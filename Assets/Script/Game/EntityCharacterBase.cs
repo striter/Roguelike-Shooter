@@ -8,7 +8,6 @@ using UnityEngine;
 public class EntityCharacterBase : EntityBase
 {
     public int I_MaxHealth;
-    public Renderer ExtraRendererForForest107Only;
     public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
     public int I_DefaultArmor;
     public float F_MovementSpeed;
@@ -16,9 +15,9 @@ public class EntityCharacterBase : EntityBase
     public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
     public virtual Transform tf_Weapon=>null;
-    public virtual Transform tf_WeaponModel => null;
     public CharacterInfoManager m_CharacterInfo { get; private set; }
-    EntityCharacterEffectManager m_Effect;
+    public virtual MeshRenderer m_WeaponSkin { get; private set; }
+    public EntityCharacterSkinEffectManager m_CharacterSkinEffect { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
@@ -41,8 +40,7 @@ public class EntityCharacterBase : EntityBase
         Transform tf_Skin = tf_Model.Find("Skin");
         List<Renderer> renderers = new List<Renderer>();
         if(tf_Skin) renderers.AddRange(tf_Skin.GetComponentsInChildren<Renderer>().ToList());
-        if (ExtraRendererForForest107Only) renderers.Add(ExtraRendererForForest107Only);
-        m_Effect = new EntityCharacterEffectManager(tf_Model,renderers);
+        m_CharacterSkinEffect = new EntityCharacterSkinEffectManager(tf_Model,renderers);
         m_CharacterInfo = GetEntityInfo();
     }
 
@@ -59,12 +57,12 @@ public class EntityCharacterBase : EntityBase
         base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        m_Effect.OnDisable();
+        m_CharacterSkinEffect.OnDisable();
     }
     protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
         base.EntityActivate(flag, startHealth);
-        m_Effect.OnReset();
+        m_CharacterSkinEffect.OnReset();
     }
 
     protected void OnMainCharacterActivate(enum_EntityFlag _flag)
@@ -86,9 +84,9 @@ public class EntityCharacterBase : EntityBase
             return;
 
         m_CharacterInfo.Tick(Time.deltaTime);
-        m_Effect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
-        m_Effect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
-        m_Effect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
+        m_CharacterSkinEffect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
+        m_CharacterSkinEffect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
+        m_CharacterSkinEffect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
         if (!m_IsDead)
             OnAliveTick(Time.deltaTime);
         else
@@ -100,7 +98,7 @@ public class EntityCharacterBase : EntityBase
         if (m_DeadCounter.m_Timing)
         {
             m_DeadCounter.Tick(deltaTime);
-            m_Effect.SetDeathEffect(1f-m_DeadCounter.m_TimeLeftScale);
+            m_CharacterSkinEffect.SetDeathEffect(1f-m_DeadCounter.m_TimeLeftScale);
             return;
         }
         if (!m_DeadCounter.m_Timing)
@@ -112,7 +110,7 @@ public class EntityCharacterBase : EntityBase
         if (!m_IsDead)
             return;
         OnRevive();
-        m_Effect.OnReset();
+        m_CharacterSkinEffect.OnReset();
         m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
         health.OnSetStatus( health.m_MaxHealth,health.m_MaxArmor);
@@ -139,7 +137,7 @@ public class EntityCharacterBase : EntityBase
     {
         base.OnDead();
         m_CharacterInfo.OnDead();
-        m_Effect.SetDeath();
+        m_CharacterSkinEffect.SetDeath();
         m_DeadCounter.SetTimer(GameConst.F_EntityDeadFadeTime);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
@@ -152,7 +150,7 @@ public class EntityCharacterBase : EntityBase
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
         base.OnHealthChanged(type);
-        m_Effect.OnHit(type);
+        m_CharacterSkinEffect.OnHit(type);
         switch (type)
         {
             case enum_HealthChangeMessage.DamageArmor:
@@ -168,17 +166,18 @@ public class EntityCharacterBase : EntityBase
             OnDead();
     }
 
-    class EntityCharacterEffectManager:ICoroutineHelperClass
+    public class EntityCharacterSkinEffectManager:ICoroutineHelperClass
     {
         Material m_NormalMaterial,m_EffectMaterial;
         List<Renderer> m_skins;
+        public Renderer m_MainSkin =>m_skins[0];
         bool m_cloaked;
         bool m_freezed;
         bool m_scanned;
         bool m_death;
         TSpecialClasses.ParticleControlBase m_Particles;
         MaterialPropertyBlock m_NormalProperty = new MaterialPropertyBlock();
-        public EntityCharacterEffectManager(Transform particleTrans, List<Renderer> _skin)
+        public EntityCharacterSkinEffectManager(Transform particleTrans, List<Renderer> _skin)
         {
             m_Particles = new ParticleControlBase(particleTrans);
             m_skins = _skin;
@@ -309,6 +308,7 @@ public class EntityCharacterBase : EntityBase
         static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
         static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
         static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
+        static readonly int HS_FM_Attack = Animator.StringToHash("fm_attack");
         static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
         public CharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
@@ -337,6 +337,7 @@ public class EntityCharacterBase : EntityBase
         {
             m_Animator.SetFloat(HS_FM_Movement, movementSpeed);
         }
+        public void SetFireSpeed(float fireSpeed)=> m_Animator.SetFloat(HS_FM_Attack, fireSpeed);
         public void OnDead()
         {
             m_Animator.SetTrigger(HS_T_Dead);

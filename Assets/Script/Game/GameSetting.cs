@@ -550,7 +550,7 @@ namespace GameSetting
 
     public enum enum_EquipmentRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
-    public enum enum_EffectAttach { Invalid = -1,  Head = 1, Feet = 2, WeaponModel = 3,}
+    public enum enum_EffectType { Invalid = -1,  HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3,}
 
     public enum enum_PlayerCharacter {Invalid=-1,Beth=10001, }
 
@@ -563,25 +563,31 @@ namespace GameSetting
         Invalid = -1,
         RailPistol = 101,
         Railgun = 102,
-        M82A1 = 201,
-        Kar98 = 202,
-        UZI = 301,
-        UMP45 = 302,
-        SCAR = 401,
-        M16A4 = 402,
-        AKM = 403,
-        P92 = 501,
-        DE = 502,
-        XM1014 = 601,
-        S686 = 602,
-        Crossbow = 701,
-        RocketLauncher = 702,
-        Minigun = 703,
-        Flamer = 801,
-        Driller = 802,
-        Bouncer = 803,
-        Tesla=804,
-        HeavySword=901,
+        M82A1 = 103,
+        Kar98 = 104,
+        UZI = 105,
+        UMP45 = 106,
+        SCAR = 107,
+        M16A4 = 108,
+        AKM = 109,
+        P92 = 110,
+        DE = 111,
+        XM1014 = 112,
+        S686 = 113,
+        Crossbow = 114,
+        RocketLauncher = 115,
+        Minigun = 116,
+
+        Flamer = 201,
+        Driller = 202,
+        Bouncer = 203,
+        Tesla = 204,
+
+        HeavySword = 301,
+
+        LavaWand = 401,
+        PoisonWand = 402,
+        FrostWand = 403,
     }
 
     public enum enum_WeaponTrigger
@@ -1467,7 +1473,7 @@ namespace GameSetting
         public float F_DamageReceiveMultiply { get; private set; } = 1f;
         public float F_HealReceiveMultiply { get; private set; } = 1f;
         public float F_MovementSpeedMultiply { get; private set; } = 1f;
-        protected float F_FireRateMultiply { get; private set; } = 1f;
+        public float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
         protected float F_DamageMultiply { get; private set; } = 0f;
         protected float F_HealthDrainMultiply { get; private set; } = 0f;

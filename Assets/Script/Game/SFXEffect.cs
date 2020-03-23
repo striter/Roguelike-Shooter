@@ -4,40 +4,27 @@ using UnityEngine;
 using GameSetting;
 public class SFXEffect : SFXParticles
 {
-    public enum_EffectAttach E_AttachTo;
-    public bool B_IsMeshGlow;
+    public enum_EffectType E_AttachTo;
     public void Play(EntityCharacterBase entity)
     {
         base.PlayControlled(entity.m_EntityID);
-        Transform attachTo=null;
         switch (E_AttachTo)
         {
-            case enum_EffectAttach.Feet:
-                attachTo = entity.transform;
+            case enum_EffectType.FeetAttach:
+                transform.SetPositionAndRotation(entity.transform.position, entity.transform.rotation);
                 break;
-            case enum_EffectAttach.Head:
-                attachTo = entity.tf_Head;
+            case enum_EffectType.HeadAttach:
+                transform.SetPositionAndRotation(entity.tf_Head.position, entity.tf_Head.rotation);
                 break;
-            case enum_EffectAttach.WeaponModel:
-                attachTo = entity.tf_WeaponModel;
+            case enum_EffectType.WeaponMesh:
+                m_Particle.m_Particles.Traversal((ParticleSystem particle) =>
+                {
+                    ParticleSystem.ShapeModule shape = particle.shape;
+                    shape.shapeType = ParticleSystemShapeType.MeshRenderer;
+                    shape.meshRenderer = entity.m_WeaponSkin;
+                });
                 break;
         }
-        if (attachTo == null)
-            Debug.LogError("Invalid Attach Found Of:" + E_AttachTo + "," + entity.name);
-
-        transform.SetPositionAndRotation(attachTo.position,attachTo.rotation);
         AttachTo(entity.transform);
-
-        if (!B_IsMeshGlow)
-            return;
-
-        MeshRenderer targetMesh = attachTo.GetComponent<MeshRenderer>();
-        if (targetMesh == null)
-            Debug.Log("Null Mesh Found!");
-        m_Particle.m_Particles.Traversal((ParticleSystem particle) =>
-        {
-            ParticleSystem.ShapeModule shape = particle.shape;
-            shape.meshRenderer = targetMesh;
-        });
     }
 }

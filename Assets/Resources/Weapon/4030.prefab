@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4550938155433920}
-  - component: {fileID: 114579307329279138}
+  - component: {fileID: 114299159877207768}
   m_Layer: 9
   m_Name: 4030
   m_TagString: Untagged
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114579307329279138
+--- !u!114 &114299159877207768
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,22 +48,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1032428382501042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
+  m_Script: {fileID: 11500000, guid: 5311f8113741b1f46bc5966d96ce3c65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 48.7
-  F_Speed: 50
+  F_Damage: 50
+  F_Speed: 15
   B_Penetrate: 0
-  AC_MuzzleClip: {fileID: 8300000, guid: 160f5b769412a1946941b45857c18c4d, type: 3}
-  I_TrailIndex: 70003
-  I_MuzzleIndex: 19002
-  I_ImpactIndex: 29002
+  AC_MuzzleClip: {fileID: 0}
+  I_TrailIndex: 70009
+  I_MuzzleIndex: 19009
+  I_ImpactIndex: 29009
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
-  I_BuffApplyOnHit: 0
-  F_Radius: 0.1
-  F_Height: 0.2
+  I_BuffApplyOnHit: 14030
+  F_Radius: 0.05
+  F_Height: 1
   RI_CountExtension:
     start: 0
     length: 0

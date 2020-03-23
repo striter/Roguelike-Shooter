@@ -68,7 +68,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnExpireChange();
         if (m_Animator != null)
-            m_Animator.SetMovementSpeed(m_CharacterInfo.F_MovementSpeed/4f);
+            m_Animator.SetMovementFireSpeed(m_CharacterInfo.F_MovementSpeedMultiply, m_CharacterInfo.F_FireRateMultiply);
         m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
     }
 
@@ -126,6 +126,7 @@ public class EntityCharacterAI : EntityCharacterBase {
                 break;
         }
     }
+
 
     #region AI
 
@@ -430,6 +431,12 @@ public class EntityCharacterAI : EntityCharacterBase {
             if(attack)
                 m_Animator.SetTrigger(HS_T_Attack);
             m_Animator.SetBool(HS_B_Attack,attack);
+        }
+
+        public void SetMovementFireSpeed(float movementSpeed,float fireSpeed)
+        {
+            SetMovementSpeed(movementSpeed);
+            SetFireSpeed(fireSpeed);
         }
     }
 #if UNITY_EDITOR

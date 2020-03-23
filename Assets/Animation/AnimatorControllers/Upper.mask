@@ -6,30 +6,30 @@ AvatarMask:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Upper
-  m_Mask: 00000000010000000100000000000000000000000100000001000000010000000100000000000000000000000000000000000000
+  m_Mask: 00000000000000000100000000000000000000000100000001000000010000000100000000000000000000000000000000000000
   m_Elements:
   - m_Path: 
     m_Weight: 1
   - m_Path: Motion
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_L_Thigh
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_L_Thigh/B_L_Calf
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_L_Thigh/B_L_Calf/B_L_Foot
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_L_Thigh/B_L_Calf/B_L_Foot/B_L_Toe0
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_R_Thigh
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_R_Thigh/B_R_Calf
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_R_Thigh/B_R_Calf/B_R_Foot
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_R_Thigh/B_R_Calf/B_R_Foot/B_R_Toe0
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_Spine
     m_Weight: 1
   - m_Path: Motion/B_Pelvis/B_Spine/B_Spine1

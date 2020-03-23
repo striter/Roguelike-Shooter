@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1032428382501042}
+  m_IsPrefabParent: 1
+--- !u!1 &1032428382501042
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4550938155433920}
+  - component: {fileID: 114217759110967742}
+  m_Layer: 9
+  m_Name: 2030
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4550938155433920
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1032428382501042}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.497224, y: -4.1753907, z: -1.8572063}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114217759110967742
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1032428382501042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d6ae3b2683015443b66e9f6597bce56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  E_ProjectileType: 1
+  F_Damage: 21.9
+  F_Speed: 10
+  B_Penetrate: 0
+  AC_MuzzleClip: {fileID: 8300000, guid: fd4d145fec1799846b3b2106b66123e2, type: 3}
+  I_TrailIndex: 70006
+  I_MuzzleIndex: 19004
+  I_ImpactIndex: 29004
+  I_IndicatorIndex: 0
+  I_HitMarkIndex: 0
+  I_BuffApplyOnHit: 0
+  F_Radius: 0.05
+  F_Height: 0.1
+  RI_CountExtension:
+    start: 0
+    length: 0
+  F_OffsetExtension: 0
+  I_BounceCount: 15

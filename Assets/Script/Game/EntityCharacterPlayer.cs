@@ -26,7 +26,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public float m_EquipmentDistance { get; private set; }
     public Transform tf_UIStatus { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
-    public override Transform tf_WeaponModel => m_WeaponCurrent.m_Case;
+    public override MeshRenderer m_WeaponSkin => m_WeaponCurrent.m_WeaponSkin;
     protected Transform tf_AimAssistTarget=null;
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public new PlayerInfoManager m_CharacterInfo { get; private set; }
@@ -182,19 +182,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.Trigger(down);
     }
     public bool m_weaponCanFire { get; private set; } = false;
-    void OnReloadClick()
-    {
-        if (m_WeaponCurrent == null)
-            return;
-    }
-
-    void OnReload(bool start, float reloadTime)
-    {
-        if (start)
-            m_Animator.Reload(reloadTime);
-        else
-            m_CharacterInfo.OnReloadFinish();
-    }
     void OnWeaponTick(float deltaTime)
     {
         if (m_WeaponCurrent == null)
@@ -510,7 +497,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnInteract, OnSwapClick, OnReloadClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnInteract, OnSwapClick, OnAbilityClick);
         else
             UIManager.Instance.RemoveBindings();
     }
@@ -518,9 +505,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected class PlayerAnimator : CharacterAnimator
     {
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
-        static readonly int HS_FM_Attack = Animator.StringToHash("fm_attack");
-        static readonly int HS_T_Reload = Animator.StringToHash("t_reload");
-        static readonly int HS_FM_Reload = Animator.StringToHash("fm_reload");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_B_Aim = Animator.StringToHash("b_aim");
         Vector2 v2_movement;
@@ -539,13 +523,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
         public void Attack(float fireRate)
         {
-            m_Animator.SetFloat(HS_FM_Attack,1/fireRate);
+            SetFireSpeed(1/fireRate);
             m_Animator.SetTrigger(HS_T_Attack);
-        } 
-        public void Reload(float reloadTime)
-        {
-            m_Animator.SetTrigger(HS_T_Reload);
-            m_Animator.SetFloat(HS_FM_Reload, 1 / reloadTime);
         }
     }
 #if UNITY_EDITOR

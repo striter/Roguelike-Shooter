@@ -10,7 +10,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     public SWeapon m_WeaponInfo { get; private set; }
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
-    public Transform m_Case { get; private set; } = null;
+    public MeshRenderer m_WeaponSkin { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
     public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
     public float GetSpread() => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
@@ -27,7 +27,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     {
         base.OnPoolItemInit(_identity,_OnRecycle);
         m_Muzzle = transform.FindInAllChild("Muzzle");
-        m_Case = transform.FindInAllChild("Case");
+        m_WeaponSkin = transform.FindInAllChild("Case").GetComponent<MeshRenderer>();
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
