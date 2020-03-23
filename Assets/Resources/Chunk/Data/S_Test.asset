@@ -16,1002 +16,802 @@ MonoBehaviour:
   m_Height: 10
   m_TileData:
   - m_TerrainType: 16
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 18
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 13
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 1
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 1
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 1
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: 17
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 11
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 11
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 18
-    m_TerrainMap: 2
     m_ObjectType: 11
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 17
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 5
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 8
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 8
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 5
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 3
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 20
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 3
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 4
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 8
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 5
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 14
     m_EdgeObjectType: 3
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 2
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 53
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 2
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 3
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 1
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 1
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 14
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 2
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 16
     m_EdgeObjectType: 2
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 2
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 55
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 17
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 18
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 17
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 2
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 2
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 15
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 18
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 16
-    m_TerrainMap: 2
     m_ObjectType: 12
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 18
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 2
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 9
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 5
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 3
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 17
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 18
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 17
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 5
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 9
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 3
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 9
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 8
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 4
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 51
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 3
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 17
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 3
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 14
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 11
     m_EdgeObjectType: 3
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 1
     m_Direction: 2
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: 3
     m_Direction: 2
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
     m_ObjectType: 12
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_TerrainMap: 2
-    m_ObjectType: -1
+    m_ObjectType: 23
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: 14
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 11
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 1
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 6
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 11
-    m_TerrainMap: 2
     m_ObjectType: -1
     m_EdgeObjectType: -1
     m_Direction: 2

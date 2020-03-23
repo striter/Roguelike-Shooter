@@ -41,8 +41,6 @@ namespace TTiles
         public static TileAxis operator -(TileAxis a) => new TileAxis(-a.X, -a.Y);
         public static bool operator ==(TileAxis a, TileAxis b) => a.X == b.X && a.Y == b.Y;
         public static bool operator !=(TileAxis a, TileAxis b) => a.X != b.X || a.Y != b.Y;
-        public static bool operator >=(TileAxis a, TileAxis b) => a.X >= b.X && a.Y >= b.Y;
-        public static bool operator <=(TileAxis a, TileAxis b) => a.X <= b.X && a.Y <= b.Y;
         public static TileAxis operator -(TileAxis a, TileAxis b) => new TileAxis(a.X - b.X, a.Y - b.Y);
         public static TileAxis operator +(TileAxis a, TileAxis b) => new TileAxis(a.X + b.X, a.Y + b.Y);
         public static TileAxis operator *(TileAxis a, TileAxis b) => new TileAxis(a.X * b.X, a.Y * b.Y);

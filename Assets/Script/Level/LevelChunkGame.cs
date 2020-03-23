@@ -13,7 +13,7 @@ public class LevelChunkGame : LevelChunkBase
     public TileAxis m_Size { get; private set; }
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
     public List<TileObjectBlockLift> m_RoadBlockTiles { get; private set; } = new List<TileObjectBlockLift>();
-    public Dictionary<enum_TileObject, List<ChunkGameObjectData>> m_ChunkObjects { get; private set; } = new Dictionary<enum_TileObject, List<ChunkGameObjectData>>();
+    public Dictionary<enum_TileObjectType, List<ChunkGameObjectData>> m_ChunkObjects { get; private set; } = new Dictionary<enum_TileObjectType, List<ChunkGameObjectData>>();
     Action OnChunkObjectDestroy;
 
     Transform m_RoadBlockParent;
@@ -35,7 +35,7 @@ public class LevelChunkGame : LevelChunkBase
 
                 Vector3 worldPosition = axis.ToPosition()  + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToPosition() / 2f;
                 m_ChunkObjects[tileData.m_ObjectType].Add(new ChunkGameObjectData(worldPosition, tileData.m_Direction.ToRotation()));
-                return tileData.ChangeObjectType(enum_TileObject.Invalid);
+                return tileData.ChangeObjectType(enum_TileObjectType.Invalid);
             }
             return tileData;
         });
@@ -47,7 +47,7 @@ public class LevelChunkGame : LevelChunkBase
         base.OnTileInit(tile, axis, data, random);
         if (tile.m_Object)
             tile.m_Object.GameInit(GameExpression.GetLevelObjectHealth(tile.m_Object.m_ObjectType), OnChunkObjectDestroy);
-        if (data.m_ObjectType == enum_TileObject.Block)
+        if (data.m_ObjectType == enum_TileObjectType.Block)
         {
             TileObjectBlockLift roadBlock = tile.m_Object as TileObjectBlockLift;
             roadBlock.transform.SetParent(m_RoadBlockParent);

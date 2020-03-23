@@ -10,9 +10,6 @@ namespace LevelSetting
         public const int I_TileSize = 2;
 
         public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
-
-        public static readonly Color C_MapTexture_Ground =  new Color(0, 0, 0, 1);
-        public static readonly Color C_MapTexture_Plants = new Color(1, 0, 0, 1);
     }
 
     public enum enum_LevelType {
@@ -26,13 +23,12 @@ namespace LevelSetting
     public enum enum_TileSubType
     {
         Invalid = -1,
-        Object = 1,
-        Terrain = 2,
-        TerrainMap = 3,
-        EdgeObject = 4,
-        Plants = 5,
+        Object=1,
+        Terrain=2,
+        EdgeObject=3,
+        Plants=4,
 
-        EditorTerrain = 10,
+        EditorGround=10,
     }
 
     public enum enum_EditorTerrainType
@@ -43,7 +39,7 @@ namespace LevelSetting
         Highland,
     }
     
-    public enum enum_TileTerrain 
+    public enum enum_TileTerrainType 
     {
         Invalid=-1,
         Plane,
@@ -70,14 +66,7 @@ namespace LevelSetting
         Slope_4S_1GTR,
     }
 
-    public enum enum_TileTerrainMap
-    {
-        Invalid=-1,
-        Plants=1,
-        Ground=2,
-    }
-
-    public enum enum_TileObject
+    public enum enum_TileObjectType
     {
         Invalid=-1,
         Dangerzone = 1,
@@ -95,6 +84,8 @@ namespace LevelSetting
         Static3x2B=20,
         Static3x3A=21,
         Static3x3B=22,
+
+        PlantsCombine,
 
         EditorStart =50,       //Available During Editor
         EEntrance2x2=51,
@@ -115,7 +106,7 @@ namespace LevelSetting
         Plants6,
     }
 
-    public enum enum_TileEdgeObject
+    public enum enum_TileEdgeObjectType
     {
         Invalid=-1,
         EdgeObjectFenceL_BL = 1,
@@ -137,9 +128,8 @@ namespace LevelSetting
     {
         Invalid=-1,
         Terrain=1,
-        TerrainMap=2,
-        Object=3,
-        EdgeObject=4,
+        Object=2,
+        EdgeObject=3,
     }
 
     public static class LevelExpressions
@@ -172,7 +162,7 @@ namespace LevelSetting
 
         public static Vector3 ToPosition(this TileAxis axis) => new Vector3(axis.X,0,axis.Y)*LevelConst.I_TileSize;
         
-        public static float GetTerrainHeight(this enum_TileTerrain type)
+        public static float GetTerrainHeight(this enum_TileTerrainType type)
         {
             switch(type.GetEditorGroundType())
             {
@@ -188,114 +178,114 @@ namespace LevelSetting
             }
         }
 
-        public static enum_EditorTerrainType GetEditorGroundType(this enum_TileTerrain type)
+        public static enum_EditorTerrainType GetEditorGroundType(this enum_TileTerrainType type)
         {
             switch(type)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return enum_EditorTerrainType.Invalid;
-                case enum_TileTerrain.Invalid:
+                case enum_TileTerrainType.Invalid:
                     return enum_EditorTerrainType.Invalid;
-                case enum_TileTerrain.Plane:
+                case enum_TileTerrainType.Plane:
                     return enum_EditorTerrainType.Plane;
-                case enum_TileTerrain.River_0P:
-                case enum_TileTerrain.River_1RT:
-                case enum_TileTerrain.River_2RTB:
-                case enum_TileTerrain.River_2RTR_CP:
-                case enum_TileTerrain.River_2RRT_CR:
-                case enum_TileTerrain.River_3RLTR_LP_RR:
-                case enum_TileTerrain.River_3RLTR_LRP:
-                case enum_TileTerrain.River_3RLTR_LRR:
-                case enum_TileTerrain.River_3RLTR_LR_RP:
-                case enum_TileTerrain.River_4R_1PTR:
-                case enum_TileTerrain.River_4R_2PTRBL:
-                case enum_TileTerrain.River_4R_2PTRTL:
-                case enum_TileTerrain.River_4R_3P_1RTR:
-                case enum_TileTerrain.River_4R_4P:
-                case enum_TileTerrain.River_4R_0P:
+                case enum_TileTerrainType.River_0P:
+                case enum_TileTerrainType.River_1RT:
+                case enum_TileTerrainType.River_2RTB:
+                case enum_TileTerrainType.River_2RTR_CP:
+                case enum_TileTerrainType.River_2RRT_CR:
+                case enum_TileTerrainType.River_3RLTR_LP_RR:
+                case enum_TileTerrainType.River_3RLTR_LRP:
+                case enum_TileTerrainType.River_3RLTR_LRR:
+                case enum_TileTerrainType.River_3RLTR_LR_RP:
+                case enum_TileTerrainType.River_4R_1PTR:
+                case enum_TileTerrainType.River_4R_2PTRBL:
+                case enum_TileTerrainType.River_4R_2PTRTL:
+                case enum_TileTerrainType.River_4R_3P_1RTR:
+                case enum_TileTerrainType.River_4R_4P:
+                case enum_TileTerrainType.River_4R_0P:
                     return enum_EditorTerrainType.River;
-                case enum_TileTerrain.Highland:
-                case enum_TileTerrain.Slope_2STR_CS:
-                case enum_TileTerrain.Slope_3SLTR_LRS:
-                case enum_TileTerrain.Slope_4S_1GTR:
+                case enum_TileTerrainType.Highland:
+                case enum_TileTerrainType.Slope_2STR_CS:
+                case enum_TileTerrainType.Slope_3SLTR_LRS:
+                case enum_TileTerrainType.Slope_4S_1GTR:
                     return enum_EditorTerrainType.Highland;
             }
         }
 
-        public static enum_TileTerrain GetDefaultTerrainType(this enum_EditorTerrainType type)
+        public static enum_TileTerrainType GetDefaultTerrainType(this enum_EditorTerrainType type)
         {
             switch(type)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!");
-                    return enum_TileTerrain.Invalid;
+                    return enum_TileTerrainType.Invalid;
                 case enum_EditorTerrainType.Plane:
-                    return enum_TileTerrain.Plane;
+                    return enum_TileTerrainType.Plane;
                 case enum_EditorTerrainType.River:
-                    return enum_TileTerrain.River_0P;
+                    return enum_TileTerrainType.River_0P;
                 case enum_EditorTerrainType.Highland:
-                    return enum_TileTerrain.Highland;
+                    return enum_TileTerrainType.Highland;
             }
         }
 
 
-        public static bool IsEditorTileObject(this enum_TileObject type) => type >= enum_TileObject.EditorStart && type <= enum_TileObject.EditorEnd;
+        public static bool IsEditorTileObject(this enum_TileObjectType type) => type >= enum_TileObjectType.EditorStart && type <= enum_TileObjectType.EditorEnd;
 
-        public static TileAxis GetSizeAxis(this enum_TileObject type,enum_TileDirection direction)
+        public static TileAxis GetSizeAxis(this enum_TileObjectType type,enum_TileDirection direction)
         {
             TileAxis size = TileAxis.One;
             switch (type)
             {
-                case enum_TileObject.Static2x2A:
-                case enum_TileObject.Static2x2B:
-                case enum_TileObject.EEntrance2x2:
+                case enum_TileObjectType.Static2x2A:
+                case enum_TileObjectType.Static2x2B:
+                case enum_TileObjectType.EEntrance2x2:
                     size = TileAxis.One * 2;
                     break;
-                case enum_TileObject.EExport4x1:
+                case enum_TileObjectType.EExport4x1:
                     size = new TileAxis(4, 1);
                     break;
-                case enum_TileObject.Static2x1B:
-                case enum_TileObject.Static2x1A:
+                case enum_TileObjectType.Static2x1B:
+                case enum_TileObjectType.Static2x1A:
                     size = new TileAxis(2, 1);
                     break;
-                case enum_TileObject.Static3x2A: 
-                case enum_TileObject.Static3x2B:
+                case enum_TileObjectType.Static3x2A: 
+                case enum_TileObjectType.Static3x2B:
                     size = new TileAxis(3, 2);
                     break;
-                case enum_TileObject.EEventArea3x3:
-                case enum_TileObject.Static3x3A:
-                case enum_TileObject.Static3x3B:
+                case enum_TileObjectType.EEventArea3x3:
+                case enum_TileObjectType.Static3x3A:
+                case enum_TileObjectType.Static3x3B:
                     size = TileAxis.One * 3;
                     break;
             }
             return TileTools.GetDirectionedSize(size, direction);
         }
         
-        public static Dictionary<enum_TileObject,int> GetChunkRestriction(enum_LevelType type)
+        public static Dictionary<enum_TileObjectType,int> GetChunkRestriction(enum_LevelType type)
         {
-            Dictionary<enum_TileObject, int> restrictionDic = new Dictionary<enum_TileObject, int>();
+            Dictionary<enum_TileObjectType, int> restrictionDic = new Dictionary<enum_TileObjectType, int>();
             switch(type)
             {
                 case enum_LevelType.Start:
-                    restrictionDic.Add(enum_TileObject.EEntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObject.EExport4x1, 1);
-                    restrictionDic.Add(enum_TileObject.EEventArea3x3, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_LevelType.Event:
-                    restrictionDic.Add(enum_TileObject.EEntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObject.EExport4x1, 1);
-                    restrictionDic.Add(enum_TileObject.EEventArea3x3, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_LevelType.Battle:
-                    restrictionDic.Add(enum_TileObject.EEntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObject.EExport4x1, 1);
-                    restrictionDic.Add( enum_TileObject.EEnermySpawn1x1,-1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add( enum_TileObjectType.EEnermySpawn1x1,-1);
                     break;
                 case enum_LevelType.Final:
-                    restrictionDic.Add(enum_TileObject.EEntrance2x2, 1);
-                    restrictionDic.Add(enum_TileObject.EExport4x1, 1);
-                    restrictionDic.Add(enum_TileObject.EEnermySpawn1x1, -1);
+                    restrictionDic.Add(enum_TileObjectType.EEntrance2x2, 1);
+                    restrictionDic.Add(enum_TileObjectType.EExport4x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EEnermySpawn1x1, -1);
                     break;
             }
             return restrictionDic;

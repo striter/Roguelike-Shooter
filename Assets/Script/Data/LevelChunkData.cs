@@ -130,7 +130,7 @@ public class LevelChunkData : ScriptableObject {
                     default:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.black;
                         break;
-                    case enum_TileTerrain.Invalid:
+                    case enum_TileTerrainType.Invalid:
                         colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
                         break;
                 }
@@ -147,25 +147,25 @@ public class LevelChunkData : ScriptableObject {
                 Color tileColor = Color.clear;
                 switch (tileData.m_ObjectType)
                     {
-                        case enum_TileObject.Invalid:
+                        case enum_TileObjectType.Invalid:
                             break;
                         default:
                             tileColor = Color.grey;
                             break;
-                        case enum_TileObject.EEntrance2x2:
+                        case enum_TileObjectType.EEntrance2x2:
                             tileColor = Color.green;
                             break;
-                        case enum_TileObject.EExport4x1:
+                        case enum_TileObjectType.EExport4x1:
                             tileColor = Color.blue;
                             break;
-                        case enum_TileObject.EEventArea3x3:
+                        case enum_TileObjectType.EEventArea3x3:
                             tileColor = Color.white;
                             break;
-                        case enum_TileObject.EEnermySpawn1x1:
+                        case enum_TileObjectType.EEnermySpawn1x1:
                             tileColor = Color.red;
                             break;
-                        case enum_TileObject.Block:
-                        case enum_TileObject.Dangerzone:
+                        case enum_TileObjectType.Block:
+                        case enum_TileObjectType.Dangerzone:
                             tileColor = Color.yellow;
                             break;
                     }
@@ -180,29 +180,22 @@ public class LevelChunkData : ScriptableObject {
 [System.Serializable]
 public struct ChunkTileData
 {
-    public enum_TileTerrain m_TerrainType;
-    public enum_TileTerrainMap m_TerrainMap;
-    public enum_TileObject m_ObjectType;
-    public enum_TileEdgeObject m_EdgeObjectType;
+    public enum_TileTerrainType m_TerrainType;
+    public enum_TileObjectType m_ObjectType;
+    public enum_TileEdgeObjectType m_EdgeObjectType;
     public enum_TileDirection m_Direction;
 
-    public ChunkTileData ChangeTerrainType(enum_TileTerrain groundType)
+    public ChunkTileData ChangeTerrainType(enum_TileTerrainType groundType)
     {
         m_TerrainType = groundType;
         return this;
     }
-    public ChunkTileData ChangeTerrainMapType(enum_TileTerrainMap mapType)
-    {
-        m_TerrainMap = mapType;
-        return this;
-    }
-
-    public ChunkTileData ChangeObjectType(enum_TileObject objectType)
+    public ChunkTileData ChangeObjectType(enum_TileObjectType objectType)
     {
         m_ObjectType = objectType;
         return this;
     }
-    public ChunkTileData ChangeEdgeObjectType(enum_TileEdgeObject edgeObjectType)
+    public ChunkTileData ChangeEdgeObjectType(enum_TileEdgeObjectType edgeObjectType)
     {
         m_EdgeObjectType = edgeObjectType;
         return this;
@@ -213,8 +206,8 @@ public struct ChunkTileData
         return this;
     }
 
-    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrain.Highland, m_TerrainMap = enum_TileTerrainMap.Plants,m_ObjectType =  enum_TileObject.Invalid,m_EdgeObjectType= enum_TileEdgeObject.Invalid,m_Direction= enum_TileDirection.Top };
-    public static ChunkTileData Create(enum_TileTerrain terrainType ,enum_TileTerrainMap mapType,  enum_TileObject objectType,enum_TileEdgeObject edgeObjectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = terrainType,m_TerrainMap=mapType, m_ObjectType = objectType,m_EdgeObjectType=edgeObjectType, m_Direction = direction };
+    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Highland, m_ObjectType =  enum_TileObjectType.Invalid,m_EdgeObjectType= enum_TileEdgeObjectType.Invalid,m_Direction= enum_TileDirection.Top };
+    public static ChunkTileData Create(enum_TileTerrainType groundType ,  enum_TileObjectType objectType,enum_TileEdgeObjectType edgeObjectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = groundType, m_ObjectType = objectType,m_EdgeObjectType=edgeObjectType, m_Direction = direction };
 
     public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_TerrainType==b.m_TerrainType&&a.m_ObjectType==b.m_ObjectType;
     public static bool operator !=(ChunkTileData a, ChunkTileData b) => !(a==b);

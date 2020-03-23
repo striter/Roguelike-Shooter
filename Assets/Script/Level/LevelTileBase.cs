@@ -13,7 +13,7 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
     public TileObjectBase m_Object { get; protected set; }
     public TileEdgeObjectBase m_EdgeObject { get; private set; }
     public List<TilePlantsBase> m_Plants { get; private set; } = new List<TilePlantsBase>();
-    protected virtual float GetTerrainHeight(enum_TileTerrain terrain) => terrain == enum_TileTerrain.Invalid ?0 : terrain.GetTerrainHeight();
+    protected virtual float GetTerrainHeight(enum_TileTerrainType terrain) => terrain == enum_TileTerrainType.Invalid ?0 : terrain.GetTerrainHeight();
     public virtual void InitTile(TileAxis axis,ChunkTileData data,System.Random random)
     {
         m_Axis = axis;
@@ -21,7 +21,7 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
         transform.localRotation = Quaternion.identity;
         tf_Models = transform.Find("Models");
         Vector3 objectHight = Vector3.up * GetTerrainHeight(data.m_TerrainType);
-        if (data.m_TerrainType != enum_TileTerrain.Invalid)
+        if (data.m_TerrainType != enum_TileTerrainType.Invalid)
         {
             m_Terrain = LevelObjectManager.GetTerrainItem(data.m_TerrainType, tf_Models);
             m_Terrain.OnGenerateItem(data, random);
@@ -35,7 +35,7 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
             m_Object.transform.localPosition = objectHight; 
         }
 
-        if(WillGeneratePlants(data))
+        if(WillGeneratePlants(data.m_ObjectType))
         {
             int plantsCount = random.Next(1,4);
             for (int i = 0; i < plantsCount; i++)
@@ -47,7 +47,7 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
             }
         }
 
-        if(data.m_EdgeObjectType!= enum_TileEdgeObject.Invalid)
+        if(data.m_EdgeObjectType!= enum_TileEdgeObjectType.Invalid)
         {
             m_EdgeObject = LevelObjectManager.GetEdgeObjectItem(data.m_EdgeObjectType, tf_Models);
             m_EdgeObject.OnGenerateItem(data, random);
@@ -71,16 +71,17 @@ public class LevelTileBase : MonoBehaviour, ITileAxis
         m_Plants.Clear();
     }
 
-    protected virtual bool WillGenerateObject(enum_TileObject type)
+    protected virtual bool WillGenerateObject(enum_TileObjectType type)
     {
-        if (type.IsEditorTileObject()||type== enum_TileObject.Invalid)
+        if (type.IsEditorTileObject())
             return false;
+        switch(type)
+        {
+            case enum_TileObjectType.Invalid:
+            case enum_TileObjectType.PlantsCombine:
+                return false;
+        }
         return true;
     }
-    protected virtual bool WillGeneratePlants(ChunkTileData data)
-    {
-        if (data.m_TerrainMap != enum_TileTerrainMap.Plants|| data.m_ObjectType != enum_TileObject.Invalid)
-            return false;
-        return true;
-    }
+    protected virtual bool WillGeneratePlants(enum_TileObjectType type) => type == enum_TileObjectType.PlantsCombine;
 }

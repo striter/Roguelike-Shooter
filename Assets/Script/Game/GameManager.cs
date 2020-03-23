@@ -142,22 +142,22 @@ public class GameManager : GameManagerBase
     }
 
 
-    void OnGenerateChunkRelatives(enum_ChunkEventType eventType, enum_TileObject tileType, ChunkGameObjectData objectData)
+    void OnGenerateChunkRelatives(enum_ChunkEventType eventType, enum_TileObjectType tileType, ChunkGameObjectData objectData)
     {
         switch (tileType)
         {
-            case enum_TileObject.EEntrance2x2:
+            case enum_TileObjectType.EEntrance2x2:
                 m_CameraAttachZ = objectData.pos.z;
                 m_LocalPlayer.Teleport(objectData.pos, objectData.rot);
                 GameObjectManager.SpawnInteract<InteractTeleport>(enum_Interaction.Teleport, objectData.pos, objectData.rot).Play(m_GameLevel.m_GameStyle);
                 break;
-            case enum_TileObject.EExport4x1:
+            case enum_TileObjectType.EExport4x1:
                 GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, objectData.pos, objectData.rot).Play(OnLevelFinished, "Test");
                 break;
-            case enum_TileObject.EEnermySpawn1x1:
+            case enum_TileObjectType.EEnermySpawn1x1:
                 m_EnermySpawnPoints.Add(objectData.pos);
                 break;
-            case enum_TileObject.EEventArea3x3:
+            case enum_TileObjectType.EEventArea3x3:
                 switch (eventType)
                 {
                     case enum_ChunkEventType.PerkAcquire:

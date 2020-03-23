@@ -38,10 +38,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _GroundTex:
-        m_Texture: {fileID: 2800000, guid: 40cb7c19027ae0544b5e14101fd586d2, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 40cb7c19027ae0544b5e14101fd586d2, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -56,10 +52,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _PlantsTex:
-        m_Texture: {fileID: 2800000, guid: 56ac485edeca4984e93b70962fcc12e3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -77,7 +69,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _UVScale: 9.52
+    - _UVScale: 10
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

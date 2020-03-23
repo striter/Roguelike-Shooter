@@ -5,10 +5,10 @@ using LevelSetting;
 using TTiles;
 using UnityEngine;
 using GameSetting;
-public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObject>,ICoroutineHelperClass {
-    public enum_TileObject m_ObjectType= enum_TileObject.Invalid;
+public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICoroutineHelperClass {
+    public enum_TileObjectType m_ObjectType= enum_TileObjectType.Invalid;
     public override enum_TileSubType m_Type => enum_TileSubType.Object;
-    Action<enum_TileObject, MonoBehaviour> OnRecycle;
+    Action<enum_TileObjectType, MonoBehaviour> OnRecycle;
     public override TileAxis GetDirectionedSize(enum_TileDirection direction) => m_ObjectType.GetSizeAxis(direction);
 
     HitCheckStatic[] m_hitChecks;
@@ -17,7 +17,7 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObject>,ICorouti
     Action OnItemDestroy;
     float m_Health = -1;
 
-    public void OnPoolItemInit(enum_TileObject identity, Action<enum_TileObject, MonoBehaviour> OnRecycle)
+    public void OnPoolItemInit(enum_TileObjectType identity, Action<enum_TileObjectType, MonoBehaviour> OnRecycle)
     {
         Init();
         m_ObjectType = identity;
