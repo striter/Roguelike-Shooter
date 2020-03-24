@@ -11,13 +11,14 @@ using System.Linq;
 
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
-    int m_CurrentLevel = -1;
-    ObjectPoolListComponent<int, LevelChunkGame> m_GameChunks;
+    LevelChunkGame m_GameChunk;
     public Light m_DirectionalLight { get; private set; }
+    Dictionary<enum_ChunkType, List<LevelChunkData>> m_ChunkDatas;
     protected override void Awake()
     {
         base.Awake();
-        m_GameChunks = new ObjectPoolListComponent<int, LevelChunkGame>(transform.Find("GameChunks"), "ChunkItem", (LevelChunkGame chunk) => chunk.Init());
+        m_GameChunk = transform.Find("GameChunk").GetComponent<LevelChunkGame>();
+        m_GameChunk.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
@@ -37,46 +38,35 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
     }
     
-    public void GenerateStage(enum_GameStyle style, List<GameLevelData> levelGenerateData, System.Random random)
+    public void GenerateStage(enum_GameStyle style, List<GameLevelPortalData> levelGenerateData, System.Random random)
     {
-        m_CurrentLevel = -1;
-        m_GameChunks.ClearPool();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
-        Dictionary<enum_LevelType, List<LevelChunkData>> chunkDatas = TResources.GetChunkDatas();
-        levelGenerateData.Traversal((int index, GameLevelData data) => {
-            LevelChunkGame _chunk = m_GameChunks.AddItem(index);
-            _chunk.InitGameChunk(data.m_EventType, chunkDatas[data.m_ChunkType].RandomItem(random), random, NavigationManager.UpdateChunkData);
-            _chunk.SetActivate(false);
-        });
+        m_ChunkDatas= TResources.GetChunkDatas(); 
     }
     
-    public void OnStartLevel(int chunkIndex,System.Random _random , Action<enum_ChunkEventType, enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
+    public void OnStartLevel(enum_ChunkType levelType,System.Random _random , Action<enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
     {
-        if(m_CurrentLevel!=-1)
-            m_GameChunks.GetItem(m_CurrentLevel).SetActivate(false);
-
-        m_CurrentLevel = chunkIndex;
-        LevelChunkGame currentChunk = m_GameChunks.GetItem(m_CurrentLevel);
-        currentChunk.SetActivate(true);
-        Vector3 size = currentChunk.m_Size.ToPosition();
-        NavigationManager.InitNavMeshData(currentChunk.transform, new Bounds(size / 2, new Vector3(size.x, .1f, size.z)));
-        currentChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
-            objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(currentChunk.m_EventType,obejctType,data); });
+        m_GameChunk.InitGameChunk( m_ChunkDatas[levelType].RandomItem(_random),_random,NavigationManager.UpdateChunkData);
+        Vector3 size = m_GameChunk.m_Size.ToPosition();
+        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, .1f, size.z)));
+        m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
+            objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(obejctType,data); });
         });
     }
+
     void OnBattleStart()
     {
-        m_GameChunks.GetItem(m_CurrentLevel).SetBlocksLift(true);
+        m_GameChunk.SetBlocksLift(true);
         NavigationManager.UpdateChunkData();
     }
 
     void OnBattleFinish()
     {
-        m_GameChunks.GetItem(m_CurrentLevel).SetBlocksLift(false);
+        m_GameChunk.SetBlocksLift(false);
         NavigationManager.UpdateChunkData();
     }
 }
@@ -136,22 +126,22 @@ public static class LevelObjectManager
         });
     }
 
-    public static void RecycleAll()
+    public static void DestroyBatchedItem()
     {
-        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.RecycleAll();
-        ObjectPoolManager<enum_TileObjectType, TileObjectBase>.RecycleAll();
-        ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.RecycleAll();
-        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.RecycleAll();
-        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.RecycleAll();
+        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.DestroyPoolItem();
+        ObjectPoolManager<enum_TileObjectType, TileObjectBase>.DestroyPoolItem();
+        ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.DestroyPoolItem();
+        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.DestroyPoolItem();
+        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.DestroyPoolItem();
     }
 
     public static void Clear()
     {
-        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.DestroyAll();
-        ObjectPoolManager<enum_TileObjectType, TileObjectBase>.DestroyAll();
-        ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.DestroyAll();
-        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.DestroyAll();
-        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.DestroyAll();
+        ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.Destroy();
+        ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Destroy();
+        ObjectPoolManager<enum_TileEdgeObjectType, TileEdgeObjectBase>.Destroy();
+        ObjectPoolManager<enum_TilePlantsType, TilePlantsBase>.Destroy();
+        ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.Destroy();
     }
     
     public static bool HaveObjectItem(enum_TileObjectType type)=> ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Registed(type);

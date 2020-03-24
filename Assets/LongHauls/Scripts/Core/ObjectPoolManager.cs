@@ -58,15 +58,18 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
             return item;
         }
 
-        public void DestroyAll()
+        public void Destroy()
         {
             GameObject.Destroy(m_spawnItem.gameObject);
-
-            for (; m_DeactiveQueue.Count>0;)
+            DestroyPoolItem();
+        }
+        public void DestroyPoolItem()
+        {
+            for (; m_DeactiveQueue.Count > 0;)
                 GameObject.Destroy(m_DeactiveQueue.Dequeue().gameObject);
             for (int i = 0; i < m_ActiveList.Count; i++)
                 GameObject.Destroy(m_ActiveList[i].gameObject);
-            
+
             m_DeactiveQueue.Clear();
             m_ActiveList.Clear();
         }
@@ -157,10 +160,16 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
         });
     }
     public static void OnSceneChange() => d_ItemInfos.Clear();
-    public static void DestroyAll()
+    public static void DestroyPoolItem()
     {
         RecycleAll();
-        d_ItemInfos.Traversal(( ItemPoolInfo info) => { info.DestroyAll(); });
+        d_ItemInfos.Traversal((ItemPoolInfo info) => { info.DestroyPoolItem(); });
+    }
+
+    public static void Destroy()
+    {
+        RecycleAll();
+        d_ItemInfos.Traversal(( ItemPoolInfo info) => { info.Destroy(); });
         d_ItemInfos.Clear();
     }
 }

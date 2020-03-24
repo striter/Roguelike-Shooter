@@ -9,7 +9,6 @@ using UnityEngine;
 
 public class LevelChunkGame : LevelChunkBase
 {
-    public enum_ChunkEventType m_EventType { get; private set; }
     public TileAxis m_Size { get; private set; }
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
     public List<TileObjectBlockLift> m_RoadBlockTiles { get; private set; } = new List<TileObjectBlockLift>();
@@ -17,16 +16,21 @@ public class LevelChunkGame : LevelChunkBase
     Action OnChunkObjectDestroy;
 
     Transform m_RoadBlockParent;
-    public void InitGameChunk(enum_ChunkEventType _eventType, LevelChunkData _data, System.Random _random,Action OnChunkObjectDestroy)
+    public override void Init()
     {
+        base.Init();
         m_RoadBlockParent = transform.Find("RoadBlocks");
+    }
+    public void InitGameChunk(LevelChunkData _data, System.Random _random,Action OnChunkObjectDestroy)
+    {
         m_ChunkObjects.Clear();
         m_NearbyChunks.Clear();
         m_RoadBlockTiles.Clear();
-        m_EventType =_eventType;
         m_Size = _data.m_Size;
         gameObject.name = _data.name;
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;
+        m_TilePool.m_ActiveItemDic.Traversal((LevelTileBase tile) => { tile.Clear(); });
+        LevelObjectManager.DestroyBatchedItem();
         InitData(_data, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {

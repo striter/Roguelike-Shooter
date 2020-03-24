@@ -32,7 +32,7 @@ public class AudioManagerBase : SingletonMono <AudioManagerBase>
     }
     public virtual void Recycle()
     {
-        ObjectPoolManager<int, SFXAudioBase>.DestroyAll();
+        ObjectPoolManager<int, SFXAudioBase>.Destroy();
     }
     protected void SwitchBackground(AudioClip _Clip,bool loop)
     {

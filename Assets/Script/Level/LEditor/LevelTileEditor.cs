@@ -49,7 +49,6 @@ public class LevelTileEditor : LevelTileBase {
             m_EditorTerrain.OnGenerateItem(data, random);
             m_EditorTerrain.transform.localPosition = Vector3.zero;
         }
-
     }
 
 

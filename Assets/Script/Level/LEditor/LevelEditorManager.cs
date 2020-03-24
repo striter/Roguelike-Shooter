@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LevelSetting;
 using GameSetting;
+using UnityEditor;
 
 public class LevelEditorManager : SingletonMono<LevelEditorManager>
 {
@@ -13,7 +14,7 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
         CameraController.Instance.m_Effect.SetEffectEnable(true,true);
     }
     #region FileEdit
-    public void New(int sizeX,int sizeY,enum_LevelType type)=>LevelChunkEditor.Instance.Init(LevelChunkData.NewData(sizeX, sizeY,type));
+    public void New(int sizeX,int sizeY,enum_ChunkType type)=>LevelChunkEditor.Instance.Init(LevelChunkData.NewData(sizeX, sizeY,type));
     
     public LevelChunkData Read(string dataName)
     {
@@ -27,6 +28,14 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
             return null;
         LevelChunkEditor.Instance.Init(m_Data);
         return m_Data;
+    }
+
+    public void Delete(string dataName)
+    {
+        LevelChunkData m_Data = TResources.GetChunkData(dataName);
+        if (!m_Data)
+            return;
+        AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(m_Data));
     }
 
     public LevelChunkData Save(string dataName)

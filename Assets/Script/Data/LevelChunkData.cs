@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 public class LevelChunkData : ScriptableObject {
     [SerializeField]
-    protected enum_LevelType m_Type;
+    protected enum_ChunkType m_Type;
     [SerializeField]
     protected int m_Width, m_Height;
     [SerializeField]
     protected ChunkTileData[] m_TileData;
     [SerializeField]
     protected ChunkConnectionData[] m_ConnectionIndex;
-    public enum_LevelType Type => m_Type;
+    public enum_ChunkType Type => m_Type;
     public int Width => m_Width;
     public int Height => m_Height;
     public TileAxis m_Size => new TileAxis(Width, Height);
@@ -23,7 +23,7 @@ public class LevelChunkData : ScriptableObject {
         return data;
     } 
 
-    public static LevelChunkData NewData(int width,int height, enum_LevelType type)
+    public static LevelChunkData NewData(int width,int height, enum_ChunkType type)
     {
         LevelChunkData data = CreateInstance<LevelChunkData>();
         data.m_Type = type;
@@ -35,7 +35,7 @@ public class LevelChunkData : ScriptableObject {
                 data.m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), data.Width)] = ChunkTileData.Default();
         return data;
     }
-    public static LevelChunkData NewData( enum_LevelType type, int count,enum_TileDirection direction, LevelTileEditor[,] transferData)
+    public static LevelChunkData NewData( enum_ChunkType type, int count,enum_TileDirection direction, LevelTileEditor[,] transferData)
     {
         LevelChunkData data = NewData(transferData.GetLength(0), transferData.GetLength(1) ,type);
         int xResize=0;
@@ -152,10 +152,10 @@ public class LevelChunkData : ScriptableObject {
                         default:
                             tileColor = Color.grey;
                             break;
-                        case enum_TileObjectType.EEntrance2x2:
+                        case enum_TileObjectType.EEntrance1x1:
                             tileColor = Color.green;
                             break;
-                        case enum_TileObjectType.EExport4x1:
+                        case enum_TileObjectType.EPortalMain3x1:
                             tileColor = Color.blue;
                             break;
                         case enum_TileObjectType.EEventArea3x3:

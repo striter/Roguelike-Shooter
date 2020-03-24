@@ -128,17 +128,7 @@ namespace GameSetting
                 case enum_StageLevel.Ranger: return 400;
             }
         }
-
-        public static List<GameLevelData> GetGameLevelDatas(System.Random random)
-        {
-            switch(random.Next(1))
-            {
-                default: Debug.LogError("Invalid Convertions Here!");return null;
-                case 0: return new List<GameLevelData>() {new GameLevelData( enum_LevelType.Start),new GameLevelData( enum_LevelType.Battle),new GameLevelData( enum_LevelType.Event, enum_ChunkEventType.Trader),new GameLevelData( enum_LevelType.Final) };
-            }
-
-        }
-
+        
         public static float GetResultCompletion(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
@@ -392,7 +382,7 @@ namespace GameSetting
             }
         }
 
-        public static string GetLevelIconSprite(this enum_LevelType type) => "map_icon_" + type;
+        public static string GetLevelIconSprite(this enum_ChunkType type) => "map_icon_" + type;
 
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
@@ -418,7 +408,7 @@ namespace GameSetting
 
     public static class LocalizationKeyJoint
     {
-        public static string GetLevelNameLocalizeKey(this enum_LevelType type) => "UI_Level_" + type;
+        public static string GetLevelNameLocalizeKey(this enum_ChunkType type) => "UI_Level_" + type;
         public static string GetNameLocalizeKey(this EntityExpirepRreset buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this ActionPerkBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionPerkBase action) => "Action_Intro_" + action.m_Index;
@@ -427,9 +417,9 @@ namespace GameSetting
         public static string GetMapLocalizeNameKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Name";
         public static string GetMapLocalizeIntroKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Intro";
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType+interact.m_ExternalLocalizeKeyJoint;
-        public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + interact.m_ExternalLocalizeKeyJoint + "_Bottom";
-        public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType +interact.m_ExternalLocalizeKeyJoint+ "_Intro";
+        public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType;
+        public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + "_Bottom";
+        public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + "_Intro";
         public static string GetLocalizeKey(this enum_EquipmentRarity rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;

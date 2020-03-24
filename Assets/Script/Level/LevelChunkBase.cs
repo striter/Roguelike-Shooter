@@ -7,7 +7,7 @@ using System;
 
 public class LevelChunkBase : MonoBehaviour
 {
-    public enum_LevelType m_ChunkType { get; private set; }
+    public enum_ChunkType m_ChunkType { get; private set; }
     public int m_Width { get; private set; }
     public int m_Height { get; private set; }
     protected ObjectPoolListComponent<int, LevelTileBase> m_TilePool { get; private set; }
@@ -16,11 +16,9 @@ public class LevelChunkBase : MonoBehaviour
     {
         m_TilePool = new ObjectPoolListComponent<int, LevelTileBase>(transform.Find("TilePool"), "TileItem");
     }
-
     protected void InitData(LevelChunkData _data,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DataObjectCheck=null)
     {
         m_TilePool.ClearPool();
-
         m_ChunkType = _data.Type;
         m_Width = _data.Width;
         m_Height = _data.Height;

@@ -5,27 +5,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelEditorUIDataView : UIT_GridItem {
-    Button m_Edit;
     Text m_Name;
     RawImage m_Image;
-    Action<int> OnDataEditClick;
+    Action<int> OnDataEditClick,OnDataDeleteClick;
     public override void Init()
     {
         base.Init();
-        m_Edit= tf_Container.Find("Button").GetComponent<Button>();
         m_Name = tf_Container.Find("Name").GetComponent<Text>();
         m_Image = tf_Container.Find("Image").GetComponent<RawImage>();
-        m_Edit.onClick.AddListener(OnClick);
+        tf_Container.Find("Edit").GetComponent<Button>().onClick.AddListener(()=>OnDataEditClick(m_Index));
+        tf_Container.Find("Delete").GetComponent<Button>().onClick.AddListener(() => OnDataDeleteClick(m_Index));
     }
 
 
-    public void SetData(Action<int> OnDataClick, LevelChunkData data)
+    public void SetData(Action<int> OnDataEditClick, Action<int> OnDataDeleteClick, LevelChunkData data)
     {
-        OnDataEditClick = OnDataClick;
+        this.OnDataEditClick = OnDataEditClick;
+        this. OnDataDeleteClick = OnDataDeleteClick;
         m_Name.text = data.name;
         m_Image.texture = data.CalculateEditorChunkTexture();
         m_Image.SetNativeSize();
     }
 
-    void OnClick() => OnDataEditClick(m_Index);
+    void OnEditClick() => OnDataEditClick(m_Index);
 }

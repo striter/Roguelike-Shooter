@@ -56,7 +56,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
     {
-        SetBulletTime(true, 0f);
+        SetBulletTime(true, .1f);
         SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
     }
 
@@ -68,9 +68,9 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     #region Effect
     protected static float m_BulletTime = 1f;
     public static bool m_BulletTiming => m_BulletTime != 1f;
-    public static void SetBulletTime(bool enter,float duration=.8f)
+    public static void SetBulletTime(bool enter,float timeScale=.8f)
     {
-        m_BulletTime = enter ? duration:1f ;
+        m_BulletTime = enter ? timeScale:1f ;
         Time.timeScale = m_BulletTime;
     }
 
@@ -368,11 +368,11 @@ public static class GameObjectManager
     }
     public static void Clear()
     {
-        ObjectPoolManager<int, SFXBase>.DestroyAll();
-        ObjectPoolManager<int, SFXWeaponBase>.DestroyAll();
-        ObjectPoolManager<int, EntityBase>.DestroyAll();
-        ObjectPoolManager<enum_Interaction, InteractGameBase>.DestroyAll();
-        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.DestroyAll();
+        ObjectPoolManager<int, SFXBase>.Destroy();
+        ObjectPoolManager<int, SFXWeaponBase>.Destroy();
+        ObjectPoolManager<int, EntityBase>.Destroy();
+        ObjectPoolManager<enum_Interaction, InteractGameBase>.Destroy();
+        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Destroy();
     }
     #region Register
     public static void PresetRegistCommonObject()
