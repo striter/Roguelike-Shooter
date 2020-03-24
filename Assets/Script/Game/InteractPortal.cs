@@ -11,7 +11,7 @@ public class InteractPortal : InteractGameBase
     enum_ChunkType m_PortalLevel = enum_ChunkType.Invalid;
     enum_ChunkEventType m_PortalEvent = enum_ChunkEventType.Invalid;
     Action<bool,enum_ChunkType, enum_ChunkEventType> OnPortalInteract;
-    public override bool B_InteractOnTrigger => true;
+    public override bool B_InteractOnTrigger => false;
     public void Play(bool stagePortal, enum_ChunkType levelType,enum_ChunkEventType eventType, Action<bool,enum_ChunkType,enum_ChunkEventType> _OnPortalInteract)
     {
         base.Play();
