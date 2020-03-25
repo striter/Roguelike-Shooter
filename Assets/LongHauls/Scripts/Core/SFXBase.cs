@@ -78,17 +78,17 @@ public class SFXBase :CObjectPoolMono<int> {
     protected virtual void Update()
     {
         float deltaTime = m_ScaledDeltaTime ? Time.deltaTime : Time.unscaledDeltaTime;
-        if (m_AttachTo)
-        {
-            transform.position = m_AttachTo.TransformPoint(m_localPos);
-            transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
-        }
-
         if (B_Delaying && f_delayTimeLeft >= 0)
         {
             f_delayTimeLeft -= deltaTime;
             if (f_delayTimeLeft < 0)
                 OnPlay();
+        }
+
+        if(B_Playing&&m_AttachTo)
+        {
+            transform.position = m_AttachTo.TransformPoint(m_localPos);
+            transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
         }
 
         if (!m_TickLifeTime||!B_Activating)
@@ -97,7 +97,6 @@ public class SFXBase :CObjectPoolMono<int> {
 
         if (B_Playing && f_playTimeLeft < 0)
             OnStop();
-
         if (!B_Playing && f_lifeTimeCheck < 0)
             OnRecycle();
     }

@@ -488,6 +488,8 @@ public class GameManager : GameManagerBase
         if (!m_Battling)
             return;
 
+        OnBattleEnermyKilled(character);
+
         if (GetCharacters(enum_EntityFlag.Enermy, true).FindAll(p=>!p.m_IsDead).Count<=0)
             OnBattleFinish();
     }

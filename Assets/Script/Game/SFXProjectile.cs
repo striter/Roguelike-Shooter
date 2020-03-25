@@ -82,7 +82,7 @@ public class SFXProjectile : SFXWeaponBase
         OnHitTarget(hitInfo, hitCheck);
         if (OnHitTargetPenetrate(hitCheck))
             return false;
-
+        
         if (B_StopParticlesOnHit) OnStop();
         if (B_StopPhysicsOnHit) B_PhysicsSimulating = false;
         return true;
@@ -144,6 +144,8 @@ public class SFXProjectile : SFXWeaponBase
     {
         if(m_Trail)
         {
+            m_Trail.transform.position = transform.position;
+            m_Trail.transform.rotation = transform.rotation;
             m_Trail.Stop();
             m_Trail = null;
         }
