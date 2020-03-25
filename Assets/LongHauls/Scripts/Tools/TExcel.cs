@@ -5,6 +5,8 @@ using System.Data;
 using System.Reflection;
 using Excel;
 using UnityEngine;
+using System.Linq;
+
 namespace TExcel
 {
     public interface ISExcel
@@ -39,9 +41,22 @@ namespace TExcel
             m_Properties = null;
         }
     }
+    struct SheetProperty<T> where T : struct,ISExcel
+    {
+        public string m_SheetName { get; private set; }
+        public List<T> m_Properties { get; private set; }
+        public static SheetProperty<T> Create(string sheetName,List<T> _properties)
+        {
+            SheetProperty<T> item=new SheetProperty<T>();
+            item.m_SheetName = sheetName;
+            item.m_Properties = _properties;
+            return item;
+        }
+    }
+
     class SheetProperties<T> where T : struct, ISExcel
     {
-        static Dictionary<int, List<T>> m_AllProperties = null;
+        static Dictionary<int, SheetProperty<T>> m_AllProperties = null;
         public static bool B_Inited => m_AllProperties != null;
         public int I_SheetCount => m_AllProperties.Count;
         public static List<T> GetPropertiesList(int i)
@@ -51,15 +66,18 @@ namespace TExcel
                 Debug.LogError(typeof(T).ToString() + ",Excel Not Inited,Shoulda Init Property First");
                 return null;
             }
-            return m_AllProperties[i];
+            Debug.Log(m_AllProperties[i].m_SheetName);
+            return m_AllProperties[i].m_Properties;
         }
         public static void Init()
         {
-            m_AllProperties = new Dictionary<int, List<T>>();
-            Dictionary<int, List<string[]>> m_AllDatas = Tools.ReadExcelMultipleSheetData(TResources.GetExcelData(typeof(T).Name));
-            for (int i = 0; i < m_AllDatas.Count; i++)
-                m_AllProperties.Add(i, Tools.GetFieldData<T>(m_AllDatas[i]));
+            m_AllProperties = new Dictionary<int, SheetProperty<T>>();
+            Dictionary<string, List<string[]>> m_AllDatas = Tools.ReadExcelMultipleSheetData(TResources.GetExcelData(typeof(T).Name));
+            foreach(string sheetName in m_AllDatas.Keys)
+                m_AllProperties.Add(m_AllProperties.Count, SheetProperty<T>.Create(sheetName, Tools.GetFieldData<T>(m_AllDatas[sheetName])));
         }
+        
+
         public static void Clear()
         {
             m_AllProperties.Clear();
@@ -69,15 +87,15 @@ namespace TExcel
 
     class Tools
     {
-        public static List<string[]> ReadExcelFirstSheetData(TextAsset excelAsset) => ReadExcelData(excelAsset,false)[0];
-        public static Dictionary<int, List<string[]>> ReadExcelMultipleSheetData(TextAsset excelAsset) => ReadExcelData(excelAsset, true);
-        static Dictionary<int, List<string[]>> ReadExcelData(TextAsset excelAsset,bool readExtraSheet)
+        public static List<string[]> ReadExcelFirstSheetData(TextAsset excelAsset) => ReadExcelData(excelAsset,false).First().Value;
+        public static Dictionary<string, List<string[]>> ReadExcelMultipleSheetData(TextAsset excelAsset) => ReadExcelData(excelAsset, true);
+        static Dictionary<string, List<string[]>> ReadExcelData(TextAsset excelAsset,bool readExtraSheet)
         {
             IExcelDataReader reader = ExcelReaderFactory.CreateBinaryReader(new MemoryStream(excelAsset.bytes));
-            Dictionary<int, List<string[]>> result = new Dictionary<int, List<string[]>>();
+            Dictionary<string, List<string[]>> result = new Dictionary<string, List<string[]>>();
             do
             {
-                result.Add(result.Count, new List<string[]>());
+                List<string[]> properties = new List<string[]>();
                 while (reader.Read())
                 {
                     string[] row = new string[reader.FieldCount];
@@ -87,8 +105,9 @@ namespace TExcel
                         row[i] = data == null ? "" : data;
                     }
                     if (row[0] != "")
-                        result[result.Count-1].Add(row);
+                        properties.Add(row);
                 }
+                result.Add(reader.Name, properties);
             } while (readExtraSheet&&reader.NextResult());
             return result;
         }

@@ -38,7 +38,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
     }
     
-    public void GenerateStage(enum_GameStyle style, List<GameLevelPortalData> levelGenerateData, System.Random random)
+    public void GenerateStage(enum_GameStyle style, System.Random random)
     {
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);

@@ -68,11 +68,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4943826024243778}
+  - component: {fileID: 114830085250591804}
   - component: {fileID: 136969556414685698}
   - component: {fileID: 195265925062954242}
   - component: {fileID: 208837212441087546}
   - component: {fileID: 114369432402836246}
-  - component: {fileID: 114830085250591804}
   m_Layer: 0
   m_Name: 350_Entity_Soldier8Weapon
   m_TagString: Untagged
@@ -672,7 +672,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 220
-  ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 6

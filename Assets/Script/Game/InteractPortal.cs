@@ -8,9 +8,8 @@ using System.Collections.Generic;
 public class InteractPortal : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.Portal;
-    bool m_StagePortal = false;
     enum_LevelType m_PortalEvent = enum_LevelType.Invalid;
-    Action<bool, enum_LevelType> OnPortalInteract;
+    Action<enum_LevelType> OnPortalInteract;
     public override string GetUITitleKey() => m_PortalEvent.GetLocalizeNameKey();
     public override string GetUIIntroKey() => m_PortalEvent.GetLocalizeIntroKey();
     public override bool B_InteractOnTrigger => false;
@@ -24,10 +23,9 @@ public class InteractPortal : InteractGameBase
         });
     }
 
-    public void Play(bool stagePortal,enum_LevelType eventType, Action<bool,enum_LevelType> _OnPortalInteract)
+    public void Play(enum_LevelType eventType, Action<enum_LevelType> _OnPortalInteract)
     {
         base.Play();
-        m_StagePortal = stagePortal;
         m_PortalEvent = eventType;
         OnPortalInteract = _OnPortalInteract;
         enum_ChunkPortalType portal = m_PortalEvent.GetPortalType();
@@ -43,7 +41,7 @@ public class InteractPortal : InteractGameBase
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
         base.OnInteractOnceCanKeepInteract(_interactor);
-        OnPortalInteract(m_StagePortal,m_PortalEvent);
+        OnPortalInteract(m_PortalEvent);
         m_PortalParticles.Traversal((TSpecialClasses.ParticleControlBase particles) => {
                 particles.Stop();
         });

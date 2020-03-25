@@ -337,14 +337,11 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
     }
-    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage)
+    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage,enum_GameStyle style)
     {
-        Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>();
-        SheetProperties<SEnermyGenerate>.GetPropertiesList((int)stage-1).Traversal((SEnermyGenerate generate)=> {
-            if (!m_GenerateDic.ContainsKey(generate.m_IsFinal))
-                m_GenerateDic.Add(generate.m_IsFinal, new List<SEnermyGenerate>());
-            m_GenerateDic[generate.m_IsFinal].Add(generate);
-        });
+        int sheetIndex = ((int)style - 1) * 3 + (int)stage - 1;
+        Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>() { { true, new List<SEnermyGenerate>() }, { false, new List<SEnermyGenerate>() } };
+        SheetProperties<SEnermyGenerate>.GetPropertiesList(sheetIndex).Traversal((SEnermyGenerate generate)=> {   m_GenerateDic[generate.m_IsFinal].Add(generate); });
         return m_GenerateDic;
     }
     #endregion
@@ -381,19 +378,19 @@ public static class GameObjectManager
             target) => { ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
         TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => { ObjectPoolManager<int, EntityBase>.Register(index, entity, 1); });
     }
-    public static Dictionary<enum_EnermyType, List<int>> RegistStyledInGamePrefabs(enum_GameStyle currentStyle, enum_Stage stageLevel)
+    public static Dictionary<enum_EnermyType, int> RegistStyledInGamePrefabs(enum_GameStyle currentStyle, enum_Stage stageLevel)
     {
         RegisterInGameInteractions(currentStyle, stageLevel);
 
-        Dictionary<enum_EnermyType, List<int>> enermyDic = new Dictionary<enum_EnermyType, List<int>>();
+        Dictionary<enum_EnermyType, int> enermyDic = new Dictionary<enum_EnermyType, int>();
         TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
             ObjectPoolManager<int, EntityBase>.Register(index, entity, 1);
             EntityCharacterBase enermy = entity as EntityCharacterBase;
             if (enermy.E_SpawnType == enum_EnermyType.Invalid)
                 return;
-            if (!enermyDic.ContainsKey(enermy.E_SpawnType))
-                enermyDic.Add(enermy.E_SpawnType, new List<int>());
-            enermyDic[enermy.E_SpawnType].Add(index);
+            if (enermyDic.ContainsKey(enermy.E_SpawnType))
+                Debug.LogError("Same Enermy Type Found!" + entity.name );
+            enermyDic.Add(enermy.E_SpawnType, index);
         });
         return enermyDic;
     }

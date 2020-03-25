@@ -270,19 +270,6 @@ namespace GameSetting
             }
         }
 
-        public static List<int> GetEnermyIDList(this SEnermyGenerate enermyGenerate,Dictionary<enum_EnermyType,List<int>> m_EnermyIDs,System.Random random)
-        {
-            List<int> enermyID = new List<int>();
-            for (int i = 0; i < enermyGenerate.m_FighterCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Fighter].RandomItem(random));
-            for (int i = 0; i < enermyGenerate.m_ShooterRCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Shooter_Rookie].RandomItem(random));
-            for (int i = 0; i < enermyGenerate.m_ShooterVCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Shooter_Veteran].RandomItem(random));
-            for (int i = 0; i < enermyGenerate.m_CasterCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.AOECaster].RandomItem(random));
-            return enermyID;
-        }
     }
 
     public static class UIConst
@@ -441,40 +428,14 @@ namespace GameSetting
 
     public struct GameLevelPortalData
     {
-        int m_PortalSelection;
         public enum_LevelType m_PortalMain { get; private set; }
         public enum_LevelType m_PortalExtra { get; private set; }
-        public GameLevelPortalData(enum_LevelType _chunkType, int portalSelectionIndex=-1)
+        public GameLevelPortalData(enum_LevelType _mainType,enum_LevelType _subType)
         {
-            m_PortalMain = _chunkType;
-            m_PortalExtra = enum_LevelType.Invalid;
-            m_PortalSelection = portalSelectionIndex;
+            m_PortalMain = _mainType;
+            m_PortalExtra = _subType;
         }
-
-        public void GenerateExtraData(EntityCharacterPlayer player, System.Random _random)
-        {
-            if (m_PortalSelection==-1)
-                return;
-
-            if (player.m_CharacterInfo.m_Coins <= 10 || TCommon.RandomBool(_random))
-                m_PortalMain = enum_LevelType.NormalBattle;
-            else
-                m_PortalMain = GetNextPortal(enum_LevelType.Invalid,_random);
-
-            m_PortalExtra = m_PortalSelection == 1 ? enum_LevelType.Trader:GetNextPortal(m_PortalMain, _random);
-        }
-
-        enum_LevelType GetNextPortal(enum_LevelType exclude,System.Random _random)
-        {
-            List<enum_LevelType> levelPool;
-            if (TCommon.RandomPercentage(_random) <= GameConst.I_RewardLevelRate)
-                levelPool = new List<enum_LevelType>(GameConst.m_RewardLevelsPool);
-            else
-                levelPool = new List<enum_LevelType>(GameConst.m_NormalLevelsPool);
-            if (levelPool.Contains(exclude))
-                levelPool.Remove(exclude);
-            return levelPool.RandomItem(_random);
-        }
+        
     }
 
 
@@ -907,19 +868,38 @@ namespace GameSetting
     public struct SEnermyGenerate : ISExcel
     {
         bool b_isFinal;
-        int i_fighterCount;
-        int i_shooterRCount;
-        int i_shooterVCount;
-        int i_casterCount;
+        int i_MeleeCount;
+        int i_E2Count;
+        int i_E3Count;
+        int i_E4Count;
+        int i_E5Count;
+        int i_E6Count;
+        int i_EliteCount;
 
         public bool m_IsFinal => b_isFinal;
-        public int m_FighterCount => i_fighterCount;
-        public int m_ShooterRCount => i_shooterRCount;
-        public int m_ShooterVCount => i_shooterVCount;
-        public int m_CasterCount => i_casterCount;
 
         public void InitOnValueSet()
         {
+        }
+        
+        public List<int> GetEnermyIDList(Dictionary<enum_EnermyType, int> m_EnermyIDs)
+        {
+            List<int> enermyID = new List<int>();
+            for (int i = 0; i < i_MeleeCount; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.Melee]);
+            for (int i = 0; i < i_E2Count; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.E2]);
+            for (int i = 0; i < i_E3Count; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.E3]);
+            for (int i = 0; i < i_E4Count; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.E4]);
+            for (int i = 0; i < i_E5Count; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.E5]);
+            for (int i = 0; i < i_E6Count; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.E6]);
+            for (int i = 0; i < i_EliteCount; i++)
+                enermyID.Add(m_EnermyIDs[enum_EnermyType.Elite]);
+            return enermyID;
         }
     }
     #endregion

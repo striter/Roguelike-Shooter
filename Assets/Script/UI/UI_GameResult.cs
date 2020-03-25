@@ -28,7 +28,7 @@ public class UI_GameResult : UIPage {
     public void Play(GameProgressManager level,Action _OnButtonClick)
     {
         m_level = level;
-        m_ResultTitle.sprite = GameUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(level.m_gameWin,OptionsManager.m_OptionsData.m_Region)];
+        m_ResultTitle.sprite = GameUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(level.m_GameWin,OptionsManager.m_OptionsData.m_Region)];
         m_Completion.text = string.Format("{0}%", (int)level.F_Completion*100f);
         m_CompletionScore.text = string.Format("{0}", (int)level.F_CompletionScore);
         m_Difficulty.text = string.Format("{0}", level.m_GameDifficulty);

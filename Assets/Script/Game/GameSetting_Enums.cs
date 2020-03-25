@@ -74,6 +74,9 @@ namespace GameSetting
         PerkUpgrade,
         PerkAcquire,
         WeaponReforge,
+
+        StageEnd,
+        GameEnd,
     }
 
     public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
@@ -84,7 +87,7 @@ namespace GameSetting
 
     public enum enum_GameStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
 
-    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
+    public enum enum_EnermyType { Invalid = -1, Melee = 1, E2 = 2, E3 = 3, E4 = 4, E5 = 5,E6=6,Elite=7 }
 
     public enum enum_Interaction
     {
@@ -257,11 +260,10 @@ namespace GameSetting
             switch(eventType)
             {
                 default:
-                    Debug.LogError("Invalid Convertions Here!");
+                    Debug.LogError("Invalid Convertions Here!"+eventType);
                     return enum_ChunkType.Invalid;
                 case enum_LevelType.Start:
                     return enum_ChunkType.Start;
-
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkAcquire:
                 case enum_LevelType.PerkUpgrade:
@@ -282,7 +284,9 @@ namespace GameSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return enum_ChunkPortalType.Invalid;
-
+                case enum_LevelType.StageEnd:
+                case enum_LevelType.GameEnd:
+                    return  enum_ChunkPortalType.Battle;
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkAcquire:
                 case enum_LevelType.PerkUpgrade:
