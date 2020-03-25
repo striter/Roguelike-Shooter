@@ -19,7 +19,15 @@ namespace LevelSetting
         Battle,
         Final,
     }
-    
+
+    public enum enum_ChunkPortalType
+    {
+        Invalid=-1,
+        Battle,
+        Event,
+        Reward,
+    }
+
     public enum enum_TileSubType
     {
         Invalid = -1,
@@ -89,8 +97,8 @@ namespace LevelSetting
 
         EditorStart =50,       //Available During Editor
         EEntrance1x1=51,
-        EPortalMain3x1=53,
-        EPortalExtra3x1=54,
+        EPortalMain2x1=53,
+        EPortalExtra2x1=54,
         EEventArea3x3 = 55,
         EEnermySpawn1x1=56,
         EditorEnd,
@@ -114,27 +122,17 @@ namespace LevelSetting
         EdgeObjectFenceL_BLBR = 2,
         EdgeObjectFenceBL_BLTR = 3,
     }
-    public enum enum_ChunkEventType
-    {
-        Invalid=-1,
-        Trader,
-        Bonefire ,
-        RewardChest,
-        PerkUpgrade,
-        PerkAcquire,
-        WeaponReforge,
-    }
-
     public enum enum_LevelEditorEditType
     {
-        Invalid=-1,
-        Terrain=1,
-        Object=2,
-        EdgeObject=3,
+        Invalid = -1,
+        Terrain = 1,
+        Object = 2,
+        EdgeObject = 3,
     }
 
     public static class LevelExpressions
     {
+
         public static enum_LevelEditorEditType Next(this enum_LevelEditorEditType type)
         {
             type++;
@@ -242,9 +240,9 @@ namespace LevelSetting
                 case enum_TileObjectType.Static2x2B:
                     size = TileAxis.One * 2;
                     break;
-                case enum_TileObjectType.EPortalMain3x1:
-                case enum_TileObjectType.EPortalExtra3x1:
-                    size = new TileAxis(3, 1);
+                case enum_TileObjectType.EPortalMain2x1:
+                case enum_TileObjectType.EPortalExtra2x1:
+                    size = new TileAxis(2, 1);
                     break;
                 case enum_TileObjectType.Static2x1B:
                 case enum_TileObjectType.Static2x1A:
@@ -270,23 +268,24 @@ namespace LevelSetting
             {
                 case enum_ChunkType.Start:
                     restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain3x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_ChunkType.Event:
                     restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain3x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_ChunkType.Battle:
                     restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain3x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalExtra3x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
                     restrictionDic.Add( enum_TileObjectType.EEnermySpawn1x1,-1);
                     break;
                 case enum_ChunkType.Final:
                     restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain3x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EEnermySpawn1x1, -1);
                     break;
             }
@@ -294,35 +293,6 @@ namespace LevelSetting
         }
     }
     
-    public struct GameLevelPortalData
-    {
-        public enum_ChunkType m_PortalMainChunk { get; private set; }
-        bool m_PortalSelection;
-        public GameLevelPortalData(enum_ChunkType _chunkType,bool extraPortal)
-        {
-            m_PortalMainChunk = _chunkType;
-            m_PortalMainEvent = enum_ChunkEventType.Invalid;
-            m_PortalExtraChunk = enum_ChunkType.Invalid;
-            m_PortalExtraEvent = enum_ChunkEventType.Invalid;
-            m_PortalSelection = extraPortal;
-        }
-
-        public enum_ChunkEventType m_PortalMainEvent { get; private set; }
-        public enum_ChunkType m_PortalExtraChunk { get; private set; }
-        public enum_ChunkEventType m_PortalExtraEvent { get; private set; }
-        public void GenerateExtraData(EntityCharacterPlayer player,System.Random _random)
-        {
-            if (!m_PortalSelection)
-                return;
-
-            m_PortalMainChunk = enum_ChunkType.Event;
-            m_PortalMainEvent = enum_ChunkEventType.Trader;
-
-            m_PortalExtraChunk = enum_ChunkType.Event;
-            m_PortalExtraEvent = enum_ChunkEventType.Trader;
-        }
-    }
-
     public struct ChunkGameObjectData
     {
         public Vector3 pos { get; private set; }
@@ -333,16 +303,6 @@ namespace LevelSetting
             rot = _rot;
         }
     }
-
-    public class ChunkGenerateData
-    {
-        public LevelChunkData m_Data { get; private set; }
-        public enum_ChunkEventType m_EventType { get; private set; }
-        public ChunkGenerateData( LevelChunkData _data, enum_ChunkEventType eventType)
-        {
-            m_Data = _data;
-            m_EventType = eventType;
-        }
-    }
+    
     
 }

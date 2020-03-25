@@ -337,7 +337,7 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
     }
-    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_StageLevel stage)
+    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage)
     {
         Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>();
         SheetProperties<SEnermyGenerate>.GetPropertiesList((int)stage-1).Traversal((SEnermyGenerate generate)=> {
@@ -381,7 +381,7 @@ public static class GameObjectManager
             target) => { ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
         TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => { ObjectPoolManager<int, EntityBase>.Register(index, entity, 1); });
     }
-    public static Dictionary<enum_EnermyType, List<int>> RegistStyledInGamePrefabs(enum_GameStyle currentStyle, enum_StageLevel stageLevel)
+    public static Dictionary<enum_EnermyType, List<int>> RegistStyledInGamePrefabs(enum_GameStyle currentStyle, enum_Stage stageLevel)
     {
         RegisterInGameInteractions(currentStyle, stageLevel);
 
@@ -397,7 +397,7 @@ public static class GameObjectManager
         });
         return enermyDic;
     }
-    static void RegisterInGameInteractions(enum_GameStyle portalStyle, enum_StageLevel stageIndex)
+    static void RegisterInGameInteractions(enum_GameStyle portalStyle, enum_Stage stageIndex)
     {
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
@@ -419,7 +419,7 @@ public static class GameObjectManager
         return entity;
     }
 
-    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_StageLevel _stage) => SpawnEntity(poolIndex, toPosition, toRot, (EntityCharacterAI ai) => ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty)));
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_Stage _stage) => SpawnEntity(poolIndex, toPosition, toRot, (EntityCharacterAI ai) => ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty)));
 
     public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) => character.OnSubCharacterActivate(_flag, spawnerID, startHealth));
 
