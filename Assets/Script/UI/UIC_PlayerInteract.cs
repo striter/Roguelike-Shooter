@@ -115,8 +115,8 @@ public class UIC_PlayerInteract : UIControlBase
                     break;
                 default:
                     isCommon = true;
-                    m_CommonTop.localizeKey = interactInfo.GetTitleLocalizeKey();
-                    m_CommonIntro.localizeKey = interactInfo.GetIntroLocalizeKey();
+                    m_CommonTop.localizeKey = interactInfo.GetUITitleKey();
+                    m_CommonIntro.localizeKey = interactInfo.GetUIIntroKey();
                     m_CommonImage.sprite = UIManager.Instance.m_CommonSprites[interactInfo.m_InteractType.GetInteractIcon()];
                     break;
             }
@@ -130,7 +130,7 @@ public class UIC_PlayerInteract : UIControlBase
         tf_Trade.SetActivate(tradeItem);
         m_BottomTips.SetActivate(!tradeItem);
         if (!tradeItem)
-            m_BottomTips.localizeKey = interactInfo.GetBottomLocalizeKey();
+            m_BottomTips.localizeKey = interactInfo.GetUIBottomKey();
         m_TradePrice.text = price.ToString();
         LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);
         return true;

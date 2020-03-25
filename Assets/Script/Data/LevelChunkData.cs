@@ -155,7 +155,7 @@ public class LevelChunkData : ScriptableObject {
                         case enum_TileObjectType.EEntrance1x1:
                             tileColor = Color.green;
                             break;
-                        case enum_TileObjectType.EPortalMain3x1:
+                        case enum_TileObjectType.EPortalMain2x1:
                             tileColor = Color.blue;
                             break;
                         case enum_TileObjectType.EEventArea3x3:

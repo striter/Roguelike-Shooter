@@ -6,7 +6,6 @@ using GameSetting;
 public class InteractBase : MonoBehaviour
 {
     public virtual enum_Interaction m_InteractType => enum_Interaction.Invalid;
-    public virtual string m_ExternalLocalizeKeyJoint=>"";
     public int m_TradePrice { get; protected set; } = -1;
     public virtual bool B_InteractOnTrigger => false;
     protected HitCheckInteract m_InteractCheck { get; private set; }
@@ -42,4 +41,8 @@ public class InteractBase : MonoBehaviour
         m_InteractEnable = interactable;
         m_InteractCheck.SetEnable(interactable);
     }
+
+    public virtual string GetUITitleKey() => m_InteractType.GetTitleLocalizeKey();
+    public virtual string GetUIIntroKey() => m_InteractType.GetIntroLocalizeKey();
+    public virtual string GetUIBottomKey() => m_InteractType.GetBottomLocalizeKey();
 }

@@ -84,7 +84,7 @@ public class LoadingManager : SingletonMono<LoadingManager>
         m_Loading.Tick(Time.unscaledDeltaTime);
     }
 
-    public void ShowLoading(enum_StageLevel level= enum_StageLevel.Invalid) => m_Loading.Begin(level);
+    public void ShowLoading(enum_Stage level= enum_Stage.Invalid) => m_Loading.Begin(level);
     public void EndLoading() => m_Loading.Finish();
 
     class GameLogo
@@ -126,7 +126,7 @@ public class LoadingManager : SingletonMono<LoadingManager>
         public Transform transform { get; private set; }
         Image m_Loading;
         Transform tf_GameStage;
-        Dictionary<enum_StageLevel, RectTransform> m_Stages=new Dictionary<enum_StageLevel, RectTransform>();
+        Dictionary<enum_Stage, RectTransform> m_Stages=new Dictionary<enum_Stage, RectTransform>();
         RectTransform tf_Player;
         UIT_TextExtend m_Title;
         public GameLoading(Transform _transform,SpriteAtlas atlas)
@@ -137,16 +137,16 @@ public class LoadingManager : SingletonMono<LoadingManager>
             m_Loading = transform.Find("Loading").GetComponent<Image>();
             m_Title = transform.Find("Title").GetComponent<UIT_TextExtend>();
             tf_GameStage = transform.Find("GameStage");
-            TCommon.TraversalEnum((enum_StageLevel level) =>
+            TCommon.TraversalEnum((enum_Stage level) =>
             {
                 m_Stages.Add(level, tf_GameStage.Find(level.ToString()).GetComponent<RectTransform>());
             });
             tf_Player = tf_GameStage.Find("Player").GetComponent<RectTransform>();
         }
         bool playing;
-        public void Begin(enum_StageLevel m_Stage)
+        public void Begin(enum_Stage m_Stage)
         {
-            bool inGame = m_Stage != enum_StageLevel.Invalid;
+            bool inGame = m_Stage != enum_Stage.Invalid;
             m_Title.localizeKey = inGame ? "UI_Loading_Game" : "UI_Loading_Camp";
             tf_GameStage.SetActivate(inGame);
             if (inGame) tf_Player.anchoredPosition = new Vector2(m_Stages[m_Stage].anchoredPosition.x, tf_Player.anchoredPosition.y);

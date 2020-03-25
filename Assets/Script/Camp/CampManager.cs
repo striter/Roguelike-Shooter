@@ -35,7 +35,7 @@ public class CampManager : GameManagerBase
     public void OnSceneItemInteract()
     {
         OnPortalEnter(1f,tf_PlayerCameraAttach, () => {
-            LoadingManager.Instance.ShowLoading(enum_StageLevel.Rookie);
+            LoadingManager.Instance.ShowLoading(enum_Stage.Rookie);
             SwitchScene( enum_Scene.Game);
         });
     }

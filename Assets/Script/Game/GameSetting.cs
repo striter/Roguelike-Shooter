@@ -52,7 +52,6 @@ namespace GameSetting
         public const int I_HealthPackAmount = 50;
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly Dictionary<enum_ChunkEventType, int> D_ChunkEventPercentage = new Dictionary<enum_ChunkEventType, int>() { { enum_ChunkEventType.RewardChest, 25 },{ enum_ChunkEventType.WeaponReforge, 25 }, { enum_ChunkEventType.PerkAcquire, 25 }, { enum_ChunkEventType.PerkUpgrade, 25 } };
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
         public const int I_EventEquipmentTradePrice = 10;
         public const int I_EventPerkAcquireTryCount = 3;
@@ -80,6 +79,10 @@ namespace GameSetting
 
         public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
+
+        public const int I_RewardLevelRate = 40;
+        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.PerkAcquire, enum_LevelType.PerkUpgrade };
+        public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.RewardChest };
 
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
@@ -112,25 +115,25 @@ namespace GameSetting
 
         public static float F_SphereCastDamageReduction(float weaponDamage, float distance, float radius) => weaponDamage * (1 - (distance / radius));       //Rocket Blast Damage
 
-        public static SBuff GetEnermyGameBuff(enum_StageLevel stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .2f+ (difficulty - 1)*.2f );
-        public static float GetEnermyMaxHealthMultiplier(enum_StageLevel stage, int difficulty) => 1f + ((int)stage - 1) * .2f + (difficulty - 1) * .05f;
+        public static SBuff GetEnermyGameBuff(enum_Stage stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .2f+ (difficulty - 1)*.2f );
+        public static float GetEnermyMaxHealthMultiplier(enum_Stage stage, int difficulty) => 1f + ((int)stage - 1) * .2f + (difficulty - 1) * .05f;
 
         public static int GetRankupExp(int rank) => 100 + 10* rank;
-        public static int GetEnermyKillExp(bool isElite,enum_StageLevel stage)
+        public static int GetEnermyKillExp(bool isElite,enum_Stage stage)
         {
             if (!isElite)
                 return 25;
             switch (stage)
             {
                 default: Debug.LogError("Invalid Convertions Here!") ; return 0;
-                case enum_StageLevel.Rookie: return 200;
-                case enum_StageLevel.Veteran: return 300;
-                case enum_StageLevel.Ranger: return 400;
+                case enum_Stage.Rookie: return 200;
+                case enum_Stage.Veteran: return 300;
+                case enum_Stage.Ranger: return 400;
             }
         }
         
-        public static float GetResultCompletion(bool win, enum_StageLevel _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
-        public static float GetResultLevelScore(enum_StageLevel _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
+        public static float GetResultCompletion(bool win, enum_Stage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
+        public static float GetResultLevelScore(enum_Stage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
 
@@ -166,8 +169,7 @@ namespace GameSetting
         }
         public static int GetEventPerkAcquireSuccessRate(int tryCount) => 20 * (tryCount + 1);
         public static int GetEventPerkAcquireCoinsAmount(int tryCount) => 5 * (tryCount + 1);
-
-
+        
         public static float GetLevelObjectHealth(enum_TileObjectType objectType)
         {
             switch(objectType)
@@ -198,14 +200,14 @@ namespace GameSetting
             }
         }
 
-        public static int GetActionRemovePrice(enum_StageLevel stage, int removeTimes) => 10 * (removeTimes + 1) ;
-        public static int GetActionUpgradePrice(enum_StageLevel stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
-        public static StageInteractGenerateData GetInteractGenerate(enum_StageLevel level)
+        public static int GetActionRemovePrice(enum_Stage stage, int removeTimes) => 10 * (removeTimes + 1) ;
+        public static int GetActionUpgradePrice(enum_Stage stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
+        public static StageInteractGenerateData GetInteractGenerate(enum_Stage level)
         {
             switch (level)
             {
                 default: return new StageInteractGenerateData();
-                case enum_StageLevel.Rookie:
+                case enum_Stage.Rookie:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 80 }, { enum_EquipmentRarity.OutStanding, 15 }, { enum_EquipmentRarity.Epic,5 } },     //Trade Equipment
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 50 }, { enum_EquipmentRarity.OutStanding, 30 }, { enum_EquipmentRarity.Epic, 20 } },    //Rankup Equipment
@@ -216,7 +218,7 @@ namespace GameSetting
                         PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite Pickups
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Ordinary, 0 }, { enum_WeaponRarity.Advanced, 100 } })        //Elite Weapon Pickups
                         );
-                case enum_StageLevel.Veteran:
+                case enum_Stage.Veteran:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 50 }, { enum_EquipmentRarity.OutStanding, 45 }, { enum_EquipmentRarity.Epic, 5 } },
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 0 }, { enum_EquipmentRarity.OutStanding, 100 }, { enum_EquipmentRarity.Epic, 0 } },
@@ -227,7 +229,7 @@ namespace GameSetting
                         PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
                         new Dictionary<enum_WeaponRarity, float> { { enum_WeaponRarity.Rare, 100 } })
                         );
-                case enum_StageLevel.Ranger:
+                case enum_Stage.Ranger:
                     return StageInteractGenerateData.Create(
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal,5} , { enum_EquipmentRarity.OutStanding,65 } , { enum_EquipmentRarity.Epic, 30 } },
                         new Dictionary<enum_EquipmentRarity, int>() { { enum_EquipmentRarity.Normal, 0 }, { enum_EquipmentRarity.OutStanding, 0 }, { enum_EquipmentRarity.Epic, 100 } },
@@ -319,23 +321,7 @@ namespace GameSetting
         public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(0, 100, uiSpeed);
         public static float GetUIDamageScale(float damage) => ((damage / 50 / 10 ) + .9f )/ 2;  //伤害显示比例缩放，默认是两倍大小
     }
-
-    public static class GameEnumConvertions
-    {
-        public static enum_EquipmentRarity ToRarity(this enum_StageLevel stageLevel) => (enum_EquipmentRarity)stageLevel;
-        public static int ToLayer(this enum_HitCheck layerType)
-        {
-            switch (layerType)
-            {
-                default: Debug.LogError("Null Layer Can Be Transferd From:" + layerType.ToString()); return 0;
-                case enum_HitCheck.Entity: return GameLayer.I_Entity;
-                case enum_HitCheck.Static: return GameLayer.I_Static;
-                case enum_HitCheck.Dynamic: return GameLayer.I_Dynamic;
-                case enum_HitCheck.Interact: return GameLayer.I_Interact;
-            }
-        }
-    }
-
+    
     public static class UIConvertions
     {
         public static string GetInteractIcon(this enum_Interaction type)
@@ -382,7 +368,7 @@ namespace GameSetting
             }
         }
 
-        public static string GetLevelIconSprite(this enum_ChunkType type) => "map_icon_" + type;
+        public static string GetLevelIconSprite(this enum_LevelType type) => "map_icon_" + type;
 
         public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
@@ -408,18 +394,17 @@ namespace GameSetting
 
     public static class LocalizationKeyJoint
     {
-        public static string GetLevelNameLocalizeKey(this enum_ChunkType type) => "UI_Level_" + type;
         public static string GetNameLocalizeKey(this EntityExpirepRreset buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this ActionPerkBase action) => "Action_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ActionPerkBase action) => "Action_Intro_" + action.m_Index;
-        public static string GetLocalizeKey(this enum_StageLevel stage) => "Game_Stage_" + stage;
+        public static string GetLocalizeKey(this enum_Stage stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
-        public static string GetMapLocalizeNameKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Name";
-        public static string GetMapLocalizeIntroKey(this enum_ChunkEventType type) => "UI_Map_" + type + "_Intro";
+        public static string GetLocalizeNameKey(this enum_LevelType type) => "UI_Level_" + type + "_Name";
+        public static string GetLocalizeIntroKey(this enum_LevelType type) => "UI_Level_" + type + "_Intro";
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetTitleLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType;
-        public static string GetBottomLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + "_Bottom";
-        public static string GetIntroLocalizeKey(this InteractBase interact) => "UI_Interact_" + interact.m_InteractType + "_Intro";
+        public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact+"_Title";
+        public static string GetBottomLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Bottom";
+        public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
         public static string GetLocalizeKey(this enum_EquipmentRarity rarity) => "UI_Rarity_" + rarity;
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
@@ -451,205 +436,48 @@ namespace GameSetting
 
     #region For Developers Use
 
-    #region BroadCastEnum
-    enum enum_BC_GameStatus
-    {
-        Invalid = -1,
-
-        OnEntityActivate,
-        OnEntityRecycle,
-
-        OnCharacterHealthWillChange,
-        OnCharacterHealthChange,
-        OnCharacterDead,
-        OnCharacterRevive,
-
-        OnPlayerRankUp,
-        
-        OnBattleStart,
-        OnBattleFinish,
-
-        OnLevelStart,
-        OnLevelFinished,
-        OnStageFinished,
-
-        OnGameLoad,
-        OnGameBegin,
-        OnGameFinish,
-        OnGameExit,
-
-        OnCampStart,
-    }
-
-    enum enum_BC_UIStatus
-    {
-        Invalid = -1,
-        UI_PlayerCommonStatus,
-        UI_PlayerInteractStatus,
-        UI_PlayerInteractPickup, 
-        UI_PlayerHealthStatus,
-        UI_PlayerBuffStatus,
-        UI_PlayerPerkStatus,
-        UI_PlayerWeaponStatus,
-
-        UI_OnWillAIAttack,
-
-        UI_ChunkTeleportUnlock,
-
-        UI_CampDataStatus,
-
-        UI_PageOpen,
-        UI_PageClose,
-    }
-    #endregion
-
-    #region GameEnum
-    public enum enum_StageLevel { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
-    
-    public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
-
-    public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
-
-    public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
-    
-    public enum enum_GameStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
-
-    public enum enum_EnermyType { Invalid = -1, Fighter = 1, Shooter_Rookie = 2, Shooter_Veteran = 3, AOECaster = 4, Elite = 5, }
-
-    public enum enum_Interaction { Invalid = -1,
-        GameBegin,Bonfire, TradeContainer, PickupCoin, PickupHealth,PickupHealthPack,PickupExp, PickupArmor,RewardChest,PerkUpgrade,PerkAcquire,WeaponReforge, Equipment, Weapon,Teleport, Portal, GameEnd,
-        CampBegin,CampStage, CampDifficult,CampFarm,CampAction,CampEnd, }
-    
-    public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
-
-    public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, }
-
-    public enum enum_CastTarget { Invalid=-1,Head=1,Weapon=2,Feet=3}
-
-    public enum enum_CastAreaType { Invalid = -1, OverlapSphere = 1, ForwardBox = 2, ForwardCapsule = 3, ForwardTrapezium = 4, }
-
-    public enum enum_HealthChangeMessage { Invalid = -1, Default = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
-
-    public enum enum_DamageType { Invalid = -1, Basic = 1, ArmorOnly = 2, HealthOnly = 3,}
-
-    public enum enum_CharacterEffect { Invalid = -1, Freeze = 1, Cloak = 2, Scan = 3, }
-
-    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,ActionBuff=2, ActionPerk = 3, }
-
-    public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,RefreshIdentity=3, }
-
-    public enum enum_EquipmentRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
-
-    public enum enum_EffectType { Invalid = -1,  HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3,}
-
-    public enum enum_PlayerCharacter {Invalid=-1,Beth=10001, }
-
-    public enum enum_InteractCharacter { Invalid=-1,Trader=20001,Trainer=20002, }
-
-    public enum enum_WeaponRarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Legend = 4 }
-
-    public enum enum_PlayerWeapon
-    {
-        Invalid = -1,
-        RailPistol = 101,
-        Railgun = 102,
-        M82A1 = 103,
-        Kar98 = 104,
-        UZI = 105,
-        UMP45 = 106,
-        SCAR = 107,
-        M16A4 = 108,
-        AKM = 109,
-        P92 = 110,
-        DE = 111,
-        XM1014 = 112,
-        S686 = 113,
-        Crossbow = 114,
-        RocketLauncher = 115,
-        Minigun = 116,
-
-        Flamer = 201,
-        Driller = 202,
-        Bouncer = 203,
-        Tesla = 204,
-
-        HeavySword = 301,
-
-        LavaWand = 401,
-        PoisonWand = 402,
-        FrostWand = 403,
-    }
-
-    public enum enum_WeaponTrigger
-    {
-        Invalid=-1,
-        Auto=0,
-        Storing=1,
-    }
-
-    public enum enum_PlayerAnim
-    {
-        Invalid = -1,
-        Rifle_1001 = 1001,
-        Pistol_1002 = 1002,
-        Crossbow_1003 = 1003,
-        Heavy_1004 = 1004,
-        HeavySword_2001=2001,
-    }
-
-    public enum enum_EnermyAnim
-    {
-        Invalid = -1,
-        Axe_Dual_Pound_10 = 10,
-        Spear_R_Stick_20 = 20,
-        Sword_R_Swipe_30 = 30,
-        Sword_R_Slash_31 = 31,
-        Dagger_Dual_Twice_40 = 40,
-        Staff_L_Cast_110 = 110,
-        Staff_Dual_Cast_111 = 111,
-        Staff_R_Cast_Loop_112 = 112,
-        Staff_R_Cast_113 = 113,
-        Bow_Shoot_130 = 130,
-        CrossBow_Shoot_131 = 131,
-        Bow_UpShoot_133 = 133,
-        Rifle_HipShot_140 = 140,
-        Rifle_AimShot_141 = 141,
-        Throwable_Hips_150 = 150,
-        Throwable_R_ThrowHip_151 = 151,
-        Throwable_R_ThrowBack_152 = 152,
-        Throwable_R_Summon_153 = 153,
-        Heavy_HipShot_161 = 161,
-        Heavy_Mortal_162 = 162,
-        Heavy_Shield_Spear_163 = 163,
-        Heavy_Remote_164 = 164,
-    }
-
-    public enum enum_GameVFX
-    {
-        Invalid=-1,
-
-        EntityDamage,
-        PlayerDamage,
-
-        PlayerRevive,
-    }
-
-    public enum enum_GameMusic { Invalid=-1,StyledStart=1,  Relax,StyledEnd=10, Fight}
-
-    public enum enum_CampMusic { Invalid=-1, Relax = 0,}
-
-    public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
-
-    public enum enum_Option_ScreenEffect { Invalid=-1,Off,Normal,High}
-
-    public enum enum_CampFarmItemStatus { Invalid=-1, Empty = 0, Locked=1 , Decayed = 2, Progress1=10,Progress2,Progress3,Progress4,Progress5}
-
-    public enum enum_UITipsType { Invalid=-1,Normal=0,Warning=1,Error=2}
-
-    #endregion
-
     #region Structs
     #region Default Readonly
+
+    public struct GameLevelPortalData
+    {
+        int m_PortalSelection;
+        public enum_LevelType m_PortalMain { get; private set; }
+        public enum_LevelType m_PortalExtra { get; private set; }
+        public GameLevelPortalData(enum_LevelType _chunkType, int portalSelectionIndex=-1)
+        {
+            m_PortalMain = _chunkType;
+            m_PortalExtra = enum_LevelType.Invalid;
+            m_PortalSelection = portalSelectionIndex;
+        }
+
+        public void GenerateExtraData(EntityCharacterPlayer player, System.Random _random)
+        {
+            if (m_PortalSelection==-1)
+                return;
+
+            if (player.m_CharacterInfo.m_Coins <= 10 || TCommon.RandomBool(_random))
+                m_PortalMain = enum_LevelType.NormalBattle;
+            else
+                m_PortalMain = GetNextPortal(enum_LevelType.Invalid,_random);
+
+            m_PortalExtra = m_PortalSelection == 1 ? enum_LevelType.Trader:GetNextPortal(m_PortalMain, _random);
+        }
+
+        enum_LevelType GetNextPortal(enum_LevelType exclude,System.Random _random)
+        {
+            List<enum_LevelType> levelPool;
+            if (TCommon.RandomPercentage(_random) <= GameConst.I_RewardLevelRate)
+                levelPool = new List<enum_LevelType>(GameConst.m_RewardLevelsPool);
+            else
+                levelPool = new List<enum_LevelType>(GameConst.m_NormalLevelsPool);
+            if (levelPool.Contains(exclude))
+                levelPool.Remove(exclude);
+            return levelPool.RandomItem(_random);
+        }
+    }
+
+
     public struct PickupGenerateData
     {
         public int m_HealthRate { get; private set; }
@@ -767,7 +595,7 @@ namespace GameSetting
     public class CBattleSave : ISave
     {
         public string m_GameSeed;
-        public enum_StageLevel m_Stage;
+        public enum_Stage m_Stage;
         public int m_LevelPassed;
         public float m_Coins;
         public int m_Exp;
@@ -788,7 +616,7 @@ namespace GameSetting
             m_Armor = -1;
             m_Equipments = new List<EquipmentSaveData>();
             m_ActionBuffs = new List<ActionSaveData>();
-            m_Stage = enum_StageLevel.Rookie;
+            m_Stage = enum_Stage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
             m_character = GameDataManager.m_GameData.m_CharacterSelected;
             m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.P92);
