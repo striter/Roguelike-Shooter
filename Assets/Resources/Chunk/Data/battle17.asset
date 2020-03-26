@@ -1028,7 +1028,7 @@ MonoBehaviour:
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: -1
+    m_ObjectType: 16
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
@@ -1108,7 +1108,7 @@ MonoBehaviour:
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: -1
+    m_ObjectType: 16
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
@@ -1480,9 +1480,9 @@ MonoBehaviour:
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: -1
+    m_ObjectType: 15
     m_EdgeObjectType: -1
-    m_Direction: 0
+    m_Direction: 1
   - m_TerrainType: 0
     m_ObjectType: -1
     m_EdgeObjectType: -1
