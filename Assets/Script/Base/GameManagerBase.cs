@@ -17,7 +17,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         TBroadCaster<enum_BC_UIStatus>.Init();
         GameIdentificationManager.Init();
         GameDataManager.Init();
-        ActionDataManager.Init();
+        PerkDataManager.Init();
         OptionsManager.Init();
     }
 
@@ -212,7 +212,7 @@ public static class OptionsManager
 }
 public static class GameDataManager
 {
-    public static Dictionary<enum_WeaponRarity, List<enum_PlayerWeapon>> m_WeaponRarities { get; private set; } = new Dictionary<enum_WeaponRarity, List<enum_PlayerWeapon>>();
+    public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_WeaponRarities { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
     public static bool m_Inited { get; private set; } = false;
     public static void Init()
     {
@@ -494,57 +494,3 @@ public static class GameObjectManager
     #endregion
 }
 
-public static class ActionDataManager
-{
-    static Dictionary<int, Type> m_EquipmentTypes = new Dictionary<int, Type>();
-    static Dictionary<int, Type> m_ActionBuffTypes = new Dictionary<int, Type>();
-    static int m_ActionIdentity = 0;
-    public static void Init()
-    {
-        m_EquipmentTypes.Clear();
-        m_ActionBuffTypes.Clear();
-
-        TReflection.TraversalAllInheritedClasses(((Type type, ActionBase action) => {
-            if (action.m_Index <= 0)
-                return;
-
-            if (action.m_ExpireType== enum_ExpireType.ActionPerk)
-                m_EquipmentTypes.Add(action.m_Index, action.GetType());
-            else if (action.m_ExpireType == enum_ExpireType.ActionBuff)
-                m_ActionBuffTypes.Add(action.m_Index, action.GetType());
-        }));
-    }
-    public static ActionPerkBase CreateRandomPlayerEquipment(enum_EquipmentRarity rarity, System.Random seed)=> CreatePlayerEquipment(EquipmentSaveData.Default( m_EquipmentTypes.RandomKey(seed),rarity));
-
-    public static ActionPerkBase CreatePlayerEquipment(EquipmentSaveData data)
-    {
-        if (!m_EquipmentTypes.ContainsKey(data.m_ActionData.m_Index))
-            Debug.LogError("Error Action Equipment:" + data.m_ActionData.m_Index + " ,Does not exist");
-        ActionPerkBase equipment= TReflection.CreateInstance<ActionPerkBase>(m_EquipmentTypes[data.m_ActionData.m_Index]);
-        equipment.OnManagerSetData(m_ActionIdentity,data);
-        return equipment;
-    }
-    public static List<ActionPerkBase> CreatePlayerEquipments(List<EquipmentSaveData> datas)
-    {
-        List<ActionPerkBase> equipments = new List<ActionPerkBase>();
-        datas.Traversal((EquipmentSaveData data) => { equipments.Add(CreatePlayerEquipment(data)); });
-        return equipments;
-    }
-
-    public static ActionBuffBase CreateRandomActionBuff( System.Random seed=null)=> CreateActionBuff(ActionSaveData.Default(m_ActionBuffTypes.RandomKey(seed)));
-    public static ActionBuffBase CreateActionBuff(int buffIndex) => CreateActionBuff(ActionSaveData.Default(buffIndex));
-    public static ActionBuffBase CreateActionBuff(ActionSaveData data)
-    {
-        if (!m_ActionBuffTypes.ContainsKey(data.m_Index))
-            Debug.LogError("Error Action Buff:" + data.m_Index + " ,Does not exist");
-        ActionBuffBase actionBuff = TReflection.CreateInstance<ActionBuffBase>(m_ActionBuffTypes[data.m_Index]);
-        actionBuff.OnManagerSetData(m_ActionIdentity++, data);
-        return actionBuff;
-    }
-    public static List<ActionBuffBase> CreateActionBuffs(List<ActionSaveData> datas)
-    {
-        List<ActionBuffBase> actions = new List<ActionBuffBase>();
-        datas.Traversal((ActionSaveData data) => { actions.Add(CreateActionBuff(data)); });
-        return actions;
-    }
-}

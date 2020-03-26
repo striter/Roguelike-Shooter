@@ -105,7 +105,7 @@ public class UIC_PlayerInteract : UIControlBase
                 case enum_Interaction.Equipment:
                     isAction = true;
                     InteractEquipment actionInteract = interactInfo as InteractEquipment;
-                    m_EquipmentData.SetInfo(actionInteract.m_Equipment);
+                    m_EquipmentData.SetInfo(PerkDataManager.GetPerkData(actionInteract.m_PerkID));
                     break;
                 case enum_Interaction.Weapon:
                     isWeapon = true;
