@@ -28,7 +28,7 @@ public class GameManager : GameManagerBase
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Freeze All", "0.5", KeyCode.Alpha8, (string value) =>
         {
             GetCharacters( enum_EntityFlag.Enermy,true).Traversal((EntityCharacterBase entity) => {
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EquipmentInfo(-1,0, enum_CharacterEffect.Freeze,float.Parse( value))));
+                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EffectInfo(-1,0, enum_CharacterEffect.Freeze,float.Parse( value))));
             });
         }));
         m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Enermy", "101", KeyCode.Z, (string id) => {
@@ -371,6 +371,7 @@ public class GameManager : GameManagerBase
     RaycastHit[] m_Raycasts;
     public bool EntityTargetable(EntityCharacterBase entity) => !entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
     public bool EntityOpposite(EntityBase sourceEntity, EntityBase targetEntity) => sourceEntity.m_Flag != targetEntity.m_Flag;
+    public bool EntityOpposite(int sourceEntity, int targetEntity) => GetEntity(sourceEntity).m_Flag != GetEntity(targetEntity).m_Flag;
     public EntityCharacterBase GetNeariesCharacter(EntityCharacterBase sourceEntity, bool targetAlly, bool checkObstacle = true, float checkDistance = float.MaxValue, Predicate<EntityCharacterBase> predictMatch = null)
     {
         EntityCharacterBase target = null;
@@ -462,7 +463,7 @@ public class GameManager : GameManagerBase
     #region Battle Relatives 
     List<Vector3> m_EnermySpawnPoints = new List<Vector3>();
     public Dictionary<enum_EnermyType, int> m_EnermySpawnIDs;
-    public bool m_Battling = false;
+    public bool m_Battling { get; private set; } = false;
 
     void OnBattleEntityKilled(EntityCharacterBase character)
     {

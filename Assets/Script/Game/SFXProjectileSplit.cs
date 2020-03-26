@@ -19,11 +19,11 @@ public class SFXProjectileSplit : SFXProjectile {
         float angleEach = F_SplitRange / I_SplitCount;
         float startAngle = -(I_SplitCount - 1) * angleEach / 2f;
         int subProjectTileIndex = GameExpression.GetWeaponSubIndex(m_Identity);
-        SFXProjectile projectileInfo = GameObjectManager.GetEquipmentData<SFXProjectile>(subProjectTileIndex);
+        SFXProjectile projectileInfo = GameObjectManager.GetSFXWeaponData<SFXProjectile>(subProjectTileIndex);
         for (int i = 0; i < I_SplitCount; i++)
         {
             Vector3 splitDirection = transform.forward.RotateDirectionClockwise(Vector3.up, startAngle + i * angleEach);
-            GameObjectManager.SpawnEquipment<SFXProjectile>(subProjectTileIndex, transform.position, Vector3.up).Play(m_DamageInfo.m_detail,splitDirection, transform.position + splitDirection * 10);
+            GameObjectManager.SpawnSFXWeapon<SFXProjectile>(subProjectTileIndex, transform.position, Vector3.up).Play(m_DamageInfo.m_detail,splitDirection, transform.position + splitDirection * 10);
         }
         GameObjectManager.PlayMuzzle(m_SourceID,transform.position,transform.forward, projectileInfo.I_MuzzleIndex, projectileInfo.AC_MuzzleClip);
     }

@@ -26,6 +26,6 @@ public class SFXProjectileCastTrigger : SFXProjectile
     protected virtual void OnCastTrigger(Vector3 point)
     {
         m_CastTriggered = true;
-        GameObjectManager.SpawnEquipment<SFXCast>(GameExpression.GetWeaponSubIndex(m_Identity),point , Vector3.up).Play(m_DamageInfo.m_detail);
+        GameObjectManager.SpawnSFXWeapon<SFXCast>(GameExpression.GetWeaponSubIndex(m_Identity),point , Vector3.up).Play(m_DamageInfo.m_detail);
     }
 }

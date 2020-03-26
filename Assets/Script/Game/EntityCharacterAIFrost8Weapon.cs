@@ -38,7 +38,7 @@ public class EntityCharacterAIFrost8Weapon : EntityCharacterAI
         {
             m_Weapon.OnPlay(false, m_Target);
             b_selfDetonating = false;
-            DoRecycle();
+            OnDead();
         }
     }
 }

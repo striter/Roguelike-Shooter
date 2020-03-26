@@ -196,7 +196,7 @@ public class SFXProjectile : SFXWeaponBase
             return;
         m_copiesLeft--;
         Vector3 direction=TCommon.GetXZLookDirection(transform.position,target.tf_Head.position );
-        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(m_Identity, transform.position, direction);
+        SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(m_Identity, transform.position, direction);
         projectile.F_Speed = F_Speed;
         projectile.B_Penetrate = B_Penetrate;
         projectile.PlayerCopyCount(m_DamageInfo.m_detail, direction, transform.position + direction * GameConst.I_ProjectileMaxDistance,m_copiesLeft,0);

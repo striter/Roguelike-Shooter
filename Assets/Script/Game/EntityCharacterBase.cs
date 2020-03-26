@@ -223,7 +223,7 @@ public class EntityCharacterBase : EntityBase
             CheckMaterials();
             m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
             m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
-            m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .2f);
+            m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .4f);
         }
         public void SetDeathEffect(float value)
         {

@@ -913,13 +913,18 @@ public class TimeCounter
     public bool m_Timing => m_timeCheck > 0;
     public float m_timeCheck { get; private set; } = -1;
     public float m_TimeLeftScale =>m_duration==0?0:m_timeCheck / m_duration;
-    public TimeCounter(float duration = 0) { SetTimer(duration); }
+    public TimeCounter(float duration = 0,bool startOff=false) {
+        SetTimer(duration);
+        if (startOff)
+            Stop();
+    }
     public void SetTimer(float duration)
     {
         m_duration = duration;
         m_timeCheck = m_duration;
     }
     public void Reset() => m_timeCheck = m_duration;
+    public void Stop() => m_timeCheck = 0;
     public void Tick(float deltaTime)
     {
         if (m_timeCheck <= 0)
