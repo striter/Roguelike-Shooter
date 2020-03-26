@@ -317,6 +317,48 @@ namespace GameSetting_Action
         public P0020(PerkSaveData saveData) : base(saveData) { }
     }
 
+    public class P0022:ExpirePerkBase
+    {
+        public override int m_Index => 0022;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
+        public override float Value1 => 3f;
+        public override float Value2 => 2f;
+        public override float m_FireRateMultiply => (m_Attacher.m_Health.m_MaxHealth - m_Attacher.m_Health.m_CurrentHealth) / Value1 * Value2*m_Stack / 100f;
+        public P0022(PerkSaveData saveData) : base(saveData) { }
+    }
+    
+    public class P0023:ExpirePerkBase
+    {
+        public override int m_Index => 0023;
+        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
+        public override float Value1 => 5f;
+        public override float m_DamageAdditive => m_Attacher.m_Health.m_HealthFull ? Value1 * m_Stack : 0;
+        public P0023(PerkSaveData saveData) : base(saveData) { }
+    }
+
+    public class P0024:ExpirePerkBase
+    {
+        public override int m_Index => 0024;
+        public override enum_Rarity m_Rarity => enum_Rarity.Epic;
+        public override float Value1 => 3f;
+        public override float m_HealthDrainMultiply => Value1 /100f* m_Stack;
+        public P0024(PerkSaveData saveData) : base(saveData) { }
+    }
+
+    public class P0025:ExpirePerkBase
+    {
+        public override int m_Index => 0025;
+        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
+        public override float Value1 => 5f;
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDamage(receiver, info, applyAmount);
+            if (receiver.m_IsDead)
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(-Value1 * m_Stack, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(m_Attacher.m_EntityID)));
+        }
+        public P0025(PerkSaveData saveData) : base(saveData) { }
+    }
+
 
     public class PerkSFXweapon : ExpirePerkBase
     {

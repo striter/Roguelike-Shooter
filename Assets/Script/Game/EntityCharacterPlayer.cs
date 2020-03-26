@@ -273,7 +273,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnFireAddRecoil(float recoil)
     {
         TPSCameraController.Instance.AddRecoil(recoil);
-        m_Animator.Attack(m_CharacterInfo.F_FireRateTick(m_WeaponCurrent.m_WeaponInfo.m_FireRate));
+        m_Animator.Attack(m_WeaponCurrent.m_WeaponInfo.m_FireRate/m_CharacterInfo.F_FireRateMultiply);
     }
 
     void OnMoveTick(float deltaTime)
