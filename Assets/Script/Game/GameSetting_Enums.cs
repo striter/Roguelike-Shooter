@@ -15,9 +15,7 @@ namespace GameSetting
         OnCharacterHealthChange,
         OnCharacterDead,
         OnCharacterRevive,
-
-        OnPlayerRankUp,
-
+        
         OnBattleStart,
         OnBattleFinish,
 
@@ -40,7 +38,6 @@ namespace GameSetting
         UI_PlayerInteractStatus,
         UI_PlayerInteractPickup,
         UI_PlayerHealthStatus,
-        UI_PlayerBuffStatus,
         UI_PlayerPerkStatus,
         UI_PlayerWeaponStatus,
 
@@ -71,7 +68,6 @@ namespace GameSetting
         Trader,
         Bonefire,
         RewardChest,
-        PerkUpgrade,
         PerkAcquire,
         WeaponReforge,
 
@@ -92,7 +88,7 @@ namespace GameSetting
     public enum enum_Interaction
     {
         Invalid = -1,
-        GameBegin, Bonfire, TradeContainer, PickupCoin, PickupHealth, PickupHealthPack, PickupExp, PickupArmor, RewardChest, PerkUpgrade, PerkAcquire, WeaponReforge, Equipment, Weapon, Teleport, Portal, GameEnd,
+        GameBegin, Bonfire, TradeContainer, PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, RewardChest, PerkAcquire, WeaponReforge, Equipment, Weapon, Teleport, Portal, GameEnd,
         CampBegin, CampStage, CampDifficult, CampFarm, CampAction, CampEnd,
     }
 
@@ -110,11 +106,9 @@ namespace GameSetting
 
     public enum enum_CharacterEffect { Invalid = -1, Freeze = 1, Cloak = 2, Scan = 3, }
 
-    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1, ActionBuff = 2, ActionPerk = 3, }
+    public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2, RefreshIdentity = 3, }
-
-    public enum enum_EquipmentRarity { Invalid = -1, Normal = 1, OutStanding = 2, Epic = 3, }
 
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
@@ -122,7 +116,7 @@ namespace GameSetting
 
     public enum enum_InteractCharacter { Invalid = -1, Trader = 20001, Trainer = 20002, }
 
-    public enum enum_WeaponRarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Legend = 4 }
+    public enum enum_Rarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Epic = 4 }
 
     public enum enum_PlayerWeapon
     {
@@ -226,7 +220,6 @@ namespace GameSetting
 
     public static class GameEnumConvertions
     {
-        public static enum_EquipmentRarity ToRarity(this enum_Stage stageLevel) => (enum_EquipmentRarity)stageLevel;
         public static int ToLayer(this enum_HitCheck layerType)
         {
             switch (layerType)
@@ -266,7 +259,6 @@ namespace GameSetting
                     return enum_ChunkType.Start;
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkAcquire:
-                case enum_LevelType.PerkUpgrade:
                 case enum_LevelType.RewardChest:
                 case enum_LevelType.Trader:
                 case enum_LevelType.WeaponReforge:
@@ -289,7 +281,6 @@ namespace GameSetting
                     return  enum_ChunkPortalType.Battle;
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkAcquire:
-                case enum_LevelType.PerkUpgrade:
                 case enum_LevelType.RewardChest:
                 case enum_LevelType.Trader:
                 case enum_LevelType.WeaponReforge:

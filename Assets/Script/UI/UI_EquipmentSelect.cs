@@ -5,14 +5,14 @@ using GameSetting;
 using System;
 using UnityEngine.UI;
 
-public class UI_EquipmentSelect : UIPage
+public class UI_PerkSelect : UIPage
 {
     UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem> m_Grid;
     UIC_EquipmentNameFormatIntro m_Selecting;
 
-    List<ActionPerkBase> m_Equipments;
+    List<ExpirePerkBase> m_Perks;
     int m_selectIndex;
-    Action<ActionPerkBase> OnEquipmentSelect;
+    Action<ExpirePerkBase> OnEquipmentSelect;
 
     protected override void Init()
     {
@@ -22,15 +22,15 @@ public class UI_EquipmentSelect : UIPage
         rtf_Container.Find("Confirm").GetComponent<Button>().onClick.AddListener(OnConfirm);
     }
 
-    public void Show(List<ActionPerkBase> _equipments,Action<ActionPerkBase> OnEquipmentSelect)
+    public void Show(List<ExpirePerkBase> _perks,Action<ExpirePerkBase> OnPerkSelect)
     {
         m_selectIndex = -1;
-        this.OnEquipmentSelect = OnEquipmentSelect;
-        m_Equipments = _equipments;
+        this.OnEquipmentSelect = OnPerkSelect;
+        m_Perks = _perks;
 
         m_Grid.ClearGrid();
-        m_Equipments.Traversal((int index, ActionPerkBase equipment) => {
-            m_Grid.AddItem(index).SetInfo(equipment);
+        m_Perks.Traversal((int index, ExpirePerkBase perk) => {
+            m_Grid.AddItem(index).SetInfo(perk);
         });
         m_Grid.OnItemClick(0);
     }
@@ -38,11 +38,11 @@ public class UI_EquipmentSelect : UIPage
     void OnItemSelect(int index)
     {
         m_selectIndex = index;
-        m_Selecting.SetInfo(m_Equipments[m_selectIndex]);
+        m_Selecting.SetInfo(m_Perks[m_selectIndex]);
     }
     void OnConfirm()
     {
-        OnEquipmentSelect(m_Equipments[m_selectIndex]);
+        OnEquipmentSelect(m_Perks[m_selectIndex]);
         OnCancelBtnClick();
     }
 }
