@@ -542,7 +542,7 @@ MonoBehaviour:
   F_CameraMoveSmooth: 0.08
   B_InvertCamera: 0
   F_RotateSensitive: 2
-  TPSOffset: {x: 0, y: 30, z: -8}
+  TPSOffset: {x: 0, y: 25, z: -6}
   I_PitchMin: 75
   I_PitchMax: 75
   I_ShakeParam: 6
