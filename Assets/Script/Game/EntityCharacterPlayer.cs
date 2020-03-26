@@ -93,7 +93,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.enabled = true;
 
         m_CharacterInfo.SetInfoData(m_saveData);
-        m_Health.OnActivate(m_saveData.m_Health >= 0 ? m_saveData.m_Health : I_MaxHealth, m_saveData.m_Armor >= 0 ? m_saveData.m_Armor : I_DefaultArmor);
+        m_Health.OnActivate(I_MaxHealth,I_DefaultArmor, m_saveData.m_Health >= 0 ? m_saveData.m_Health : I_MaxHealth);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon1));
         if (m_saveData.m_weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_weapon2));
@@ -110,12 +110,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Controller.enabled = true;        //Magic Spell 2
         m_Agent.enabled = true;
     }
-
-    protected override void OnBattleFinish()
-    {
-        base.OnBattleFinish();
-        m_Health.OnBattleFinishResetArmor();
-    }
+    
     protected override void OnDead()
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
@@ -403,9 +398,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             case enum_Interaction.PickupCoin:
                 m_CharacterInfo.OnCoinsGain(amount,true);
                 break;
-            case enum_Interaction.PickupExp:
-                m_CharacterInfo.OnExpGain(amount);
-                return;
             case enum_Interaction.PickupHealth:
             case enum_Interaction.PickupHealthPack:
                 m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_EntityID)));

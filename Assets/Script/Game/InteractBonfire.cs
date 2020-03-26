@@ -45,7 +45,7 @@ public class InteractBonfire : InteractGameBase {
         else
         {
             GameObjectManager.PlayMuzzle(-1,transform.position,Vector3.up, 10021);
-            m_Interactor.m_CharacterInfo.OnActionBuffAcquire(ActionDataManager.CreateActionBuff(10003));
+            m_Interactor.m_CharacterInfo.OnActionPerkAcquire(0);
         }
     }
 

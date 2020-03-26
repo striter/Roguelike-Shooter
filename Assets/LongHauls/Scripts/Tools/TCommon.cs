@@ -330,6 +330,7 @@ public static class TCommon
     #endregion
     #region Random
     public static int RandomLength(int length, System.Random seed = null) => seed != null ? seed.Next(length) : UnityEngine.Random.Range(0, length);
+    public static float RandomLength(float length, System.Random seed = null) => seed != null ? (float)seed.NextDouble() * length : UnityEngine.Random.Range(0,length);
     public static float RandomUnitValue(System.Random seed = null) => seed != null ? (float)seed.NextDouble()*2f-1f : UnityEngine.Random.Range(-1f,1f);
     public static Vector3 RandomXZSphere(System.Random seed=null)
     {

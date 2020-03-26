@@ -18,8 +18,8 @@ public class UI_EquipmentPack : UIPage {
     {
         m_Info = GameManager.Instance.m_LocalPlayer.m_CharacterInfo;
         m_Grid.ClearGrid();
-        m_Info.m_ExpirePerks.Traversal((int index,ActionPerkBase equipment) => {
-            m_Grid.AddItem(index).SetInfo(equipment);
+        m_Info.m_ExpirePerks.Traversal((int index,ExpirePerkBase perk) => {
+            m_Grid.AddItem(index).SetInfo(perk);
         });
         m_Selecting.transform.SetActivate(false);
         if (m_Info.m_ExpirePerks.Count > 0)

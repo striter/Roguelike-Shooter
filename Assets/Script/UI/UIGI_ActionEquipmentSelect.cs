@@ -25,7 +25,7 @@ public class UIGI_ActionEquipmentSelect : UIGI_ActionBase,IGridHighlight {
         m_Name.color = highlight ? TCommon.GetHexColor("FE9E00FF") : TCommon.GetHexColor("FFFFFFFF");
     }
 
-    public override void SetInfo(ActionPerkBase action)
+    public override void SetInfo(ExpirePerkBase action)
     {
         base.SetInfo(action);
         m_Name.localizeKey = action.GetNameLocalizeKey();
