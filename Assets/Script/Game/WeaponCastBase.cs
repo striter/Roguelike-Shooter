@@ -1,9 +1,12 @@
 ﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponCastBase : WeaponBase {
-    protected SFXCast ShowCast()=> GameObjectManager.SpawnSFXWeapon<SFXCast>(GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index), m_Muzzle.position, m_Attacher.transform.forward);
+
+    public override float F_BaseDamage => GameObjectManager.GetSFXWeaponData<SFXCast>(m_BaseSFXWeaponIndex).F_Damage;
+    protected SFXCast ShowCast()=> GameObjectManager.SpawnSFXWeapon<SFXCast>(m_BaseSFXWeaponIndex, m_Muzzle.position, m_Attacher.transform.forward);
 
 }

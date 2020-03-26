@@ -3,15 +3,16 @@ using GameSetting;
 using System;
 
 public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
-{ 
-    public enum_PlayerAnim E_Anim= enum_PlayerAnim.Invalid;
-    public bool B_AttachLeft=false;
+{
+    public enum_PlayerAnim E_Anim = enum_PlayerAnim.Invalid;
+    public bool B_AttachLeft = false;
     protected EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
+    public virtual float F_BaseDamage => 0;
     public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
     public float GetSpread() => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
     protected WeaponTrigger m_Trigger { get; private set; }
@@ -22,7 +23,8 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool m_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
-    
+
+    protected int m_BaseSFXWeaponIndex { get; private set; }
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity,_OnRecycle);
@@ -33,6 +35,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         m_Trigger = GetTrigger();
         m_BulletRefillTimer.SetTimer(m_WeaponInfo.m_BulletRefillTime);
+        m_BaseSFXWeaponIndex = GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index);
     }
 
 

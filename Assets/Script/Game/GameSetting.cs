@@ -102,8 +102,8 @@ namespace GameSetting
     public static class GameExpression
     {
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
-        public static int GetPlayerStoreWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
-        public static int GetPlayerEquipmentWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
+        public static int GetPlayerExtraWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
+        public static int GetPlayerPerkSFXWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
 
@@ -1026,6 +1026,7 @@ namespace GameSetting
                         break;
                     case enum_DamageType.Basic:
                         {
+                            finalAmount *= healEnhance;
                             float armorReceive = finalAmount - m_CurrentHealth + m_MaxHealth;
                             DamageHealth(finalAmount);
                             if (armorReceive > 0)
@@ -1590,17 +1591,14 @@ namespace GameSetting
 
         public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity)=> m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnBeforeDealtDamage(damageEntity, damageInfo); });
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
-
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
-            if (damageInfo.m_detail.I_SourceID <= 0)
-                return;
             base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
             
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnReceiveDamage(damageInfo, amountApply); });
+                    m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
                 else
                     m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
             }
@@ -1801,7 +1799,7 @@ namespace GameSetting
 
         #region Interact
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
-        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnAttack(bool criticalHit) { }
         public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }

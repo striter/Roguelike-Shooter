@@ -231,20 +231,108 @@ namespace GameSetting_Action
         public P0015(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0016:ExpirePerkBase
+    public class P0016: PerkSFXweapon
     {
         public override int m_Index => 0016;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_MaxStack => 1;
+        public override float Value1 => 50f;
+        float m_CurrentDamage = 0;
+        protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.DamageInfo(m_Attacher.m_EntityID,0f,Value1/100f* m_CurrentDamage, false);
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
-            if (info.m_detail.m_CriticalHit)
-                Debug.Log("?");
+            if (!info.m_detail.m_CriticalHit)
+                return;
+            m_CurrentDamage = info.m_AmountApply;
+            PlaySFXWeapon(receiver);
         }
         public P0016(PerkSaveData saveData) : base(saveData) { }
     }
 
+    public class P0017:PerkSFXweapon
+    {
+        public override int m_Index => 0017;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override int m_MaxStack => 1;
+        public override float Value1 => 25f;
+        protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.DamageInfo(m_Attacher.m_EntityID, 0f, Value1 / 100f * m_Attacher.m_WeaponCurrent.F_BaseDamage, false);
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDamage(receiver, info, applyAmount);
+            if (receiver.m_IsDead)
+                PlaySFXWeapon(receiver);
+        }
+        public P0017(PerkSaveData saveData) : base(saveData) { }
+    }
+
+    public class P0018 : ExpirePerkBase
+    {
+        public override int m_Index => 0018;
+        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
+        public override int m_MaxStack => 1;
+        public override float Value1 => 3f;
+        public override int m_EffectIndex => m_Timer.m_Timing ? 40004 : 0;
+        public override float m_DamageReduction => m_Timer.m_Timing ? 1f : 0;
+        bool haveArmor;
+        TimeCounter m_Timer;
+        public override void OnBeforeReceiveDamage(DamageInfo info)
+        {
+            base.OnBeforeReceiveDamage(info);
+            haveArmor = m_Attacher.m_Health.m_CurrentArmor > 0;
+        }
+
+        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
+        {
+            base.OnAfterReceiveDamage(info, amount);
+            if (haveArmor && m_Attacher.m_Health.m_CurrentArmor <= 0)
+                m_Timer.Reset();
+        }
+
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_Timer.Tick(deltaTime);
+        }
+        public P0018(PerkSaveData saveData) : base(saveData) { m_Timer = new TimeCounter(Value1); }
+    }
+
+    public class P0019:ExpirePerkBase
+    {
+        public override int m_Index => 0019;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override float Value1 => 40f;
+        public override float m_HealAdditive => Value1 / 100f*m_Stack;
+        public P0019(PerkSaveData saveData) : base(saveData) {}
+    }
+
+    public class P0020:ExpirePerkBase
+    {
+        public override int m_Index => 0020;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override float Value1 => 20f;
+        public override float Value2 => 20f;
+        public override float m_DamageMultiply => Value1 / 100f * m_Stack;
+        public override float m_DamageReduction => -Value2 / 100f * m_Stack;
+        public P0020(PerkSaveData saveData) : base(saveData) { }
+    }
+
+
+    public class PerkSFXweapon : ExpirePerkBase
+    {
+        WeaponHelperBase m_Equipment;
+        protected virtual DamageDeliverInfo GetDamageInfo() => null;
+        public override void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired)
+        {
+            base.OnActivate(_actionEntity, OnExpired);
+            m_Equipment = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerPerkSFXWeaponIndex(m_Index), m_Attacher, GetDamageInfo);
+        }
+        protected virtual void PlaySFXWeapon(EntityCharacterBase target)
+        {
+            m_Equipment.OnPlay(false, target);
+        }
+        public PerkSFXweapon(PerkSaveData data):base(data) { }
+    }
 }
 #region DataHelper
 public static class PerkDataManager

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponCastDuration : WeaponCastBase {
-
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
     protected override void OnAutoTriggerSuccessful()

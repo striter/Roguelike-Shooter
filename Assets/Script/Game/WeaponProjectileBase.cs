@@ -6,16 +6,11 @@ using UnityEngine;
 
 public class WeaponProjectileBase : WeaponBase
 {
-    protected int m_BaseProjectileDataIndex { get; private set; }
-    public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
-    {
-        base.OnPoolItemInit(_identity, _OnRecycle);
-        m_BaseProjectileDataIndex = GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index);
-    }
+    public override float F_BaseDamage => GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_BaseSFXWeaponIndex).F_Damage;
     protected override void OnAutoTriggerSuccessful()
     {
         base.OnAutoTriggerSuccessful();
-        FireProjectiles(m_BaseProjectileDataIndex);
+        FireProjectiles(m_BaseSFXWeaponIndex);
     }
     RaycastHit hit;
     protected void FireProjectiles(int projectileIndex)
