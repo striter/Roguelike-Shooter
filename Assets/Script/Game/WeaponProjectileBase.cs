@@ -20,7 +20,7 @@ public class WeaponProjectileBase : WeaponBase
     RaycastHit hit;
     protected void FireProjectiles(int projectileIndex)
     {
-        SFXProjectile projectileData = GameObjectManager.GetEquipmentData<SFXProjectile>(projectileIndex);
+        SFXProjectile projectileData = GameObjectManager.GetSFXWeaponData<SFXProjectile>(projectileIndex);
         DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo();
 
         Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
@@ -47,7 +47,7 @@ public class WeaponProjectileBase : WeaponBase
 
     void FireProjectile(int projectilIndex, SFXProjectile projectileData,DamageDeliverInfo damage, Vector3 direction)
     {
-        SFXProjectile projectile = GameObjectManager.SpawnEquipment<SFXProjectile>(projectilIndex, m_Muzzle.position, direction);
+        SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(projectilIndex, m_Muzzle.position, direction);
         projectile.F_Speed = m_Attacher.m_CharacterInfo.F_ProjectileSpeedMuiltiply*projectileData.F_Speed;
         projectile.B_Penetrate = projectileData.B_Penetrate || m_Attacher.m_CharacterInfo.F_PenetrateAdditive > UnityEngine.Random.Range(0, 1);
 

@@ -110,9 +110,6 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_BulletRefillTimer.Reset();
     }
     
-    public void ForceReload()
-    {
-        I_AmmoLeft = I_ClipAmount;
-    }
+    public void ForceReloadOnce()=>I_AmmoLeft += 1;
     #endregion
 }

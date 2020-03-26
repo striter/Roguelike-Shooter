@@ -41,19 +41,19 @@ public class ObjectPoolManager
         tf_PoolRegist = new GameObject("PoolRegist").transform;
     }
 }
-public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IObjectpool<T>
+public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour, IObjectpool<T>
 {
     class ItemPoolInfo
     {
         public int i_poolSaveAmount;
         public Y m_spawnItem;
-        public Queue<Y> m_DeactiveQueue=new Queue<Y>();
-        public List<Y> m_ActiveList=new List<Y>();
+        public Queue<Y> m_DeactiveQueue = new Queue<Y>();
+        public List<Y> m_ActiveList = new List<Y>();
 
-        public Y NewItem(T identity,Action<T,MonoBehaviour> OnRecycle)
+        public Y NewItem(T identity, Action<T, MonoBehaviour> OnRecycle)
         {
             Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); ;
-            item.name = m_spawnItem.name + "_"+(m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
+            item.name = m_spawnItem.name + "_" + (m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
             item.OnPoolItemInit(identity, OnRecycle);
             return item;
         }
@@ -84,7 +84,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
     public static Y GetRegistedSpawnItem(T identity)
     {
         if (!Registed(identity))
-            Debug.LogError("Identity:"+identity +"Unregisted");
+            Debug.LogError("Identity:" + identity + "Unregisted");
         return d_ItemInfos[identity].m_spawnItem;
     }
     public static void Register(T identity, Y registerItem, int poolStartAmount)
@@ -102,15 +102,15 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
         info.i_poolSaveAmount = poolStartAmount;
         for (int i = 0; i < info.i_poolSaveAmount; i++)
         {
-            Y spawnItem = info.NewItem(identity,SelfRecycle);
+            Y spawnItem = info.NewItem(identity, SelfRecycle);
             info.m_DeactiveQueue.Enqueue(spawnItem);
         }
     }
-    public static Y Spawn(T identity,Transform toTrans,Vector3 toPos,Quaternion rot)
+    public static Y Spawn(T identity, Transform toTrans, Vector3 toPos, Quaternion rot)
     {
         if (!d_ItemInfos.ContainsKey(identity))
         {
-            Debug.LogWarning("PoolManager:"+typeof(T).ToString()+","+typeof(Y).ToString()+ " Error! Null Identity:" + identity + "Registed");
+            Debug.LogWarning("PoolManager:" + typeof(T).ToString() + "," + typeof(Y).ToString() + " Error! Null Identity:" + identity + "Registed");
             return null;
         }
         ItemPoolInfo info = d_ItemInfos[identity];
@@ -118,7 +118,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
         if (info.m_DeactiveQueue.Count > 0)
             item = info.m_DeactiveQueue.Dequeue();
         else
-            item = info.NewItem(identity,SelfRecycle);
+            item = info.NewItem(identity, SelfRecycle);
         info.m_ActiveList.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.transform.position = toPos;
@@ -127,11 +127,11 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
         return item;
     }
     static void SelfRecycle(T identity, MonoBehaviour obj) => Recycle(identity, obj as Y);
-    public static void Recycle(T identity,Y obj)
+    public static void Recycle(T identity, Y obj)
     {
         if (!d_ItemInfos.ContainsKey(identity))
         {
-            Debug.LogWarning("Null Identity Of GameObject:"+obj.name+"/"+identity+" Registed("+typeof(T).ToString()+"|"+typeof(Y).ToString()+")");
+            Debug.LogWarning("Null Identity Of GameObject:" + obj.name + "/" + identity + " Registed(" + typeof(T).ToString() + "|" + typeof(Y).ToString() + ")");
             return;
         }
         ItemPoolInfo info = d_ItemInfos[identity];
@@ -141,7 +141,7 @@ public class ObjectPoolManager<T,Y>:ObjectPoolManager where Y: MonoBehaviour,IOb
         obj.transform.SetParent(tf_PoolSpawn);
         info.m_DeactiveQueue.Enqueue(obj);
     }
-
+    public static void TraversalAllActive(Action<Y> OnEachItem) => d_ItemInfos.Traversal((ItemPoolInfo info) => { info.m_ActiveList.Traversal(OnEachItem); });
     public static void RecycleAll(T identity)
     {
         ItemPoolInfo info = d_ItemInfos[identity];

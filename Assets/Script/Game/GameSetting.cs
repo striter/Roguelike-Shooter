@@ -1105,6 +1105,7 @@ namespace GameSetting
         public int I_SourceID { get; private set; } = -1;
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageAdditive { get; private set; } = 0;
+        public bool m_CriticalHit { get; private set; } = false;
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
         public enum_CharacterEffect m_DamageEffect = enum_CharacterEffect.Invalid;
         public float m_EffectDuration = 0;
@@ -1114,8 +1115,8 @@ namespace GameSetting
         public static DamageDeliverInfo Default(int sourceID=-1) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f };
         public static DamageDeliverInfo BuffInfo(int sourceID, SBuff buffApply) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<SBuff>() { buffApply } };
         public static DamageDeliverInfo BuffInfo(int sourceID, int commonBuffIndex) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = 0f, m_DamageAdditive = 0f, m_BaseBuffApply = new List<SBuff>() { GameDataManager.GetPresetBuff(commonBuffIndex) } };
-        public static DamageDeliverInfo EquipmentInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
-        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, };
+        public static DamageDeliverInfo EffectInfo(int sourceID, float _damageAdditive, enum_CharacterEffect _effect, float _duration) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageAdditive = _damageAdditive, m_DamageEffect = _effect, m_EffectDuration = _duration };
+        public static DamageDeliverInfo DamageInfo(int sourceID, float _damageEnhanceMultiply, float _damageAdditive,bool _criticalhit) => new DamageDeliverInfo() { I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), I_SourceID = sourceID, m_DamageMultiply = _damageEnhanceMultiply, m_DamageAdditive = _damageAdditive, m_CriticalHit=_criticalhit};
         public static DamageDeliverInfo DamageHitInfo(int sourceID, Action<EntityBase> OnHitEntity) => new DamageDeliverInfo() { I_SourceID = sourceID, I_IdentiyID = GameIdentificationManager.I_DamageIdentityID(), m_OnHitAction = OnHitEntity };
         public void EntityComponentOverride(int overrideID) => I_SourceID = overrideID;
         public void EffectAdditiveOverride(enum_CharacterEffect damageEffect, float effectDuration)
@@ -1237,12 +1238,13 @@ namespace GameSetting
         public float F_FireRateMultiply { get; private set; } = 1f;
         protected float F_ReloadRateMultiply { get; private set; } = 1f;
         protected float F_HealthDrainMultiply { get; private set; } = 0f;
-        private float F_DamageMultiply  = 0f;
+        protected float F_DamageMultiply { get; private set; } = 0f;
         public float F_CriticalHitRate { get; private set; } = 0f;
         public float F_CriticalHitMultiply { get; private set; } = 1f;
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.m_baseMovementSpeed * F_MovementSpeedMultiply;
+
 
         protected Dictionary<enum_CharacterEffect, EffectCounterBase> m_Effects = new Dictionary<enum_CharacterEffect, EffectCounterBase>();
         public bool B_Effecting(enum_CharacterEffect type) => m_Effects[type].m_Effecting;
@@ -1251,13 +1253,16 @@ namespace GameSetting
 
         Func<DamageDeliverInfo> m_DamageBuffOverride;
         public void AddDamageOverride(Func<DamageDeliverInfo> _damageOverride) => m_DamageBuffOverride = _damageOverride;
-        public float GetDamageMultiply() => F_DamageMultiply + TCommon.RandomLength(1f) > F_CriticalHitRate ? 0f : F_CriticalHitMultiply;
+        public bool CheckCriticalHit() => TCommon.RandomLength(1f) < F_CriticalHitRate;
+        public float GetCritalDamageMultiply() =>   F_CriticalHitMultiply;
         public virtual DamageDeliverInfo GetDamageBuffInfo()
         {
-            DamageDeliverInfo deliver = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, GetDamageMultiply(), 0f);
+            bool criticalHit = CheckCriticalHit();
+            DamageDeliverInfo deliver = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply + (criticalHit ? GetCritalDamageMultiply() : 0f), 0f, criticalHit);
             if (m_DamageBuffOverride != null) deliver.InfoAdditive(m_DamageBuffOverride());
             return deliver;
         }
+
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireInfoChange;
 
@@ -1277,6 +1282,10 @@ namespace GameSetting
             Reset();
             m_DamageBuffOverride = null;
         }
+        public virtual void OnDead() => Reset();
+        public virtual void OnRecycle() => Reset();
+        public virtual void OnRevive() => Reset();
+
         public virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             if (amountApply <= 0)
@@ -1289,9 +1298,6 @@ namespace GameSetting
                 m_Expires.Traversal((EntityExpireBase expire) => { expire.OnDealtDamage(damageEntity,damageInfo,amountApply); });
             }
         }
-        public virtual void OnDead() => Reset();
-        public virtual void OnRecycle() => Reset();
-        public virtual void OnRevive() => Reset(); 
         protected virtual void Reset()
         {
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
@@ -1418,7 +1424,7 @@ namespace GameSetting
     public class PlayerInfoManager : CharacterInfoManager
     {
         EntityCharacterPlayer m_Player;
-        public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)(( baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
+        public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
         public float F_SpreadMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
@@ -1432,7 +1438,7 @@ namespace GameSetting
         protected int I_ClipAdditive { get; private set; } = 0;
         protected float F_ClipMultiply { get; private set; } = 1f;
         protected float F_DamageAdditive = 0f;
-        
+
         protected Vector3 m_prePos;
 
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
@@ -1456,7 +1462,7 @@ namespace GameSetting
             base.Tick(deltaTime);
 
             UpdateEntityInfo();
-            OnPlayerMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
+            OnMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
             m_prePos = m_Entity.transform.position;
         }
 
@@ -1471,6 +1477,7 @@ namespace GameSetting
 
         #region Perks
         #region Interact
+        public bool CheckRevive() => m_ExpirePerks.Any(p => p.Value.OnCheckRevive());
         public void OnActionPerkAcquire(int perkID)
         {
             if (m_ExpirePerks.ContainsKey(perkID))
@@ -1482,22 +1489,16 @@ namespace GameSetting
         }
 
 
-        public bool CheckRevive()
-        {
-            for (int i = 0; i < m_ExpirePerks.Count; i++)
-                if (m_ExpirePerks[i].OnCheckRevive())
-                    return true;
-            return false;
-        }
         #endregion
         #region List Update
         protected override void AddExpire(EntityExpireBase expire)
         {
             base.AddExpire(expire);
             ExpirePerkBase targetExpire = expire as ExpirePerkBase;
-            if(targetExpire==null)
+            if (targetExpire == null)
                 return;
-            
+
+            m_ExpirePerks.Add(targetExpire.m_Index,targetExpire);
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
             targetExpire.OnActivate(m_Player, RemoveExpire);
         }
@@ -1541,7 +1542,7 @@ namespace GameSetting
             F_DamageAdditive += action.m_DamageAdditive;
             F_SpreadMultiply -= action.F_SpreadReduction;
             F_AimMovementStrictMultiply -= action.F_AimPressureReduction;
-            
+
             I_ClipAdditive += action.I_ClipAdditive;
             F_ClipMultiply += action.F_ClipMultiply;
 
@@ -1567,14 +1568,15 @@ namespace GameSetting
         public override DamageDeliverInfo GetDamageBuffInfo()
         {
             ResetEffect(enum_CharacterEffect.Cloak);
+            bool criticalHit = CheckCriticalHit();
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageDeliverInfo info =  DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, GetDamageMultiply() + randomDamageMultiply, F_DamageAdditive);
-            m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAttackDamageSet(info); });
+            DamageDeliverInfo info = DamageDeliverInfo.DamageInfo(m_Entity.m_EntityID, F_DamageMultiply+(criticalHit?GetCritalDamageMultiply():0f)+ randomDamageMultiply, F_DamageAdditive,criticalHit);
+            m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAttack(criticalHit); });
             return info;
         }
 
-        public void OnPlayerMove(float distance) => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnMove(distance); });
-        public void OnReloadFinish() => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnReloadFinish(); });
+        public void OnMove(float distance) => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnMove(distance); });
+        public void OnAbilityTrigger() => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAbilityTrigger(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1766,7 +1768,7 @@ namespace GameSetting
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Perk;
         public virtual enum_Rarity m_Rarity { get; private set; } = enum_Rarity.Invalid;
-        public virtual int m_MaxStack=>1;
+        public virtual int m_MaxStack=>-1;
 
         public int m_Stack { get; private set; } = 0;
         public virtual float m_RecordData { get; protected set; }
@@ -1800,13 +1802,13 @@ namespace GameSetting
         #region Interact
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
         public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
-        public virtual void OnAttackDamageSet(DamageDeliverInfo info) { }
+        public virtual void OnAttack(bool criticalHit) { }
         public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
         public virtual void OnGainCoins(float coinAmount) { }
-        public virtual void OnReloadFinish() { }
         public virtual void OnMove(float distsance) { }
         public virtual bool OnCheckRevive() { return false; }
+        public virtual void OnAbilityTrigger() { }
         #endregion
     }
     
@@ -1912,7 +1914,7 @@ namespace GameSetting
         }
         public static WeaponHelperBase AcquireWeaponHelper(int weaponIndex, EntityCharacterBase _entity, Func<DamageDeliverInfo> GetDamageBuffInfo)
         {
-            SFXWeaponBase weaponInfo = GameObjectManager.GetEquipmentData<SFXWeaponBase>(weaponIndex);
+            SFXWeaponBase weaponInfo = GameObjectManager.GetSFXWeaponData<SFXWeaponBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
             if (projectile)
             {
@@ -1961,7 +1963,7 @@ namespace GameSetting
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Transform castAt = GetCastAt(m_Entity);
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, NavigationManager.NavMeshPosition(  castAt.position), m_castForward?castAt.forward:Vector3.up).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnSFXWeapon<SFXCast>(I_Index, NavigationManager.NavMeshPosition(  castAt.position), m_castForward?castAt.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
         protected Transform GetCastAt(EntityCharacterBase character)
         {
@@ -1994,7 +1996,7 @@ namespace GameSetting
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnSFXWeapon<SFXCast>(I_Index, _calculatedPosition,m_castForward?m_Entity.tf_Weapon.forward:Vector3.up).Play(GetDamageDeliverInfo());
         }
     }
 
@@ -2009,7 +2011,7 @@ namespace GameSetting
         {
             if (!m_Cast)
             {
-                m_Cast = GameObjectManager.SpawnEquipment<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
+                m_Cast = GameObjectManager.SpawnSFXWeapon<SFXCast>(I_Index, m_Entity.tf_Weapon.position, m_Entity.tf_Weapon.forward);
                 m_Cast.PlayControlled(m_Entity.m_EntityID, m_Entity, attacherHead);
             }
 
@@ -2069,7 +2071,7 @@ namespace GameSetting
 
         protected void FireBullet(Vector3 startPosition, Vector3 direction, Vector3 targetPosition)
         {
-            GameObjectManager.SpawnEquipment<SFXProjectile>(I_Index, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
+            GameObjectManager.SpawnSFXWeapon<SFXProjectile>(I_Index, startPosition, direction).Play(GetDamageDeliverInfo(),direction, targetPosition);
         }
         protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.m_EntityID,startPosition,direction,i_muzzleIndex,m_MuzzleClip);
     }
@@ -2124,7 +2126,7 @@ namespace GameSetting
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             if (!m_Effect || !m_Effect.B_Playing)
-                m_Effect = GameObjectManager.SpawnEquipment<SFXBuffApply>(I_Index, m_Entity.tf_Weapon.position, Vector3.up);
+                m_Effect = GameObjectManager.SpawnSFXWeapon<SFXBuffApply>(I_Index, m_Entity.tf_Weapon.position, Vector3.up);
 
             m_Effect.Play(m_Entity.m_EntityID, m_buffInfo, m_Entity.tf_Weapon, _target);
         }
@@ -2147,7 +2149,7 @@ namespace GameSetting
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere()* m_Entity.F_AttackSpread;
-            GameObjectManager.SpawnEquipment<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity,_target.transform.position, startHealth, GetDamageDeliverInfo, OnSpawn);
+            GameObjectManager.SpawnSFXWeapon<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity,_target.transform.position, startHealth,GetDamageDeliverInfo, OnSpawn);
         }
     }
     #endregion

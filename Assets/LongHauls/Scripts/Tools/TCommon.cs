@@ -154,10 +154,8 @@ public static class TCommon
     public static Color ColorAlpha(Color origin, float alpha)=> new Color(origin.r, origin.g, origin.b, alpha);
     #endregion
     #region Vector/Angle
-    public static float GetXZDistance(Vector3 start, Vector3 end)
-    {
-        return new Vector2(start.x - end.x, start.z - end.z).magnitude;
-    }
+    public static float GetXZDistance(Vector3 start, Vector3 end) =>new Vector2(start.x - end.x, start.z - end.z).magnitude;
+    public static float GetXZSqrDistance(Vector3 start, Vector3 end) => new Vector2(start.x - end.x, start.z - end.z).sqrMagnitude;
     public static Vector3 GetXZLookDirection(Vector3 startPoint, Vector3 endPoint)
     {
         Vector3 lookDirection = endPoint - startPoint;

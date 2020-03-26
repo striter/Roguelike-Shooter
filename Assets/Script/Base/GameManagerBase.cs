@@ -418,7 +418,7 @@ public static class GameObjectManager
 
     public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_Stage _stage) => SpawnEntity(poolIndex, toPosition, toRot, (EntityCharacterAI ai) => ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty)));
 
-    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) => character.OnSubCharacterActivate(_flag, spawnerID, startHealth));
+    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) => character.OnSubCharacterActivate(_flag, spawnerID, startHealth==0?character.I_MaxHealth:startHealth));
 
     public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave, Vector3 position, Quaternion rotation) => SpawnEntity((int)playerSave.m_character, position, rotation, (EntityCharacterPlayer player) => player.OnPlayerActivate(playerSave));
 
@@ -426,7 +426,7 @@ public static class GameObjectManager
 
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
-    #region Weapon
+    #region ModeledWeapon
     public static WeaponBase SpawnWeapon(WeaponSaveData weaponData, Transform toTrans = null)
     {
         if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(weaponData.m_Weapon))
@@ -439,7 +439,32 @@ public static class GameObjectManager
     }
     public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
     #endregion
-    #region SFX
+    #region SFXWeapon
+    public static T SpawnSFXWeapon<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXWeaponBase
+    {
+        if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
+
+        T template = ObjectPoolManager<int, SFXWeaponBase>.Spawn(weaponIndex, TF_SFXWeapon, position, Quaternion.LookRotation(normal)) as T;
+        if (template == null)
+            Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
+        return template;
+    }
+    public static T GetSFXWeaponData<T>(int weaponIndex) where T : SFXWeaponBase
+    {
+        if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
+
+        T damageSourceInfo = ObjectPoolManager<int, SFXWeaponBase>.GetRegistedSpawnItem(weaponIndex) as T;
+        if (damageSourceInfo == null)
+            Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
+        return damageSourceInfo;
+    }
+
+    public static void TraversalAllSFXWeapon(Action<SFXWeaponBase> OnEachSFXWeapon) => ObjectPoolManager<int, SFXWeaponBase>.TraversalAllActive(OnEachSFXWeapon);
+    public static void RecycleAllSFXWeapon(Predicate<SFXWeaponBase> predicate) => ObjectPoolManager<int, SFXWeaponBase>.RecycleAll(predicate);
+    #endregion
+    #region SFXEffects
     public static T SpawnSFX<T>(int index, Vector3 position, Vector3 normal) where T : SFXBase
     {
         T sfx = ObjectPoolManager<int, SFXBase>.Spawn(index, TF_SFXPlaying, position, Quaternion.LookRotation(normal)) as T;
@@ -459,28 +484,6 @@ public static class GameObjectManager
         if (muzzleClip)
             AudioManager.Instance.Play3DClip(_sourceID, muzzleClip, false, position);
     }
-
-    public static T SpawnEquipment<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXWeaponBase
-    {
-        if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
-
-        T template = ObjectPoolManager<int, SFXWeaponBase>.Spawn(weaponIndex, TF_SFXWeapon, position, Quaternion.LookRotation(normal)) as T;
-        if (template == null)
-            Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
-        return template;
-    }
-    public static T GetEquipmentData<T>(int weaponIndex) where T : SFXWeaponBase
-    {
-        if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
-
-        T damageSourceInfo = ObjectPoolManager<int, SFXWeaponBase>.GetRegistedSpawnItem(weaponIndex) as T;
-        if (damageSourceInfo == null)
-            Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
-        return damageSourceInfo;
-    }
-    public static void RecycleAllWeapon(Predicate<SFXWeaponBase> predicate) => ObjectPoolManager<int, SFXWeaponBase>.RecycleAll(predicate);
     #endregion
     #region Interact
     public static T SpawnInteract<T>(enum_Interaction type, Vector3 pos, Quaternion rot) where T : InteractGameBase

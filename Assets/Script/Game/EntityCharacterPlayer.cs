@@ -318,6 +318,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     
     protected virtual void OnAbilityTrigger()
     {
+        m_CharacterInfo.OnAbilityTrigger();
     }
 
     public class CharacterAbility
