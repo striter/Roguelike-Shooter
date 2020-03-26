@@ -30,7 +30,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected Transform tf_AimAssistTarget=null;
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
     public new PlayerInfoManager m_CharacterInfo { get; private set; }
-    protected bool m_aiming = false;
+    public bool m_Aiming { get; private set; } = false;
     protected override enum_GameVFX m_DamageClip => enum_GameVFX.PlayerDamage;
     public new EntityPlayerHealth m_Health { get; private set; }
     protected override HealthBase GetHealthManager()
@@ -76,6 +76,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnPoolItemEnable();
         SetBinding(true);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     protected override void OnPoolItemDisable()
@@ -83,6 +84,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnPoolItemDisable();
         SetBinding(false);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
@@ -111,6 +113,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.enabled = true;
     }
     
+
+    protected override void OnBattleFinish()
+    {
+        base.OnBattleFinish();
+        m_Health.OnBattleFinishResetArmor();
+    }
+
     protected override void OnDead()
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
@@ -163,9 +172,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!mainWeapon && !m_Weapon2)
             return;
 
-        if (m_aiming==down&& m_weaponEquipingFirst==mainWeapon)
+        if (m_Aiming==down&& m_weaponEquipingFirst==mainWeapon)
             return;
-        m_aiming = down;
+        m_Aiming = down;
 
         if (down && m_weaponEquipingFirst != mainWeapon)
         {
@@ -279,7 +288,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void OnMoveTick(float deltaTime)
     {
         if (m_aimingMovementReduction) f_aimMovementReduction -= deltaTime;
-        if (m_aiming) f_aimMovementReduction =  GameConst.F_MovementReductionDuration;
+        if (m_Aiming) f_aimMovementReduction =  GameConst.F_MovementReductionDuration;
 
         TargetTick(deltaTime);
         
@@ -294,7 +303,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
 
-        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.F_MovementSpeedMultiply,m_aiming);
+        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.F_MovementSpeedMultiply,m_Aiming);
     }
 
     void TargetTick(float deltaTime)

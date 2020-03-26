@@ -1081,6 +1081,8 @@ namespace GameSetting
             if(changed)
                 OnHealthChanged(enum_HealthChangeMessage.Default);
         }
+
+        public void OnBattleFinishResetArmor() => base.OnSetStatus(m_CurrentHealth, m_MaxArmor);
     }
 
     public class DamageInfo
@@ -1576,8 +1578,9 @@ namespace GameSetting
             return info;
         }
 
-        public void OnMove(float distance) => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnMove(distance); });
-        public void OnAbilityTrigger() => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAbilityTrigger(); });
+        public void OnMove(float distance) => m_ExpirePerks.Traversal((ExpirePerkBase perk) => { perk.OnMove(distance); });
+        public void OnAbilityTrigger() => m_ExpirePerks.Traversal((ExpirePerkBase perk) => { perk.OnAbilityTrigger(); });
+        public void OnLevelFinish() => m_ExpirePerks.Traversal((ExpirePerkBase perk) => { perk.OnLevelFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1767,17 +1770,15 @@ namespace GameSetting
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Perk;
         public virtual enum_Rarity m_Rarity { get; private set; } = enum_Rarity.Invalid;
         public virtual int m_MaxStack=>-1;
+        public virtual bool m_DataHidden => false;
 
         public int m_Stack { get; private set; } = 0;
         public virtual float m_RecordData { get; protected set; }
         public ExpirePerkBase(PerkSaveData data) { m_Stack = data.m_PerkStack; m_RecordData = data.m_RecordData; }
-
-        public void OnStackUp() => m_Stack ++;
-        protected void OnStackDown() => m_Stack--;
-        public virtual bool m_Hidden => m_Stack == m_MaxStack;
-
+        
         public EntityCharacterPlayer m_Attacher { get; private set; }
         public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
+        public void OnStackUp() => m_Stack++;
 
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
@@ -1807,6 +1808,7 @@ namespace GameSetting
         public virtual void OnMove(float distsance) { }
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }
+        public virtual void OnLevelFinish() { }
         #endregion
     }
     

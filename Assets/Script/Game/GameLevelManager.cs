@@ -52,7 +52,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     {
         m_GameChunk.InitGameChunk( m_ChunkDatas[levelType].RandomItem(_random),_random,NavigationManager.UpdateChunkData);
         Vector3 size = m_GameChunk.m_Size.ToPosition();
-        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, .1f, size.z)));
+        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, .5f, size.z)));
         m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
             objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(obejctType,data); });
         });
