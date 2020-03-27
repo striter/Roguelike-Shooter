@@ -113,7 +113,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.enabled = true;
     }
     
-
     protected override void OnBattleFinish()
     {
         base.OnBattleFinish();
@@ -129,6 +128,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Assist.SetEnable(false);
         base.OnDead();
     }
+
     protected override void OnRevive()
     {
         base.OnRevive();
@@ -138,6 +138,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         AudioManager.Instance.Play2DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_ReviveClip));
     }
+
     public override void DoRecycle()
     {
         base.DoRecycle();
@@ -145,9 +146,30 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Assist.Recycle();
     }
 
-    void OnMainDown(bool down)=>OnWeaponTrigger(true,down);
-    
-    void OnSubDown(bool down) => OnWeaponTrigger(false, down);
+    void OnMainDown(bool down)
+    {
+        if (down)
+        {
+            TrySwapWeapon(true);
+
+            if (OnInteract())
+                return;
+        }
+        OnWeaponTrigger(down);
+    }
+
+    void OnSubDown(bool down)
+    {
+        if(down)
+        {
+            TrySwapWeapon(false);
+
+            if ( OnInteract())
+                return;
+        }
+
+        OnWeaponTrigger(down);
+    } 
 
     protected override void OnAliveTick(float deltaTime)
     {
@@ -166,21 +188,21 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual bool CalculateWeaponFire() =>!Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
     #region WeaponControll
-
-    void OnWeaponTrigger(bool mainWeapon, bool down)
+    
+    void TrySwapWeapon(bool mainWeapon)
     {
         if (!mainWeapon && !m_Weapon2)
             return;
 
-        if (m_Aiming==down&& m_weaponEquipingFirst==mainWeapon)
+        if (m_weaponEquipingFirst != mainWeapon)
+            OnSwapWeapon(mainWeapon);
+    }
+
+    void OnWeaponTrigger( bool down)
+    {
+        if (m_Aiming == down)
             return;
         m_Aiming = down;
-
-        if (down && m_weaponEquipingFirst != mainWeapon)
-        {
-            OnSwapWeapon(mainWeapon);
-            OnWeaponStatus();
-        }
 
         if (m_WeaponCurrent)
             m_WeaponCurrent.Trigger(down);
@@ -225,8 +247,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Weapon2 = _weapon;
             OnSwapWeapon(false);
         }
-
-        OnWeaponStatus();
+        
         return exchangeWeapon;
     }
     public WeaponBase Reforge(WeaponBase _weapon)
@@ -244,16 +265,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Weapon2 = _weapon;
             OnSwapWeapon(false);
         }
-        OnWeaponStatus();
         return exchangeWeapon;
-    }
-
-    public void OnSwapClick()
-    {
-        if (!m_Weapon2)
-            return;
-        OnSwapWeapon(!m_weaponEquipingFirst);
-        OnWeaponStatus();
     }
 
     void OnSwapWeapon(bool isFirst)
@@ -266,6 +278,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_Assist) m_Assist.Recycle();
         m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
         m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_ProjectileMask, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
+        OnWeaponStatus();
     }
     #endregion
     #region CharacterControll
@@ -382,18 +395,19 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             OnInteractStatus();
         }
     }
-    public void OnInteract()
+    protected bool OnInteract()
     {
         if (m_Interact == null)
-            return;
+            return false;
 
         if (!m_Interact.TryInteract(this))
-            return;
+            return false;
 
         if (!m_Interact.DnCheckInteractResponse(this))
             m_Interact = null;
 
         OnInteractStatus();
+        return true;
     }
     public void OnInteractPickup(InteractPickupAmount pickup,int amount)
     {
@@ -499,7 +513,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnInteract, OnSwapClick, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnAbilityClick);
         else
             UIManager.Instance.RemoveBindings();
     }
