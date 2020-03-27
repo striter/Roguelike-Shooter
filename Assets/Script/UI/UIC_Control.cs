@@ -10,10 +10,9 @@ public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Transform tf_InGame;
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
-    Image m_Settings,m_Equipments;
+    Image m_Settings;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
-    Action OnSwap, OnCharacterAbility;
-    Action<bool> OnWeaponAction;
+    Action  OnCharacterAbility;
     Action<bool> OnMainDown,OnSubDown;
     TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
     protected override void Init()
@@ -31,8 +30,8 @@ public class UIC_Control : UIControlBase {
         m_Settings = transform.Find("Settings/Image").GetComponent<Image>();
         transform.Find("Equipments").GetComponent<Button>().onClick.AddListener(OnEquipmentBtnClick);
         
-        m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"),OnWeaponFirstActionClick, OnWeaponSwap);
-        m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"),OnWeaponSecondActionClick, OnWeaponSwap);
+        m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"));
+        m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"));
 
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
@@ -73,12 +72,11 @@ public class UIC_Control : UIControlBase {
     }
 
     #region Controls
-    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action _OnSwap, Action _OnCharacterAbility)
+    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
         OnMainDown = _OnMainDown;
         OnSubDown = _OnSubDown;
-        OnSwap = _OnSwap;
         OnCharacterAbility = _OnCharacterAbility;
         m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilitySprite(player.m_Character)];
     }
@@ -87,15 +85,11 @@ public class UIC_Control : UIControlBase {
         m_TouchDelta.RemoveAllBinding();
         OnMainDown = null;
         OnCharacterAbility = null;
-        OnSwap = null;
         OnSubDown = null;
     }
 
     protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
     protected void OnSubButtonDown(bool down, Vector2 pos) => OnSubDown?.Invoke(down);
-    protected void OnWeaponSwap() => OnSwap?.Invoke();
-    protected void OnWeaponFirstActionClick() => OnWeaponAction?.Invoke(true);
-    protected void OnWeaponSecondActionClick() => OnWeaponAction?.Invoke(false);
     protected void OnAbilityButtonDown() => OnCharacterAbility?.Invoke();
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
@@ -144,15 +138,13 @@ public class UIC_Control : UIControlBase {
         Transform tf_Equiping, tf_Unequiping;
         UIC_WeaponData m_weaponData;
         TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
-        Action OnWeaponClick;
-        public ControlWeaponData(Transform _transform,UnityAction OnActionClick,Action _OnWeaponClick)
+        public ControlWeaponData(Transform _transform)
         {
             transform = _transform;
             m_weaponData = new UIC_WeaponData(transform.Find("WeaponData"));
             tf_Equiping = m_weaponData.transform.Find("Equiping");
             tf_Unequiping = m_weaponData.transform.Find("Unequiping");
             m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1, -1);
-            OnWeaponClick = _OnWeaponClick;
             m_weaponData.transform.GetComponent<UIT_EventTriggerListener>().SetOnPressDuration(.25f, OnWeaponDetailPressed);
         }
         public void UpdateInfo(WeaponBase weapon, bool equiping)
@@ -186,8 +178,6 @@ public class UIC_Control : UIControlBase {
         {
             if (pressed)
                 UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,null);
-            else
-                OnWeaponClick();
         }
     }
 
@@ -206,12 +196,6 @@ public class UIC_Control : UIControlBase {
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
             OnAbilityButtonDown();
-        if (Input.GetKeyDown(KeyCode.Tab))
-            OnWeaponSwap();
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            OnWeaponFirstActionClick();
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            OnWeaponSecondActionClick();
 
     }
 #endif

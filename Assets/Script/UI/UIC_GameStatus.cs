@@ -133,7 +133,6 @@ public class UIC_GameStatus : UIControlBase
     {
         RectTransform transform;
         GridLayoutGroup m_AmmoLayout;
-        Image img_ReloadFill;
         float m_AmmoGridWidth;
         UIT_GridControllerGridItem<UIGI_AmmoItem> m_AmmoGrid;
         UIT_TextExtend m_AmmoAmount, m_AmmoAmountProjection;
@@ -146,7 +145,6 @@ public class UIC_GameStatus : UIControlBase
             m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(transform.Find("Container/AmmoGrid"));
             m_AmmoGridWidth = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.x;
             m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
-            img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
         }
 
 
