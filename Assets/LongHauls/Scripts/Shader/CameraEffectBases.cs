@@ -29,7 +29,10 @@ public class CameraEffectBase
     {
         Graphics.Blit(source, destination);
     }
-    public void OnCheckEffectEnable(DepthTextureMode depthTextureMode) { m_Enabled = m_DepthTextureRequire== DepthTextureMode.None|| depthTextureMode == m_DepthTextureRequire; }
+    public void OnCheckEffectEnable(DepthTextureMode depthTextureMode) {
+        if (m_DepthTextureRequire != DepthTextureMode.None)
+            m_Enabled = depthTextureMode == m_DepthTextureRequire;
+    }
     public virtual void OnDestroy()
     {
     }

@@ -42,7 +42,6 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     public void SetCameraEffects( DepthTextureMode textureMode)
     {
         m_Camera.depthTextureMode = textureMode;
-        Shader.SetGlobalInt("_CameraDepthTextureMode",(int)m_Camera.depthTextureMode);
         ResetPostEffectParams();
     }
 
@@ -107,8 +106,10 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         RemoveAllPostEffect();
     }
 
+    static readonly int m_GlobalCameraDepthTextureMode = Shader.PropertyToID("_CameraDepthTextureMode");
     void ResetPostEffectParams()
     {
+        Shader.SetGlobalInt(m_GlobalCameraDepthTextureMode, (int)m_Camera.depthTextureMode);
         m_PostEffectEnabled = false;
         m_DepthToWorldMatrix = false;
         m_PostEffects.Traversal((CameraEffectBase effectBase) =>

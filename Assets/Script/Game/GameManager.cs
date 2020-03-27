@@ -92,9 +92,8 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
     }
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
         AddConsoleBinddings();
         LoadStage();
     }
@@ -116,6 +115,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoad);
         yield return null;
         m_GameLevel.StageInit();
+        OnGameStartInit(m_GameLevel.m_GameStyle);
         GameLevelManager.Instance.GenerateStage(m_GameLevel.m_GameStyle, m_GameLevel.m_Random);
 
         EntityDicReset();
@@ -123,7 +123,6 @@ public class GameManager : GameManagerBase
         GameObjectManager.PresetRegistCommonObject();
         m_EnermySpawnIDs = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_StageIndex);
 
-        InitPostEffects(m_GameLevel.m_GameStyle);
         yield return null;
         Resources.UnloadUnusedAssets();
         GC.Collect();
