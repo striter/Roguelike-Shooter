@@ -35,7 +35,6 @@ public class GameRenderData : ScriptableObject
         directionalLight.transform.rotation = Quaternion.Euler(f_pitch,f_yaw,0);
         RenderSettings.ambientSkyColor = c_ambient;
         Shader.SetGlobalFloat("_Lambert", f_lambert);
-        Shader.SetGlobalColor("_SkyColor", c_skyColor);
         Shader.SetGlobalColor("_ShadowColor", c_shadowColor);
         camera.backgroundColor = c_skyColor;
     }
