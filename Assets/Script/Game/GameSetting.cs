@@ -43,7 +43,7 @@ namespace GameSetting
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
 
         public const int I_DangerzoneDamage = 20;
-        public const float F_DangerzoneResetDuration = 3f;
+        public const float F_DangerzoneResetDuration = .5f;
 
         public const float F_PickupMaxSpeed = 100f;
         public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
