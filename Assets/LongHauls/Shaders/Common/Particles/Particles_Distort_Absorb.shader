@@ -7,7 +7,7 @@
 	SubShader
 	{
 		Tags{ "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent-1" "PreviewType"="Plane"}
-		Cull Off Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
+		Cull Back Lighting Off ZWrite Off Fog { Color(0,0,0,0) }
 
 		Pass
 		{		
