@@ -111,10 +111,10 @@
 				float fresnel = Fresnel(normal, viewDir);
 				
 				float specular = Specular(distort, normal, viewDir, lightDir);
-				float4 specularColor = float4(_LightColor0.rgb*specular, specular);
+				float4 specularColor = float4(_LightColor0.rgb*specular, 1);
 
 				float foam = Foam(i.screenPos);
-				float4 foamColor = _FoamColor*foam;
+				float4 foamColor = float4( _FoamColor.rgb*foam,1);
 
 				float4 albedo = float4((tex2D(_MainTex, i.uv+distort)*_Color).rgb,1);
 				return lerp(tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + distort), albedo, fresnel)+ foamColor + specularColor;

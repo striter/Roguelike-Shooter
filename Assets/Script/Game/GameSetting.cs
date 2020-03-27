@@ -270,7 +270,6 @@ namespace GameSetting
 
     public static class UIConst
     {
-        public const int I_AmmoCountToSlider = 200;      //Ammo UI,While Clip Above This Will Turn To Be Slider大于此值变成白条
         public const int I_PlayerDyingMinValue = 10;
         public const int I_PlayerDyingMaxValue = 50;
         

@@ -82,5 +82,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 0.853}
     - _DistortParam: {r: 0.008, g: 0.1, b: 0.25, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelParam: {r: 0.35, g: 0.5, b: 12, a: 0}
-    - _WaveParam: {r: 0.12, g: 2, b: 1, a: 1}
+    - _FoamColor: {r: 0.41911763, g: 0.9759634, b: 1, a: 0.472}
+    - _FoamParam: {r: 0.15, g: 0, b: 0, a: 1}
+    - _FresnelParam: {r: 0.41, g: 0.5, b: 12, a: 0}
+    - _WaveParam: {r: 0.12, g: 2, b: 1.39, a: 1}

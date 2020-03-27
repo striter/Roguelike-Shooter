@@ -19,10 +19,10 @@ public class CampManager : GameManagerBase
         base.OnDestroy();
         nInstance = null;
     }
-
-    protected void Start()
+    protected override void Start()
     {
-        OnGameStartInit( enum_GameStyle.Invalid);
+        base.Start();
+        InitGameEffects( enum_GameStyle.Invalid);
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave(),tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_PlayerCameraAttach = player.transform;
         AttachPlayerCamera(tf_PlayerCameraAttach);

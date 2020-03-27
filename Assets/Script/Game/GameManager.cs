@@ -9,7 +9,6 @@ using UnityEngine;
 using System.Threading.Tasks;
 public class GameManager : GameManagerBase
 {
-    public bool Test_CameraYLock = false;
     #region Test
     public string M_TESTSEED = "";
     public bool B_PhysicsDebugGizmos = true;
@@ -92,8 +91,9 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
     }
 
-    protected void Start()
+    protected override void Start()
     {
+        base.Start();
         AddConsoleBinddings();
         LoadStage();
     }
@@ -104,7 +104,7 @@ public class GameManager : GameManagerBase
             return;
 
         float deltaTime = Time.deltaTime;
-        tf_CameraAttach.position = Test_CameraYLock? new Vector3(m_LocalPlayer.transform.position.x,0, m_CameraAttachZ):m_LocalPlayer.transform.position;
+        tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
     //Call When Level Changed
     void LoadStage() => this.StartSingleCoroutine(999, DoLoadStage());
@@ -115,7 +115,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoad);
         yield return null;
         m_GameLevel.StageInit();
-        OnGameStartInit(m_GameLevel.m_GameStyle);
+        InitGameEffects(m_GameLevel.m_GameStyle);
         GameLevelManager.Instance.GenerateStage(m_GameLevel.m_GameStyle, m_GameLevel.m_Random);
 
         EntityDicReset();

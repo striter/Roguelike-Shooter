@@ -14,12 +14,8 @@ public class UIC_GameStatus : UIControlBase
     UIT_GridControllerGridItem<UIGI_ActionExpireInfo> m_ActionExpireGrid;
     
     Transform tf_StatusData;
-    RectTransform rtf_AmmoData;
-    GridLayoutGroup m_AmmoLayout;
-    Image img_ReloadFill;
-    float m_AmmoGridWidth;
-    UIT_GridControllerGridItem<UIGI_AmmoItem> m_AmmoGrid;
-    UIT_TextExtend m_AmmoAmount,m_AmmoAmountProjection;
+    RectTransform tf_WeaponData;
+    AmmoData m_Ammo1Data, m_Ammo2Data;
 
     Transform tf_ArmorData;
     RectTransform rtf_ArmorFillHandle;
@@ -47,13 +43,9 @@ public class UIC_GameStatus : UIControlBase
         img_Dying = tf_Container.Find("Dying").GetComponent<RawImage>();
 
         tf_StatusData = tf_Container.Find("StatusData");
-        rtf_AmmoData = tf_StatusData.Find("AmmoData") as RectTransform;
-        m_AmmoAmount =  rtf_AmmoData.Find("Container/Amount").GetComponent<UIT_TextExtend>();
-        m_AmmoAmountProjection = rtf_AmmoData.Find("Container/AmountProjection").GetComponent<UIT_TextExtend>();
-        m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(rtf_AmmoData.Find("Container/AmmoGrid"));
-        m_AmmoGridWidth = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.x;
-        m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
-        img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
+        tf_WeaponData = tf_StatusData.Find("WeaponData") as RectTransform;
+        m_Ammo1Data = new AmmoData(tf_WeaponData.Find("Ammo1Data"));
+        m_Ammo2Data = new AmmoData(tf_WeaponData.Find("Ammo2Data"));
 
         tf_ArmorData = tf_StatusData.Find("ArmorData");
         img_ArmorFill = tf_ArmorData.Find("Fill").GetComponent<Image>();
@@ -100,7 +92,7 @@ public class UIC_GameStatus : UIControlBase
         if (!m_Player)
             return;
         
-        rtf_AmmoData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
+        tf_WeaponData.SetWorldViewPortAnchor(m_Player.tf_UIStatus.position, CameraController.Instance.m_Camera, Time.deltaTime * 10f);
 
         m_HealthLerp.TickDelta(Time.unscaledDeltaTime);
         m_ArmorLerp.TickDelta(Time.unscaledDeltaTime);
@@ -125,7 +117,8 @@ public class UIC_GameStatus : UIControlBase
         bool dying = !m_Player.m_IsDead && m_Player.m_Health.m_CurrentHealth < UIConst.I_PlayerDyingMaxValue;
         if(m_DyingCheck.Check(dying))
             img_Dying.SetActivate(dying);
-        OnAmmoStatus(_player.m_WeaponCurrent);
+        m_Ammo1Data.UpdateData(_player.m_Weapon1);
+        m_Ammo2Data.UpdateData(_player.m_Weapon2);
     }
 
     void OnHealthStatus(EntityPlayerHealth _healthManager)
@@ -136,20 +129,39 @@ public class UIC_GameStatus : UIControlBase
         m_HealthAmount.text = string.Format("{0} <color=#FFCB4e>/ {1}</color>", (int)_healthManager.m_CurrentHealth,(int)_healthManager.m_MaxHealth);
     }
 
-    void OnAmmoStatus(WeaponBase weaponInfo)
+    class AmmoData
     {
-        rtf_AmmoData.transform.SetActivate(weaponInfo != null);
-        if (weaponInfo == null)
-            return;
-
-        string ammoText = string.Format("{0} / {1}", (int)weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount);
-        m_AmmoAmount.text = ammoText;
-        m_AmmoAmountProjection.text = ammoText;
-        if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
+        RectTransform transform;
+        GridLayoutGroup m_AmmoLayout;
+        Image img_ReloadFill;
+        float m_AmmoGridWidth;
+        UIT_GridControllerGridItem<UIGI_AmmoItem> m_AmmoGrid;
+        UIT_TextExtend m_AmmoAmount, m_AmmoAmountProjection;
+        ValueChecker<int, int> m_AmmoUpdate = new ValueChecker<int, int>(-1, -1);
+        public AmmoData(Transform _transform)
         {
-            m_AmmoGrid.ClearGrid();
-            if (weaponInfo.I_ClipAmount <= UIConst.I_AmmoCountToSlider)
+            transform = _transform as RectTransform;
+            m_AmmoAmount = transform.Find("Container/Amount").GetComponent<UIT_TextExtend>();
+            m_AmmoAmountProjection = transform.Find("Container/AmountProjection").GetComponent<UIT_TextExtend>();
+            m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(transform.Find("Container/AmmoGrid"));
+            m_AmmoGridWidth = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.x;
+            m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
+            img_ReloadFill = m_AmmoGrid.transform.Find("Reload").GetComponent<Image>();
+        }
+
+
+        public void UpdateData(WeaponBase weaponInfo)
+        {
+            transform.SetActivate(weaponInfo != null);
+            if (weaponInfo == null || !m_AmmoUpdate.Check(weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount))
+                return;
+
+            string ammoText = string.Format("{0} / {1}", weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount);
+            m_AmmoAmount.text = ammoText;
+            m_AmmoAmountProjection.text = ammoText;
+            if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
             {
+                m_AmmoGrid.ClearGrid();
                 for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
                     m_AmmoGrid.AddItem(i);
 
@@ -158,5 +170,4 @@ public class UIC_GameStatus : UIControlBase
             }
         }
     }
-    
 }
