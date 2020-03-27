@@ -11,7 +11,7 @@
 		_DistortParam("Distort: X|Refraction Distort Y|Frequency Z|Specular Distort",Vector) = (1,1,1,1)
 		_FresnelParam("Fresnel: X | Base Y| Max Z| Scale ",Vector)=(1,1,1,1)
 		_FoamColor("Foam Color",Color)=(1,1,1,1)
-		_FoamParam("Foam: X|Width",Vector)=(1,1,1,1)
+		_FoamWidth("Foam Width",Range(0,.5)) = .2
 	}
 	SubShader
 	{
@@ -27,7 +27,6 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_instancing
-
 
 			struct appdata
 			{
@@ -79,12 +78,12 @@
 				return specular;
 			}
 
-			float4 _FoamParam;
+			float _FoamWidth;
 			float Foam(float4 screenPos) {
 				if (_CameraDepthTextureMode==0)
 					return 0;
 				float depthOffset = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, screenPos)).r - screenPos.w;
-				return smoothstep(_FoamParam.x,0, depthOffset);
+				return smoothstep(_FoamWidth,0, depthOffset);
 			}
 
 			v2f vert (appdata v)
@@ -114,7 +113,7 @@
 				float4 specularColor = float4(_LightColor0.rgb*specular, 1);
 
 				float foam = Foam(i.screenPos);
-				float4 foamColor = float4( _FoamColor.rgb*foam,1);
+				float4 foamColor = float4( _FoamColor.rgb*_FoamColor.a*foam,1);
 
 				float4 albedo = float4((tex2D(_MainTex, i.uv+distort)*_Color).rgb,1);
 				return lerp(tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + distort), albedo, fresnel)+ foamColor + specularColor;
