@@ -39,10 +39,10 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         ResetPostEffectParams();
     }
 
-    public void SetEffectEnable(bool enablePostEffect,bool mobileCostEnable)
+    public void SetCameraEffects( DepthTextureMode textureMode)
     {
-        m_PostEffectEnabled = enablePostEffect;
-        m_MobileCostEnable = mobileCostEnable;
+        m_Camera.depthTextureMode = textureMode;
+        Shader.SetGlobalInt("_CameraDepthTextureMode",(int)m_Camera.depthTextureMode);
         ResetPostEffectParams();
     }
 
@@ -63,20 +63,19 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     #endregion
     List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
+    public bool m_DepthToWorldMatrix { get; private set; } = false;
     public bool m_PostEffectEnabled { get; private set; } = false;
-    public bool m_MobileCostEnable { get; private set; } = true;
-    public bool m_calculateDepthToWorldMatrix { get; private set; } = false;
     RenderTexture tempTexture1, tempTexture2;
     protected void Awake()
     {
         m_Camera = GetComponent<Camera>();
         m_Camera.depthTextureMode = DepthTextureMode.None;
-        m_calculateDepthToWorldMatrix = false;
+        m_DepthToWorldMatrix = false;
     }
     
     protected void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (m_calculateDepthToWorldMatrix)
+        if (m_DepthToWorldMatrix)
         {
             CalculateFrustumCornorsRay();
             CalculateViewProjectionMatrixInverse();
@@ -107,25 +106,19 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     {
         RemoveAllPostEffect();
     }
-    private void OnRenderObject()
-    {
-        for (int i = 0; i < m_PostEffects.Count; i++)
-            m_PostEffects[i].OnRenderObject();
-    }
 
     void ResetPostEffectParams()
     {
-        m_Camera.depthTextureMode = DepthTextureMode.None;
-        m_calculateDepthToWorldMatrix = false;
-        
+        m_PostEffectEnabled = false;
+        m_DepthToWorldMatrix = false;
         m_PostEffects.Traversal((CameraEffectBase effectBase) =>
         {
-            effectBase.OnCheckMobileCostEnable(m_MobileCostEnable);
+            effectBase.OnCheckEffectEnable(m_Camera.depthTextureMode);
             if (!effectBase.m_Enabled)
                 return;
-            
-            m_Camera.depthTextureMode |= effectBase.m_DepthTextureMode;
-            m_calculateDepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+
+            m_PostEffectEnabled |=effectBase.m_IsPostEffect;
+            m_DepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
         });
     }
 

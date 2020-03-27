@@ -10,6 +10,8 @@
 		_WaveParam("Wave: X|Strength Y|Frequency ZW|Direction",Vector) = (1,1,1,1)
 		_DistortParam("Distort: X|Refraction Distort Y|Frequency Z|Specular Distort",Vector) = (1,1,1,1)
 		_FresnelParam("Fresnel: X | Base Y| Max Z| Scale ",Vector)=(1,1,1,1)
+		_FoamColor("Foam Color",Color)=(1,1,1,1)
+		_FoamParam("Foam: X|Width",Vector)=(1,1,1,1)
 	}
 	SubShader
 	{
@@ -45,17 +47,21 @@
 
 			
 			sampler2D _CameraOpaqueTexture;
+			bool _CameraDepthTextureMode;
+			sampler2D _CameraDepthTexture;
 			sampler2D _MainTex;
 			float _SpecularRange;
 			float _TexUVScale;
 			sampler2D _DistortTex;
 			float4 _Color;
+			float4 _FoamColor;
+
 			float4 _WaveParam;
-			float4 _DistortParam;
 			float Wave(float3 worldPos)
 			{
 				return  sin(worldPos.xz* _WaveParam.zw +_Time.y*_WaveParam.y)*_WaveParam.x;
 			}
+			float4 _DistortParam;
 			float2 Distort(float2 uv)
 			{
 				return tex2D(_DistortTex, uv+ _WaveParam.zw *_Time.y*_DistortParam.y).rg*_DistortParam.x;
@@ -64,6 +70,21 @@
 			float4 _FresnelParam;
 			float Fresnel(float3 normal, float3 viewDir) {
 				return lerp( _FresnelParam.x ,_FresnelParam.y, saturate(  _FresnelParam.z* (1 - dot(normal, viewDir))));
+			}
+
+			float Specular(float2 distort, float3 normal, float3 viewDir, float3 lightDir)
+			{
+				float specular = dot(normalize(normal), normalize(viewDir + lightDir));
+				specular = smoothstep(_SpecularRange, 1, specular - distort.x*_DistortParam.z);
+				return specular;
+			}
+
+			float4 _FoamParam;
+			float Foam(float4 screenPos) {
+				if (_CameraDepthTextureMode==0)
+					return 0;
+				float depthOffset = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, screenPos)).r - screenPos.w;
+				return smoothstep(_FoamParam.x,0, depthOffset);
 			}
 
 			v2f vert (appdata v)
@@ -89,12 +110,14 @@
 				
 				float fresnel = Fresnel(normal, viewDir);
 				
-				float specular =  dot(normalize(normal), normalize(viewDir + lightDir));
-				specular = smoothstep(_SpecularRange,1, specular-distort.x*_DistortParam.z);
+				float specular = Specular(distort, normal, viewDir, lightDir);
 				float4 specularColor = float4(_LightColor0.rgb*specular, specular);
 
+				float foam = Foam(i.screenPos);
+				float4 foamColor = _FoamColor*foam;
+
 				float4 albedo = float4((tex2D(_MainTex, i.uv+distort)*_Color).rgb,1);
-				return lerp(tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + distort), albedo, fresnel)+ specularColor;
+				return lerp(tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + distort), albedo, fresnel)+ foamColor + specularColor;
 			}
 			ENDCG
 		}

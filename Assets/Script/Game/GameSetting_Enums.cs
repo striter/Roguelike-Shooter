@@ -209,7 +209,9 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
-    public enum enum_Option_ScreenEffect { Invalid = -1, Off, Normal, High }
+    public enum enum_Option_Effect { Invalid = -1, Normal, High }
+
+    public enum enum_Option_Bloom { Invalid = -1, Off, Normal, High }
 
     public enum enum_CampFarmItemStatus { Invalid = -1, Empty = 0, Locked = 1, Decayed = 2, Progress1 = 10, Progress2, Progress3, Progress4, Progress5 }
 

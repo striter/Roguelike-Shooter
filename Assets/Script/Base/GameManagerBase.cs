@@ -51,8 +51,10 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     {
         TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
         Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
-        CameraController.Instance.m_Effect.SetEffectEnable(OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.Off,OptionsManager.m_OptionsData.m_ScreenEffect>= enum_Option_ScreenEffect.High);
+        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect == enum_Option_Effect.High ? DepthTextureMode.Depth : DepthTextureMode.None);
+        OnSetBloomOptions();
     }
+
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
     {
@@ -65,7 +67,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         SetBulletTime(false);
         SetPostEffect_Vortex(false, vortexTarget, 1f);
     }
-    #region Effect
+    #region Game Effect
     protected static float m_BulletTime = 1f;
     public static bool m_BulletTiming => m_BulletTime != 1f;
     public static void SetBulletTime(bool enter,float timeScale=.8f)
@@ -74,15 +76,14 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         Time.timeScale = m_BulletTime;
     }
 
-    PE_BSC m_BSC;
+    PE_BloomSpecific m_Bloom;
     public void InitPostEffects(enum_GameStyle _levelStyle)
     {
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
-        m_BSC.SetEffect(1f, 1f, 1f);
-//        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,3, 5,2);
+        //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
+        m_Bloom = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
+        OnSetBloomOptions();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
         {
@@ -95,12 +96,25 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         }
     }
 
+    void OnSetBloomOptions()
+    {
+        if (m_Bloom == null)
+            return;
+
+        m_Bloom.SetEnable(OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
+        if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.Normal)
+            m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 4, 5,2);
+        else if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.High)
+            m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
+    }
     protected void SetPostEffect_Dead()
     {
+        PE_BSC m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(Mathf.Lerp(1f,.2f,value), Mathf.Lerp(1f, 0f, value), Mathf.Lerp(1f, .8f, value)); }, 0, 1f, 3f));
     }
     protected void SetPostEffect_Revive()
     {
+        PE_BSC m_BSC = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BSC>();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_Bloom>().SetEffect(2, 3, 4,.9f,2f);
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_BSC.SetEffect(value, 1f, 1f); }, 2f, 1, 2f,
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));

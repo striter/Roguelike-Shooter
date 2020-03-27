@@ -106,7 +106,8 @@ public class UI_Options : UIPage {
         OnSelectionClick(enum_OptionSelection.Display);
         
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
-        new ValueToggle<enum_Option_ScreenEffect>(m_Page[enum_OptionSelection.Display].Find("ScreenEffect/BtnToggle"), OnScreenEffectClicked, GetScreenEffectOption(),new List<enum_Option_ScreenEffect> { enum_Option_ScreenEffect.Off, enum_Option_ScreenEffect.Normal, enum_Option_ScreenEffect.High});
+        new ValueToggle<enum_Option_Effect>(m_Page[enum_OptionSelection.Display].Find("Effect/BtnToggle"), OnEffectClicked, GetEffectOption(),new List<enum_Option_Effect> {  enum_Option_Effect.Normal, enum_Option_Effect.High});
+        new ValueToggle<enum_Option_Bloom>(m_Page[enum_OptionSelection.Display].Find("Bloom/BtnToggle"), OnBloomClicked, GetBloomOption(), new List<enum_Option_Bloom> { enum_Option_Bloom.Off, enum_Option_Bloom.Normal, enum_Option_Bloom.High });
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Shadow/BtnToggle"), OnShadowClicked, GetShadowOption());
         new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
@@ -144,14 +145,22 @@ public class UI_Options : UIPage {
         return GetFrameRateOption();
     }
 
-    enum_Option_ScreenEffect GetScreenEffectOption() => OptionsManager.m_OptionsData.m_ScreenEffect;
-    enum_Option_ScreenEffect OnScreenEffectClicked()
+    enum_Option_Effect GetEffectOption() => OptionsManager.m_OptionsData.m_Effect;
+    enum_Option_Effect OnEffectClicked()
     {
-        OptionsManager.m_OptionsData.m_ScreenEffect++;
-        if (OptionsManager.m_OptionsData.m_ScreenEffect > enum_Option_ScreenEffect.High)
-            OptionsManager.m_OptionsData.m_ScreenEffect = enum_Option_ScreenEffect.Off;
+        OptionsManager.m_OptionsData.m_Effect = OptionsManager.m_OptionsData.m_Effect == enum_Option_Effect.Normal ? enum_Option_Effect.High : enum_Option_Effect.Normal;
         OptionsManager.OnOptionChanged();
-        return GetScreenEffectOption();
+        return GetEffectOption();
+    }
+
+    enum_Option_Bloom GetBloomOption() => OptionsManager.m_OptionsData.m_Bloom;
+    enum_Option_Bloom OnBloomClicked()
+    {
+        OptionsManager.m_OptionsData.m_Bloom++;
+        if (OptionsManager.m_OptionsData.m_Bloom > enum_Option_Bloom.High)
+            OptionsManager.m_OptionsData.m_Bloom = enum_Option_Bloom.Off;
+        OptionsManager.OnOptionChanged();
+        return GetBloomOption();
     }
 
     bool GetRegionOption() => OptionsManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;
