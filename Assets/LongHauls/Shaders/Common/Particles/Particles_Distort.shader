@@ -26,7 +26,6 @@
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float2 uv:TEXCOORD1;
 				float4 screenPos:TEXCOORD2;
 			};
 			sampler2D _CameraOpaqueTexture;
@@ -36,14 +35,14 @@
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
 				o.screenPos = ComputeScreenPos(o.vertex);
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_CameraOpaqueTexture,i.screenPos.xy / i.screenPos.w + tex2D(_DistortTex,i.uv) *_DistortStrength);
+				float2 uv = i.screenPos.xy / i.screenPos.w;
+				fixed4 col = tex2D(_CameraOpaqueTexture,uv + tex2D(_DistortTex,uv) *_DistortStrength);
 				return col;
 			}
 			ENDCG
