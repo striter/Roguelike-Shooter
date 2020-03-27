@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
@@ -6,14 +7,18 @@ using UnityEngine;
 public class InteractPerkAcquire : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkAcquire;
-    int m_PerkID;
-    public int m_TryCount { get; private set; } = 0;
-    public InteractPerkAcquire Play(int _perkID)
+    List<int> m_PerkIDs;
+    TSpecialClasses.ParticleControlBase m_Particles;
+    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    {
+        base.OnPoolItemInit(identity, OnRecycle);
+        m_Particles = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
+    }
+    public InteractPerkAcquire Play(List<int> _perkID)
     {
         base.Play();
-        m_PerkID = _perkID;
-        m_TryCount = 0;
-        m_TradePrice = GameExpression.GetEventPerkAcquireCoinsAmount(m_TryCount);
+        m_PerkIDs = _perkID;
+        m_Particles.Play();
         return this;
     }
 
@@ -21,11 +26,8 @@ public class InteractPerkAcquire : InteractGameBase
     protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
     {
         base.OnInteractOnceCanKeepInteract(_interactor);
-        bool successful = TCommon.RandomPercentage() < GameExpression.GetEventPerkAcquireSuccessRate(m_TryCount);
-        if (successful)
-            _interactor.m_CharacterInfo.OnActionPerkAcquire(m_PerkID);
-        m_TryCount++;
-        m_TradePrice = GameExpression.GetEventPerkAcquireCoinsAmount(m_TryCount);
-        return !successful&&m_TryCount<GameConst.I_EventPerkAcquireTryCount;
+        m_Particles.Stop();
+        GameUIManager.Instance.ShowPage<UI_PerkSelect>(true, .5f).Show(m_PerkIDs,_interactor.m_CharacterInfo.OnActionPerkAcquire);
+        return false;
     }
 }

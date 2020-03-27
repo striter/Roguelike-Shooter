@@ -68,7 +68,6 @@ namespace GameSetting
         Trader,
         Bonefire,
         RewardChest,
-        PerkAcquire,
         WeaponReforge,
 
         StageEnd,
@@ -258,7 +257,6 @@ namespace GameSetting
                 case enum_LevelType.Start:
                     return enum_ChunkType.Start;
                 case enum_LevelType.Bonefire:
-                case enum_LevelType.PerkAcquire:
                 case enum_LevelType.RewardChest:
                 case enum_LevelType.Trader:
                 case enum_LevelType.WeaponReforge:
@@ -280,7 +278,6 @@ namespace GameSetting
                 case enum_LevelType.GameEnd:
                     return  enum_ChunkPortalType.Battle;
                 case enum_LevelType.Bonefire:
-                case enum_LevelType.PerkAcquire:
                 case enum_LevelType.RewardChest:
                 case enum_LevelType.Trader:
                 case enum_LevelType.WeaponReforge:

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_EquipmentPack : UIPage {
+public class UI_PlayerPerks : UIPage {
     UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem> m_Grid;
     UIC_EquipmentNameFormatIntro m_Selecting;
     protected override void Init()
@@ -23,7 +23,7 @@ public class UI_EquipmentPack : UIPage {
         });
         m_Selecting.transform.SetActivate(false);
         if (m_Info.m_ExpirePerks.Count > 0)
-            m_Grid.OnItemClick(0);
+            m_Grid.OnItemClick(m_Info.m_ExpirePerks.GetIndexKey(0));
     }
 
     void OnItemSelect(int index)

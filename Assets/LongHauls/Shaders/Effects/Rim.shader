@@ -6,13 +6,15 @@
 	   _RimColor("Rim Color", Color) =(1,1,1,1)
 	   _RimWidth("Rim Width", Range(0.2,20.0)) = 3.0
 	   _RimGlow("Rim Glow Multiplier", Range(0.0,9.0)) = 1.0
+		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Src Blend",Float) = 1
+		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Dst Blend",Float) = 1
 	}
 	SubShader
 	{
 		Tags { "RenderType"="Transparent" "Queue"="Transparent" }
 		ZWrite Off
 		Cull Back
-		Blend One One
+		Blend [_SrcBlend] [_DstBlend]
 		Pass
 		{
 			CGPROGRAM

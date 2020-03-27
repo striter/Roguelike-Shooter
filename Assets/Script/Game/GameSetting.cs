@@ -53,8 +53,8 @@ namespace GameSetting
 
         public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
         public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
-        public const int I_EventEquipmentTradePrice = 10;
-        public const int I_EventPerkAcquireTryCount = 3;
+        public const int I_EventEquipmentTradePerk = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_BattleFinishPerkGenerate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public static readonly Dictionary<enum_Rarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_Rarity, RangeInt>() { { enum_Rarity.Ordinary, new RangeInt(5, 5) }, { enum_Rarity.Advanced, new RangeInt(10, 5) }, { enum_Rarity.Rare, new RangeInt(20, 5) }, { enum_Rarity.Epic, new RangeInt(30, 5) } };
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
 
@@ -81,7 +81,7 @@ namespace GameSetting
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
 
         public const int I_RewardLevelRate = 40;
-        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.PerkAcquire };
+        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire };
         public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.RewardChest };
 
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
@@ -168,9 +168,7 @@ namespace GameSetting
                     }
             }
         }
-        public static int GetEventPerkAcquireSuccessRate(int tryCount) => 20 * (tryCount + 1);
-        public static int GetEventPerkAcquireCoinsAmount(int tryCount) => 5 * (tryCount + 1);
-        
+
         public static float GetLevelObjectHealth(enum_TileObjectType objectType)
         {
             switch(objectType)
@@ -1310,7 +1308,7 @@ namespace GameSetting
         }
 
         public virtual void Tick(float deltaTime) {
-            m_Expires.Traversal((EntityExpireBase expire) => { expire.OnTick(deltaTime); },true);
+            m_Expires.Traversal((EntityExpireBase expire) => { expire.OnTick(deltaTime); });
             m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
 
             if (b_expireUpdated)

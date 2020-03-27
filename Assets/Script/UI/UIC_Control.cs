@@ -119,7 +119,7 @@ public class UIC_Control : UIControlBase {
 
     void OnEquipmentBtnClick()
     {
-        UIManager.Instance.ShowPage<UI_EquipmentPack>(true, 0f).Show();
+        UIManager.Instance.ShowPage<UI_PlayerPerks>(true, 0f).Show();
     }
 
     Action OnSettingClick;

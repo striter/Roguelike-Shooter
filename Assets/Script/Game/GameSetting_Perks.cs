@@ -449,14 +449,37 @@ public static class PerkDataManager
     {
         m_AllPerks.Clear();
         m_PerkRarities.Clear();
-        TReflection.TraversalAllInheritedClasses(((Type type, ExpirePerkBase action) => {
-            m_AllPerks.Add(action.m_Index, action);
-            if (!m_PerkRarities.ContainsKey(action.m_Rarity))
-                m_PerkRarities.Add(action.m_Rarity, new List<int>());
-            m_PerkRarities[action.m_Rarity].Add(action.m_Index);
+        TReflection.TraversalAllInheritedClasses(((Type type, ExpirePerkBase perk) => {
+            m_AllPerks.Add(perk.m_Index, perk);
+            if (perk.m_DataHidden)
+                return;
+            if (!m_PerkRarities.ContainsKey(perk.m_Rarity))
+                m_PerkRarities.Add(perk.m_Rarity, new List<int>());
+            m_PerkRarities[perk.m_Rarity].Add(perk.m_Index);
         }), PerkSaveData.New(-1));
     }
     public static int RandomPerkIndex(enum_Rarity rarity, System.Random seed) => m_AllPerks.RandomKey(seed);
+
+    public static List<int> RandomPerks(int perkCount,Dictionary<enum_Rarity,int> perkGenerate,Dictionary<int,ExpirePerkBase> playerPerks,System.Random random=null)
+    {
+        Dictionary<enum_Rarity, List<int>> _perkIDs =m_PerkRarities.DeepCopy();
+        Dictionary<enum_Rarity, int> _rarities = perkGenerate.DeepCopy();
+
+        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Stack == perk.m_MaxStack) _perkIDs[perk.m_Rarity].Remove(perk.m_Index); });
+
+        List<int> randomIDs = new List<int>();
+        for (int i = 0; i < perkCount; i++)
+        {
+            enum_Rarity rarity = TCommon.RandomPercentage(_rarities, random);
+            if (_perkIDs[rarity].Count == 0)
+                rarity = enum_Rarity.Ordinary;
+
+            int perkID = _perkIDs[rarity].RandomItem(random);
+            _perkIDs[rarity].Remove(perkID);
+            randomIDs.Add(perkID);
+        }
+        return randomIDs;
+    }
 
     public static ExpirePerkBase GetPerkData(int index) => m_AllPerks[index];
 

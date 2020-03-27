@@ -9,10 +9,9 @@ public class UI_PerkSelect : UIPage
 {
     UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem> m_Grid;
     UIC_EquipmentNameFormatIntro m_Selecting;
-
-    List<ExpirePerkBase> m_Perks;
-    int m_selectIndex;
-    Action<ExpirePerkBase> OnEquipmentSelect;
+    
+    int m_SelectPerkIndex;
+    Action<int> OnEquipmentSelect;
 
     protected override void Init()
     {
@@ -22,27 +21,26 @@ public class UI_PerkSelect : UIPage
         rtf_Container.Find("Confirm").GetComponent<Button>().onClick.AddListener(OnConfirm);
     }
 
-    public void Show(List<ExpirePerkBase> _perks,Action<ExpirePerkBase> OnPerkSelect)
+    public void Show(List<int> _perks,Action<int> OnPerkSelect)
     {
-        m_selectIndex = -1;
+        m_SelectPerkIndex = -1;
         this.OnEquipmentSelect = OnPerkSelect;
-        m_Perks = _perks;
 
         m_Grid.ClearGrid();
-        m_Perks.Traversal((int index, ExpirePerkBase perk) => {
-            m_Grid.AddItem(index).SetInfo(perk);
+        _perks.Traversal((int perk) => {
+            m_Grid.AddItem(perk).SetInfo(PerkDataManager.GetPerkData( perk));
         });
-        m_Grid.OnItemClick(0);
+        m_Grid.OnItemClick(_perks[0]);
     }
 
     void OnItemSelect(int index)
     {
-        m_selectIndex = index;
-        m_Selecting.SetInfo(m_Perks[m_selectIndex]);
+        m_SelectPerkIndex = index;
+        m_Selecting.SetInfo(PerkDataManager.GetPerkData(m_SelectPerkIndex));
     }
     void OnConfirm()
     {
-        OnEquipmentSelect(m_Perks[m_selectIndex]);
+        OnEquipmentSelect(m_SelectPerkIndex);
         OnCancelBtnClick();
     }
 }

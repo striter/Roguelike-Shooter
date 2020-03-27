@@ -200,39 +200,62 @@ public static class TCommon
     }
     #endregion
     #region Collections/Array Traversal
+    public static T GetIndexKey<T, Y>(this Dictionary<T, Y> dictionary, int index) => dictionary.ElementAt(index).Key;
+    public static Y GetIndexValue<T, Y>(this Dictionary<T, Y> dictionary, int index) => dictionary.ElementAt(index).Value;
+
+    public static List<T> DeepCopy<T>(this List<T> list) where T : struct
+    {
+        List<T> copyList = new List<T>();
+        list.Traversal((T value) => { copyList.Add(value); });
+        return copyList;
+    }
+
+    public static Dictionary<T,Y> DeepCopy<T,Y>(this Dictionary<T,Y> dictionary) where T:struct where Y: struct
+    {
+        Dictionary<T, Y> copyDic = new Dictionary<T, Y>();
+        dictionary.Traversal((T key, Y value) => { copyDic.Add(key, value); });
+        return copyDic;
+    }
+
+    public static Dictionary<T,List<Y>> DeepCopy<T,Y>(this Dictionary<T,List<Y>> dictionary) where T:struct where Y:struct
+    {
+        Dictionary<T, List<Y>> copyDic = new Dictionary<T, List<Y>>();
+        dictionary.Traversal((T key, List<Y> value) => { copyDic.Add(key, value.DeepCopy()); });
+        return copyDic;
+    }
 
     public static void Traversal<T>(this List<T> list,Action<int,T> OnEachItem)=>TraversalEnumerableIndex(0, list.Count,(int index)=> {  OnEachItem(index,list[index]); return false;});
-    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem, bool listChanged = false)
+    public static void Traversal<T>(this List<T> list, Action<T> OnEachItem, bool shallowCopy = false)
     {
-        List<T> tempList = listChanged ? new List<T>(list) : list;
+        List<T> tempList = shallowCopy ? new List<T>(list) : list;
         TraversalEnumerableIndex(0, list.Count, (int index) => { OnEachItem(tempList[index]); return false; });
     }
-    public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem,bool listChanged=false)
+    public static void TraversalBreak<T>(this List<T> list, Func<T,bool> OnEachItem,bool shallowCopy=false)
     {
-        List<T> tempList = listChanged ? new List<T>(list) : list;
+        List<T> tempList = shallowCopy ? new List<T>(list) : list;
         TraversalEnumerableIndex(0, list.Count, (int index) => {return OnEachItem(tempList[index]);});
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey,bool changeValue=false)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T> OnEachKey,bool shallowCopy=false)
     {
-        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        Dictionary<T, Y> tempDic = shallowCopy ? new Dictionary<T, Y>(dic) : dic;
         foreach (T temp in tempDic.Keys)
             OnEachKey(temp);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue,bool changeValue=false)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<Y> OnEachValue,bool shallowCopy =false)
     {
-        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        Dictionary<T, Y> tempDic = shallowCopy  ? new Dictionary<T, Y>(dic) : dic;
         foreach (T temp in tempDic.Keys)
             OnEachValue(tempDic[temp]);
     }
-    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair,bool changeValue=false)
+    public static void Traversal<T, Y>(this Dictionary<T, Y> dic, Action<T, Y> OnEachPair,bool shallowCopy =false)
     {
-        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        Dictionary<T, Y> tempDic = shallowCopy  ? new Dictionary<T, Y>(dic) : dic;
         foreach (T temp in tempDic.Keys)
             OnEachPair(temp,tempDic[temp]);
     }
-    public static void TraversalBreak<T, Y>(this Dictionary<T, Y> dic, Func<Y, bool> OnEachItem, bool changeValue = false)
+    public static void TraversalBreak<T, Y>(this Dictionary<T, Y> dic, Func<Y, bool> OnEachItem, bool shallowCopy = false)
     {
-        Dictionary<T, Y> tempDic = changeValue ? new Dictionary<T, Y>(dic) : dic;
+        Dictionary<T, Y> tempDic = shallowCopy ? new Dictionary<T, Y>(dic) : dic;
         foreach (T temp in tempDic.Keys)
             if (OnEachItem(tempDic[temp]))
                 break;
