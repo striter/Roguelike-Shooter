@@ -52,9 +52,7 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float4 albedo = _InnerColor;
-
-				return albedo + _RimColor * i.rim;
+				return lerp(_InnerColor,_RimColor, i.rim);
 			}
 			ENDCG
 		}
