@@ -11,11 +11,11 @@
 		_DistortParam("Distort: X|Refraction Distort Y|Frequency Z|Specular Distort",Vector) = (1,1,1,1)
 		_FresnelParam("Fresnel: X | Base Y| Max Z| Scale ",Vector)=(1,1,1,1)
 		_FoamColor("Foam Color",Color)=(1,1,1,1)
-		_FoamWidth("Foam Width",Range(0,.5)) = .2
+		_FoamDepthParam("Depth/Foam: X| FoamWidth Y | DepthStart Z | Depth Width",Vector)=(.2,.5,1.5,1)
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Transparent" "Queue"="Transparent"  }
+		Tags { "RenderType"="Transparent" "Queue"="Transparent-1"  }
 		Cull Back
 		CGINCLUDE
 		#include "UnityCG.cginc"
@@ -67,7 +67,7 @@
 			}
 
 			float4 _FresnelParam;
-			float Fresnel(float3 normal, float3 viewDir) {
+			float FresnelOpacity(float3 normal, float3 viewDir) {
 				return lerp( _FresnelParam.x ,_FresnelParam.y, saturate(  _FresnelParam.z* (1 - dot(normal, viewDir))));
 			}
 
@@ -78,12 +78,26 @@
 				return specular;
 			}
 
-			float _FoamWidth;
-			float Foam(float4 screenPos) {
+			float4 _FoamDepthParam;
+			float Foam(float depthOffset) {
 				if (_CameraDepthTextureMode==0)
 					return 0;
-				float depthOffset = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, screenPos)).r - screenPos.w;
-				return smoothstep(_FoamWidth,0, depthOffset);
+				return step( depthOffset, _FoamDepthParam.x);
+				//return smoothstep(_FoamDepthParam.x, 0, depthOffset);		//More Realistic
+			}
+
+			float DepthOpacity(float depthOffset)
+			{
+				if (_CameraDepthTextureMode == 0)
+					return 0;
+				return smoothstep(_FoamDepthParam.y, _FoamDepthParam.y+ _FoamDepthParam.z,depthOffset);
+			}
+
+			float2 DepthDistort(float depthOffset, float2 distort)
+			{
+				if (_CameraDepthTextureMode == 0)
+					return distort;
+				return step(_FoamDepthParam.y, depthOffset) * distort;
 			}
 
 			v2f vert (appdata v)
@@ -99,24 +113,28 @@
 				return o;
 			}
 			
-			fixed4 frag (v2f i) : SV_Target
+			float4 frag (v2f i) : SV_Target
 			{
-				float2 distort = Distort(i.uv);
-
 				float3 normal = normalize(i.worldNormal);
 				float3 viewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
 				float3 lightDir = normalize(UnityWorldSpaceLightDir(i.worldPos));
-				
-				float fresnel = Fresnel(normal, viewDir);
-				
+				float linearDepthOffset = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, i.screenPos)).r - i.screenPos.w;
+
+				float2 distort = Distort(i.uv);
+
+				float foam = Foam(linearDepthOffset) * _FoamColor.a;
+				float4 foamColor = float4( _FoamColor.rgb*foam,0);
+
+				float fresnelOpacity = FresnelOpacity(normal, viewDir);
+				float depthOpacity = DepthOpacity(linearDepthOffset);
+				float totalOpacity = saturate( fresnelOpacity + depthOpacity);
+
 				float specular = Specular(distort, normal, viewDir, lightDir);
-				float4 specularColor = float4(_LightColor0.rgb*specular, 1);
+				float4 specularColor = float4(_LightColor0.rgb * specular, 0);
 
-				float foam = Foam(i.screenPos);
-				float4 foamColor = float4( _FoamColor.rgb*_FoamColor.a*foam,1);
-
+				float4 transparentTexture = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + DepthDistort(linearDepthOffset, distort) );
 				float4 albedo = float4((tex2D(_MainTex, i.uv+distort)*_Color).rgb,1);
-				return lerp(tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + distort), albedo, fresnel)+ foamColor + specularColor;
+				return lerp(transparentTexture, albedo, totalOpacity)+ foamColor + specularColor;
 			}
 			ENDCG
 		}

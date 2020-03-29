@@ -2,7 +2,8 @@
 {
 	Properties
 	{
-		_AbsorbStrength("Absorb Strength",Range(0,0.1))=.005
+		_DistortStrength("Distort Strength",Range(0,0.1))=.005
+		_DistortSpeed("Distort Speed",float)=1
 	}
 	SubShader
 	{
@@ -29,7 +30,8 @@
 				float4 centerScreenPos:TEXCOORD1;
 			};
 			sampler2D _CameraOpaqueTexture;
-			float _AbsorbStrength;
+			float _DistortStrength;
+			float _DistortSpeed;
 			v2f vert(appdata v)
 			{
 				v2f o;
@@ -43,10 +45,12 @@
 			{
 				float2 screenUV = i.screenPos.xy / i.screenPos.w;
 				float2 centerScreenUV = i.centerScreenPos.xy / i.centerScreenPos.w;
-				float2 dir = screenUV - centerScreenUV;
-				float2 distort = normalize(dir)*(1 - length(dir))*_AbsorbStrength;
+				float2 offsetDirection = screenUV - centerScreenUV;
+				float absorb = normalize(offsetDirection) * (1 - length(offsetDirection));
+				float distort = abs( sin( _Time.y* _DistortSpeed %3.14));
+				screenUV += absorb * _DistortStrength *distort;
 
-				fixed4 col = tex2D(_CameraOpaqueTexture,screenUV+ distort);
+				fixed4 col = tex2D(_CameraOpaqueTexture,screenUV);
 				return col;
 			}
 			ENDCG

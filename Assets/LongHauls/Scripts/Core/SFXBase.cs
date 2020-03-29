@@ -25,12 +25,12 @@ public class SFXBase :CObjectPoolMono<int> {
         EDITOR_DEBUG();
 #endif
     }
-    protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool tickLifeTime)
+    protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool tickPlayDuration)
     {
+        B_Activating = true;
         B_Delaying = true;
-        B_Activating = false;
         B_Playing = false;
-        m_TickLifeTime = tickLifeTime;
+        m_TickLifeTime = tickPlayDuration;
         m_SourceID = sourceID;
         f_playDuration = playDuration;
         f_delayDuration = delayDuration;
@@ -46,7 +46,6 @@ public class SFXBase :CObjectPoolMono<int> {
 
     protected virtual void OnPlay()
     {
-        B_Activating = true;
         B_Delaying = false;
         B_Playing = true;
     }
@@ -54,6 +53,7 @@ public class SFXBase :CObjectPoolMono<int> {
     protected virtual void OnStop()
     {
         f_lifeTimeCheck = I_SFXStopExternalDuration;
+        m_TickLifeTime = true;
         B_Delaying = false;
         B_Playing = false;
         m_AttachTo = null;
@@ -77,6 +77,9 @@ public class SFXBase :CObjectPoolMono<int> {
 
     protected virtual void Update()
     {
+        if (!B_Activating)
+            return;
+
         float deltaTime = m_ScaledDeltaTime ? Time.deltaTime : Time.unscaledDeltaTime;
         if (B_Delaying && f_delayTimeLeft >= 0)
         {
@@ -91,10 +94,12 @@ public class SFXBase :CObjectPoolMono<int> {
             transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
         }
 
-        if (!m_TickLifeTime||!B_Activating)
+        if (f_lifeTimeCheck < 0)
             return;
         f_lifeTimeCheck -= deltaTime;
 
+        if (!m_TickLifeTime)
+            return;
         if (B_Playing && f_playTimeLeft < 0)
             OnStop();
         if (!B_Playing && f_lifeTimeCheck < 0)
