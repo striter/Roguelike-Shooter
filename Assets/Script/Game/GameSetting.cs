@@ -122,8 +122,8 @@ namespace GameSetting
         {
             float halfWidth = widthSize / 2;
             float interpolateParam = Mathf.InverseLerp(0, halfWidth, Mathf.Abs(widthParam));
-            float adjustedInterpolate = Mathf.Clamp(interpolateParam,0,.8f)*(.5f+ Mathf.Lerp(.8f,.4f,interpolateParam)*.5f);
-            return Mathf.Sign(widthParam) * adjustedInterpolate * halfWidth;
+            interpolateParam = Mathf.Clamp(interpolateParam,0,.8f)*(.5f+ Mathf.Lerp(.8f,.4f,interpolateParam)*.5f);
+            return Mathf.Sign(widthParam) * interpolateParam * halfWidth;
         } 
 
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
