@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 
     public bool m_ShowErrorOnly = true;
+    public bool m_ConsoleOpening { get; private set; } = false;
     public int LogExistCount = 10;
     public int LogSaveCount = 30;
     Text m_LogText, m_FrameText;
@@ -21,7 +22,8 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 
         Transform tf_ConsoleCommand = transform.Find("ConsoleCommand");
         m_ConsoleCommands = new ObjectPoolListClass<int, ConsoleCommand>(tf_ConsoleCommand, "GridItem");
-        m_ConsoleCommands.transform.SetActivate(false);
+        m_ConsoleOpening = false;
+        m_ConsoleCommands.transform.SetActivate(m_ConsoleOpening);
     }
 
     public void InitConsole(Action<bool> _OnConsoleShow)
@@ -29,7 +31,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         OnConsoleShow = _OnConsoleShow;
         m_ConsoleCommands.ClearPool();
     }
-
+#region Console
     public ConsoleCommand AddConsoleBinding() => m_ConsoleCommands.AddItem(m_ConsoleCommands.Count);
     
     public class ConsoleCommand : CSimplePoolObject<int>
@@ -48,7 +50,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
             m_CommandTitle = transform.Find("Button/Title").GetComponent<Text>();
         }
 
-        public void EditorTick()
+        public void EditorKeycodeTick()
         {
             if (Input.GetKeyDown(m_KeyCode))
                 m_CommonButton.onClick.Invoke();
@@ -88,13 +90,13 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
             m_CommonButton.onClick.AddListener(() => OnValueClick(m_ValueInput.text));
         }
     }
-
+#endregion
     float m_fastKeyCooldown = 0f;
 
     private void Update()
     {
 #if UNITY_EDITOR
-        m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.EditorTick(); });
+        m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.EditorKeycodeTick(); });
 #endif
 
         m_FrameText.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
@@ -106,8 +108,10 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         if (Input.touchCount >= 4 || Input.GetKey(KeyCode.BackQuote))
         {
             m_fastKeyCooldown = .5f;
-            m_ConsoleCommands.transform.SetActivate(!m_ConsoleCommands.transform.gameObject.activeSelf);
-            OnConsoleShow?.Invoke(m_ConsoleCommands.transform.gameObject.activeInHierarchy);
+            m_ConsoleOpening = !m_ConsoleOpening;
+            m_ConsoleCommands.transform.SetActivate(m_ConsoleOpening);
+            OnConsoleShow?.Invoke(m_ConsoleOpening);
+            UpdateLogUI();
         }
     }
 
@@ -147,6 +151,22 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
     {
         if (m_LogText != null)
             m_LogText.text = "";
+
+        if(!m_ConsoleOpening)
+        {
+            int errorCount=0,warningCount=0,logCount=0;
+            List_Log.Traversal((log l) => {
+                switch(l.logType)
+                {
+                    case LogType.Error:errorCount++;break;
+                    case LogType.Warning: warningCount++; break;
+                    case LogType.Log: logCount++; break;
+                }
+            });
+            m_LogText.text += string.Format("<color=#FFFFFF>Errors:{0},Warnings:{1},Logs:{2}</color>",errorCount,warningCount, logCount);
+            return;
+        }
+
         int startIndex = 0;
         int listCount = List_Log.Count;
         if (listCount >= LogExistCount)
