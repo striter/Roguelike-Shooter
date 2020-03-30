@@ -16,40 +16,40 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         m_Animator= new PlayerAnimatorBeth(animator, _OnAnimEvent);
         return m_Animator;
     }
-    protected float f_rollCheck;
-    protected bool m_rolling => f_rollCheck > 0;
+    protected TimeCounter m_RollTimer;
+    protected bool m_Rolling => m_RollTimer.m_Timing;
     Vector3 m_rollDirection,m_rollingLookRotation;
+    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    {
+        base.OnPoolItemInit(_identity, _OnRecycle);
+        m_RollTimer = new TimeCounter(F_RollDuration, true);
+    }
     protected override void OnAbilityTrigger()
     {
         base.OnAbilityTrigger();
-        f_rollCheck = F_RollDuration;
         Vector2 rollAxisDirection = m_MoveAxisInput == Vector2.zero ? new Vector2(0, 1) : m_MoveAxisInput;
         m_rollDirection = base.CalculateMoveDirection(rollAxisDirection);
         m_rollingLookRotation = m_rollDirection;
         m_Animator.BeginRoll(F_RollDuration);
+        m_RollTimer.Reset();
     }
 
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
-        if (m_rolling)
-        {
-            f_rollCheck -= deltaTime;
-            if (!m_rolling)
-                m_Animator.EndRoll();
-        }
-        //EnableHitbox(!m_rolling);
+        if (!m_Rolling)
+            return;
+
+        m_RollTimer.Tick(deltaTime);
+        EnableHitbox(!m_Rolling);
+        if (!m_Rolling)
+            m_Animator.EndRoll();
     }
-    protected override void OnDead()
-    {
-        base.OnDead();
-        f_rollCheck = -1;
-    }
-    protected override bool CalculateWeaponFire() => !m_rolling&& base.CalculateWeaponFire();
-    protected override float CalculateMovementSpeedBase() => (m_rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
-    protected override float CalculateMovementSpeedMultiple() => m_rolling ? 1f : base.CalculateMovementSpeedMultiple();
-    protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_rolling ? m_rollDirection : base.CalculateMoveDirection(moveAxisInput);
-    protected override Quaternion GetCharacterRotation() => m_rolling ? Quaternion.LookRotation(m_rollingLookRotation, Vector3.up) : base.GetCharacterRotation();
+    protected override bool CalculateWeaponFire() => !m_Rolling&& base.CalculateWeaponFire();
+    protected override float CalculateMovementSpeedBase() => (m_Rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
+    protected override float CalculateMovementSpeedMultiple() => m_Rolling ? 1f : base.CalculateMovementSpeedMultiple();
+    protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_Rolling ? m_rollDirection : base.CalculateMoveDirection(moveAxisInput);
+    protected override Quaternion GetCharacterRotation() => m_Rolling ? Quaternion.LookRotation(m_rollingLookRotation, Vector3.up) : base.GetCharacterRotation();
 
     class PlayerAnimatorBeth:PlayerAnimator
     {

@@ -56,7 +56,6 @@ public class GameManager : GameManagerBase
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     Transform tf_CameraAttach;
     ChunkGameObjectData m_PlayerStart,m_PortalMain,m_PortalExtra;
-    float m_CameraAttachZ;
 
     public override bool B_InGame => true;
     public bool m_GameLoading { get; private set; } = false;
@@ -159,7 +158,6 @@ public class GameManager : GameManagerBase
         {
             case enum_TileObjectType.EEntrance1x1:
                 m_PlayerStart=objectData;
-                m_CameraAttachZ = objectData.pos.z;
                 GameObjectManager.SpawnInteract<InteractTeleport>(enum_Interaction.Teleport, objectData.pos, objectData.rot).Play(m_GameLevel.m_GameStyle);
                 break;
             case enum_TileObjectType.EPortalMain2x1:
