@@ -46,7 +46,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => {GameObjectManager.SpawnInteract<InteractPickupArmor>(  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(armor), !m_Battling);});
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, (int)enum_PlayerWeapon.Railgun, enum_PlayerWeapon.Railgun,(int weaponIdentity) => {
             GameObjectManager.SpawnInteract<InteractWeaponPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(WeaponSaveData.CreateNew((enum_PlayerWeapon)weaponIdentity)); });
-
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
     }
     #endregion
     protected static GameManager nInstance;
@@ -102,8 +102,18 @@ public class GameManager : GameManagerBase
             return;
 
         float deltaTime = Time.deltaTime;
-        tf_CameraAttach.position = m_LocalPlayer.transform.position;
+        tf_CameraAttach.position = CalculateCameraPosition();
     }
+
+    Vector3 CalculateCameraPosition()
+    {
+        Vector3 position = GameLevelManager.Instance.m_LevelCenter;
+        Vector3 offset =   m_LocalPlayer.transform.position- position;
+        position += Vector3.right * GameExpression.GetCameraSmoothInterpolate(offset.x,GameLevelManager.Instance.m_LevelWidth); 
+        position += Vector3.forward * GameExpression.GetCameraSmoothInterpolate(offset.z, GameLevelManager.Instance.m_LevelHeight);
+        return position;
+    }
+
     //Call When Level Changed
     void LoadStage() => this.StartSingleCoroutine(999, DoLoadStage());
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game

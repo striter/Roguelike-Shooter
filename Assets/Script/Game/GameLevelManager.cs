@@ -13,6 +13,9 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 {
     LevelChunkGame m_GameChunk;
     public Light m_DirectionalLight { get; private set; }
+    public Vector3 m_LevelCenter { get; private set; }
+    public float m_LevelHeight { get; private set; }
+    public float m_LevelWidth { get; private set; }
     Dictionary<enum_ChunkType, List<LevelChunkData>> m_ChunkDatas;
     protected override void Awake()
     {
@@ -52,7 +55,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     {
         m_GameChunk.InitGameChunk( m_ChunkDatas[levelType].RandomItem(_random),_random,NavigationManager.UpdateChunkData);
         Vector3 size = m_GameChunk.m_Size.ToPosition();
-        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(size / 2, new Vector3(size.x, .5f, size.z)));
+        m_LevelCenter = size / 2;
+        m_LevelWidth = size.x;
+        m_LevelHeight = size.z;
+        NavigationManager.InitNavMeshData(m_GameChunk.transform, new Bounds(m_LevelCenter, new Vector3(m_LevelWidth, .5f, m_LevelHeight)));
         m_GameChunk.m_ChunkObjects.Traversal((enum_TileObjectType obejctType,List<ChunkGameObjectData> objectDatas)=> {
             objectDatas.Traversal((ChunkGameObjectData data) => { OnLevelObjectGenerate(obejctType,data); });
         });

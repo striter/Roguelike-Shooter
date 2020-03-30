@@ -194,7 +194,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         }
         return colorParam;
     }
-    public void ClearLog()
+    public void ClearConsoleLog()
     {
         m_LogQueue.Clear();
         UpdateLogUI();
