@@ -14,40 +14,39 @@ public class GameManager : GameManagerBase
     public bool B_PhysicsDebugGizmos = true;
     void AddConsoleBinddings()
     {
-        List<UIT_MobileConsole.CommandBinding> m_bindings = new List<UIT_MobileConsole.CommandBinding>();
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Show Seed", "", KeyCode.None, (string value) => { Debug.LogError(m_GameLevel.m_GameSeed); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Level", "", KeyCode.Minus, (string value) => { OnChunkPortalEnter( m_GameLevel.GetNextLevelGenerate(m_LocalPlayer).m_PortalMain); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Skip Stage", "", KeyCode.Equals, (string value) => {OnChunkPortalEnter( m_GameLevel.m_FinalStage? enum_LevelType.GameEnd:  enum_LevelType.StageEnd);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Kill All", "", KeyCode.Alpha0, (string value) => {
+        UIT_MobileConsole.Instance.InitConsole((bool show) => { Time.timeScale = show ? .1f : 1f; });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed",KeyCode.None,()=> { Debug.LogError(m_GameLevel.m_GameSeed); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextLevelGenerate(m_LocalPlayer).m_PortalMain); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_LevelType.GameEnd : enum_LevelType.StageEnd); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test Level", KeyCode.Backspace, (int)enum_LevelType.Trader, enum_LevelType.Trader,(int index)=> { OnChunkPortalEnter((enum_LevelType)index); });
+
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All",  KeyCode.Alpha0, () => {
             GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
             {
                 character.m_HitCheck.TryHit(new DamageInfo(character.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
             });
-        }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Freeze All", "0.5", KeyCode.Alpha8, (string value) =>
+        });
+
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Freeze",  KeyCode.Alpha8, "0.5", (string value) =>
         {
             GetCharacters( enum_EntityFlag.Enermy,true).Traversal((EntityCharacterBase entity) => {
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EffectInfo(-1,0, enum_CharacterEffect.Freeze,float.Parse( value))));
             });
-        }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Enermy", "101", KeyCode.Z, (string id) => {
-            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position+ TCommon.RandomXZSphere()*5f),Quaternion.identity, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_StageIndex);
-        }));
+        });
 
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Damage", "20", KeyCode.N, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Heal", "20", KeyCode.M, (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); }));
-        
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Perk Item", "1", KeyCode.F1, (string actionIndex) => { GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(actionIndex)); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Perk Select", "", KeyCode.F2, (string actionIndex) => { SpawnBattleFinishReward(); }));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Coins", "20", KeyCode.F5, (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupCoin, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(coins),!m_Battling);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Health", "20", KeyCode.F6, (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupHealth, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(health), !m_Battling);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Armor", "20", KeyCode.F7, (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(enum_Interaction.PickupArmor,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(armor), !m_Battling);}));
-        m_bindings.Add(UIT_MobileConsole.CommandBinding.Create("Weapon", "102", KeyCode.F8, (string weaponIdentity) => {
-            enum_PlayerWeapon spawnWeapon = GameDataManager.TryGetWeaponEnum(weaponIdentity);
-            if(spawnWeapon != enum_PlayerWeapon.Invalid)
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon,  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(spawnWeapon))); }));
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
+            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
+        });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));});
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal",  KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Item",  KeyCode.F1, "1", (string actionIndex) => { GameObjectManager.SpawnInteract<InteractPerkPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(actionIndex)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Select", KeyCode.F2, SpawnBattleFinishReward);
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Coins", KeyCode.F5, "20", (string coins) => { GameObjectManager.SpawnInteract<InteractPickupAmount>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(coins),!m_Battling);});
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Health", KeyCode.F6, "20", (string health) => {GameObjectManager.SpawnInteract<InteractPickupAmount>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(health), !m_Battling);});
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => {GameObjectManager.SpawnInteract<InteractPickupAmount>(  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(armor), !m_Battling);});
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, (int)enum_PlayerWeapon.Railgun, enum_PlayerWeapon.Railgun,(int weaponIdentity) => {
+            GameObjectManager.SpawnInteract<InteractWeaponPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(WeaponSaveData.CreateNew((enum_PlayerWeapon)weaponIdentity)); });
 
-        UIT_MobileConsole.Instance.AddConsoleBindings(m_bindings, (bool show) => { Time.timeScale = show ? .1f : 1f; });
     }
     #endregion
     protected static GameManager nInstance;
@@ -158,7 +157,6 @@ public class GameManager : GameManagerBase
         {
             case enum_TileObjectType.EEntrance1x1:
                 m_PlayerStart=objectData;
-                GameObjectManager.SpawnInteract<InteractTeleport>(enum_Interaction.Teleport, objectData.pos, objectData.rot).Play(m_GameLevel.m_GameStyle);
                 break;
             case enum_TileObjectType.EPortalMain2x1:
                 m_PortalMain= objectData;
@@ -172,25 +170,44 @@ public class GameManager : GameManagerBase
             case enum_TileObjectType.EEventArea3x3:
                 switch (m_GameLevel.m_LevelType)
                 {
-                    case enum_LevelType.WeaponReforge:
-                        GameObjectManager.SpawnInteract<InteractWeaponReforge>(enum_Interaction.WeaponReforge, objectData.pos, objectData.rot).Play(GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, m_GameLevel.m_Random)].RandomItem(m_GameLevel.m_Random));
-                        break;
-                    case enum_LevelType.Bonefire:
-                        GameObjectManager.SpawnInteract<InteractBonfire>(enum_Interaction.Bonfire, objectData.pos, objectData.rot).Play();
-                        break;
                     case enum_LevelType.Trader:
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.left, objectData.rot).Play(GameConst.I_EventEquipmentTradePerk, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerkIndex(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradePerk, m_GameLevel.m_Random), m_GameLevel.m_Random)));
+                        enum_Rarity rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradePerk, m_GameLevel.m_Random);
 
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.right, objectData.rot).Play(GameConst.I_EventEquipmentTradePerk, GameObjectManager.SpawnInteract<InteractEquipment>(enum_Interaction.Equipment, objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerkIndex(TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradePerk, m_GameLevel.m_Random), m_GameLevel.m_Random)));
-
-                        enum_Rarity rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon, m_GameLevel.m_Random);
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_Random)))));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.left, objectData.rot).Play(GameExpression.GetEventTradePrice( enum_Interaction.PerkPickup,rarity).Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractPerkPickup>( objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerk(rarity, m_GameLevel.m_Random)));
 
                         rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon, m_GameLevel.m_Random);
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(enum_Interaction.TradeContainer, objectData.pos + LevelConst.I_TileSize * Vector3.back, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_Random)))));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractWeaponPickup>( Vector3.zero,Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_Random))));
+
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.right, objectData.rot).Play(GameExpression.GetEventTradePrice(enum_Interaction.PickupHealthPack).Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractPickupHealthPack>( objectData.pos, objectData.rot).Play(GameConst.I_HealthPackAmount,false));
+                        break;
+                    case enum_LevelType.WeaponReforge:
+                        GameObjectManager.SpawnInteract<InteractWeaponReforge>(objectData.pos, objectData.rot).Play();
+                        break;
+                    case enum_LevelType.Bonefire:
+                        GameObjectManager.SpawnInteract<InteractBonfire>(objectData.pos, objectData.rot).Play();
+                        break;
+                    case enum_LevelType.WeaponVendorRare:
+                        GameObjectManager.SpawnInteract<InteractWeaponVendorMachineRare>(objectData.pos, objectData.rot).Play();
+                        break;
+                    case enum_LevelType.WeaponVendorNormal:
+                        GameObjectManager.SpawnInteract<InteractWeaponVendorMachineNormal>(objectData.pos, objectData.rot).Play();
+                        break;
+                    case enum_LevelType.PerkRare:
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkRarePrice,GameObjectManager.SpawnInteract<InteractPerkPickup>(Vector3.zero,Quaternion.identity).Play(PerkDataManager.RandomPerk( enum_Rarity.Rare,m_GameLevel.m_Random)));
+                        break;
+                    case enum_LevelType.PerkFill:
+                        GameObjectManager.SpawnInteract<InteractPerkFill>(objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerks(2,GameConst.D_EventPerkRareRate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
+                        break;
+                    case enum_LevelType.PerkRareSelect:
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkRareSelectPrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkRareSelectRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
+                        break;
+                    case enum_LevelType.WeaponRecycle:
+                        GameObjectManager.SpawnInteract<InteractWeaponRecycle>(objectData.pos, objectData.rot).Play();
+                        break;
+                    case enum_LevelType.SafeCrack:
+                        GameObjectManager.SpawnInteract<InteractSafeCrack>(objectData.pos, objectData.rot).Play();
                         break;
                 }
-
                 break;
         }
     }
@@ -198,10 +215,10 @@ public class GameManager : GameManagerBase
     void OnGenerateLevelPortals()
     {
         GameLevelPortalData data = m_GameLevel.GetNextLevelGenerate(m_LocalPlayer);
-        GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, m_PortalMain.pos, m_PortalMain.rot).Play(data.m_PortalMain, OnChunkPortalEnter);
+        GameObjectManager.SpawnInteract<InteractPortal>( m_PortalMain.pos, m_PortalMain.rot).Play(data.m_PortalMain, OnChunkPortalEnter);
 
         if(data.m_PortalExtra!= enum_LevelType.Invalid)
-            GameObjectManager.SpawnInteract<InteractPortal>(enum_Interaction.Portal, m_PortalExtra.pos, m_PortalExtra.rot).Play( data.m_PortalExtra, OnChunkPortalEnter);
+            GameObjectManager.SpawnInteract<InteractPortal>( m_PortalExtra.pos, m_PortalExtra.rot).Play( data.m_PortalExtra, OnChunkPortalEnter);
     }
 
     void OnChunkPortalEnter(enum_LevelType levelType)
@@ -433,7 +450,7 @@ public class GameManager : GameManagerBase
     #region Game Item Management
     void SpawnBattleFinishReward()
     {
-        GameObjectManager.SpawnInteract<InteractPerkAcquire>(enum_Interaction.PerkAcquire, GetPickupPosition(m_LocalPlayer), Quaternion.identity).Play(PerkDataManager.RandomPerks(3,GameConst.D_BattleFinishPerkGenerate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
+        GameObjectManager.SpawnInteract<InteractPerkSelect>( GetPickupPosition(m_LocalPlayer), Quaternion.identity).Play(PerkDataManager.RandomPerks(3,GameConst.D_BattleFinishPerkGenerate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
     }
 
     void OnBattleEnermyKilled(EntityCharacterBase entity)
@@ -444,18 +461,18 @@ public class GameManager : GameManagerBase
         PickupGenerateData pickupGenerateData = entity.E_SpawnType == enum_EnermyType.E5 ? m_GameLevel.m_InteractGenerate.m_ElitePickupData : m_GameLevel.m_InteractGenerate.m_NormalPickupData;
 
         if (pickupGenerateData.CanGenerateHealth())
-            GameObjectManager.SpawnInteract<InteractPickupHealth>(enum_Interaction.PickupHealth, GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_HealthPickupAmount, !m_Battling);
+            GameObjectManager.SpawnInteract<InteractPickupHealth>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_HealthPickupAmount, !m_Battling);
 
         if (pickupGenerateData.CanGenerateArmor())
-            GameObjectManager.SpawnInteract<InteractPickupArmor>(enum_Interaction.PickupArmor, GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_ArmorPickupAmount, !m_Battling);
+            GameObjectManager.SpawnInteract<InteractPickupArmor>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_ArmorPickupAmount, !m_Battling);
 
         int amount;
         if (pickupGenerateData.CanGenerateCoins(out amount))
-            GameObjectManager.SpawnInteract<InteractPickupCoin>(enum_Interaction.PickupCoin, GetPickupPosition(entity), Quaternion.identity).Play(amount, !m_Battling);
+            GameObjectManager.SpawnInteract<InteractPickupCoin>( GetPickupPosition(entity), Quaternion.identity).Play(amount, !m_Battling);
         
         enum_Rarity weaponRarity = TCommon.RandomPercentage(pickupGenerateData.m_WeaponRate, enum_Rarity.Invalid);
         if (weaponRarity != enum_Rarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractWeapon>(enum_Interaction.Weapon, GetPickupPosition(entity), Quaternion.identity).Play(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()), null));
+            GameObjectManager.SpawnInteract<InteractWeaponPickup>( GetPickupPosition(entity), Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()));
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere()* 1.5f);

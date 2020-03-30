@@ -51,13 +51,30 @@ namespace GameSetting
         public const int I_ArmorPickupAmount = 25;
         public const int I_HealthPackAmount = 50;
 
-        public static readonly RangeInt IR_EventTradeBuffPrice = new RangeInt(20, 5);
-        public static readonly RangeInt IR_EventMedicPrice = new RangeInt(10, 5);
-        public const int I_EventEquipmentTradePerk = 10;
-        public static readonly Dictionary<enum_Rarity, int> D_BattleFinishPerkGenerate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public static readonly Dictionary<enum_Rarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_Rarity, RangeInt>() { { enum_Rarity.Ordinary, new RangeInt(5, 5) }, { enum_Rarity.Advanced, new RangeInt(10, 5) }, { enum_Rarity.Rare, new RangeInt(20, 5) }, { enum_Rarity.Epic, new RangeInt(30, 5) } };
-        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
 
+        public static readonly Dictionary<enum_Rarity, int> D_BattleFinishPerkGenerate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+
+
+        public const int I_WeaponVendorMachineNormalPrice = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+        public const int I_WeaponVendorMachineRarePrice = 15;
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 5 }, { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 45 }, { enum_Rarity.Epic, 30 } };
+        public const int I_EventPerkRarePrice = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
+        public const int I_EventPerkRareSelectPrice = 15;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkRareSelectRate = new Dictionary<enum_Rarity, int>() { {enum_Rarity.Advanced,20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkFillRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced , 30 }, { enum_Rarity.Rare, 8 },{ enum_Rarity.Epic,2} };
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
+        public const int I_EventWeaponReforgeSecondPrice = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
+        public const int I_EventSafeCrackPrice = 20;
+        public const int I_EventSafeCoinsCount = 5;
+        public const int I_EventSafeCoinsAmount = 7;
+        public static readonly RangeInt RI_EventSafeWeaponCount = new RangeInt(1, 1);
+        public static readonly Dictionary<enum_Rarity, int> D_EventSafeWeaponRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
+        public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
+        public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
 
         public static class AI
         {
@@ -81,8 +98,8 @@ namespace GameSetting
         public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
 
         public const int I_RewardLevelRate = 40;
-        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire };
-        public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.RewardChest };
+        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, };
+        public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkRareSelect, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
 
         public const int I_CampFarmPlot4UnlockDifficulty = 3;
         public const int I_CampFarmPlot5UnlockDifficulty = 10;
@@ -142,9 +159,9 @@ namespace GameSetting
             switch (interactType)
             {
                 default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
-                case enum_Interaction.PickupHealth:
+                case enum_Interaction.PickupHealthPack:
                     return new RangeInt(10, 0);
-                case enum_Interaction.Equipment:
+                case enum_Interaction.PerkPickup:
                     switch (perkRarity)
                     {
                         default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
@@ -153,7 +170,7 @@ namespace GameSetting
                         case enum_Rarity.Rare: return new RangeInt(10, 0);
                         case enum_Rarity.Epic: return new RangeInt(10, 0);
                     }
-                case enum_Interaction.Weapon:
+                case enum_Interaction.WeaponPickup:
                     switch (weaponRarity)
                     {
                         default:Debug.LogError("Invalid Weapon Rarity");return new RangeInt(0, -1);
@@ -238,20 +255,7 @@ namespace GameSetting
                         );
             }
         }
-
-        public static string GetTeleportHex(this enum_GameStyle style)
-        {
-            switch(style)
-            {
-                default: Debug.LogError("Invalid Convertions Here!"); return "";
-                case enum_GameStyle.Desert: return "00FF00FF";
-                case enum_GameStyle.Forest: return "FF00FFFF";
-                case enum_GameStyle.Frost: return "FFFF00FF";
-                case enum_GameStyle.Horde: return "FF0000FF";
-                case enum_GameStyle.Undead: return "00FFFFFF";
-            }
-        }
-
+        
         public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
         {
             switch(status)
@@ -306,17 +310,7 @@ namespace GameSetting
     
     public static class UIConvertions
     {
-        public static string GetInteractIcon(this enum_Interaction type)
-        {
-            switch(type)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!");
-                    return "";
-                case enum_Interaction.Portal:
-                    return "InteractIcon_" + type;
-            }
-        }
+        public static string GetInteractIcon(this enum_Interaction type) =>"InteractIcon_" + type;
         public static string GetNumericVisualizeIcon(this enum_Interaction type)
         {
             switch (type)
@@ -1618,10 +1612,8 @@ namespace GameSetting
         {
             m_Coins -= price * F_CoinsCostMultiply;
         }
-        public void OnCoinsGain(float coinAmount,bool isPickup)
+        public void OnCoinsGain(float coinAmount)
         {
-            if(isPickup)
-                m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnGainCoins(coinAmount); });
             m_Coins += coinAmount;
         }
         #endregion
@@ -1803,7 +1795,6 @@ namespace GameSetting
         public virtual void OnAttack(bool criticalHit) { }
         public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
-        public virtual void OnGainCoins(float coinAmount) { }
         public virtual void OnMove(float distsance) { }
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }

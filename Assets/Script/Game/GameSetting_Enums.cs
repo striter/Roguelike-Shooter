@@ -67,10 +67,18 @@ namespace GameSetting
 
         Trader,
         Bonefire,
-        RewardChest,
         WeaponReforge,
+        WeaponVendorNormal,
+        WeaponRecycle,
+        PerkRare,
+        PerkFill,
+
+        WeaponVendorRare,
+        SafeCrack,
+        PerkRareSelect,
 
         StageEnd,
+        StageEndless,
         GameEnd,
     }
 
@@ -87,7 +95,12 @@ namespace GameSetting
     public enum enum_Interaction
     {
         Invalid = -1,
-        GameBegin, Bonfire, TradeContainer, PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, RewardChest, PerkAcquire, WeaponReforge, Equipment, Weapon, Teleport, Portal, GameEnd,
+        GameBegin,
+        Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
+        TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, WeaponPickup, PerkSelect,
+        Portal,
+        GameEnd,
+
         CampBegin, CampStage, CampDifficult, CampFarm, CampAction, CampEnd,
     }
 
@@ -258,10 +271,16 @@ namespace GameSetting
                     return enum_ChunkType.Invalid;
                 case enum_LevelType.Start:
                     return enum_ChunkType.Start;
-                case enum_LevelType.Bonefire:
-                case enum_LevelType.RewardChest:
                 case enum_LevelType.Trader:
+                case enum_LevelType.Bonefire:
+                case enum_LevelType.PerkFill:
+                case enum_LevelType.PerkRare:
+                case enum_LevelType.PerkRareSelect:
                 case enum_LevelType.WeaponReforge:
+                case enum_LevelType.WeaponRecycle:
+                case enum_LevelType.WeaponVendorRare:
+                case enum_LevelType.WeaponVendorNormal:
+                case enum_LevelType.SafeCrack:
                     return enum_ChunkType.Event;
             }
         }
@@ -274,16 +293,23 @@ namespace GameSetting
             switch (eventType)
             {
                 default:
-                    Debug.LogError("Invalid Convertions Here!");
+                    Debug.LogError("Invalid Convertions Here!"+ eventType);
                     return enum_ChunkPortalType.Invalid;
                 case enum_LevelType.StageEnd:
                 case enum_LevelType.GameEnd:
                     return  enum_ChunkPortalType.Battle;
-                case enum_LevelType.Bonefire:
-                case enum_LevelType.RewardChest:
                 case enum_LevelType.Trader:
+                case enum_LevelType.Bonefire:
+                case enum_LevelType.NormalBattle:
+                case enum_LevelType.PerkFill:
+                case enum_LevelType.PerkRare:
                 case enum_LevelType.WeaponReforge:
+                case enum_LevelType.WeaponRecycle:
                     return enum_ChunkPortalType.Event;
+                case enum_LevelType.PerkRareSelect:
+                case enum_LevelType.WeaponVendorRare:
+                case enum_LevelType.SafeCrack:
+                    return enum_ChunkPortalType.Reward;
             }
         
         }

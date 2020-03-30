@@ -24,49 +24,69 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         m_ConsoleCommands.transform.SetActivate(false);
     }
 
-    public struct CommandBinding
+    public void InitConsole(Action<bool> _OnConsoleShow)
     {
-        public string title;
-        public string defaultValue;
-        public Action<string> command;
-        public KeyCode keyCode;
-        public static CommandBinding Create(string _title,string _defaultValue, KeyCode _keyCode, Action<string> _command) => new CommandBinding() { title = _title, command = _command, defaultValue = _defaultValue, keyCode = _keyCode };
+        OnConsoleShow = _OnConsoleShow;
+        m_ConsoleCommands.ClearPool();
     }
-    class ConsoleCommand : CSimplePoolObject<int>
+
+    public ConsoleCommand AddConsoleBinding() => m_ConsoleCommands.AddItem(m_ConsoleCommands.Count);
+    
+    public class ConsoleCommand : CSimplePoolObject<int>
     {
-        Action<string> OnCommand;
-        InputField inputField;
-        KeyCode m_keyCode;
+        InputField m_ValueInput;
+        EnumSelection m_ValueSelection;
+        Text m_CommandTitle;
+        KeyCode m_KeyCode;
+        Button m_CommonButton;
         public override void OnPoolInit(Transform _transform)
         {
             base.OnPoolInit(_transform);
-            inputField = transform.Find("InputField").GetComponent<InputField>();
-            transform.Find("Button").GetComponent<Button>().onClick.AddListener(OnButtonClick);
-        }
-
-        public void Play(CommandBinding binding)
-        {
-            m_keyCode = binding.keyCode;
-            inputField.SetActivate(binding.defaultValue != "");
-            inputField.text = binding.defaultValue;
-            transform.Find("Button/Title").GetComponent<Text>().text = string.Format("|{0}|{1}",  m_keyCode, binding.title);
-            OnCommand = binding.command;
+            m_ValueInput = transform.Find("Input").GetComponent<InputField>();
+            m_ValueSelection = new EnumSelection(transform.Find("Select"));
+            m_CommonButton = transform.Find("Button").GetComponent<Button>();
+            m_CommandTitle = transform.Find("Button/Title").GetComponent<Text>();
         }
 
         public void EditorTick()
         {
-            if (Input.GetKeyDown(m_keyCode))
-                OnButtonClick();
+            if (Input.GetKeyDown(m_KeyCode))
+                m_CommonButton.onClick.Invoke();
         }
 
-        void OnButtonClick() => OnCommand(inputField.text);
-    }
-    public void AddConsoleBindings(List<CommandBinding> Bindings, Action<bool> _OnConsoleShow)
-    {
-        OnConsoleShow = _OnConsoleShow;
-        m_ConsoleCommands.ClearPool();
-        int commandCount=0;
-        Bindings.Traversal((CommandBinding binding) => { m_ConsoleCommands.AddItem(commandCount++).Play(binding); });
+        void Play(string title,KeyCode keyCode)
+        {
+            m_KeyCode = keyCode;
+            m_CommandTitle.text = string.Format("{0}|{1}", title, keyCode);
+            m_CommonButton.onClick.RemoveAllListeners();
+            m_ValueInput.SetActivate(false);
+            m_ValueSelection.transform.SetActivate(false);
+        }
+
+        public void Play(string title,KeyCode keyCode,Action OnClick)
+        {
+            Play(title, keyCode);
+            m_CommonButton.onClick.AddListener(()=>OnClick());
+        }
+
+        int selectionIndex = -1;
+        public void Play<T>(string title,KeyCode keyCode,int defaultValue,T defaultEnum ,Action<int> OnClick)
+        {
+            Play(title, keyCode);
+            m_ValueSelection.transform.SetActivate(true);
+            selectionIndex = defaultValue;
+            m_ValueSelection.Init(defaultEnum, (int value)=>  selectionIndex=value );
+            m_CommonButton.onClick.AddListener(() => OnClick(selectionIndex));
+        }
+
+
+        public void Play(string title,KeyCode keyCode, string defaultValue,Action<string> OnValueClick)
+        {
+            Play(title, keyCode);
+            m_ValueInput.SetActivate(true);
+            m_ValueInput.text = defaultValue;
+            m_CommonButton.onClick.AddListener(() => OnValueClick(m_ValueInput.text));
+        }
     }
 
     float m_fastKeyCooldown = 0f;

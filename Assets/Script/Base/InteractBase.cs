@@ -10,8 +10,6 @@ public class InteractBase : MonoBehaviour
     public virtual bool B_InteractOnTrigger => false;
     protected HitCheckInteract m_InteractCheck { get; private set; }
     protected virtual bool E_InteractOnEnable => true;
-    public virtual bool DnCheckInteractResponse(EntityCharacterPlayer _interactTarget) => m_InteractEnable;
-    protected virtual bool DoCheckInteractSuccessful(EntityCharacterPlayer _interactor) => m_TradePrice<=0|| _interactor.m_CharacterInfo.CanCostCoins(m_TradePrice);
     public bool m_InteractEnable { get; private set; } = true;
 
     protected virtual void Play()
@@ -21,21 +19,21 @@ public class InteractBase : MonoBehaviour
         m_InteractCheck.Init();
         SetInteractable(E_InteractOnEnable);
     }
-    protected virtual bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    
+    protected virtual bool OnTryInteractCheck(EntityCharacterPlayer _interactor) => m_TradePrice <= 0 || _interactor.m_CharacterInfo.CanCostCoins(m_TradePrice);
+    protected virtual bool OnInteractedCheck(EntityCharacterPlayer _interactor) => true;
+    public bool TryInteract(EntityCharacterPlayer _interactor)
     {
+        if (!OnTryInteractCheck(_interactor))
+            return false;
+
         if (m_TradePrice > 0)
             _interactor.m_CharacterInfo.OnCoinsCost(m_TradePrice);
 
+        SetInteractable(OnInteractedCheck(_interactor));
         return true;
     }
-    public virtual bool TryInteract(EntityCharacterPlayer _interactor)
-    {
-        if (!DoCheckInteractSuccessful(_interactor))
-            return false;
 
-        SetInteractable(OnInteractOnceCanKeepInteract(_interactor));
-        return true;
-    }
     public void SetInteractable(bool interactable)
     {
         m_InteractEnable = interactable;

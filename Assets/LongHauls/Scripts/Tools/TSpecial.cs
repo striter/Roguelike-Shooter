@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.U2D;
+using UnityEngine.UI;
 
 namespace TTiles
 {
@@ -1193,6 +1194,39 @@ public class AtlasAnim:AtlasLoader
         if (animIndex == m_Anims.Count)
             animIndex = 0;
         return m_Anims[animIndex];
+    }
+}
+
+class EnumSelection : TReflection.UI.CPropertyFillElement
+{
+    Text m_Text;
+    ObjectPoolListComponent<int, Button> m_ChunkButton;
+    public EnumSelection(Transform transform) : base(transform)
+    {
+        TReflection.UI.UIPropertyFill(this, transform);
+        m_ChunkButton = new ObjectPoolListComponent<int, Button>(transform.Find("Grid"), "GridItem");
+        transform.GetComponent<Button>().onClick.AddListener(() => {
+            m_ChunkButton.transform.SetActivate(!m_ChunkButton.transform.gameObject.activeSelf);
+        });
+        m_ChunkButton.transform.SetActivate(false);
+    }
+
+    public void Init<T>(T defaultValue, Action<int> OnClick)
+    {
+        m_Text.text = defaultValue.ToString();
+        m_ChunkButton.ClearPool();
+        TCommon.TraversalEnum((T temp) =>
+        {
+            int index = (int)((object)temp);
+            Button btn = m_ChunkButton.AddItem(index);
+            btn.onClick.RemoveAllListeners();
+            btn.GetComponentInChildren<Text>().text = temp.ToString();
+            btn.onClick.AddListener(() => {
+                m_Text.text = temp.ToString();
+                OnClick(index);
+                m_ChunkButton.transform.SetActivate(false);
+            });
+        });
     }
 }
 #endregion

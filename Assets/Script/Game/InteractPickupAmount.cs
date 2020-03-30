@@ -28,9 +28,9 @@ public class InteractPickupAmount : InteractGameBase {
         m_moveTowards = null;
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactor);
+        base.OnInteractedCheck(_interactor);
         _interactor.OnInteractPickup(this,m_Amount);
         return false;
     }

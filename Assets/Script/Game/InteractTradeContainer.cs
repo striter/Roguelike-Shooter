@@ -20,18 +20,13 @@ public class InteractTradeContainer : InteractGameBase {
     }
     public InteractBase m_TradeInteract { get; private set; }
     Transform tf_Model;
-    
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
-    {
-        base.OnInteractOnceCanKeepInteract(_interactor);
-        return false;
-    }
 
-    public override bool TryInteract(EntityCharacterPlayer _interactor)
+    protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=>base.OnTryInteractCheck(_interactor) &&  m_TradeInteract.TryInteract(_interactor); 
+
+    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
-        if (!DoCheckInteractSuccessful(_interactor) || !m_TradeInteract.TryInteract(_interactor))
-            return false;
-        return base.TryInteract(_interactor);
+        base.OnInteractedCheck(_interactor);
+        return false;
     }
 
     protected void Attach(InteractBase _interactItem)
