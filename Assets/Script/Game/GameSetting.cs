@@ -122,7 +122,7 @@ namespace GameSetting
         {
             float halfWidth = widthSize / 2;
             float interpolateParam = Mathf.InverseLerp(0, halfWidth, Mathf.Abs(widthParam));
-            interpolateParam = Mathf.Clamp(interpolateParam,0,.8f)*(.5f+ Mathf.Lerp(.8f,.4f,interpolateParam)*.5f);
+            interpolateParam = Mathf.Clamp(interpolateParam,0,.5f)*(.5f+ Mathf.Lerp(.8f,.4f,interpolateParam)*.5f);
             return Mathf.Sign(widthParam) * interpolateParam * halfWidth;
         } 
 
