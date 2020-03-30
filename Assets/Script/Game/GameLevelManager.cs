@@ -43,11 +43,11 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     
     public void GenerateStage(enum_GameStyle style, System.Random random)
     {
+        m_GameChunk.Clear();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
-        m_GameChunk.Clear();
         m_ChunkDatas= TResources.GetChunkDatas(); 
     }
     
