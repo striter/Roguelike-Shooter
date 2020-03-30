@@ -21,16 +21,21 @@ public class LevelChunkGame : LevelChunkBase
         base.Init();
         m_RoadBlockParent = transform.Find("RoadBlocks");
     }
-    public void InitGameChunk(LevelChunkData _data, System.Random _random,Action OnChunkObjectDestroy)
+    public void Clear()
     {
         m_ChunkObjects.Clear();
         m_NearbyChunks.Clear();
         m_RoadBlockTiles.Clear();
+        m_TilePool.m_ActiveItemDic.Traversal((LevelTileBase tile) => { tile.Clear(); });
+        LevelObjectManager.DestroyBatchedItem();
+    }
+
+    public void InitGameChunk(LevelChunkData _data, System.Random _random,Action OnChunkObjectDestroy)
+    {
+        Clear();
         m_Size = _data.m_Size;
         gameObject.name = _data.name;
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;
-        m_TilePool.m_ActiveItemDic.Traversal((LevelTileBase tile) => { tile.Clear(); });
-        LevelObjectManager.DestroyBatchedItem();
         InitData(_data, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {

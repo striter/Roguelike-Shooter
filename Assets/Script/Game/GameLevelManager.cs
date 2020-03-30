@@ -47,7 +47,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
-
+        m_GameChunk.Clear();
         m_ChunkDatas= TResources.GetChunkDatas(); 
     }
     
