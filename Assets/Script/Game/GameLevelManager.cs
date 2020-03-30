@@ -23,6 +23,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_GameChunk = transform.Find("GameChunk").GetComponent<LevelChunkGame>();
         m_GameChunk.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
+        m_ChunkDatas = TResources.GetChunkDatas();
         OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
@@ -48,7 +49,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         GameRenderData[] customizations = TResources.GetRenderData(style);
         GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
-        m_ChunkDatas= TResources.GetChunkDatas(); 
     }
     
     public void OnStartLevel(enum_ChunkType levelType,System.Random _random , Action<enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
