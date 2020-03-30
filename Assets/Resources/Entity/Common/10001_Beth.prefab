@@ -1043,7 +1043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b4fde58ba7bf84d89f746257a30866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 400
+  I_MaxHealth: 200
   E_SpawnType: -1
   I_DefaultArmor: 100
   F_MovementSpeed: 8
