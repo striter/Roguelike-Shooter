@@ -126,8 +126,9 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         Application.logMessageReceived -= OnLogReceived;
     }
 
-    List<log> List_Log = new List<log>();
-    struct log
+    Queue<ConsoleLog> m_LogQueue = new Queue<ConsoleLog>();
+    int m_ErrorCount, m_WarningCount, m_LogCount;
+    struct ConsoleLog
     {
         public string logInfo;
         public string logTrace;
@@ -138,48 +139,40 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         if (m_ShowErrorOnly && type != LogType.Error && type != LogType.Exception)
             return;
 
-        log tempLog = new log();
+        ConsoleLog tempLog = new ConsoleLog();
         tempLog.logInfo = info;
         tempLog.logTrace = trace;
         tempLog.logType = type;
-        List_Log.Add(tempLog);
-        if (List_Log.Count > LogSaveCount)
-            List_Log.RemoveAt(0);
+        m_LogQueue.Enqueue(tempLog);
+        switch (type)
+        {
+            case LogType.Error: m_ErrorCount++; break;
+            case LogType.Warning: m_WarningCount++; break;
+            case LogType.Log: m_LogCount++; break;
+        }
+        if (m_LogQueue.Count > LogSaveCount)
+            m_LogQueue.Dequeue();
         UpdateLogUI();
     }
     void UpdateLogUI()
     {
-        if (m_LogText != null)
-            m_LogText.text = "";
-
-        if(!m_ConsoleOpening)
+        if (!m_ConsoleOpening)
         {
-            int errorCount=0,warningCount=0,logCount=0;
-            List_Log.Traversal((log l) => {
-                switch(l.logType)
-                {
-                    case LogType.Error:errorCount++;break;
-                    case LogType.Warning: warningCount++; break;
-                    case LogType.Log: logCount++; break;
-                }
-            });
-            m_LogText.text += string.Format("<color=#FFFFFF>Errors:{0},Warnings:{1},Logs:{2}</color>",errorCount,warningCount, logCount);
+            m_LogText.text = string.Format("<color=#FFFFFF>Errors:{0},Warnings:{1},Logs:{2}</color>",m_ErrorCount,m_WarningCount, m_LogCount);
             return;
         }
 
         int startIndex = 0;
-        int listCount = List_Log.Count;
+        int listCount = m_LogQueue.Count;
         if (listCount >= LogExistCount)
         {
             startIndex = listCount - LogExistCount;
         }
-        for (int i = startIndex; i < listCount; i++)
-        {
-            if (m_LogText != null)
-                m_LogText.text += "<color=#" + LogColor(List_Log[i].logType) + ">" + List_Log[i].logInfo + "</color>\n";
-        }
+        m_LogText.text = "";
+        foreach (ConsoleLog log in m_LogQueue) 
+            m_LogText.text += "<color=#" + GetLogHexColor(log.logType) + ">" + log.logInfo + "</color>\n"; 
     }
-    string LogColor(LogType type)
+    string GetLogHexColor(LogType type)
     {
         string colorParam = "";
         switch (type)
@@ -203,7 +196,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
     }
     public void ClearLog()
     {
-        List_Log.Clear();
+        m_LogQueue.Clear();
         UpdateLogUI();
     }
     #endregion
