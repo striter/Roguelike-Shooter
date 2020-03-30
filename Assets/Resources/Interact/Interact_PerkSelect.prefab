@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 114733377306020078}
   - component: {fileID: 114713668073818104}
   m_Layer: 0
-  m_Name: Interact_PerkAcquire
+  m_Name: Interact_PerkSelect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

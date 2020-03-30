@@ -6,17 +6,20 @@ using UnityEngine;
 public class InteractWeaponReforge : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponReforge;
-    enum_PlayerWeapon m_Weapon;
-    public InteractWeaponReforge Play(enum_PlayerWeapon _weapon)
+    int m_ReforgeTime;
+    public new InteractWeaponReforge Play()
     {
         base.Play();
-        m_Weapon = _weapon;
+        m_ReforgeTime = 0;
         return this;
     }
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactor);
-         _interactor.Reforge(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(m_Weapon)))?.DoItemRecycle();
-        return false;
+        base.OnInteractedCheck(_interactor);
+        _interactor.ReforgeWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, null)].RandomItem())))?.DoItemRecycle();
+        m_ReforgeTime++;
+        if (m_ReforgeTime == 1)
+            m_TradePrice = GameConst.I_EventWeaponReforgeSecondPrice;
+        return m_ReforgeTime > 1;
     }
 }

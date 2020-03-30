@@ -38,9 +38,9 @@ public class InteractPortal : InteractGameBase
 
     }
     
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactor);
+        base.OnInteractedCheck(_interactor);
         OnPortalInteract(m_PortalEvent);
         m_PortalParticles.Traversal((TSpecialClasses.ParticleControlBase particles) => {
                 particles.Stop();

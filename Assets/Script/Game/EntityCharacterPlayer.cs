@@ -250,19 +250,30 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         
         return exchangeWeapon;
     }
-    public WeaponBase Reforge(WeaponBase _weapon)
+
+    public WeaponBase RecycleWeapon()
     {
-        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
+        WeaponBase recycleWeapon = m_WeaponCurrent;
+        if(m_weaponEquipingFirst)
+            m_Weapon1 = m_Weapon2;
+        m_Weapon2 = null;
+        OnSwapWeapon(true);
+        return recycleWeapon;
+    }
+
+    public WeaponBase ReforgeWeapon(WeaponBase _reforceWeapon)
+    {
+        _reforceWeapon.OnAttach(this, _reforceWeapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
         WeaponBase exchangeWeapon = m_WeaponCurrent;
         m_WeaponCurrent.OnDetach();
         if (m_weaponEquipingFirst)
         {
-            m_Weapon1 = _weapon;
+            m_Weapon1 = _reforceWeapon;
             OnSwapWeapon(true);
         }
         else
         {
-            m_Weapon2 = _weapon;
+            m_Weapon2 = _reforceWeapon;
             OnSwapWeapon(false);
         }
         return exchangeWeapon;
@@ -375,9 +386,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
-        if (!interactTarget.DnCheckInteractResponse(this))
-            return;
-
         if (interactTarget.B_InteractOnTrigger)
         {
             interactTarget.TryInteract(this);
@@ -403,7 +411,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_Interact.TryInteract(this))
             return false;
 
-        if (!m_Interact.DnCheckInteractResponse(this))
+        if (!m_Interact.m_InteractEnable)
             m_Interact = null;
 
         OnInteractStatus();
@@ -420,7 +428,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(m_EntityID)));
                 break;
             case enum_Interaction.PickupCoin:
-                m_CharacterInfo.OnCoinsGain(amount,true);
+                m_CharacterInfo.OnCoinsGain(amount);
                 break;
             case enum_Interaction.PickupHealth:
             case enum_Interaction.PickupHealthPack:
