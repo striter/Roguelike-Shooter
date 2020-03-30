@@ -74,7 +74,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpecularPow: 200
-    - _SpecularRange: 0.9949
+    - _SpecularRange: 0.9879
     - _SrcBlend: 1
     - _TexUVScale: 5
     - _UVSec: 0

@@ -123,13 +123,14 @@
 				float2 distort = Distort(i.uv);
 
 				float foam = Foam(linearDepthOffset) * _FoamColor.a;
-				float4 foamColor = float4( _FoamColor.rgb*foam,0);
-
 				float fresnelOpacity = FresnelOpacity(normal, viewDir);
 				float depthOpacity = DepthOpacity(linearDepthOffset);
 				float totalOpacity = saturate( fresnelOpacity + depthOpacity);
 
-				float specular = Specular(distort, normal, viewDir, lightDir);
+				float foam = Foam(linearDepthOffset) * _FoamColor.a;
+				float4 foamColor = float4(_FoamColor.rgb * foam, 0);
+
+				float specular =lerp(Specular(distort, normal, viewDir, lightDir),0,foam);
 				float4 specularColor = float4(_LightColor0.rgb * specular, 0);
 
 				float4 transparentTexture = tex2D(_CameraOpaqueTexture, i.screenPos.xy / i.screenPos.w + DepthDistort(linearDepthOffset, distort) );

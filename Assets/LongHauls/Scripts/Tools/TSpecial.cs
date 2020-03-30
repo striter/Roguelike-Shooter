@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
@@ -961,41 +962,32 @@ public struct RangeInt
         length = _length;
     }
 }
-public interface IXmlPhrase
+public interface IXmlPhrase 
 {
-     string ToXMLData();
 }
 public class TXmlPhrase : SingleTon<TXmlPhrase>
 {
     Dictionary<Type, Func<object, string>> dic_valueToXmlData = new Dictionary<Type, Func<object, string>>();
     Dictionary<Type, Func<string, object>> dic_xmlDataToValue = new Dictionary<Type, Func<string, object>>();
-    Dictionary<Type, Func<object>> dic_xmlDataDefault = new Dictionary<Type, Func<object>>();
+    Dictionary<Type, FieldInfo[]> dic_xmlParseFieldInfos = new Dictionary<Type, FieldInfo[]>();
     public TXmlPhrase()     //Common Smaller Forms Translate/Retranslate
     {
         dic_valueToXmlData.Add(typeof(int), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(int), (string xmlData) => { return int.Parse(xmlData); });
-        dic_xmlDataDefault.Add(typeof(int), () => { return -1; });
         dic_valueToXmlData.Add(typeof(long), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(long), (string xmlData) => { return long.Parse(xmlData); });
-        dic_xmlDataDefault.Add(typeof(long), () => { return -1; });
         dic_valueToXmlData.Add(typeof(double), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(double), (string xmlData) => { return double.Parse(xmlData); });
-        dic_xmlDataDefault.Add(typeof(double), () => { return -1; });
         dic_valueToXmlData.Add(typeof(float), (object target) => { return target.ToString(); });
         dic_xmlDataToValue.Add(typeof(float), (string xmlData) => { return float.Parse(xmlData); });
-        dic_xmlDataDefault.Add(typeof(float), () => { return -1f; });
         dic_valueToXmlData.Add(typeof(string), (object target) => { return target as string; });
         dic_xmlDataToValue.Add(typeof(string), (string xmlData) => { return xmlData; });
-        dic_xmlDataDefault.Add(typeof(string), () => { return "Invalid"; });
         dic_valueToXmlData.Add(typeof(bool), (object data) => { return (((bool)data ? 1 : 0)).ToString(); });
         dic_xmlDataToValue.Add(typeof(bool), (string xmlData) => { return int.Parse(xmlData) == 1; });
-        dic_xmlDataDefault.Add(typeof(bool), () => { return false; });
         dic_valueToXmlData.Add(typeof(RangeInt), (object data) => { return ((RangeInt)data).start.ToString() + "," + ((RangeInt)data).length.ToString(); });
         dic_xmlDataToValue.Add(typeof(RangeInt), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeInt(int.Parse(split[0]), int.Parse(split[1])); });
-        dic_xmlDataDefault.Add(typeof(RangeInt), () => { return new RangeInt(-1, 0); });
         dic_valueToXmlData.Add(typeof(RangeFloat), (object data) => { return ((RangeFloat)data).start.ToString() + "," + ((RangeFloat)data).length.ToString(); });
         dic_xmlDataToValue.Add(typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); });
-        dic_xmlDataDefault.Add(typeof(RangeFloat), () => { return new RangeFloat(-1, 0); });
     }
     public static TXmlPhrase Phrase=>Instance;
     public string this[object value]
@@ -1081,11 +1073,11 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
             return obj_target;
         }
     }
-    public object GetDefault(Type type) => dic_xmlDataDefault.ContainsKey(type) ? dic_xmlDataDefault[type]() : type.IsValueType ? Activator.CreateInstance(type) : null;
+    public object GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
     string ValueToXmlData(Type type, object value)
     {
-        if (typeof(IXmlPhrase).IsAssignableFrom(type))
-            return ((IXmlPhrase)value).ToXMLData(); 
+        if (CheckIXmlParseType(type))
+            return IXmlPhraseToString(type,value); 
 
         if (type.IsEnum)
             return value.ToString();
@@ -1095,8 +1087,8 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
     }
     object XmlDataToValue(Type type, string xmlData)
     {
-        if (typeof(IXmlPhrase).IsAssignableFrom(type))
-            return Activator.CreateInstance(type,xmlData);
+        if (CheckIXmlParseType(type))
+            return IXmlPraseToData(type, xmlData);
 
         if (type.IsEnum)
             return Enum.Parse(type,xmlData);
@@ -1105,6 +1097,41 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
             Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
         
         return dic_xmlDataToValue[type](xmlData);
+    }
+
+    static readonly Type m_XmlParseType = typeof(IXmlPhrase);
+    bool CheckIXmlParseType(Type type)
+    {
+        if (!m_XmlParseType.IsAssignableFrom(type))
+            return false;
+
+        if (!dic_xmlParseFieldInfos.ContainsKey(type))
+            dic_xmlParseFieldInfos.Add(type, type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.NonPublic));
+        return true;
+    }
+    string IXmlPhraseToString(Type type, object data)
+    {
+        string pharseData = "";
+        int fieldLength = dic_xmlParseFieldInfos[type].Length;
+        for (int i = 0; i < fieldLength; i++)
+        {
+            pharseData += dic_xmlParseFieldInfos[type][i].GetValue(data);
+            if (i != fieldLength - 1)
+                pharseData += ",";
+        }
+        return pharseData;
+    }
+
+    object IXmlPraseToData(Type type,string data)
+    {
+        object objectData=Activator.CreateInstance(type);
+        int fieldLength = dic_xmlParseFieldInfos[type].Length;
+        string[] splitString = data.Split(',');
+        if (splitString.Length != fieldLength)
+            throw new Exception("Field Not Match!");
+        for (int i = 0; i < fieldLength; i++)
+            dic_xmlParseFieldInfos[type][i].SetValue(objectData, XmlDataToValue(dic_xmlParseFieldInfos[type][i].FieldType, splitString[i]));
+        return objectData;
     }
 }
 public static class Physics_Extend

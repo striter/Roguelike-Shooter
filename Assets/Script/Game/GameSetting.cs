@@ -631,14 +631,6 @@ namespace GameSetting
         public int m_Index { get; private set; }
         public int m_PerkStack { get; private set; }
         public float m_RecordData { get; private set; }
-        public string ToXMLData() => m_Index +","+m_PerkStack+ ","+ m_RecordData;
-        public PerkSaveData(string xmlData)
-        {
-            string[] split = xmlData.Split(',');
-            m_Index = int.Parse(split[0]);
-            m_PerkStack = int.Parse(split[1]);
-            m_RecordData = float.Parse(split[2]);
-        }
         public static PerkSaveData New(int index) => new PerkSaveData() { m_Index = index, m_PerkStack = 1, m_RecordData = -1 };
         public static PerkSaveData Create(ExpirePerkBase perk) => new PerkSaveData() { m_Index = perk.m_Index,m_PerkStack=perk.m_Stack, m_RecordData = perk.m_RecordData };
         public static List<PerkSaveData> Create(List<ExpirePerkBase> perks)
@@ -652,11 +644,6 @@ namespace GameSetting
     public struct WeaponSaveData : IXmlPhrase
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
-        public string ToXMLData() => m_Weapon.ToString();
-        public WeaponSaveData(string xmlData)
-        {
-            m_Weapon = (enum_PlayerWeapon)Enum.Parse(typeof(enum_PlayerWeapon), xmlData);
-        }
         public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon =weapon!=null? weapon.m_WeaponInfo.m_Weapon: enum_PlayerWeapon.Invalid};
         public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
     }
@@ -666,13 +653,6 @@ namespace GameSetting
     {
         public int m_StartStamp { get; private set; }
         public enum_CampFarmItemStatus m_Status { get; private set; }
-        public string ToXMLData() => m_StartStamp.ToString() + "," + m_Status.ToString();
-        public CampFarmPlotData(string xmlData)
-        {
-            string[] split = xmlData.Split(',');
-            m_StartStamp = int.Parse(split[0]);
-            m_Status = (enum_CampFarmItemStatus)Enum.Parse(typeof(enum_CampFarmItemStatus), split[1]);
-        }
 
         public static CampFarmPlotData Create(enum_CampFarmItemStatus _status) => new CampFarmPlotData { m_StartStamp = -1, m_Status = _status };
         public static CampFarmPlotData SaveData(CampFarmPlot _plot) => new CampFarmPlotData { m_StartStamp = _plot.m_StartStamp, m_Status = _plot.m_Status };
