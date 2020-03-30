@@ -96,14 +96,14 @@ public class UIC_PlayerInteract : UIControlBase
         {
             switch (interactInfo.m_InteractType)
             {
-                case enum_Interaction.Equipment:
+                case enum_Interaction.PerkPickup:
                     isAction = true;
-                    InteractEquipment actionInteract = interactInfo as InteractEquipment;
+                    InteractPerkPickup actionInteract = interactInfo as InteractPerkPickup;
                     m_EquipmentData.SetInfo(PerkDataManager.GetPerkData(actionInteract.m_PerkID));
                     break;
-                case enum_Interaction.Weapon:
+                case enum_Interaction.WeaponPickup:
                     isWeapon = true;
-                    InteractWeapon weaponInteract = interactInfo as InteractWeapon;
+                    InteractWeaponPickup weaponInteract = interactInfo as InteractWeaponPickup;
                     m_weaponData.UpdateInfo(weaponInteract.m_Weapon);
                     m_weaponData.UpdateAmmoInfo(weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount, weaponInteract.m_Weapon.m_WeaponInfo.m_ClipAmount);
                     break;

@@ -7,38 +7,6 @@ using UnityEngine.UI;
 using TTiles;
 #pragma warning disable 0649
 public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIPropertyFill {
-    class TypeSelection:TReflection.UI.CPropertyFillElement
-    {
-        Text m_Text;
-        ObjectPoolListComponent<int, Button> m_ChunkButton;
-        public TypeSelection(Transform transform):base(transform)
-        {
-            TReflection.UI.UIPropertyFill(this, transform);
-            m_ChunkButton = new ObjectPoolListComponent<int, Button>(transform.Find("Grid"), "GridItem");
-            transform.GetComponent<Button>().onClick.AddListener(() => {
-                m_ChunkButton.transform.SetActivate(!m_ChunkButton.transform.gameObject.activeSelf);
-            });
-            m_ChunkButton.transform.SetActivate(false);
-        }
-
-        public void Init<T>(T defaultValue, Action<int> OnClick)
-        {
-            m_Text.text = defaultValue.ToString();
-            m_ChunkButton.ClearPool();
-            TCommon.TraversalEnum((T temp) =>
-            {
-                int index =(int)((object)temp);
-                Button btn= m_ChunkButton.AddItem(index);
-                btn.onClick.RemoveAllListeners();
-                btn.GetComponentInChildren<Text>().text = temp.ToString();
-                btn.onClick.AddListener(() => {
-                    m_Text.text = temp.ToString();
-                    OnClick(index);
-                    m_ChunkButton.transform.SetActivate(false);
-                });
-            });
-        }
-    }
 
     Transform m_File, m_Edit;
     Button m_File_New, m_File_Read, m_File_Save;
@@ -46,10 +14,10 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     Button m_Edit_AddSize;
     Text m_Edit_AddSize_Text;
     InputField m_Edit_AddSize_Count;
-    TypeSelection m_Edit_AddSize_Direction;
-    TypeSelection m_File_Type;
+    EnumSelection m_Edit_AddSize_Direction;
+    EnumSelection m_File_Type;
     Transform m_Data;
-    TypeSelection m_Data_Type;
+    EnumSelection m_Data_Type;
     UIT_GridControllerGridItem<LevelEditorUIDataView> m_EditorView;
 
     enum_ChunkType m_FileChunkType= enum_ChunkType.Battle;

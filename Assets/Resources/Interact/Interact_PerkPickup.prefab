@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 111035122497549636}
   - component: {fileID: 114004340570081130}
   m_Layer: 0
-  m_Name: Interact_Equipment
+  m_Name: Interact_PerkPickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

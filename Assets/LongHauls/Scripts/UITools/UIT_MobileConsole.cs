@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 
     public bool m_ShowErrorOnly = true;
+    public bool m_ConsoleOpening { get; private set; } = false;
     public int LogExistCount = 10;
     public int LogSaveCount = 30;
     Text m_LogText, m_FrameText;
@@ -21,60 +22,81 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 
         Transform tf_ConsoleCommand = transform.Find("ConsoleCommand");
         m_ConsoleCommands = new ObjectPoolListClass<int, ConsoleCommand>(tf_ConsoleCommand, "GridItem");
-        m_ConsoleCommands.transform.SetActivate(false);
+        m_ConsoleOpening = false;
+        m_ConsoleCommands.transform.SetActivate(m_ConsoleOpening);
     }
 
-    public struct CommandBinding
-    {
-        public string title;
-        public string defaultValue;
-        public Action<string> command;
-        public KeyCode keyCode;
-        public static CommandBinding Create(string _title,string _defaultValue, KeyCode _keyCode, Action<string> _command) => new CommandBinding() { title = _title, command = _command, defaultValue = _defaultValue, keyCode = _keyCode };
-    }
-    class ConsoleCommand : CSimplePoolObject<int>
-    {
-        Action<string> OnCommand;
-        InputField inputField;
-        KeyCode m_keyCode;
-        public override void OnPoolInit(Transform _transform)
-        {
-            base.OnPoolInit(_transform);
-            inputField = transform.Find("InputField").GetComponent<InputField>();
-            transform.Find("Button").GetComponent<Button>().onClick.AddListener(OnButtonClick);
-        }
-
-        public void Play(CommandBinding binding)
-        {
-            m_keyCode = binding.keyCode;
-            inputField.SetActivate(binding.defaultValue != "");
-            inputField.text = binding.defaultValue;
-            transform.Find("Button/Title").GetComponent<Text>().text = string.Format("|{0}|{1}",  m_keyCode, binding.title);
-            OnCommand = binding.command;
-        }
-
-        public void EditorTick()
-        {
-            if (Input.GetKeyDown(m_keyCode))
-                OnButtonClick();
-        }
-
-        void OnButtonClick() => OnCommand(inputField.text);
-    }
-    public void AddConsoleBindings(List<CommandBinding> Bindings, Action<bool> _OnConsoleShow)
+    public void InitConsole(Action<bool> _OnConsoleShow)
     {
         OnConsoleShow = _OnConsoleShow;
         m_ConsoleCommands.ClearPool();
-        int commandCount=0;
-        Bindings.Traversal((CommandBinding binding) => { m_ConsoleCommands.AddItem(commandCount++).Play(binding); });
     }
+#region Console
+    public ConsoleCommand AddConsoleBinding() => m_ConsoleCommands.AddItem(m_ConsoleCommands.Count);
+    
+    public class ConsoleCommand : CSimplePoolObject<int>
+    {
+        InputField m_ValueInput;
+        EnumSelection m_ValueSelection;
+        Text m_CommandTitle;
+        KeyCode m_KeyCode;
+        Button m_CommonButton;
+        public override void OnPoolInit(Transform _transform)
+        {
+            base.OnPoolInit(_transform);
+            m_ValueInput = transform.Find("Input").GetComponent<InputField>();
+            m_ValueSelection = new EnumSelection(transform.Find("Select"));
+            m_CommonButton = transform.Find("Button").GetComponent<Button>();
+            m_CommandTitle = transform.Find("Button/Title").GetComponent<Text>();
+        }
 
+        public void EditorKeycodeTick()
+        {
+            if (Input.GetKeyDown(m_KeyCode))
+                m_CommonButton.onClick.Invoke();
+        }
+
+        void Play(string title,KeyCode keyCode)
+        {
+            m_KeyCode = keyCode;
+            m_CommandTitle.text = string.Format("{0}|{1}", title, keyCode);
+            m_CommonButton.onClick.RemoveAllListeners();
+            m_ValueInput.SetActivate(false);
+            m_ValueSelection.transform.SetActivate(false);
+        }
+
+        public void Play(string title,KeyCode keyCode,Action OnClick)
+        {
+            Play(title, keyCode);
+            m_CommonButton.onClick.AddListener(()=>OnClick());
+        }
+
+        int selectionIndex = -1;
+        public void Play<T>(string title,KeyCode keyCode,int defaultValue,T defaultEnum ,Action<int> OnClick)
+        {
+            Play(title, keyCode);
+            m_ValueSelection.transform.SetActivate(true);
+            selectionIndex = defaultValue;
+            m_ValueSelection.Init(defaultEnum, (int value)=>  selectionIndex=value );
+            m_CommonButton.onClick.AddListener(() => OnClick(selectionIndex));
+        }
+
+
+        public void Play(string title,KeyCode keyCode, string defaultValue,Action<string> OnValueClick)
+        {
+            Play(title, keyCode);
+            m_ValueInput.SetActivate(true);
+            m_ValueInput.text = defaultValue;
+            m_CommonButton.onClick.AddListener(() => OnValueClick(m_ValueInput.text));
+        }
+    }
+#endregion
     float m_fastKeyCooldown = 0f;
 
     private void Update()
     {
 #if UNITY_EDITOR
-        m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.EditorTick(); });
+        m_ConsoleCommands.m_ActiveItemDic.Traversal((ConsoleCommand command) => { command.EditorKeycodeTick(); });
 #endif
 
         m_FrameText.text = ((int)(1 / Time.unscaledDeltaTime)).ToString();
@@ -86,8 +108,10 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         if (Input.touchCount >= 4 || Input.GetKey(KeyCode.BackQuote))
         {
             m_fastKeyCooldown = .5f;
-            m_ConsoleCommands.transform.SetActivate(!m_ConsoleCommands.transform.gameObject.activeSelf);
-            OnConsoleShow?.Invoke(m_ConsoleCommands.transform.gameObject.activeInHierarchy);
+            m_ConsoleOpening = !m_ConsoleOpening;
+            m_ConsoleCommands.transform.SetActivate(m_ConsoleOpening);
+            OnConsoleShow?.Invoke(m_ConsoleOpening);
+            UpdateLogUI();
         }
     }
 
@@ -102,8 +126,9 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         Application.logMessageReceived -= OnLogReceived;
     }
 
-    List<log> List_Log = new List<log>();
-    struct log
+    Queue<ConsoleLog> m_LogQueue = new Queue<ConsoleLog>();
+    int m_ErrorCount, m_WarningCount, m_LogCount;
+    struct ConsoleLog
     {
         public string logInfo;
         public string logTrace;
@@ -114,32 +139,40 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         if (m_ShowErrorOnly && type != LogType.Error && type != LogType.Exception)
             return;
 
-        log tempLog = new log();
+        ConsoleLog tempLog = new ConsoleLog();
         tempLog.logInfo = info;
         tempLog.logTrace = trace;
         tempLog.logType = type;
-        List_Log.Add(tempLog);
-        if (List_Log.Count > LogSaveCount)
-            List_Log.RemoveAt(0);
+        m_LogQueue.Enqueue(tempLog);
+        switch (type)
+        {
+            case LogType.Error: m_ErrorCount++; break;
+            case LogType.Warning: m_WarningCount++; break;
+            case LogType.Log: m_LogCount++; break;
+        }
+        if (m_LogQueue.Count > LogSaveCount)
+            m_LogQueue.Dequeue();
         UpdateLogUI();
     }
     void UpdateLogUI()
     {
-        if (m_LogText != null)
-            m_LogText.text = "";
+        if (!m_ConsoleOpening)
+        {
+            m_LogText.text = string.Format("<color=#FFFFFF>Errors:{0},Warnings:{1},Logs:{2}</color>",m_ErrorCount,m_WarningCount, m_LogCount);
+            return;
+        }
+
         int startIndex = 0;
-        int listCount = List_Log.Count;
+        int listCount = m_LogQueue.Count;
         if (listCount >= LogExistCount)
         {
             startIndex = listCount - LogExistCount;
         }
-        for (int i = startIndex; i < listCount; i++)
-        {
-            if (m_LogText != null)
-                m_LogText.text += "<color=#" + LogColor(List_Log[i].logType) + ">" + List_Log[i].logInfo + "</color>\n";
-        }
+        m_LogText.text = "";
+        foreach (ConsoleLog log in m_LogQueue) 
+            m_LogText.text += "<color=#" + GetLogHexColor(log.logType) + ">" + log.logInfo + "</color>\n"; 
     }
-    string LogColor(LogType type)
+    string GetLogHexColor(LogType type)
     {
         string colorParam = "";
         switch (type)
@@ -161,9 +194,9 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         }
         return colorParam;
     }
-    public void ClearLog()
+    public void ClearConsoleLog()
     {
-        List_Log.Clear();
+        m_LogQueue.Clear();
         UpdateLogUI();
     }
     #endregion

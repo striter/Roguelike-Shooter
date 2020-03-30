@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class InteractCampNPCFarm : InteractCamp {
     public override enum_Interaction m_InteractType => enum_Interaction.CampFarm;
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactor);
+        base.OnInteractedCheck(_interactor);
         CampManager.Instance.OnFarmNPCChatted();
         return true;
     }

@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1420319
+    totalSpriteSurfaceArea: 1290207
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -41,10 +41,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
   - {fileID: 21300000, guid: d3693ba12401d8c4cac8765412e6c015, type: 3}
-  - {fileID: 21300000, guid: 7b7cd898f223b464e90a8c4751924dcc, type: 3}
-  - {fileID: 21300000, guid: c6b9070ce5347dc4385af076d3cf53c2, type: 3}
   - {fileID: 21300000, guid: ea52e7fe013a95341b32b99bd1f28ec6, type: 3}
-  - {fileID: 21300000, guid: e2dc748ae38dba94c926226a6ccd905f, type: 3}
   - {fileID: 21300000, guid: 8d9d6752fb320bd438f49a5bec44867c, type: 3}
   - {fileID: 21300000, guid: 5299f3520a85ed74fac7a3636bdc9238, type: 3}
   - {fileID: 21300000, guid: 1dfff60a4d340614f8574902c4683851, type: 3}
@@ -68,10 +65,7 @@ SpriteAtlas:
   - result_title_win_CN
   - backpack_bottom
   - settlement_bottom
-  - map_icon_teleport_anim
-  - map_icon_teleport
   - map_icon_event_Trader
-  - map_icon_event_RewardChest
   - interact_text_bottom
   - interact_bottom
   - equipmentPack_empty

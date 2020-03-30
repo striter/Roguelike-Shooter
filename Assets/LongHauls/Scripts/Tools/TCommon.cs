@@ -314,6 +314,7 @@ public static class TCommon
     }
 
     #region Enum
+
     public static void TraversalEnum<T>(Action<T> enumAction)    //Can't Constraint T to System.Enum?
     {
         if (!typeof(T).IsSubclassOf(typeof(Enum)))
@@ -353,21 +354,22 @@ public static class TCommon
     public static int RandomLength(int length, System.Random seed = null) => seed != null ? seed.Next(length) : UnityEngine.Random.Range(0, length);
     public static float RandomLength(float length, System.Random seed = null) => seed != null ? (float)seed.NextDouble() * length : UnityEngine.Random.Range(0,length);
     public static float RandomUnitValue(System.Random seed = null) => seed != null ? (float)seed.NextDouble()*2f-1f : UnityEngine.Random.Range(-1f,1f);
-    public static Vector3 RandomXZSphere(System.Random seed=null)
+    public static Vector3 RandomXZSphere(System.Random seed = null) => RandomXZCircle(seed) * RandomUnitValue(seed);
+    public static Vector3 RandomXZCircle(System.Random seed=null)
     {
         Vector2 randomCirlce = Vector2.zero;
-        if (seed!=null)
+        if (seed != null)
         {
-            float radius = RandomUnitValue(seed);
             float radin = RandomUnitValue(seed) * Mathf.PI;
-            randomCirlce = new Vector2( Mathf.Sin(radin),Mathf.Cos(radin))*radius;
+            randomCirlce = new Vector2(Mathf.Sin(radin), Mathf.Cos(radin));
         }
         else
         {
             randomCirlce = UnityEngine.Random.insideUnitCircle;
         }
-        return new Vector3(randomCirlce.x, 0, randomCirlce.y) ;
+        return new Vector3(randomCirlce.x, 0, randomCirlce.y);
     }
+
     public static int Random(this RangeInt ir, System.Random seed = null) => ir.start + RandomLength(ir.length + 1, seed);
     public static float Random(this RangeFloat ir, System.Random seed = null) => seed != null ? seed.Next((int)(ir.start * 1000), (int)(ir.end * 1000)) / 1000f : UnityEngine.Random.Range(ir.start, ir.end);
 

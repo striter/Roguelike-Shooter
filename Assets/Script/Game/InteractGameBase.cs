@@ -21,9 +21,9 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
 
-    protected override bool OnInteractOnceCanKeepInteract(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractOnceCanKeepInteract(_interactor);
+        base.OnInteractedCheck(_interactor);
         GameObjectManager.PlayMuzzle(_interactor.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
         if (B_SelfRecycleOnInteract)
             OnRecycle();

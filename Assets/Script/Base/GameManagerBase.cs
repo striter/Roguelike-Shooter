@@ -408,12 +408,18 @@ public static class GameObjectManager
         });
         return enermyDic;
     }
+
+    static Dictionary<Type, enum_Interaction> m_GameInteractTypes = new Dictionary<Type, enum_Interaction>();
     static void RegisterInGameInteractions(enum_GameStyle portalStyle, enum_Stage stageIndex)
     {
+        m_GameInteractTypes.Clear();
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
-            if (enumValue > enum_Interaction.GameBegin && enumValue < enum_Interaction.GameEnd)
-                ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue, TResources.GetInteract(enumValue), 5);
+            if (enumValue <= enum_Interaction.GameBegin || enumValue >= enum_Interaction.GameEnd)
+                return;
+            InteractGameBase gameInteract = TResources.GetInteract(enumValue);
+            m_GameInteractTypes.Add(gameInteract.GetType(),gameInteract.m_InteractType);
+            ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue,gameInteract , 5);
         });
     }
     #endregion
@@ -500,11 +506,7 @@ public static class GameObjectManager
     }
     #endregion
     #region Interact
-    public static T SpawnInteract<T>(enum_Interaction type, Vector3 pos, Quaternion rot) where T : InteractGameBase
-    {
-        T target = ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(type, TF_Interacts, pos, rot) as T;
-        return target;
-    }
+    public static T SpawnInteract<T>( Vector3 pos, Quaternion rot) where T : InteractGameBase=> ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[typeof(T)], TF_Interacts, pos, rot) as T;
     public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType, target);
     public static void RecycleAllInteract() => ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
     #endregion
