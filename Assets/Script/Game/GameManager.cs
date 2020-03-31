@@ -17,7 +17,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.InitConsole((bool show) => { Time.timeScale = show ? .1f : 1f; });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed",KeyCode.None,()=> { Debug.LogError(m_GameLevel.m_GameSeed); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextLevelGenerate(m_LocalPlayer).m_PortalMain); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_LevelType.GameEnd : enum_LevelType.StageEnd); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_LevelType.GameWin : enum_LevelType.StageEnd); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test Level", KeyCode.Backspace, (int)enum_LevelType.Trader, enum_LevelType.Trader,(int index)=> { OnChunkPortalEnter((enum_LevelType)index); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All",  KeyCode.Alpha0, () => {
@@ -180,6 +180,9 @@ public class GameManager : GameManagerBase
             case enum_TileObjectType.EEventArea3x3:
                 switch (m_GameLevel.m_LevelType)
                 {
+                    case enum_LevelType.StageStart:
+                         GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkRareSelectRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
+                        break;
                     case enum_LevelType.Trader:
                         enum_Rarity rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradePerk, m_GameLevel.m_Random);
 
@@ -243,7 +246,7 @@ public class GameManager : GameManagerBase
             OnPortalEnter(1f, tf_CameraAttach, LoadStage);
             return;
         }
-        else if(levelType== enum_LevelType.GameEnd)
+        else if(levelType== enum_LevelType.GameWin)
         {
             OnGameFinished(true);
             return;
@@ -499,8 +502,15 @@ public class GameManager : GameManagerBase
 
         OnBattleEnermyKilled(character);
 
-        if (GetCharacters(enum_EntityFlag.Enermy, true).FindAll(p=>!p.m_IsDead).Count<=0)
-            OnBattleFinish();
+        if (GetCharacters(enum_EntityFlag.Enermy, true).Any(p => !p.m_IsDead))
+            return;
+        SEnermyGenerate generate;
+        if(!m_GameLevel.OnBattleWaveFinished(out generate))
+        {
+            GenerateBattleEnermies(generate);
+            return;
+        }
+        OnBattleFinish();
     }
 
     void OnBattleStart()
@@ -511,15 +521,7 @@ public class GameManager : GameManagerBase
             return;
         }
         m_Battling = true;
-        SEnermyGenerate enermyGenerate = m_GameLevel.GetEnermyGenerate();
-        int spawnPointCount = 0;
-        enermyGenerate.GetEnermyIDList(m_EnermySpawnIDs).Traversal((int enermyID) => {
-            GameObjectManager.SpawnEntityCharacterAI(enermyID,m_EnermySpawnPoints[spawnPointCount],Quaternion.identity, enum_EntityFlag.Enermy,m_GameLevel.m_GameDifficulty,m_GameLevel.m_StageIndex);
-            spawnPointCount++;
-            if (spawnPointCount == m_EnermySpawnPoints.Count)
-                spawnPointCount = 0;
-        });
-        
+        GenerateBattleEnermies(m_GameLevel.OnBattleStart());
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
     }
 
@@ -529,6 +531,17 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
         SpawnBattleFinishReward();
         OnGenerateLevelPortals();
+    }
+
+    void GenerateBattleEnermies(SEnermyGenerate enermyGenerate)
+    {
+        int spawnPointCount = 0;
+        enermyGenerate.GetEnermyIDList(m_EnermySpawnIDs).Traversal((int enermyID) => {
+            GameObjectManager.SpawnEntityCharacterAI(enermyID, m_EnermySpawnPoints[spawnPointCount], Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
+            spawnPointCount++;
+            if (spawnPointCount == m_EnermySpawnPoints.Count)
+                spawnPointCount = 0;
+        });
     }
     #endregion
 }
@@ -552,6 +565,7 @@ public class GameProgressManager
     public int m_LevelIndex { get; private set; }
     Dictionary<bool, List<SEnermyGenerate>> m_EnermyGenerate;
     public List<int> m_SelectLevelIndexes { get; private set; } = new List<int>();
+    public int m_BattleWave { get; private set; }
     #endregion
     #region Get
     public bool m_FinalStage => m_StageIndex == enum_Stage.Ranger;
@@ -579,7 +593,7 @@ public class GameProgressManager
         m_Random = new System.Random((m_GameSeed + m_StageIndex.ToString()).GetHashCode());
 
         m_LevelIndex = 0;
-        m_LevelType = enum_LevelType.Start;
+        m_LevelType = enum_LevelType.StageStart;
 
         List<int> selectionIndex = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
         m_SelectLevelIndexes.Clear();
@@ -592,21 +606,53 @@ public class GameProgressManager
         m_SelectLevelIndexes.Sort((int a, int b) => a - b);
     }
 
-    public SEnermyGenerate GetEnermyGenerate()
+    public SEnermyGenerate OnBattleStart()
     {
-        int index = m_EnermyGenerate[m_FinalLevel].RandomIndex();
-        SEnermyGenerate enermyGenerate = m_EnermyGenerate[m_FinalLevel][index];
-        m_EnermyGenerate[m_FinalLevel].RemoveAt(index);
-        return enermyGenerate;
+        m_BattleWave = 0;
+        return GetBattleWaveData();
     }
+
+    public bool OnBattleWaveFinished(out SEnermyGenerate nextWaveData)
+    {
+        m_BattleWave++;
+        nextWaveData = GetBattleWaveData();
+        if (m_LevelType== enum_LevelType.EndlessBattle)
+            return false;
+        return true;
+    }
+
+    protected SEnermyGenerate GetBattleWaveData()
+    {
+        switch(m_LevelType)
+        {
+            case enum_LevelType.EndlessBattle:
+                {
+                    SEnermyGenerate generate = m_EnermyGenerate[false].RandomItem();
+                    int generateAdditive = m_BattleWave / 4;
+                    for (int i = 0; i < generateAdditive; i++)
+                        generate += m_EnermyGenerate[false].RandomItem();
+                    return generate;
+                }
+            case enum_LevelType.NormalBattle:
+                return m_EnermyGenerate[false].RandomItem();
+            case enum_LevelType.StageFinalBattle:
+                return m_EnermyGenerate[true].RandomItem();
+            case enum_LevelType.EliteBattle:
+                return m_EnermyGenerate[false].RandomItem() + m_EnermyGenerate[false].RandomItem();
+        }
+        Debug.LogError("Invalid Battle Wave Data Found!");
+        return new SEnermyGenerate();
+    }
+
+
 
     public GameLevelPortalData GetNextLevelGenerate(EntityCharacterPlayer player)
     {
         if (m_LevelIndex == 8)
-            return new GameLevelPortalData(enum_LevelType.FinalBattle, enum_LevelType.Invalid);
+            return new GameLevelPortalData(enum_LevelType.StageFinalBattle, enum_LevelType.Invalid);
 
         if (m_FinalLevel)
-            return new GameLevelPortalData(m_FinalStage? enum_LevelType.GameEnd:enum_LevelType.StageEnd, enum_LevelType.Invalid);
+            return new GameLevelPortalData(m_FinalStage? enum_LevelType.GameWin:enum_LevelType.StageEnd, enum_LevelType.EndlessBattle);
 
         int selectionIndex = m_SelectLevelIndexes.FindIndex(p=>p==m_LevelIndex);
         if (selectionIndex == -1)

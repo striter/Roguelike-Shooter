@@ -269,6 +269,7 @@ namespace LevelSetting
                 case enum_ChunkType.Start:
                     restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
                     break;
                 case enum_ChunkType.Event:
@@ -286,6 +287,7 @@ namespace LevelSetting
                 case enum_ChunkType.Final:
                     restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
+                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
                     restrictionDic.Add(enum_TileObjectType.EEnermySpawn1x1, -1);
                     break;
             }

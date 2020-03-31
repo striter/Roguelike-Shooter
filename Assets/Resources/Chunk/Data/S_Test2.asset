@@ -280,7 +280,7 @@ MonoBehaviour:
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0
-    m_ObjectType: -1
+    m_ObjectType: 55
     m_EdgeObjectType: -1
     m_Direction: 0
   - m_TerrainType: 0

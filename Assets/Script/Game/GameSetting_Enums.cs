@@ -53,17 +53,23 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
-    public enum enum_Stage { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
+    public enum enum_Stage {
+        Invalid = -1,
+        Rookie = 1,
+        Veteran = 2,
+        Ranger = 3,
+    }
 
     public enum enum_LevelType
     {
         Invalid = -1,
 
-        Start=0,
+        StageStart=0,
 
         NormalBattle = 1,
         EliteBattle = 2,
-        FinalBattle=3,
+        StageFinalBattle=3,
+        EndlessBattle=4,
 
         Trader,
         Bonefire,
@@ -78,8 +84,7 @@ namespace GameSetting
         PerkRareSelect,
 
         StageEnd,
-        StageEndless,
-        GameEnd,
+        GameWin,
     }
 
     public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
@@ -253,24 +258,28 @@ namespace GameSetting
                 default:
                     return false;
                 case enum_LevelType.EliteBattle:
-                case enum_LevelType.FinalBattle:
                 case enum_LevelType.NormalBattle:
+                case enum_LevelType.EndlessBattle:
+                case enum_LevelType.StageFinalBattle:
                     return true;
             }
         }
 
         public static enum_ChunkType GetChunkType(this enum_LevelType eventType)
         {
-            if (eventType.IsBattleLevel())
-                return enum_ChunkType.Battle;
-
             switch(eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+eventType);
                     return enum_ChunkType.Invalid;
-                case enum_LevelType.Start:
+                case enum_LevelType.StageStart:
                     return enum_ChunkType.Start;
+                case enum_LevelType.StageFinalBattle:
+                case enum_LevelType.EndlessBattle:
+                    return enum_ChunkType.Final;
+                case enum_LevelType.NormalBattle:
+                case enum_LevelType.EliteBattle:
+                    return enum_ChunkType.Battle;
                 case enum_LevelType.Trader:
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkFill:
@@ -287,28 +296,28 @@ namespace GameSetting
 
         public static enum_ChunkPortalType GetPortalType(this enum_LevelType eventType)
         {
-            if (eventType.IsBattleLevel())
-                return enum_ChunkPortalType.Battle;
-
             switch (eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+ eventType);
                     return enum_ChunkPortalType.Invalid;
-                case enum_LevelType.StageEnd:
-                case enum_LevelType.GameEnd:
-                    return  enum_ChunkPortalType.Battle;
+                case enum_LevelType.EliteBattle:
+                case enum_LevelType.NormalBattle:
+                case enum_LevelType.StageFinalBattle:
+                    return enum_ChunkPortalType.Battle;
                 case enum_LevelType.Trader:
                 case enum_LevelType.Bonefire:
-                case enum_LevelType.NormalBattle:
                 case enum_LevelType.PerkFill:
                 case enum_LevelType.PerkRare:
                 case enum_LevelType.WeaponReforge:
                 case enum_LevelType.WeaponRecycle:
                     return enum_ChunkPortalType.Event;
+                case enum_LevelType.StageEnd:
+                case enum_LevelType.GameWin:
                 case enum_LevelType.PerkRareSelect:
                 case enum_LevelType.WeaponVendorRare:
                 case enum_LevelType.SafeCrack:
+                case enum_LevelType.EndlessBattle:
                     return enum_ChunkPortalType.Reward;
             }
         

@@ -824,6 +824,18 @@ namespace GameSetting
         public void InitOnValueSet()
         {
         }
+
+        public static SEnermyGenerate operator +(SEnermyGenerate data1,SEnermyGenerate data2)
+        {
+            data1.i_MeleeCount += data2.i_MeleeCount;
+            data1.i_E2Count += data2.i_E2Count;
+            data1.i_E3Count += data2.i_E3Count;
+            data1.i_E4Count += data2.i_E4Count;
+            data1.i_E5Count += data2.i_E5Count;
+            data1.i_E6Count += data2.i_E6Count;
+            data1.i_EliteCount += data2.i_EliteCount;
+            return data1;
+        }
         
         public List<int> GetEnermyIDList(Dictionary<enum_EnermyType, int> m_EnermyIDs)
         {
