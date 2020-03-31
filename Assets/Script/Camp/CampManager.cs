@@ -23,7 +23,7 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid);
-        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new CBattleSave(),tf_PlayerStart.position, tf_PlayerStart.rotation);
+        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new PlayerSaveData( enum_PlayerCharacter.Beth, enum_PlayerWeapon.P92),tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_PlayerCameraAttach = player.transform;
         AttachPlayerCamera(tf_PlayerCameraAttach);
         CampFarmManager.Instance.OnCampEnter();

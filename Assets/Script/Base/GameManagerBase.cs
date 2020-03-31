@@ -440,7 +440,7 @@ public static class GameObjectManager
 
     public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) => character.OnSubCharacterActivate(_flag, spawnerID, startHealth==0?character.I_MaxHealth:startHealth));
 
-    public static EntityCharacterPlayer SpawnEntityPlayer(CBattleSave playerSave, Vector3 position, Quaternion rotation) => SpawnEntity((int)playerSave.m_character, position, rotation, (EntityCharacterPlayer player) => player.OnPlayerActivate(playerSave));
+    public static EntityCharacterPlayer SpawnEntityPlayer(PlayerSaveData playerSave, Vector3 position, Quaternion rotation) => SpawnEntity((int)playerSave.m_Character, position, rotation, (EntityCharacterPlayer player) => player.OnPlayerActivate(playerSave));
 
     public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Quaternion rot) => SpawnEntity((int)npc, toPosition, rot, (EntityNPC npcCharacter) => npcCharacter.OnActivate());
 

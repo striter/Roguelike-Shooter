@@ -970,6 +970,9 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
     Dictionary<Type, Func<object, string>> dic_valueToXmlData = new Dictionary<Type, Func<object, string>>();
     Dictionary<Type, Func<string, object>> dic_xmlDataToValue = new Dictionary<Type, Func<string, object>>();
     Dictionary<Type, FieldInfo[]> dic_xmlParseFieldInfos = new Dictionary<Type, FieldInfo[]>();
+    static readonly char[] m_PhraseLiterateBreakPoints = new char[4] { '[', ']', '{', '}' };
+    const char m_PhraseBaseBreakPoint = ',';
+    const char m_PhraseListBreakPoint = ';';
     public TXmlPhrase()     //Common Smaller Forms Translate/Retranslate
     {
         dic_valueToXmlData.Add(typeof(int), (object target) => { return target.ToString(); });
@@ -984,153 +987,113 @@ public class TXmlPhrase : SingleTon<TXmlPhrase>
         dic_xmlDataToValue.Add(typeof(string), (string xmlData) => { return xmlData; });
         dic_valueToXmlData.Add(typeof(bool), (object data) => { return (((bool)data ? 1 : 0)).ToString(); });
         dic_xmlDataToValue.Add(typeof(bool), (string xmlData) => { return int.Parse(xmlData) == 1; });
-        dic_valueToXmlData.Add(typeof(RangeInt), (object data) => { return ((RangeInt)data).start.ToString() + "," + ((RangeInt)data).length.ToString(); });
-        dic_xmlDataToValue.Add(typeof(RangeInt), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeInt(int.Parse(split[0]), int.Parse(split[1])); });
-        dic_valueToXmlData.Add(typeof(RangeFloat), (object data) => { return ((RangeFloat)data).start.ToString() + "," + ((RangeFloat)data).length.ToString(); });
-        dic_xmlDataToValue.Add(typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(','); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); });
+        dic_valueToXmlData.Add(typeof(RangeInt), (object data) => { return ((RangeInt)data).start.ToString() + m_PhraseBaseBreakPoint + ((RangeInt)data).length.ToString(); });
+        dic_xmlDataToValue.Add(typeof(RangeInt), (string xmlData) => { string[] split = xmlData.Split(m_PhraseBaseBreakPoint); return new RangeInt(int.Parse(split[0]), int.Parse(split[1])); });
+        dic_valueToXmlData.Add(typeof(RangeFloat), (object data) => { return ((RangeFloat)data).start.ToString() + m_PhraseBaseBreakPoint + ((RangeFloat)data).length.ToString(); });
+        dic_xmlDataToValue.Add(typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(m_PhraseBaseBreakPoint); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); });
     }
     public static TXmlPhrase Phrase=>Instance;
-    public string this[object value]
-    {
-        get
-        {
-            StringBuilder sb_xmlData = new StringBuilder();
-            Type type = value.GetType();
-            if (type.IsGenericType)
-            {
-                if (type.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    Type listType = type.GetGenericArguments()[0];
-                    foreach (object obj in value as IEnumerable)
-                    {
-                        sb_xmlData.Append(ValueToXmlData(listType, obj));
-                        sb_xmlData.Append(";");
-                    }
-                    if(sb_xmlData.Length!=0)
-                        sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
-                }
-                else if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
-                {
-                    Type keyType = type.GetGenericArguments()[0];
-                    Type valueType = type.GetGenericArguments()[1];
-                    foreach (DictionaryEntry obj in (IDictionary)value)
-                    {
-                        sb_xmlData.Append(ValueToXmlData(keyType, obj.Key));
-                        sb_xmlData.Append(":");
-                        sb_xmlData.Append(ValueToXmlData(valueType, obj.Value));
-                        sb_xmlData.Append(";");
-                    }
-                    if (sb_xmlData.Length != 0)
-                        sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
-                }
-            }
-            else
-            {
-                sb_xmlData.Append(ValueToXmlData(type, value));
-            }
-            return sb_xmlData.ToString();
-        }
-    }
-    public object this[Type type, string xmlData]
-    {
-        get
-        {
-            object obj_target = null;
-            if (type.IsGenericType)
-            {
-                if (type.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    Type listType = type.GetGenericArguments()[0];
-                    IList iList_Target = (IList)Activator.CreateInstance(type);
-                    string[] as_split = xmlData.Split(';');
-                    if (as_split.Length != 1 || as_split[0] != "")
-                        for (int i = 0; i < as_split.Length; i++)
-                        {
-                            iList_Target.Add(XmlDataToValue(listType, as_split[i]));
-                        }
-                    obj_target = iList_Target;
-                }
-                else if (type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
-                {
-                    Type keyType = type.GetGenericArguments()[0];
-                    Type valueType = type.GetGenericArguments()[1];
-                    IDictionary iDic_Target = (IDictionary)Activator.CreateInstance(type);
-                    string[] as_split = xmlData.Split(';');
-                    if (as_split.Length != 1 || as_split[0] != "")
-                        for (int i = 0; i < as_split.Length; i++)
-                        {
-                            string[] as_subSplit = as_split[i].Split(':');
-                            iDic_Target.Add(XmlDataToValue(keyType, as_subSplit[0])
-                                , XmlDataToValue(valueType, as_subSplit[1]));
-                        }
-                    obj_target = iDic_Target;
-                }
-            }
-            else
-            {
-                obj_target = XmlDataToValue(type, xmlData);
-            }
-            return obj_target;
-        }
-    }
-    public object GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
-    string ValueToXmlData(Type type, object value)
-    {
-        if (CheckIXmlParseType(type))
-            return IXmlPhraseToString(type,value); 
 
+    public string this[object value]=>this[value.GetType(),value];
+    public string this[Type type, object value]=>PhraseString(type,value,0);
+    public object this[Type type, string xmlData]=>PhraseObject(type,xmlData,0);
+    static readonly Type m_XmlPhraseType = typeof(IXmlPhrase);
+
+    public object GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
+    protected string PhraseString(Type type,object value,int iteration)
+    {
         if (type.IsEnum)
             return value.ToString();
-        if (!dic_valueToXmlData.ContainsKey(type))
-            Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Base Type To Phrase");
-        return dic_valueToXmlData[type](value);
-    }
-    object XmlDataToValue(Type type, string xmlData)
-    {
+
+        if (dic_valueToXmlData.ContainsKey(type))
+            return dic_valueToXmlData[type](value);
+
         if (CheckIXmlParseType(type))
-            return IXmlPraseToData(type, xmlData);
+            return IXmlPhraseToString(type, value,iteration+1);
 
+        if (type.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            StringBuilder sb_xmlData = new StringBuilder();
+            Type listType = type.GetGenericArguments()[0];
+            foreach (object obj in value as IEnumerable)
+            {
+                sb_xmlData.Append(PhraseString(listType, obj,iteration+1));
+                sb_xmlData.Append(m_PhraseListBreakPoint);
+            }
+            if (sb_xmlData.Length != 0)
+                sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
+            return sb_xmlData.ToString();
+        }
+        Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Base Type To Phrase");
+        return null;
+    }
+    protected object PhraseObject(Type type,string xmlData,int iteration)
+    {
         if (type.IsEnum)
-            return Enum.Parse(type,xmlData);
+            return Enum.Parse(type, xmlData);
 
-        if (!dic_xmlDataToValue.ContainsKey(type))
-            Debug.LogWarning("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
-        
-        return dic_xmlDataToValue[type](xmlData);
+        if (dic_xmlDataToValue.ContainsKey(type))
+            return dic_xmlDataToValue[type](xmlData);
+
+        if (CheckIXmlParseType(type))
+            return IXmlPraseToData(type, xmlData,iteration+1);
+
+        if (type.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            Type listType = type.GetGenericArguments()[0];
+            IList iList_Target = (IList)Activator.CreateInstance(type);
+            string[] list_Split = xmlData.Split(m_PhraseListBreakPoint);
+            if (list_Split.Length != 1 || list_Split[0] != "")
+                for (int i = 0; i < list_Split.Length; i++)
+                    iList_Target.Add(PhraseObject(listType, list_Split[i],iteration+1));
+            return iList_Target;
+        }
+        Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
+        return null;
     }
 
-    static readonly Type m_XmlParseType = typeof(IXmlPhrase);
     bool CheckIXmlParseType(Type type)
     {
-        if (!m_XmlParseType.IsAssignableFrom(type))
+        if (!m_XmlPhraseType.IsAssignableFrom(type))
             return false;
 
         if (!dic_xmlParseFieldInfos.ContainsKey(type))
             dic_xmlParseFieldInfos.Add(type, type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.NonPublic));
         return true;
     }
-    string IXmlPhraseToString(Type type, object data)
+
+    string IXmlPhraseToString(Type type, object data,int iteration)
     {
-        string pharseData = "";
+        string phrase = "";
+        char dataBreak = m_PhraseLiterateBreakPoints[iteration];
         int fieldLength = dic_xmlParseFieldInfos[type].Length;
         for (int i = 0; i < fieldLength; i++)
         {
-            pharseData += dic_xmlParseFieldInfos[type][i].GetValue(data);
+            FieldInfo field = dic_xmlParseFieldInfos[type][i];
+            object fieldValue= field.GetValue(data);
+            string fieldString = PhraseString(field.FieldType, fieldValue, iteration);
+            phrase += fieldString;
             if (i != fieldLength - 1)
-                pharseData += ",";
+                phrase += dataBreak;
         }
-        return pharseData;
+        return phrase;
     }
 
-    object IXmlPraseToData(Type type,string data)
+    object IXmlPraseToData(Type type,string data,int iteration)
     {
         object objectData=Activator.CreateInstance(type);
+        char dataBreak = m_PhraseLiterateBreakPoints[iteration];
         int fieldLength = dic_xmlParseFieldInfos[type].Length;
-        string[] splitString = data.Split(',');
+        string[] splitString = data.Split(dataBreak);
         if (splitString.Length != fieldLength)
             throw new Exception("Field Not Match!");
         for (int i = 0; i < fieldLength; i++)
-            dic_xmlParseFieldInfos[type][i].SetValue(objectData, XmlDataToValue(dic_xmlParseFieldInfos[type][i].FieldType, splitString[i]));
+        {
+            FieldInfo field = dic_xmlParseFieldInfos[type][i];
+            string fieldString = splitString[i];
+            object fieldValule = PhraseObject(field.FieldType, fieldString, iteration); 
+            field.SetValue(objectData, fieldValule);
+        }
         return objectData;
     }
 }

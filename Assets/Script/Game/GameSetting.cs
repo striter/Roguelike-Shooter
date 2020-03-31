@@ -503,10 +503,6 @@ namespace GameSetting
             m_CharacterSelected = enum_PlayerCharacter.Beth;
         }
 
-        public void DataRecorrect()
-        {
-        }
-
         public void UnlockDifficulty()
         {
             if (m_GameDifficulty != m_DifficultyUnlocked)
@@ -514,6 +510,10 @@ namespace GameSetting
 
             m_DifficultyUnlocked++;
             m_GameDifficulty++;
+        }
+
+        public void DataRecorrect()
+        {
         }
     }
 
@@ -554,41 +554,19 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_Stage m_Stage;
         public int m_LevelPassed;
-        public float m_Coins;
-        public int m_Exp;
-        public int m_Rank;
-        public List<PerkSaveData> m_Perks;
-        public float m_Health;
-        public WeaponSaveData m_weapon1, m_weapon2;
-        public bool m_weaponEquipingFirst;
-        public enum_PlayerCharacter m_character;
+        public PlayerSaveData m_PlayerData;
         public CBattleSave()
         {
-            m_Coins = 0;
-            m_Exp = 0;
-            m_Rank = 0;
-            m_Health = -1;
-            m_Perks = new List<PerkSaveData>();
             m_Stage = enum_Stage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
-            m_character = GameDataManager.m_GameData.m_CharacterSelected;
-            m_weapon1 = WeaponSaveData.CreateNew(enum_PlayerWeapon.P92);
-            m_weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
-            m_weaponEquipingFirst = true;
+            m_PlayerData = new PlayerSaveData(GameDataManager.m_GameData.m_CharacterSelected, enum_PlayerWeapon.P92);
         }
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
-            m_Coins = _player.m_CharacterInfo.m_Coins;
-            m_Exp = _player.m_CharacterInfo.m_Exp;
-            m_Rank = _player.m_CharacterInfo.m_Rank;
-            m_Health = _player.m_Health.m_CurrentHealth;
-            m_weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
-            m_weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
-            m_weaponEquipingFirst = _player.m_weaponEquipingFirst;
-            m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_StageIndex;
             m_LevelPassed = _level.m_LevelPassed;
+            m_PlayerData = new PlayerSaveData(_player);
         }
 
         void ISave.DataRecorrect()
@@ -626,7 +604,57 @@ namespace GameSetting
         {
         }
     }
-    
+
+    public struct WeaponSaveData : IXmlPhrase
+    {
+        public enum_PlayerWeapon m_Weapon { get; private set; }
+        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
+        public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
+    }
+
+    public struct MercenarySaveData:IXmlPhrase
+    {
+        public enum_MercenaryCharacter m_MercenaryCharacter { get; private set; }
+        public WeaponSaveData m_Weapon { get; private set; }
+        public float m_Health { get;private set; }
+        public MercenarySaveData(EntityCharacterMercenary _mercenary)
+        {
+            m_Weapon = WeaponSaveData.Create(_mercenary.m_Weapon);
+            m_MercenaryCharacter = _mercenary.m_Character;
+            m_Health = _mercenary.m_Health.m_CurrentHealth;
+
+        }
+    }
+
+    public struct PlayerSaveData:IXmlPhrase
+    {
+        public float m_Health { get; private set; }
+        public float m_Coins { get; private set; }
+        public WeaponSaveData m_Weapon1 { get; private set; }
+        public WeaponSaveData m_Weapon2 { get; private set; }
+        public enum_PlayerCharacter m_Character { get; private set; }
+        public List<PerkSaveData> m_Perks { get; private set; }
+        public PlayerSaveData(enum_PlayerCharacter player,enum_PlayerWeapon weapon)
+        {
+            m_Coins = 0;
+            m_Health = -1;
+            m_Perks = new List<PerkSaveData>();
+            m_Character = player;
+            m_Weapon1 = WeaponSaveData.CreateNew(weapon);
+            m_Weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
+        }
+
+        public PlayerSaveData(EntityCharacterPlayer _player)
+        {
+            m_Character = _player.m_Character;
+            m_Coins = _player.m_CharacterInfo.m_Coins;
+            m_Health = _player.m_Health.m_CurrentHealth;
+            m_Weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
+            m_Weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
+            m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
+        }
+    }
+
     public struct PerkSaveData:IXmlPhrase
     {
         public int m_Index { get; private set; }
@@ -641,14 +669,6 @@ namespace GameSetting
             return data;
         }
     }
-
-    public struct WeaponSaveData : IXmlPhrase
-    {
-        public enum_PlayerWeapon m_Weapon { get; private set; }
-        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon =weapon!=null? weapon.m_WeaponInfo.m_Weapon: enum_PlayerWeapon.Invalid};
-        public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
-    }
-
 
     public struct CampFarmPlotData : IXmlPhrase
     {
@@ -1440,8 +1460,6 @@ namespace GameSetting
 
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
         public float m_Coins { get; private set; } = 0;
-        public int m_Exp { get; private set; } = 0;
-        public int m_Rank { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
@@ -1463,12 +1481,10 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
-        public void SetInfoData(CBattleSave m_saveData)
+        public void SetInfoData(PlayerSaveData _saveData)
         {
-            m_Coins = m_saveData.m_Coins;
-            m_Rank = m_saveData.m_Rank;
-            m_Exp = m_saveData.m_Exp;
-            m_saveData.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(PerkDataManager.CreatePerk(perkData)); });
+            m_Coins = _saveData.m_Coins;
+            _saveData.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(PerkDataManager.CreatePerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
 

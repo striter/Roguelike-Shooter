@@ -132,8 +132,10 @@ namespace GameSetting
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
     public enum enum_PlayerCharacter { Invalid = -1, Beth = 10001, }
-
+    
     public enum enum_InteractCharacter { Invalid = -1, Trader = 20001, Trainer = 20002, }
+
+    public enum enum_MercenaryCharacter { Invalid = -1, Militia = 30001, Veteran = 30002 }
 
     public enum enum_Rarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Epic = 4 }
 
@@ -168,7 +170,6 @@ namespace GameSetting
         PoisonWand = 402,
         FrostWand = 403,
     }
-
 
     public enum enum_WeaponTrigger
     {

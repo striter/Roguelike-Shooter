@@ -450,7 +450,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 0
-  ExtraRendererForForest107Only: {fileID: 0}
   E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 0

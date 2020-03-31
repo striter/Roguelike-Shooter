@@ -161,13 +161,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
             m_LogText.text = string.Format("<color=#FFFFFF>Errors:{0},Warnings:{1},Logs:{2}</color>",m_ErrorCount,m_WarningCount, m_LogCount);
             return;
         }
-
-        int startIndex = 0;
-        int listCount = m_LogQueue.Count;
-        if (listCount >= LogExistCount)
-        {
-            startIndex = listCount - LogExistCount;
-        }
+        
         m_LogText.text = "";
         foreach (ConsoleLog log in m_LogQueue) 
             m_LogText.text += "<color=#" + GetLogHexColor(log.logType) + ">" + log.logInfo + "</color>\n"; 
