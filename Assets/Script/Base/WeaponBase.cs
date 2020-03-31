@@ -34,10 +34,9 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         I_ClipAmount = m_WeaponInfo.m_ClipAmount;
         I_AmmoLeft = m_WeaponInfo.m_ClipAmount;
         m_Trigger = GetTrigger();
-        m_BulletRefillTimer.SetTimer(m_WeaponInfo.m_BulletRefillTime);
+        m_BulletRefillTimer.SetTimerDuration(m_WeaponInfo.m_BulletRefillTime);
         m_BaseSFXWeaponIndex = GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index);
     }
-
 
     public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil)
     {
@@ -66,7 +65,6 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
-
 
     public virtual void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
     {

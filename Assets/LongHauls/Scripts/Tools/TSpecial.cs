@@ -911,29 +911,38 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
 
 public class TimeCounter
 {
-    float m_duration;
-    public bool m_Timing => m_timeCheck > 0;
-    public float m_timeCheck { get; private set; } = -1;
-    public float m_TimeLeftScale =>m_duration==0?0:m_timeCheck / m_duration;
+    public float m_TimerDuration { get; private set; } = 0;
+    public bool m_Timing { get; private set; } = false;
+    public float m_TimeCheck { get; private set; } = -1;
+    public float m_TimeLeftScale { get; private set; } = 0;
     public TimeCounter(float duration = 0,bool startOff=false) {
-        SetTimer(duration);
+        SetTimerDuration(duration);
         if (startOff)
             Stop();
     }
-    public void SetTimer(float duration)
+    public void SetTimerDuration(float duration)
     {
-        m_duration = duration;
-        m_timeCheck = m_duration;
+        m_TimerDuration = duration;
+        OnTimeCheck(m_TimerDuration);
     }
-    public void Reset() => m_timeCheck = m_duration;
-    public void Stop() => m_timeCheck = 0;
+
+    void OnTimeCheck(float _timeCheck)
+    {
+        m_TimeCheck = _timeCheck;
+        m_Timing = m_TimeCheck > 0;
+        m_TimeLeftScale = m_TimerDuration == 0 ? 0 : m_TimeCheck / m_TimerDuration;
+    }
+
+    public void Reset() => OnTimeCheck(m_TimerDuration);
+    public void Stop() => OnTimeCheck(0);
+
     public void Tick(float deltaTime)
     {
-        if (m_timeCheck <= 0)
+        if (m_TimeCheck <= 0)
             return;
-        m_timeCheck -= deltaTime;
-        if (m_timeCheck <= 0)
-            m_timeCheck = 0;
+        OnTimeCheck(m_TimeCheck-deltaTime);
+        if (!m_Timing)
+            m_TimeCheck = 0;
     }
 }
 

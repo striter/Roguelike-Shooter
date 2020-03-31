@@ -559,7 +559,7 @@ namespace GameSetting
         {
             m_Stage = enum_Stage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
-            m_PlayerData = new PlayerSaveData(GameDataManager.m_GameData.m_CharacterSelected, enum_PlayerWeapon.P92);
+            m_PlayerData = new PlayerSaveData( enum_PlayerCharacter.Unknown, enum_PlayerWeapon.DE);
         }
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
@@ -1189,7 +1189,7 @@ namespace GameSetting
         {
             OnTriggerCheck = _OnTriggerCheck;
             OnTriggerSuccessful = _OnTriggerSuccessful;
-            m_TriggerTimer.SetTimer(_fireRate);
+            m_TriggerTimer.SetTimerDuration(_fireRate);
         }
         public override void Tick(bool paused,float deltaTime)
         {
@@ -1219,7 +1219,7 @@ namespace GameSetting
         {
             OnStoreBeginCheck = _OnStoreBeginCheck;
             OnStoreFinish = _OnStoreFinish;
-            m_StoreTimer.SetTimer(_storeDuration);
+            m_StoreTimer.SetTimerDuration(_storeDuration);
             m_Storing = false;
         }
 
@@ -1605,7 +1605,7 @@ namespace GameSetting
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_ControllType != enum_EntityControlType.AIWeaponHelper || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
+            if (targetEntity.m_ControllType != enum_EntityType.AIWeaponHelper || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);

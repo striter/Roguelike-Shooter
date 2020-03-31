@@ -57,6 +57,7 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterSkinEffect.OnDisable();
     }
+    public bool m_AvailableTarget => !m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_IsDead;
     protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
         base.EntityActivate(flag, startHealth);
@@ -136,7 +137,7 @@ public class EntityCharacterBase : EntityBase
         base.OnDead();
         m_CharacterInfo.OnDead();
         m_CharacterSkinEffect.SetDeath();
-        m_DeadCounter.SetTimer(GameConst.F_EntityDeadFadeTime);
+        m_DeadCounter.SetTimerDuration(GameConst.F_EntityDeadFadeTime);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     public override void DoRecycle()

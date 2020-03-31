@@ -7,10 +7,9 @@ using System;
 using UnityEngine.AI;
 
 public class EntityCharacterPlayer : EntityCharacterBase {
-    public override enum_EntityControlType m_ControllType => enum_EntityControlType.Player;
+    public override enum_EntityType m_ControllType => enum_EntityType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
-    protected WeaponBaseAnimator m_Animator;
-    protected virtual WeaponBaseAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new WeaponBaseAnimator(animator, _OnAnimEvent);
+    protected virtual PlayerCharacterAnimator m_Animator { get; private set; }
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
@@ -56,7 +55,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("UIStatus");
-        m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
+        m_Animator = new PlayerCharacterAnimator(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
         gameObject.layer = GameLayer.I_MovementDetect;
         m_Agent = GetComponent<NavMeshAgent>();
@@ -178,7 +177,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_CharacterInfo.F_AimMovementStrictMultiply) : 1f;
     protected virtual Quaternion GetCharacterRotation() => m_CharacterRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
-    protected virtual bool CalculateWeaponFire() =>!Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
+    protected virtual bool CheckWeaponFiring() =>!Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
 
     #region WeaponControll
     
@@ -206,10 +205,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_WeaponCurrent == null)
             return;
         
-        m_weaponFirePause = !CalculateWeaponFire();
         tf_WeaponAim.rotation = GetCharacterRotation();
-        m_Assist.SetEnable(!m_weaponFirePause  && m_Target != null);
 
+        m_weaponFirePause = !CheckWeaponFiring();
+        m_Assist.SetEnable(!m_weaponFirePause  && m_AimAssistTarget != null);
         float reloadDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
         float fireDelta = m_CharacterInfo.F_FireRateTick(deltaTime);
         if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause,  fireDelta, reloadDelta);
@@ -288,9 +287,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
     protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
-    protected EntityCharacterBase m_Target { get; private set; } = null;
-    protected bool m_TargetAvailable => m_Target != null && GameManager.Instance.EntityTargetable(m_Target);
-    float targetCheck = .3f;
+    protected EntityCharacterBase m_AimAssistTarget { get; private set; } = null;
+    TimeCounter m_TargetCheckTimer = new TimeCounter(.3f, false);
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveAxisInput = moveDelta;
@@ -310,8 +308,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TargetTick(deltaTime);
         
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
-        if (m_Target)
-            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_Target.tf_Head.position),Vector3.up); 
+        if (m_AimAssistTarget)
+            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_AimAssistTarget.tf_Head.position),Vector3.up); 
         else  if (m_MoveAxisInput != Vector2.zero)
             m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward,Vector3.up);
 
@@ -325,12 +323,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     void TargetTick(float deltaTime)
     {
-        if (!m_TargetAvailable || targetCheck < 0f)
+        m_TargetCheckTimer.Tick(deltaTime);
+        if (m_AimAssistTarget == null || !m_AimAssistTarget.m_AvailableTarget || !m_TargetCheckTimer.m_Timing)
         {
-            targetCheck = .3f;
-            m_Target =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive):null;
+            m_AimAssistTarget =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive):null;
+            m_TargetCheckTimer.Reset();
         }
-        targetCheck -= Time.deltaTime;
     }
 
     #endregion
@@ -484,7 +482,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         else
             UIManager.Instance.RemoveBindings();
     }
-    
+
 #if UNITY_EDITOR
     CapsuleCollider hitBox;
     private void OnDrawGizmos()

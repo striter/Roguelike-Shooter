@@ -345,7 +345,7 @@ public class GameManager : GameManagerBase
     void OnEntiyActivate(EntityBase entity)
     {
         m_Entities.Add(entity.m_EntityID, entity);
-        if (entity.m_ControllType == enum_EntityControlType.None)
+        if (entity.m_ControllType == enum_EntityType.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Add(character.m_EntityID, character);
@@ -358,7 +358,7 @@ public class GameManager : GameManagerBase
 
     void OnCharacterDead(EntityCharacterBase character)
     {
-        if (character.m_ControllType == enum_EntityControlType.Player)
+        if (character.m_ControllType == enum_EntityType.Player)
             SetPostEffect_Dead();
 
         OnBattleEntityKilled(character);
@@ -367,7 +367,7 @@ public class GameManager : GameManagerBase
     void OnEntityRecycle(EntityBase entity)
     {
         m_Entities.Remove(entity.m_EntityID);
-        if (entity.m_ControllType == enum_EntityControlType.None)
+        if (entity.m_ControllType == enum_EntityType.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Remove(character.m_EntityID);
@@ -377,21 +377,20 @@ public class GameManager : GameManagerBase
                 m_OppositeEntities[flag].Remove(character);
         });
 
-        if (entity.m_ControllType == enum_EntityControlType.Player)
+        if (entity.m_ControllType == enum_EntityType.Player)
             OnGameFinished(false);
     }
 
 
     void OnCharacterRevive(EntityCharacterBase character)
     {
-        if (character.m_ControllType == enum_EntityControlType.Player)
+        if (character.m_ControllType == enum_EntityType.Player)
         {
             SetPostEffect_Revive();
             return;
         }
     }
     RaycastHit[] m_Raycasts;
-    public bool EntityTargetable(EntityCharacterBase entity) => !entity.m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !entity.m_IsDead;
     public bool EntityOpposite(EntityBase sourceEntity, EntityBase targetEntity) => sourceEntity.m_Flag != targetEntity.m_Flag;
     public bool EntityOpposite(int sourceEntity, int targetEntity) => GetEntity(sourceEntity).m_Flag != GetEntity(targetEntity).m_Flag;
     public EntityCharacterBase GetNeariesCharacter(EntityCharacterBase sourceEntity, bool targetAlly, bool checkObstacle = true, float checkDistance = float.MaxValue, Predicate<EntityCharacterBase> predictMatch = null)
@@ -417,7 +416,7 @@ public class GameManager : GameManagerBase
         List<EntityCharacterBase> characters = GetCharacters(sourceEntity.m_Flag, targetAlly);
         characters.Traversal((EntityCharacterBase character) =>
         {
-            if (character.m_EntityID == sourceEntity.m_EntityID || !EntityTargetable(character))
+            if (character.m_EntityID == sourceEntity.m_EntityID || !character.m_AvailableTarget)
                 return;
 
             float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, character.tf_Head.position);

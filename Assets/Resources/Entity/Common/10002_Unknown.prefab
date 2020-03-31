@@ -170,7 +170,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4991228344696976}
-  - component: {fileID: 114852616744700244}
   - component: {fileID: 114962434440693528}
   - component: {fileID: 143119992385054218}
   - component: {fileID: 195356000126195976}
@@ -1033,24 +1032,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2091396369435d24bad4838db15bbe09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114852616744700244
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1333480194626894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42b4fde58ba7bf84d89f746257a30866, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  I_MaxHealth: 200
-  I_DefaultArmor: 100
-  F_MovementSpeed: 8
-  F_AttackSpread: 0
-  F_AbilityCoolDown: 1
-  F_RollSpeedMultiple: 2
-  F_RollDuration: 0.5
 --- !u!114 &114861050626382524
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1075,9 +1056,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 200
   I_DefaultArmor: 100
-  F_MovementSpeed: 0
+  F_MovementSpeed: 8
   F_AttackSpread: 0
-  F_AbilityCoolDown: 0
+  F_AbilityCooldown: 1
+  F_AbilityAttackRange: 5
+  F_AbilityAttackDuration: 0.5
+  P_NormalFinishPercentage: 25
+  P_EliteFinishPercentage: 15
+  F_AbilityDamagePerStack: 20
+  I_MaxAbilityDamageStack: 5
+  F_AbilityDamageStackExpireDuration: 20
 --- !u!135 &135432215870104796
 SphereCollider:
   m_ObjectHideFlags: 1

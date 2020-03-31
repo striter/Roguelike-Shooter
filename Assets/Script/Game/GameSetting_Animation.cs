@@ -112,13 +112,13 @@ namespace GameSetting
         }
     }
 
-    public class WeaponBaseAnimator : CharacterAnimator
+    public class WeaponModelAnimator : CharacterAnimator
     {
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_B_Aim = Animator.StringToHash("b_aim");
         Vector2 v2_movement;
-        public WeaponBaseAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
+        public WeaponModelAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
         {
             v2_movement = Vector2.zero;
         }
@@ -137,5 +137,24 @@ namespace GameSetting
             m_Animator.SetTrigger(HS_T_Attack);
         }
     }
+
+    public class PlayerCharacterAnimator : WeaponModelAnimator
+    {
+        static readonly int HS_T_Roll = Animator.StringToHash("t_roll");
+        static readonly int HS_F_RollSpeed = Animator.StringToHash("fm_roll");
+        public PlayerCharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
+        {
+        }
+        public void BeginRoll(float rollDuration)
+        {
+            m_Animator.SetTrigger(HS_T_Roll);
+            m_Animator.SetFloat(HS_F_RollSpeed, 1f / rollDuration);
+        }
+        public void EndRoll()
+        {
+            m_Animator.SetTrigger(HS_T_Activate);
+        }
+    }
+
     #endregion
 }

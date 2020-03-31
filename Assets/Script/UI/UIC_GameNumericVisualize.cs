@@ -44,9 +44,9 @@ public class UIC_GameNumericVisualize : UIControlBase
     {
         switch(entity.m_ControllType)
         {
-            case enum_EntityControlType.AIWeaponModel:
-            case enum_EntityControlType.AIWeaponHelper:
-            case enum_EntityControlType.Device:
+            case enum_EntityType.AIWeaponModel:
+            case enum_EntityType.AIWeaponHelper:
+            case enum_EntityType.Device:
                 return true;
         }
         return false;
