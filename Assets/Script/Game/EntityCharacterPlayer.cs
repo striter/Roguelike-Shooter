@@ -13,8 +13,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #endregion
     public override enum_EntityController m_ControllType => enum_EntityController.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
-    protected PlayerAnimator m_Animator;
-    protected virtual PlayerAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new PlayerAnimator(animator, _OnAnimEvent);
+    protected WeaponBaseAnimator m_Animator;
+    protected virtual WeaponBaseAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new WeaponBaseAnimator(animator, _OnAnimEvent);
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_Assist = null;
@@ -526,31 +526,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             UIManager.Instance.RemoveBindings();
     }
     
-    protected class PlayerAnimator : CharacterAnimator
-    {
-        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
-        static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
-        static readonly int HS_B_Aim = Animator.StringToHash("b_aim");
-        Vector2 v2_movement;
-        public PlayerAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator,_OnAnimEvent)
-        {
-            v2_movement = Vector2.zero;
-        }
-        public void OnActivate(enum_PlayerAnim animIndex)=>OnActivate((int)animIndex);
-        public void SetRun(Vector2 movement,float movementParam,bool aiming)
-        {
-            v2_movement = Vector2.Lerp(v2_movement,movement,Time.deltaTime*5f);
-            m_Animator.SetFloat(HS_F_Strafe, v2_movement.x);
-            m_Animator.SetBool(HS_B_Aim, aiming);
-            base.SetForward(v2_movement.y);
-            base.SetMovementSpeed(movementParam);
-        }
-        public void Attack(float fireRate)
-        {
-            SetFireSpeed(1/fireRate);
-            m_Animator.SetTrigger(HS_T_Attack);
-        }
-    }
 #if UNITY_EDITOR
     CapsuleCollider hitBox;
     private void OnDrawGizmos()

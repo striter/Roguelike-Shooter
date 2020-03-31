@@ -23,6 +23,8 @@ namespace GameSetting
         OnLevelFinished,
         OnStageFinished,
 
+        OnEndlessData,
+
         OnGameLoad,
         OnGameBegin,
         OnGameFinish,
@@ -167,48 +169,12 @@ namespace GameSetting
         FrostWand = 403,
     }
 
+
     public enum enum_WeaponTrigger
     {
         Invalid = -1,
         Auto = 0,
         Storing = 1,
-    }
-
-    public enum enum_PlayerAnim
-    {
-        Invalid = -1,
-        Rifle_1001 = 1001,
-        Pistol_1002 = 1002,
-        Crossbow_1003 = 1003,
-        Heavy_1004 = 1004,
-        HeavySword_2001 = 2001,
-    }
-
-    public enum enum_EnermyAnim
-    {
-        Invalid = -1,
-        Axe_Dual_Pound_10 = 10,
-        Spear_R_Stick_20 = 20,
-        Sword_R_Swipe_30 = 30,
-        Sword_R_Slash_31 = 31,
-        Dagger_Dual_Twice_40 = 40,
-        Staff_L_Cast_110 = 110,
-        Staff_Dual_Cast_111 = 111,
-        Staff_R_Cast_Loop_112 = 112,
-        Staff_R_Cast_113 = 113,
-        Bow_Shoot_130 = 130,
-        CrossBow_Shoot_131 = 131,
-        Bow_UpShoot_133 = 133,
-        Rifle_HipShot_140 = 140,
-        Rifle_AimShot_141 = 141,
-        Throwable_Hips_150 = 150,
-        Throwable_R_ThrowHip_151 = 151,
-        Throwable_R_ThrowBack_152 = 152,
-        Throwable_R_Summon_153 = 153,
-        Heavy_HipShot_161 = 161,
-        Heavy_Mortal_162 = 162,
-        Heavy_Shield_Spear_163 = 163,
-        Heavy_Remote_164 = 164,
     }
 
     public enum enum_GameVFX

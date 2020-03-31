@@ -302,45 +302,4 @@ public class EntityCharacterBase : EntityBase
         }
     }
 
-    protected class CharacterAnimator:AnimatorControlBase
-    {
-        protected static readonly int HS_T_Activate = Animator.StringToHash("t_activate");
-        static readonly int HS_T_Dead = Animator.StringToHash("t_dead");
-        static readonly int HS_F_Forward = Animator.StringToHash("f_forward");
-        static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
-        static readonly int HS_FM_Attack = Animator.StringToHash("fm_attack");
-        static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
-        public CharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
-        {
-            _animator.fireEvents = true;
-            m_Animator.GetComponent<TAnimatorEvent>().Attach(_OnAnimEvent);
-        }
-        public void OnRevive()
-        {
-            m_Animator.SetTrigger(HS_T_Activate);
-        }
-        protected void OnActivate(int index)
-        {
-            m_Animator.SetInteger(HS_I_WeaponType, index);
-            m_Animator.SetTrigger(HS_T_Activate);
-            m_Animator.Update(1f);
-        }
-        public void SetPause(bool stun)
-        {
-            m_Animator.speed = stun ? 0 : 1;
-        }
-        public void SetForward(float forward)
-        {
-            m_Animator.SetFloat(HS_F_Forward, forward);
-        }
-        public void SetMovementSpeed(float movementSpeed)
-        {
-            m_Animator.SetFloat(HS_FM_Movement, movementSpeed);
-        }
-        public void SetFireSpeed(float fireSpeed)=> m_Animator.SetFloat(HS_FM_Attack, fireSpeed);
-        public void OnDead()
-        {
-            m_Animator.SetTrigger(HS_T_Dead);
-        }
-    }
 }

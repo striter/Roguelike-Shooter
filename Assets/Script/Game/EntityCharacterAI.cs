@@ -15,7 +15,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     public RangeFloat F_AttackDuration;
     public RangeInt F_AttackTimes;
     public float F_AttackRate;
-    EnermyAnimator m_Animator;
+    WeaponHelperAnimator m_Animator;
     [Range(0,3)]
     public float F_AttackRotateParam=1f;
     [Range(0, 100)]
@@ -31,7 +31,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         tf_Barrel = transform.FindInAllChild("Barrel");
         InitAI(WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
-            m_Animator = new EnermyAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
+            m_Animator = new WeaponHelperAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
     public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
     {
@@ -417,28 +417,6 @@ public class EntityCharacterAI : EntityCharacterBase {
     #endregion
     #endregion
     #endregion
-    protected class EnermyAnimator : CharacterAnimator
-    {
-        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
-        static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
-        public EnermyAnimator(Animator _animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator,_OnAnimEvent)
-        {
-            m_Animator.fireEvents = true;
-        }
-        public void OnActivate(enum_EnermyAnim _animIndex) => OnActivate((int)_animIndex);
-        public void OnAttack(bool attack)
-        {
-            if(attack)
-                m_Animator.SetTrigger(HS_T_Attack);
-            m_Animator.SetBool(HS_B_Attack,attack);
-        }
-
-        public void SetMovementFireSpeed(float movementSpeed,float fireSpeed)
-        {
-            SetMovementSpeed(movementSpeed);
-            SetFireSpeed(fireSpeed);
-        }
-    }
 #if UNITY_EDITOR
     CapsuleCollider hitbox;
     private void OnDrawGizmos()

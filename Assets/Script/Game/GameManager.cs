@@ -60,13 +60,14 @@ public class GameManager : GameManagerBase
     public bool m_GameLoading { get; private set; } = false;
     protected override void Awake()
     {
-        nInstance=this;
         base.Awake();
+        nInstance = this;
         InitEntityDic();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         if (M_TESTSEED!="")
             GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
@@ -78,15 +79,11 @@ public class GameManager : GameManagerBase
     {
         base.OnDestroy();
         nInstance = null;
-    }
-
-    protected override void OnDisable()
-    {
-        base.OnDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
     }
 
     protected override void Start()
@@ -181,7 +178,7 @@ public class GameManager : GameManagerBase
                 switch (m_GameLevel.m_LevelType)
                 {
                     case enum_LevelType.StageStart:
-                         GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkRareSelectRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
+                         GameObjectManager.SpawnInteract<InteractPerkSelect>(objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkRareSelectRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
                         break;
                     case enum_LevelType.Trader:
                         enum_Rarity rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradePerk, m_GameLevel.m_Random);
@@ -466,9 +463,9 @@ public class GameManager : GameManagerBase
         GameObjectManager.SpawnInteract<InteractPerkSelect>( GetPickupPosition(m_LocalPlayer), Quaternion.identity).Play(PerkDataManager.RandomPerks(3,GameConst.D_BattleFinishPerkGenerate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
     }
 
-    void OnBattleEnermyKilled(EntityCharacterBase entity)
+    void SpawnBattleEntityDeadDrops(EntityCharacterBase entity)
     {
-        if (entity.m_Flag != enum_EntityFlag.Enermy || entity.E_SpawnType == enum_EnermyType.Invalid)
+        if (entity.E_SpawnType == enum_EnermyType.Invalid)
             return;
 
         PickupGenerateData pickupGenerateData = entity.E_SpawnType == enum_EnermyType.E5 ? m_GameLevel.m_InteractGenerate.m_ElitePickupData : m_GameLevel.m_InteractGenerate.m_NormalPickupData;
@@ -495,24 +492,6 @@ public class GameManager : GameManagerBase
     public Dictionary<enum_EnermyType, int> m_EnermySpawnIDs;
     public bool m_Battling { get; private set; } = false;
 
-    void OnBattleEntityKilled(EntityCharacterBase character)
-    {
-        if (!m_Battling)
-            return;
-
-        OnBattleEnermyKilled(character);
-
-        if (GetCharacters(enum_EntityFlag.Enermy, true).Any(p => !p.m_IsDead))
-            return;
-        SEnermyGenerate generate;
-        if(!m_GameLevel.OnBattleWaveFinished(out generate))
-        {
-            GenerateBattleEnermies(generate);
-            return;
-        }
-        OnBattleFinish();
-    }
-
     void OnBattleStart()
     {
         if (m_Battling)
@@ -524,6 +503,35 @@ public class GameManager : GameManagerBase
         GenerateBattleEnermies(m_GameLevel.OnBattleStart());
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
     }
+
+    void OnBattleEntityKilled(EntityCharacterBase character)
+    {
+        if (!m_Battling)
+            return;
+
+        if (character.m_Flag != enum_EntityFlag.Enermy)
+            return;
+
+        SpawnBattleEntityDeadDrops(character);
+        m_GameLevel.OnBattleEnermyKilled();
+
+        if (GetCharacters(enum_EntityFlag.Enermy, true).Any(p => !p.m_IsDead))
+            return;
+        SEnermyGenerate generate;
+        if(!m_GameLevel.OnBattleWaveFinished(out generate))
+        {
+            GenerateBattleEnermies(generate);
+            return;
+        }
+        OnBattleFinish();
+    }
+    void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float applyAmount)
+    {
+        if (damageEntity.m_Flag== enum_EntityFlag.Enermy && applyAmount <= 0)
+            return;
+        m_GameLevel.OnBattleDamageDealt(applyAmount);
+    }
+
 
     void OnBattleFinish()
     {
@@ -566,6 +574,8 @@ public class GameProgressManager
     Dictionary<bool, List<SEnermyGenerate>> m_EnermyGenerate;
     public List<int> m_SelectLevelIndexes { get; private set; } = new List<int>();
     public int m_BattleWave { get; private set; }
+    public int m_BattleEnermiesKilled { get; private set; }
+    public float m_BattleDamageDealt { get; private set; }
     #endregion
     #region Get
     public bool m_FinalStage => m_StageIndex == enum_Stage.Ranger;
@@ -606,10 +616,27 @@ public class GameProgressManager
         m_SelectLevelIndexes.Sort((int a, int b) => a - b);
     }
 
+    #region BattleData
     public SEnermyGenerate OnBattleStart()
     {
         m_BattleWave = 0;
+        m_BattleEnermiesKilled = 0;
+        m_BattleDamageDealt = 0;
         return GetBattleWaveData();
+    }
+
+    public void OnBattleEnermyKilled()
+    {
+        m_BattleEnermiesKilled++;
+        if (m_LevelType == enum_LevelType.EndlessBattle)
+            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEndlessData, m_BattleEnermiesKilled, m_BattleDamageDealt);
+    }
+
+    public void OnBattleDamageDealt(float damage)
+    {
+        m_BattleDamageDealt += damage;
+        if (m_LevelType == enum_LevelType.EndlessBattle)
+            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEndlessData,m_BattleEnermiesKilled,m_BattleDamageDealt);
     }
 
     public bool OnBattleWaveFinished(out SEnermyGenerate nextWaveData)
@@ -643,9 +670,8 @@ public class GameProgressManager
         Debug.LogError("Invalid Battle Wave Data Found!");
         return new SEnermyGenerate();
     }
-
-
-
+    #endregion
+    #region Level
     public GameLevelPortalData GetNextLevelGenerate(EntityCharacterPlayer player)
     {
         if (m_LevelIndex == 8)
@@ -681,7 +707,7 @@ public class GameProgressManager
         m_LevelPassed++;
         m_LevelType = nextLevel;
     }
-
+    #endregion
     public void StageFinished()=>  m_StageIndex++;
     
     public void GameFinished(bool win)=> m_GameWin = win;
