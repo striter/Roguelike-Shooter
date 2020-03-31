@@ -23,6 +23,8 @@ namespace GameSetting
         OnLevelFinished,
         OnStageFinished,
 
+        OnEndlessData,
+
         OnGameLoad,
         OnGameBegin,
         OnGameFinish,
@@ -53,17 +55,23 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
-    public enum enum_Stage { Invalid = -1, Rookie = 1, Veteran = 2, Ranger = 3 }
+    public enum enum_Stage {
+        Invalid = -1,
+        Rookie = 1,
+        Veteran = 2,
+        Ranger = 3,
+    }
 
     public enum enum_LevelType
     {
         Invalid = -1,
 
-        Start=0,
+        StageStart=0,
 
         NormalBattle = 1,
         EliteBattle = 2,
-        FinalBattle=3,
+        StageFinalBattle=3,
+        EndlessBattle=4,
 
         Trader,
         Bonefire,
@@ -78,8 +86,7 @@ namespace GameSetting
         PerkRareSelect,
 
         StageEnd,
-        StageEndless,
-        GameEnd,
+        GameWin,
     }
 
     public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
@@ -162,48 +169,12 @@ namespace GameSetting
         FrostWand = 403,
     }
 
+
     public enum enum_WeaponTrigger
     {
         Invalid = -1,
         Auto = 0,
         Storing = 1,
-    }
-
-    public enum enum_PlayerAnim
-    {
-        Invalid = -1,
-        Rifle_1001 = 1001,
-        Pistol_1002 = 1002,
-        Crossbow_1003 = 1003,
-        Heavy_1004 = 1004,
-        HeavySword_2001 = 2001,
-    }
-
-    public enum enum_EnermyAnim
-    {
-        Invalid = -1,
-        Axe_Dual_Pound_10 = 10,
-        Spear_R_Stick_20 = 20,
-        Sword_R_Swipe_30 = 30,
-        Sword_R_Slash_31 = 31,
-        Dagger_Dual_Twice_40 = 40,
-        Staff_L_Cast_110 = 110,
-        Staff_Dual_Cast_111 = 111,
-        Staff_R_Cast_Loop_112 = 112,
-        Staff_R_Cast_113 = 113,
-        Bow_Shoot_130 = 130,
-        CrossBow_Shoot_131 = 131,
-        Bow_UpShoot_133 = 133,
-        Rifle_HipShot_140 = 140,
-        Rifle_AimShot_141 = 141,
-        Throwable_Hips_150 = 150,
-        Throwable_R_ThrowHip_151 = 151,
-        Throwable_R_ThrowBack_152 = 152,
-        Throwable_R_Summon_153 = 153,
-        Heavy_HipShot_161 = 161,
-        Heavy_Mortal_162 = 162,
-        Heavy_Shield_Spear_163 = 163,
-        Heavy_Remote_164 = 164,
     }
 
     public enum enum_GameVFX
@@ -253,24 +224,28 @@ namespace GameSetting
                 default:
                     return false;
                 case enum_LevelType.EliteBattle:
-                case enum_LevelType.FinalBattle:
                 case enum_LevelType.NormalBattle:
+                case enum_LevelType.EndlessBattle:
+                case enum_LevelType.StageFinalBattle:
                     return true;
             }
         }
 
         public static enum_ChunkType GetChunkType(this enum_LevelType eventType)
         {
-            if (eventType.IsBattleLevel())
-                return enum_ChunkType.Battle;
-
             switch(eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+eventType);
                     return enum_ChunkType.Invalid;
-                case enum_LevelType.Start:
+                case enum_LevelType.StageStart:
                     return enum_ChunkType.Start;
+                case enum_LevelType.StageFinalBattle:
+                case enum_LevelType.EndlessBattle:
+                    return enum_ChunkType.Final;
+                case enum_LevelType.NormalBattle:
+                case enum_LevelType.EliteBattle:
+                    return enum_ChunkType.Battle;
                 case enum_LevelType.Trader:
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkFill:
@@ -287,28 +262,28 @@ namespace GameSetting
 
         public static enum_ChunkPortalType GetPortalType(this enum_LevelType eventType)
         {
-            if (eventType.IsBattleLevel())
-                return enum_ChunkPortalType.Battle;
-
             switch (eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+ eventType);
                     return enum_ChunkPortalType.Invalid;
-                case enum_LevelType.StageEnd:
-                case enum_LevelType.GameEnd:
-                    return  enum_ChunkPortalType.Battle;
+                case enum_LevelType.EliteBattle:
+                case enum_LevelType.NormalBattle:
+                case enum_LevelType.StageFinalBattle:
+                    return enum_ChunkPortalType.Battle;
                 case enum_LevelType.Trader:
                 case enum_LevelType.Bonefire:
-                case enum_LevelType.NormalBattle:
                 case enum_LevelType.PerkFill:
                 case enum_LevelType.PerkRare:
                 case enum_LevelType.WeaponReforge:
                 case enum_LevelType.WeaponRecycle:
                     return enum_ChunkPortalType.Event;
+                case enum_LevelType.StageEnd:
+                case enum_LevelType.GameWin:
                 case enum_LevelType.PerkRareSelect:
                 case enum_LevelType.WeaponVendorRare:
                 case enum_LevelType.SafeCrack:
+                case enum_LevelType.EndlessBattle:
                     return enum_ChunkPortalType.Reward;
             }
         

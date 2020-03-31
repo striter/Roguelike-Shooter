@@ -11,7 +11,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     #endregion
     public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Beth;
     private new PlayerAnimatorBeth m_Animator;
-    protected override PlayerAnimator GetAnimatorController(Animator animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent)
+    protected override WeaponBaseAnimator GetAnimatorController(Animator animator,Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent)
     {
         m_Animator= new PlayerAnimatorBeth(animator, _OnAnimEvent);
         return m_Animator;
@@ -51,7 +51,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_Rolling ? m_rollDirection : base.CalculateMoveDirection(moveAxisInput);
     protected override Quaternion GetCharacterRotation() => m_Rolling ? Quaternion.LookRotation(m_rollingLookRotation, Vector3.up) : base.GetCharacterRotation();
 
-    class PlayerAnimatorBeth:PlayerAnimator
+    class PlayerAnimatorBeth:WeaponBaseAnimator
     {
         static readonly int HS_T_Roll = Animator.StringToHash("t_roll");
         static readonly int HS_F_RollSpeed = Animator.StringToHash("fm_roll");
