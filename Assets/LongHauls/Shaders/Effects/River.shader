@@ -122,7 +122,6 @@
 
 				float2 distort = Distort(i.uv);
 
-				float foam = Foam(linearDepthOffset) * _FoamColor.a;
 				float fresnelOpacity = FresnelOpacity(normal, viewDir);
 				float depthOpacity = DepthOpacity(linearDepthOffset);
 				float totalOpacity = saturate( fresnelOpacity + depthOpacity);
