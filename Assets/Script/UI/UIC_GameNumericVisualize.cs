@@ -5,10 +5,10 @@ using GameSetting;
 public class UIC_GameNumericVisualize : UIControlBase
 {
     int visualize = 0;
-    UIT_GridControllerGridItem<UIGI_VisualizeHealth> m_HealthGrid;
-    UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_DamageGrid;
-    UIT_GridControllerGridItem<UIGI_VisualizePickup> m_PickupGrid;
-    UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate> m_AttackIndicateGrid;
+    public UIT_GridControllerGridItem<UIGI_VisualizeHealth> m_HealthGrid { get; private set; }
+    public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_DamageGrid { get; private set; }
+    public  UIT_GridControllerGridItem<UIGI_VisualizePickup> m_PickupGrid { get; private set; }
+    public UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate> m_AttackIndicateGrid { get; private set; }
     protected override void Init()
     {
         base.Init();

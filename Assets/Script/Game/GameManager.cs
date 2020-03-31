@@ -45,7 +45,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Health", KeyCode.F6, "20", (string health) => {GameObjectManager.SpawnInteract<InteractPickupHealth>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(health), !m_Battling);});
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => {GameObjectManager.SpawnInteract<InteractPickupArmor>(  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(armor), !m_Battling);});
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, (int)enum_PlayerWeapon.Railgun, enum_PlayerWeapon.Railgun,(int weaponIdentity) => {
-            GameObjectManager.SpawnInteract<InteractWeaponPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(WeaponSaveData.CreateNew((enum_PlayerWeapon)weaponIdentity)); });
+            GameObjectManager.SpawnInteract<InteractWeaponPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(WeaponSaveData.CreateNew((enum_PlayerWeapon)weaponIdentity)); }); UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None,()=> GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
     }
     #endregion
@@ -655,7 +655,7 @@ public class GameProgressManager
             case enum_LevelType.EndlessBattle:
                 {
                     SEnermyGenerate generate = m_EnermyGenerate[false].RandomItem();
-                    int generateAdditive = m_BattleWave / 4;
+                    int generateAdditive = m_BattleWave;
                     for (int i = 0; i < generateAdditive; i++)
                         generate += m_EnermyGenerate[false].RandomItem();
                     return generate;
