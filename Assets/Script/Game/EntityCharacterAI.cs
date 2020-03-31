@@ -9,7 +9,8 @@ using System;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EntityCharacterAI : EntityCharacterBase {
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
-    public override enum_EntityController m_ControllType => enum_EntityController.AI;
+    public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
+    public override enum_EntityControlType m_ControllType => enum_EntityControlType.AIWeaponHelper;
     public float F_AIChaseRange;
     public float F_AIAttackRange;
     public RangeFloat F_AttackDuration;
@@ -230,7 +231,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (!indicateOthers)
             return;
         GameManager.Instance.GetNearbyCharacters(this, true, false, GameConst.AI.F_AITargetIndicateRange).Traversal((EntityCharacterBase character) => {
-            if (character.m_ControllType == enum_EntityController.AI)
+            if (character.m_ControllType == enum_EntityControlType.AIWeaponHelper)
                 (character as EntityCharacterAI).OnBattleReceiveTarget(m_Target, false);
         });
 

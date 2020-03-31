@@ -65,7 +65,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
 
     void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
-    public virtual void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
+    public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
 
 
     public virtual void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
@@ -82,9 +82,9 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_BulletRefillTimer.Reset();
     }
 
-    public void Tick(float fireTick,float reloadTick)
+    public virtual void Tick(bool firePausing, float fireTick,float reloadTick)
     {
-        m_Trigger.Tick(fireTick);
+        m_Trigger.Tick(firePausing,fireTick);
         ReloadTick(reloadTick);
 
         int clipAmount = m_Attacher.m_CharacterInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);

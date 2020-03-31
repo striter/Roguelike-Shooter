@@ -99,13 +99,13 @@ public class TResources
         });
         return entitisDic;
     }
-    public static Dictionary<int, EntityBase> GetEnermyEntities(enum_GameStyle entityStyle)
+    public static Dictionary<int, EntityCharacterAI> GetEnermyEntities(enum_GameStyle entityStyle)
     {
-        Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
-        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity +  entityStyle.ToString());
-        entities.Traversal((EntityBase entity) => {
+        Dictionary<int, EntityCharacterAI> entitisDic = new Dictionary<int, EntityCharacterAI>();
+        EntityCharacterAI[] entities = LoadAll<EntityCharacterAI>(ConstPath.S_Entity +  entityStyle.ToString());
+        entities.Traversal((EntityCharacterAI entity) => {
             int index = int.Parse(entity.name.Split('_')[0]);
-            entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
+            entitisDic.Add(index, GameObject.Instantiate<EntityCharacterAI>(entity));
             PreloadMaterials(entity.gameObject);
         });
         return entitisDic;

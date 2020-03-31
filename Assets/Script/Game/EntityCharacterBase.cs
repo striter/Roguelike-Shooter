@@ -8,7 +8,6 @@ using UnityEngine;
 public class EntityCharacterBase : EntityBase
 {
     public int I_MaxHealth;
-    public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
     public int I_DefaultArmor;
     public float F_MovementSpeed;
     public float F_AttackSpread;
@@ -23,7 +22,6 @@ public class EntityCharacterBase : EntityBase
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
-    public override bool B_IsCharacter => true;
     protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
     protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;

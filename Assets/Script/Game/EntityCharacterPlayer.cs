@@ -7,11 +7,7 @@ using System;
 using UnityEngine.AI;
 
 public class EntityCharacterPlayer : EntityCharacterBase {
-    #region PresetData
-    public int I_AbilityTimes = -1;
-    public float F_AbilityCoolDown = 0f;
-    #endregion
-    public override enum_EntityController m_ControllType => enum_EntityController.Player;
+    public override enum_EntityControlType m_ControllType => enum_EntityControlType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
     protected WeaponBaseAnimator m_Animator;
     protected virtual WeaponBaseAnimator GetAnimatorController(Animator animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) => new WeaponBaseAnimator(animator, _OnAnimEvent);
@@ -23,7 +19,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public WeaponBase m_Weapon1 { get; private set; }
     public WeaponBase m_Weapon2 { get; private set; }
     public InteractBase m_Interact { get; private set; }
-    public float m_EquipmentDistance { get; private set; }
     public Transform tf_UIStatus { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
     public override MeshRenderer m_WeaponSkin => m_WeaponCurrent.m_WeaponSkin;
@@ -47,7 +42,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
     protected float f_reviveCheck = 0f;
-    public CharacterAbility m_CharacterAbility { get; private set; }
 
     protected override CharacterInfoManager GetEntityInfo()
     {
@@ -63,7 +57,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("UIStatus");
         m_Animator = GetAnimatorController(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
-        m_CharacterAbility = new CharacterAbility(I_AbilityTimes, F_AbilityCoolDown, OnAbilityTrigger);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
         gameObject.layer = GameLayer.I_MovementDetect;
         m_Agent = GetComponent<NavMeshAgent>();
@@ -91,11 +84,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnPlayerActivate(PlayerSaveData m_saveData)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
+        m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, m_saveData.m_Health >= 0 ? m_saveData.m_Health : I_MaxHealth);
+        m_CharacterInfo.SetInfoData(m_saveData);
+
         m_CharacterRotation = transform.rotation;
         m_Agent.enabled = true;
 
-        m_CharacterInfo.SetInfoData(m_saveData);
-        m_Health.OnActivate(I_MaxHealth,I_DefaultArmor, m_saveData.m_Health >= 0 ? m_saveData.m_Health : I_MaxHealth);
         ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_Weapon1));
         if (m_saveData.m_Weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_Weapon2));
@@ -177,7 +171,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
         m_Health.OnMaxChange(m_CharacterInfo.F_MaxHealthAdditive,m_CharacterInfo.F_MaxArmorAdditive);
-        m_CharacterAbility.Tick(deltaTime);
         OnCommonStatus();
     }
 
@@ -207,20 +200,20 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_WeaponCurrent)
             m_WeaponCurrent.Trigger(down);
     }
-    public bool m_weaponCanFire { get; private set; } = false;
+    public bool m_weaponFirePause { get; private set; } = false;
     void OnWeaponTick(float deltaTime)
     {
         if (m_WeaponCurrent == null)
             return;
         
-        m_weaponCanFire = CalculateWeaponFire();
+        m_weaponFirePause = !CalculateWeaponFire();
         tf_WeaponAim.rotation = GetCharacterRotation();
-        m_Assist.SetEnable(m_weaponCanFire  && m_Target != null);
+        m_Assist.SetEnable(!m_weaponFirePause  && m_Target != null);
 
         float reloadDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
         float fireDelta = m_CharacterInfo.F_FireRateTick(deltaTime);
-        if (m_Weapon1) m_Weapon1.Tick( fireDelta, reloadDelta);
-        if (m_Weapon2) m_Weapon2.Tick(fireDelta, reloadDelta);
+        if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause,  fireDelta, reloadDelta);
+        if (m_Weapon2) m_Weapon2.Tick(m_weaponFirePause, fireDelta, reloadDelta);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
@@ -342,46 +335,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     #endregion
     #region CharacterAbility
-    public void OnAbilityClick()
+    public virtual float m_AbilityCooldownScale => 0f;
+    public virtual bool m_AbilityAvailable => false;
+    public virtual void OnAbilityDown(bool down)
     {
-        if (m_IsDead)
-            return;
-        m_CharacterAbility.OnAbilityClick();
     }
     
-    protected virtual void OnAbilityTrigger()
-    {
-        m_CharacterInfo.OnAbilityTrigger();
-    }
-
-    public class CharacterAbility
-    {
-        public float m_CooldownScale => m_abilityCooldownLeft / m_baseAbilityCooldown;
-        public bool m_Cooldowning => m_abilityCooldownLeft > 0f;
-        protected float m_abilityCooldownLeft = 0f;
-
-        protected float m_baseAbilityCooldown;
-        Action OnAbilityTrigger;
-        public CharacterAbility(int abilityTime, float abilityCoolDown, Action _OnAbilityTrigger)
-        {
-            OnAbilityTrigger = _OnAbilityTrigger;
-            m_baseAbilityCooldown = abilityCoolDown;
-        }
-        
-        public void OnAbilityClick()
-        {
-            if (m_Cooldowning)
-                return;
-            m_abilityCooldownLeft = m_baseAbilityCooldown;
-            OnAbilityTrigger();
-        }
-
-        public void Tick(float deltaTime)
-        {
-            if (m_Cooldowning)
-                m_abilityCooldownLeft -= deltaTime;
-        }
-    }
     #endregion
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
@@ -521,7 +480,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void SetBinding(bool on)
     {
         if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnAbilityClick);
+            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnAbilityDown);
         else
             UIManager.Instance.RemoveBindings();
     }

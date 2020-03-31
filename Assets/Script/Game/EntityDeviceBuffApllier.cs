@@ -30,11 +30,11 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
         {
             switch (entity.m_ControllType)
             {
-                case enum_EntityController.AI:
-                    
+                case enum_EntityControlType.AIWeaponModel:
+                case enum_EntityControlType.AIWeaponHelper:
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(m_EntityID,m_AllyBuff)));
                     break;
-                case enum_EntityController.Player:
+                case enum_EntityControlType.Player:
                     entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(m_EntityID,m_PlayerBuff)));
                     break;
             }

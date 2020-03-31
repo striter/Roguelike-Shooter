@@ -9,7 +9,12 @@ public class WeaponProjectileRailgun : WeaponProjectileBase {
     protected int m_StoreProjectileDataIndex { get; private set; }
     SFXIndicator m_Indicator;
     public override float F_BaseDamage => GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_StoreProjectileDataIndex).F_Damage;
-    protected override WeaponTrigger GetTrigger() => new WeaponTriggerStoring(m_WeaponInfo.m_FireRate, OnTriggerCheck, OnStoreTriggerSuccessful);
+    new WeaponTriggerStoring m_Trigger;
+    protected override WeaponTrigger GetTrigger()
+    {
+        m_Trigger= new WeaponTriggerStoring(m_WeaponInfo.m_FireRate, OnTriggerCheck, OnStoreTriggerSuccessful);
+        return m_Trigger;
+    } 
 
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
@@ -23,14 +28,13 @@ public class WeaponProjectileRailgun : WeaponProjectileBase {
         OnTriggerSuccessful();
         PlayIndicator(false);
     }
-    public override void Trigger(bool down)
+
+    public override void Tick(bool firePausing, float fireTick, float reloadTick)
     {
-        base.Trigger(down);
-        if(down&&OnTriggerCheck())
-            PlayIndicator(true);
-        if(!down)
-            PlayIndicator(false);
+        base.Tick(firePausing, fireTick, reloadTick);
+        PlayIndicator(m_Trigger.m_Storing);
     }
+
     public override void OnPlay(bool play)
     {
         base.OnPlay(play);

@@ -12,7 +12,7 @@ public class UIC_Control : UIControlBase {
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
     Image m_Settings;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
-    Action  OnCharacterAbility;
+    Action<bool>  OnCharacterAbility;
     Action<bool> OnMainDown,OnSubDown;
     TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
     protected override void Init()
@@ -22,7 +22,7 @@ public class UIC_Control : UIControlBase {
         m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
-        transform.Find("Ability").GetComponent<Button>().onClick.AddListener(OnAbilityButtonDown);
+        transform.Find("Ability").GetComponent<UIT_EventTriggerListener>().OnPressStatus=OnAbilityButtonDown;
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnMainButtonDown;
         transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
 
@@ -58,10 +58,10 @@ public class UIC_Control : UIControlBase {
     
     void OncommonStatus(EntityCharacterPlayer player)
     {
-        if(player.m_CharacterAbility.m_Cooldowning)
-            m_AbilityCooldown.fillAmount = player.m_CharacterAbility.m_CooldownScale;
+        if(!player.m_AbilityAvailable)
+            m_AbilityCooldown.fillAmount = player.m_AbilityCooldownScale;
 
-        if(m_AbilityCooldownChecker.Check(player.m_CharacterAbility.m_Cooldowning))
+        if(m_AbilityCooldownChecker.Check(!player.m_AbilityAvailable))
         {
             m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
             m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
@@ -72,7 +72,7 @@ public class UIC_Control : UIControlBase {
     }
 
     #region Controls
-    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action _OnCharacterAbility)
+    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action<bool> _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
         OnMainDown = _OnMainDown;
@@ -90,7 +90,7 @@ public class UIC_Control : UIControlBase {
 
     protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
     protected void OnSubButtonDown(bool down, Vector2 pos) => OnSubDown?.Invoke(down);
-    protected void OnAbilityButtonDown() => OnCharacterAbility?.Invoke();
+    protected void OnAbilityButtonDown(bool down,Vector2 pos) => OnCharacterAbility?.Invoke(down);
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
         transform.localScale = Vector3.zero;
@@ -195,7 +195,9 @@ public class UIC_Control : UIControlBase {
             OnSubButtonDown(false, Vector2.zero);
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
-            OnAbilityButtonDown();
+            OnAbilityButtonDown(true,Vector2.zero);
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+            OnAbilityButtonDown(false, Vector3.zero);
 
     }
 #endif

@@ -5,8 +5,7 @@ using System;
 public class EntityBase : CObjectPoolMono<int>
 {
     public int m_EntityID { get; private set; } = -1;
-    public virtual bool B_IsCharacter => false;
-    public virtual enum_EntityController m_ControllType => enum_EntityController.Invalid;
+    public virtual enum_EntityControlType m_ControllType => enum_EntityControlType.Invalid;
     public enum_EntityFlag m_Flag { get; private set; }
     public HealthBase m_Health { get; private set; }
     protected virtual HealthBase GetHealthManager() => new HealthBase(OnHealthChanged);

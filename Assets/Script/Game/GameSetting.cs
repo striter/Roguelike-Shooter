@@ -1174,7 +1174,7 @@ namespace GameSetting
             m_TriggerDown = down;
         }
 
-        public virtual void Tick(float deltaTime)
+        public virtual void Tick(bool paused,float deltaTime)
         {
 
         }
@@ -1191,11 +1191,11 @@ namespace GameSetting
             OnTriggerSuccessful = _OnTriggerSuccessful;
             m_TriggerTimer.SetTimer(_fireRate);
         }
-        public override void Tick(float deltaTime)
+        public override void Tick(bool paused,float deltaTime)
         {
-            base.Tick(deltaTime);
+            base.Tick(paused,deltaTime);
             m_TriggerTimer.Tick(deltaTime);
-            if (m_TriggerTimer.m_Timing)
+            if (paused|| m_TriggerTimer.m_Timing)
                 return;
 
             if (!m_TriggerDown)
@@ -1214,31 +1214,42 @@ namespace GameSetting
          Func<bool> OnStoreBeginCheck;
         Action<float> OnStoreFinish;
         TimeCounter m_StoreTimer = new TimeCounter();
-
+        public bool m_Storing { get; private set; } = false;
         public WeaponTriggerStoring(float _storeDuration, Func<bool> _OnStoreBeginCheck, Action<float> _OnStoreFinish)
         {
             OnStoreBeginCheck = _OnStoreBeginCheck;
             OnStoreFinish = _OnStoreFinish;
             m_StoreTimer.SetTimer(_storeDuration);
+            m_Storing = false;
         }
 
         public override void OnSetTrigger(bool down)
         {
-            if (down && !OnStoreBeginCheck())
-                return;
-
-            if (m_TriggerDown && !down)
-                OnStoreFinish(1f-m_StoreTimer.m_TimeLeftScale);
-
-            m_StoreTimer.Reset();
             base.OnSetTrigger(down);
-        }
-        public override void Tick(float deltaTime)
-        {
-            base.Tick(deltaTime);
-            if (!m_TriggerDown)
+            if (!down || !OnStoreBeginCheck())
                 return;
-            m_StoreTimer.Tick(deltaTime);
+
+            m_Storing = true;
+            m_StoreTimer.Reset();
+        }
+        public override void Tick(bool paused, float deltaTime)
+        {
+            base.Tick(paused,deltaTime);
+
+            if (!m_Storing)
+                return;
+
+            if (m_TriggerDown)
+            {
+                m_StoreTimer.Tick(deltaTime);
+                return;
+            }
+
+            if (paused)
+                return;
+
+            OnStoreFinish(1f - m_StoreTimer.m_TimeLeftScale);
+            m_Storing = false;
         }
     }
     #endregion
@@ -1594,7 +1605,7 @@ namespace GameSetting
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
-            if (targetEntity.m_ControllType != enum_EntityController.AI || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
+            if (targetEntity.m_ControllType != enum_EntityControlType.AIWeaponHelper || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
                 return;
 
             EntityCharacterBase ally = (targetEntity as EntityCharacterBase);

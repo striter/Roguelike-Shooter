@@ -89,7 +89,7 @@ namespace GameSetting
         GameWin,
     }
 
-    public enum enum_EntityController { Invalid = -1, None = 1, Player = 2, AI = 3, Device = 4, }
+    public enum enum_EntityControlType { Invalid = -1, None = 1, Player = 2, AIWeaponHelper = 3, AIWeaponModel = 4, Device = 5, }
 
     public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
 

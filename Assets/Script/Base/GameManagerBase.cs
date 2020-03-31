@@ -397,13 +397,12 @@ public static class GameObjectManager
         RegisterInGameInteractions(currentStyle, stageLevel);
 
         Dictionary<enum_EnermyType, int> enermyDic = new Dictionary<enum_EnermyType, int>();
-        TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityBase entity) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, entity, 1);
-            EntityCharacterBase enermy = entity as EntityCharacterBase;
+        TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityCharacterAI enermy) => {
+            ObjectPoolManager<int, EntityBase>.Register(index, enermy, 1);
             if (enermy.E_SpawnType == enum_EnermyType.Invalid)
                 return;
             if (enermyDic.ContainsKey(enermy.E_SpawnType))
-                Debug.LogError("Same Enermy Type Found!" + entity.name );
+                Debug.LogError("Same Enermy Type Found!" + enermy.name );
             enermyDic.Add(enermy.E_SpawnType, index);
         });
         return enermyDic;

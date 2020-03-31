@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     #region Preset
+    public float F_AbilityCoolDown = 0f;
     public float F_RollSpeedMultiple;
     public float F_RollDuration;
     #endregion
@@ -16,35 +17,52 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         m_Animator= new PlayerAnimatorBeth(animator, _OnAnimEvent);
         return m_Animator;
     }
-    protected TimeCounter m_RollTimer;
+    protected TimeCounter m_RollTimer,m_RollCooldown;
     protected bool m_Rolling => m_RollTimer.m_Timing;
     Vector3 m_rollDirection,m_rollingLookRotation;
+    public override bool m_AbilityAvailable => !m_RollCooldown.m_Timing;
+    public override float m_AbilityCooldownScale => m_RollCooldown.m_TimeLeftScale;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_RollTimer = new TimeCounter(F_RollDuration, true);
+        m_RollCooldown = new TimeCounter(F_AbilityCoolDown, true);
     }
-    protected override void OnAbilityTrigger()
+
+    public override void OnAbilityDown(bool down)
     {
-        base.OnAbilityTrigger();
+        base.OnAbilityDown(down);
+        if (!down || m_IsDead || !m_AbilityAvailable)
+            return;
         Vector2 rollAxisDirection = m_MoveAxisInput == Vector2.zero ? new Vector2(0, 1) : m_MoveAxisInput;
         m_rollDirection = base.CalculateMoveDirection(rollAxisDirection);
         m_rollingLookRotation = m_rollDirection;
         m_Animator.BeginRoll(F_RollDuration);
         m_RollTimer.Reset();
+        m_RollCooldown.Reset();
     }
 
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
+        m_RollCooldown.Tick(deltaTime);
+
         if (!m_Rolling)
             return;
-
         m_RollTimer.Tick(deltaTime);
+
         EnableHitbox(!m_Rolling);
         if (!m_Rolling)
             m_Animator.EndRoll();
     }
+    protected override void OnDead()
+    {
+        base.OnDead();
+        m_RollTimer.Stop();
+        m_Animator.EndRoll();
+        EnableHitbox(!m_Rolling);
+    }
+
     protected override bool CalculateWeaponFire() => !m_Rolling&& base.CalculateWeaponFire();
     protected override float CalculateMovementSpeedBase() => (m_Rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
     protected override float CalculateMovementSpeedMultiple() => m_Rolling ? 1f : base.CalculateMovementSpeedMultiple();

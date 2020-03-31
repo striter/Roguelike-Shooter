@@ -345,7 +345,7 @@ public class GameManager : GameManagerBase
     void OnEntiyActivate(EntityBase entity)
     {
         m_Entities.Add(entity.m_EntityID, entity);
-        if (entity.m_ControllType == enum_EntityController.None)
+        if (entity.m_ControllType == enum_EntityControlType.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Add(character.m_EntityID, character);
@@ -358,7 +358,7 @@ public class GameManager : GameManagerBase
 
     void OnCharacterDead(EntityCharacterBase character)
     {
-        if (character.m_ControllType == enum_EntityController.Player)
+        if (character.m_ControllType == enum_EntityControlType.Player)
             SetPostEffect_Dead();
 
         OnBattleEntityKilled(character);
@@ -367,7 +367,7 @@ public class GameManager : GameManagerBase
     void OnEntityRecycle(EntityBase entity)
     {
         m_Entities.Remove(entity.m_EntityID);
-        if (entity.m_ControllType == enum_EntityController.None)
+        if (entity.m_ControllType == enum_EntityControlType.None)
             return;
         EntityCharacterBase character = entity as EntityCharacterBase;
         m_Characters.Remove(character.m_EntityID);
@@ -377,14 +377,14 @@ public class GameManager : GameManagerBase
                 m_OppositeEntities[flag].Remove(character);
         });
 
-        if (entity.m_ControllType == enum_EntityController.Player)
+        if (entity.m_ControllType == enum_EntityControlType.Player)
             OnGameFinished(false);
     }
 
 
     void OnCharacterRevive(EntityCharacterBase character)
     {
-        if (character.m_ControllType == enum_EntityController.Player)
+        if (character.m_ControllType == enum_EntityControlType.Player)
         {
             SetPostEffect_Revive();
             return;
@@ -465,10 +465,11 @@ public class GameManager : GameManagerBase
 
     void SpawnBattleEntityDeadDrops(EntityCharacterBase entity)
     {
-        if (entity.E_SpawnType == enum_EnermyType.Invalid)
+        EntityCharacterAI enermy = entity as EntityCharacterAI;
+        if (enermy==null|| enermy.E_SpawnType== enum_EnermyType.Invalid)
             return;
 
-        PickupGenerateData pickupGenerateData = entity.E_SpawnType == enum_EnermyType.E5 ? m_GameLevel.m_InteractGenerate.m_ElitePickupData : m_GameLevel.m_InteractGenerate.m_NormalPickupData;
+        PickupGenerateData pickupGenerateData = enermy.E_SpawnType == enum_EnermyType.E5 ? m_GameLevel.m_InteractGenerate.m_ElitePickupData : m_GameLevel.m_InteractGenerate.m_NormalPickupData;
 
         if (pickupGenerateData.CanGenerateHealth())
             GameObjectManager.SpawnInteract<InteractPickupHealth>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_HealthPickupAmount, !m_Battling);
