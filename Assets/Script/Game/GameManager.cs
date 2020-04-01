@@ -27,13 +27,6 @@ public class GameManager : GameManagerBase
             });
         });
 
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Freeze",  KeyCode.Alpha8, "0.5", (string value) =>
-        {
-            GetCharacters( enum_EntityFlag.Enermy,true).Traversal((EntityCharacterBase entity) => {
-                    entity.m_HitCheck.TryHit(new DamageInfo(-1,  enum_CharacterEffect.Freeze,float.Parse( value)));
-            });
-        });
-
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
             GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
         });

@@ -382,14 +382,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 Debug.LogError("Invalid Convertions Here!");
                 return;
             case enum_Interaction.PickupArmor:
-                m_HitCheck.TryHit(new DamageInfo(m_EntityID ,- amount, enum_DamageType.ArmorOnly));
+                m_HitCheck.TryHit(new DamageInfo(m_EntityID ,- amount, enum_DamageType.Armor));
                 break;
             case enum_Interaction.PickupCoin:
                 m_CharacterInfo.OnCoinsGain(amount);
                 break;
             case enum_Interaction.PickupHealth:
             case enum_Interaction.PickupHealthPack:
-                m_HitCheck.TryHit(new DamageInfo(m_EntityID ,- amount, enum_DamageType.HealthOnly));
+                m_HitCheck.TryHit(new DamageInfo(m_EntityID ,- amount, enum_DamageType.Health));
                 break;
         }
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerInteractPickup, pickup.transform.position, pickup.m_InteractType, amount);

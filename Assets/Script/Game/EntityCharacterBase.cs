@@ -59,7 +59,7 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterSkinEffect.OnDisable();
     }
-    public bool m_TargetAvailable => !m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_IsDead;
+    public bool m_TargetAvailable =>  !m_IsDead;
     protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
         base.EntityActivate(flag, startHealth);
@@ -85,9 +85,7 @@ public class EntityCharacterBase : EntityBase
             return;
 
         m_CharacterInfo.Tick(Time.deltaTime);
-        m_CharacterSkinEffect.SetCloak(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak));
-        m_CharacterSkinEffect.SetFreezed(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Freeze));
-        m_CharacterSkinEffect.SetScaned(m_CharacterInfo.B_Effecting(enum_CharacterEffect.Scan));
+
         if (!m_IsDead)
             OnAliveTick(Time.deltaTime);
         else
@@ -124,8 +122,6 @@ public class EntityCharacterBase : EntityBase
             return false;
 
         damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_SourceID, buffInfo); });
-        if (damageInfo.m_EffectType != enum_CharacterEffect.Invalid)
-            m_CharacterInfo.OnSetEffect(damageInfo.m_EffectType, damageInfo.m_EffectDuration);
 
         return true;
     }
@@ -172,10 +168,7 @@ public class EntityCharacterBase : EntityBase
         Material m_NormalMaterial,m_EffectMaterial;
         List<Renderer> m_skins;
         public Renderer m_MainSkin =>m_skins[0];
-        bool m_cloaked;
-        bool m_freezed;
-        bool m_scanned;
-        bool m_death;
+        enum_Effects m_Effect = enum_Effects.Invalid;
         TSpecialClasses.ParticleControlBase m_Particles;
         MaterialPropertyBlock m_NormalProperty = new MaterialPropertyBlock();
         public EntityCharacterSkinEffectManager(Transform particleTrans, List<Renderer> _skin)
@@ -191,37 +184,26 @@ public class EntityCharacterBase : EntityBase
         {
             this.StopAllSingleCoroutines();
             m_Particles.Play();
-            m_scanned = false;
-            m_cloaked = false;
-            m_death = false;
-            m_freezed = false;
-            CheckMaterials();
+            CheckMaterials(enum_Effects.Invalid);
         }
-        void CheckMaterials()
+        void CheckMaterials(enum_Effects effect)
         {
-            Shader mainShader = null;
-            if (m_cloaked)
-                mainShader = TEffects.SD_Cloak;
-            if (m_freezed)
-                mainShader = TEffects.SD_Ice;
-            if (m_death)
-                mainShader = TEffects.SD_Dissolve;
-            if (m_scanned)
-                mainShader = TEffects.SD_Scan;
-            
-            if (mainShader)
-                m_EffectMaterial.shader = mainShader;
+            if (m_Effect == effect)
+                return;
+            m_Effect = effect;
+            bool extraEffect = m_Effect != enum_Effects.Invalid;
 
             m_skins.Traversal((Renderer renderer) => {
-                renderer.material =  mainShader?m_EffectMaterial:m_NormalMaterial;
+                if (extraEffect)
+                    m_EffectMaterial.shader = TEffects.SD_ExtraEffects[m_Effect];
+                renderer.material = extraEffect ? m_EffectMaterial : m_NormalMaterial;
             });
         }
 
         public void SetDeath()
         {
             m_Particles.Stop();
-            m_death = true;
-            CheckMaterials();
+            CheckMaterials(enum_Effects.Death);
             m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
             m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
             m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .4f);
@@ -231,45 +213,30 @@ public class EntityCharacterBase : EntityBase
             m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, value);
         }
 
-        public void SetScaned(bool _scaned)
-        {
-            if (m_scanned == _scaned)
-                return;
-
-            m_scanned = _scaned;
-            CheckMaterials();
-        }
+        public void SetScaned(bool _scaned)=>CheckMaterials(_scaned? enum_Effects.Scan: enum_Effects.Invalid);
         public void SetFreezed(bool _freezed)
         {
-            if (m_freezed == _freezed)
-                return;
-            m_freezed = _freezed;
-            CheckMaterials();
+            CheckMaterials(_freezed ? enum_Effects.Freeze : enum_Effects.Invalid);
 
-            if (!m_freezed)
+            if (!_freezed)
                 return;
             m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
             m_EffectMaterial.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
             m_EffectMaterial.SetFloat("_Opacity", .5f);
         }
-        public void SetCloak(bool _cloacked)
+        public void SetCloak(bool _cloacked,float clockOpacity=.3f ,float lerpDuration=.5f)
         {
-            if (m_cloaked == _cloacked)
-                return;
-
-            m_cloaked = _cloacked;
-            CheckMaterials();
+            CheckMaterials(_cloacked ? enum_Effects.Cloak : enum_Effects.Invalid);
             if (_cloacked)
             {
-                
                 this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
                 {
                     m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);
-                }, 1, .3f, .5f));
+                }, 1, clockOpacity, lerpDuration));
             }
             else
             {
-                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);}, .3f, 1f, .3f, CheckMaterials));
+                this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_EffectMaterial.SetFloat(TEffects.ID_Opacity, value);}, clockOpacity, 1f, lerpDuration, OnReset ));
             }
         }
 
