@@ -2,6 +2,7 @@
 using UnityEngine;
 public class SFXProjectileCastTrigger : SFXProjectile
 {
+    public bool B_DealHitDamage = false;
     protected virtual Vector3 v3_castPoint=> transform.position + transform.forward * F_Height;
     protected bool m_CastTriggered = false;
     protected override void OnPlay()
@@ -15,6 +16,12 @@ public class SFXProjectileCastTrigger : SFXProjectile
         if(!m_CastTriggered)
             OnCastTrigger(v3_castPoint);
         OnRecycle();
+    }
+
+    protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    {
+        if (B_DealHitDamage)
+            base.OnHitTarget(hit, hitCheck);
     }
 
     protected override bool OnHitTargetPenetrate(HitCheckBase hitCheck)
