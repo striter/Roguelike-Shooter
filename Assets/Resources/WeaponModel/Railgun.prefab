@@ -186,5 +186,5 @@ MonoBehaviour:
   B_AttachLeft: 0
   F_BaseDamage: 159.9
   I_ExtraBuffApply: -1
-  F_StoreDamage: 40
+  F_StoreDamage: 159.9
   I_ChargeIndicatorIndex: 39002
