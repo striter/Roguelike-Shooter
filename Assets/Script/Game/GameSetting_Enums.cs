@@ -127,11 +127,11 @@ namespace GameSetting
 
     public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2, }
 
-    public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2, RefreshIdentity = 3, }
+    public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,  }
 
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
-    public enum enum_PlayerCharacter { Invalid = -1, Beth = 10001,Unknown=10002, }
+    public enum enum_PlayerCharacter { Invalid = -1, Beth = 10001,Assassin=10002, }
     
     public enum enum_InteractCharacter { Invalid = -1, Trader = 20001, Trainer = 20002, }
 

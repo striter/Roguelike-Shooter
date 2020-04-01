@@ -43,8 +43,7 @@ public class EntityBase : CObjectPoolMono<int>
     {
         if (m_IsDead)
             return false;
-
-        damageInfo.m_detail.m_OnHitAction?.Invoke(this);
+        
         return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply,HealReceiveMultiply);
     }
 

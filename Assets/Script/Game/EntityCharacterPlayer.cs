@@ -36,10 +36,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     NavMeshAgent m_Agent;
     CharacterController m_Controller;
 
-    protected float f_aimMovementReduction = 0f;
-    protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
+    protected float f_aimMovementReduction = 0f;
+    protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected float f_reviveCheck = 0f;
 
     protected override CharacterInfoManager GetEntityInfo()
@@ -208,7 +208,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponAim.rotation = GetCharacterRotation();
 
         m_weaponFirePause = !CheckWeaponFiring();
-        m_Assist.SetEnable(!m_weaponFirePause  && m_AimAssistTarget != null);
+        m_Assist.SetEnable(!m_weaponFirePause  && m_AimingTarget != null);
         float reloadDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
         float fireDelta = m_CharacterInfo.F_FireRateTick(deltaTime);
         if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause,  fireDelta, reloadDelta);
@@ -287,7 +287,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
     protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
-    protected EntityCharacterBase m_AimAssistTarget { get; private set; } = null;
+    protected EntityCharacterBase m_AimingTarget { get; private set; } = null;
     TimeCounter m_TargetCheckTimer = new TimeCounter(.3f, false);
     void OnMovementDelta(Vector2 moveDelta)
     {
@@ -308,8 +308,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TargetTick(deltaTime);
         
         m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
-        if (m_AimAssistTarget)
-            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_AimAssistTarget.tf_Head.position),Vector3.up); 
+        if (m_AimingTarget)
+            m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_AimingTarget.tf_Head.position),Vector3.up); 
         else  if (m_MoveAxisInput != Vector2.zero)
             m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward,Vector3.up);
 
@@ -324,10 +324,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void TargetTick(float deltaTime)
     {
         m_TargetCheckTimer.Tick(deltaTime);
-        if (m_AimAssistTarget == null || !m_AimAssistTarget.m_AvailableTarget || !m_TargetCheckTimer.m_Timing)
+        if (m_AimingTarget == null || !m_AimingTarget.m_TargetAvailable || !m_TargetCheckTimer.m_Timing)
         {
-            m_AimAssistTarget =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive):null;
-            m_TargetCheckTimer.Reset();
+            m_AimingTarget =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive):null;
+            m_TargetCheckTimer.Replay();
         }
     }
 
@@ -382,14 +382,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 Debug.LogError("Invalid Convertions Here!");
                 return;
             case enum_Interaction.PickupArmor:
-                m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(m_EntityID)));
+                m_HitCheck.TryHit(new DamageInfo(m_EntityID ,- amount, enum_DamageType.ArmorOnly));
                 break;
             case enum_Interaction.PickupCoin:
                 m_CharacterInfo.OnCoinsGain(amount);
                 break;
             case enum_Interaction.PickupHealth:
             case enum_Interaction.PickupHealthPack:
-                m_HitCheck.TryHit(new DamageInfo(-amount, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(m_EntityID)));
+                m_HitCheck.TryHit(new DamageInfo(m_EntityID ,- amount, enum_DamageType.HealthOnly));
                 break;
         }
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerInteractPickup, pickup.transform.position, pickup.m_InteractType, amount);
@@ -402,7 +402,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (damageInfo.m_AmountApply <= 0)
             return;
 
-        if (damageInfo.m_detail.I_SourceID == m_EntityID)
+        if (damageInfo.m_SourceID == m_EntityID)
             m_CharacterInfo.OnWillDealtDamage(damageInfo, damageEntity);
         else if (damageEntity.m_EntityID == m_EntityID)
             m_CharacterInfo.OnWillReceiveDamage(damageInfo, damageEntity);
@@ -466,7 +466,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void RevivePlayer()
     {
         ReviveCharacter();
-        m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(-1, SBuff.m_PlayerReviveBuff)));
+        m_HitCheck.TryHit(new DamageInfo(-1, 101));
     }
     #endregion
     void OnAnimationEvent(TAnimatorEvent.enum_AnimEvent animEvent)

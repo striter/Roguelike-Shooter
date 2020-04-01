@@ -99,20 +99,20 @@ SpriteAtlas:
   - 203
   - 101
   - 105
-  - control_Legend
+  - control_Epic
   - control_Advanced
   - control_Ordinary
   - control_Rare
   - weapon_skilldata
   - weapon_weaponpower
   - weapon_progress_weaponpower
-  - weapon_shadow_Legend
+  - weapon_shadow_Epic
   - weapon_shadow_Ordinary
   - weapon_shadow_Rare
   - weapon_shadow_Advanced
   - parts_bottom_normal
   - parts_bottom_advanced
   - parts_bottom_rare
-  - parts_bottom_legend
+  - parts_bottom_epic
   m_Tag: Atlas_Weapon
   m_IsVariant: 0

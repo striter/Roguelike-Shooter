@@ -66,14 +66,14 @@ namespace GameSetting_Action
         public override int m_Index => 0006;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 10f;
-        static readonly List<int> m_BuffID = new List<int>() { 14010, 14020, 14030 };
+        static readonly List<int> m_BuffID = new List<int>() { 103, 104, 105 };
         public override void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info)
         {
             base.OnBeforeDealtDamage(receiver, info);
             for (int i = 0; i < m_Stack; i++)
             {
                 if (TCommon.RandomPercentage() < Value1)
-                    info.m_detail.AddExtraBuff(m_BuffID.RandomItem());
+                    info.AddExtraBuff(m_BuffID.RandomItem());
             }
         }
         public P0006(PerkSaveData saveData) : base(saveData) { }
@@ -115,7 +115,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead)
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(-Value1 * m_Stack, enum_DamageType.HealthOnly, DamageDeliverInfo.Default(-1)));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,-Value1 * m_Stack, enum_DamageType.HealthOnly));
         }
         public P0010(PerkSaveData saveData) : base(saveData) { }
     }
@@ -164,8 +164,8 @@ namespace GameSetting_Action
             base.OnAbilityTrigger();
             if (m_TimerCoolDown.m_Timing)
                 return;
-            m_TimerActivate.Reset();
-            m_TimerCoolDown.Reset();
+            m_TimerActivate.Replay();
+            m_TimerCoolDown.Replay();
         }
 
         public override void OnTick(float deltaTime)
@@ -184,11 +184,13 @@ namespace GameSetting_Action
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override int m_MaxStack => 1;
         public override float Value1 => 1;
-        public override void OnAttack(bool criticalHit)
+        public override void OnAttack(DamageInfo info)
         {
-            base.OnAttack(criticalHit);
-            if (criticalHit)
-                m_Attacher.m_WeaponCurrent.ForceReloadOnce();
+            base.OnAttack(info);
+            if (!info.m_CritcalHitted)
+                return;
+
+            m_Attacher.m_WeaponCurrent.ForceReloadOnce();
         }
         public P0013(PerkSaveData saveData) : base(saveData) { }
     }
@@ -211,8 +213,8 @@ namespace GameSetting_Action
 
             if (m_TimerCoolDown.m_Timing)
                 return;
-            m_TimerCoolDown.Reset();
-            m_TimerActivate.Reset();
+            m_TimerCoolDown.Replay();
+            m_TimerActivate.Replay();
         }
 
         public P0014(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value2); m_TimerCoolDown = new TimeCounter(Value1); }
@@ -238,11 +240,11 @@ namespace GameSetting_Action
         public override int m_MaxStack => 1;
         public override float Value1 => 50f;
         float m_CurrentDamage = 0;
-        protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.DamageInfo(m_Attacher.m_EntityID,0f,Value1/100f* m_CurrentDamage, false);
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, Value1 / 100f * m_CurrentDamage,enum_DamageType.Basic);
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
-            if (!info.m_detail.m_CriticalHit)
+            if (!info.m_CritcalHitted)
                 return;
             m_CurrentDamage = info.m_AmountApply;
             m_SFXWeapon.OnPlay(false, receiver);
@@ -256,7 +258,7 @@ namespace GameSetting_Action
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override int m_MaxStack => 1;
         public override float Value1 => 25f;
-        protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.DamageInfo(m_Attacher.m_EntityID, 0f, Value1 / 100f * m_Attacher.m_WeaponCurrent.F_BaseDamage, false);
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID,  Value1 / 100f * m_Attacher.m_WeaponCurrent.m_BaseDamage,  enum_DamageType.Basic);
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
@@ -287,7 +289,7 @@ namespace GameSetting_Action
         {
             base.OnAfterReceiveDamage(info, amount);
             if (haveArmor && m_Attacher.m_Health.m_CurrentArmor <= 0)
-                m_Timer.Reset();
+                m_Timer.Replay();
         }
 
         public override void OnTick(float deltaTime)
@@ -362,7 +364,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead)
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(-Value1 * m_Stack, enum_DamageType.ArmorOnly, DamageDeliverInfo.Default(m_Attacher.m_EntityID)));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1 * m_Stack, enum_DamageType.ArmorOnly));
         }
         public P0025(PerkSaveData saveData) : base(saveData) { }
     }
@@ -401,7 +403,7 @@ namespace GameSetting_Action
         public override void OnLevelFinish()
         {
             base.OnLevelFinish();
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(-Value1*m_Stack, enum_DamageType.HealthOnly,DamageDeliverInfo.Default(m_Attacher.m_EntityID)));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1*m_Stack, enum_DamageType.HealthOnly));
         }
         public P0029(PerkSaveData saveData) : base(saveData) { }
     }
@@ -412,10 +414,10 @@ namespace GameSetting_Action
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 20f;
         public override float Value2 => 20f;
-        protected override DamageDeliverInfo GetDamageInfo() => DamageDeliverInfo.DamageInfo(m_Attacher.m_EntityID,0f,Value2,false);
-        public override void OnAttack(bool criticalHit)
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, Value2, enum_DamageType.Basic);
+        public override void OnAttack(DamageInfo damageInfo)
         {
-            base.OnAttack(criticalHit);
+            base.OnAttack(damageInfo);
             if (TCommon.RandomPercentage() > Value1 * m_Stack)
                 return;
 
@@ -427,7 +429,7 @@ namespace GameSetting_Action
     public class PerkSFXweapon : ExpirePerkBase
     {
         public WeaponHelperBase m_SFXWeapon { get; private set; }
-        protected virtual DamageDeliverInfo GetDamageInfo()
+        protected virtual DamageInfo GetDamageInfo()
         {
             Debug.LogError("Override This Please!");
             return null; 

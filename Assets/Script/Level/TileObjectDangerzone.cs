@@ -34,9 +34,9 @@ public class TileObjectDangerzone : TileObjectBase {
         if (m_TimerReset.m_Timing)
             return;
         
-        m_HitEntities.Traversal((HitCheckEntity entity)=>entity.TryHit(new DamageInfo(GameConst.I_DangerzoneDamage, enum_DamageType.Basic, DamageDeliverInfo.Default())));
+        m_HitEntities.Traversal((HitCheckEntity entity)=>entity.TryHit(new DamageInfo(-1,GameConst.I_DangerzoneDamage, enum_DamageType.Basic)));
         m_Animation.Play(true);
-        m_TimerReset.Reset();
+        m_TimerReset.Replay();
     } 
 
 }

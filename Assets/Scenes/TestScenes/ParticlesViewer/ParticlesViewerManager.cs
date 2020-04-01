@@ -29,7 +29,7 @@ public class ParticlesViewerManager : MonoBehaviour {
         m_Repeater.Tick(Time.deltaTime);
         if (m_Repeater.m_Timing)
             return;
-        m_Repeater.Reset();
+        m_Repeater.Replay();
 
         ObjectPoolManager<int, SFXBase>.RecycleAll();
         m_TrailHelperPool.ClearPool();

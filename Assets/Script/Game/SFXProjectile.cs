@@ -7,7 +7,6 @@ public class SFXProjectile : SFXWeaponBase
 {
     #region PresetInfos 
     public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
-    public float F_Damage;
     public float F_Speed;
     public bool B_Penetrate;
     public AudioClip AC_MuzzleClip;
@@ -16,7 +15,6 @@ public class SFXProjectile : SFXWeaponBase
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
     public int I_HitMarkIndex;
-    public int I_BuffApplyOnHit;
     [Tooltip("Physics Size")]
     public float F_Radius = .5f, F_Height = 1f;
     [Tooltip("Projectile Type:(Single|Unused) (Multiline/MultiFan| Projectile Count Each Count)")]
@@ -40,12 +38,10 @@ public class SFXProjectile : SFXWeaponBase
     protected List<int> m_EntityHitted = new List<int>();
     protected bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanSFXHitTarget(hitCheck, m_SourceID);
     protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
-    public virtual void Play(DamageDeliverInfo deliverInfo ,Vector3 direction, Vector3 targetPosition )
+    public virtual void Play(DamageInfo damageInfo ,Vector3 direction, Vector3 targetPosition )
     {
-        base.PlayUncontrolled(deliverInfo.I_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
-        if (I_BuffApplyOnHit > 0)
-            deliverInfo.AddExtraBuff(I_BuffApplyOnHit);
-        m_DamageInfo=new DamageInfo(F_Damage-damageMinus, enum_DamageType.Basic,deliverInfo);
+        base.PlayUncontrolled(damageInfo.m_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
+        m_DamageInfo= damageInfo;
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
         SpawnProjectileEffects(targetPosition, F_PlayDelay);
         m_EntityHitted.Clear();
@@ -104,7 +100,6 @@ public class SFXProjectile : SFXWeaponBase
                 if (CanDamageEntity(_entity))
                     _entity.TryHit(m_DamageInfo, transform.forward);
                 m_EntityHitted.Add(_entity.I_AttacherID);
-                OnHitCheckCopies(_entity.I_AttacherID);
                 break;
         }
     }
@@ -128,7 +123,7 @@ public class SFXProjectile : SFXWeaponBase
         if(I_TrailIndex>0)
         {
             m_Trail = GameObjectManager.SpawnTrail(I_TrailIndex,transform.position,transform.forward);
-            m_Trail.transform.localScale =(1f+ m_DamageInfo.m_detail.m_DamageMultiply) * Vector3.one;
+            m_Trail.transform.localScale = m_DamageInfo.m_BaseDamageMultiply * Vector3.one;
             m_Trail.AttachTo(transform);
             m_Trail.PlayControlled(m_SourceID);
         }
@@ -176,33 +171,7 @@ public class SFXProjectile : SFXWeaponBase
             hitMark.AttachTo(hitParent.transform);
         }
     }
-
-    #region ??????????????????????????????????????
-    int m_copiesLeft;
-    int damageMinus;    //?
-    public void PlayerCopyCount(DamageDeliverInfo deliverInfo, Vector3 direction, Vector3 targetPosition, int copyCount,int _damageMinus)//?????
-    {
-        m_copiesLeft = copyCount;
-        damageMinus = _damageMinus;
-        Play(deliverInfo, direction, targetPosition);
-    }
     
-    void OnHitCheckCopies(int hitTargetID)
-    {
-        if (m_copiesLeft <= 0)
-            return;
-        EntityCharacterBase target= GameManager.Instance.GetNeariesCharacter(GameManager.Instance.GetCharacter(hitTargetID),true,false,5f);
-        if (!target)
-            return;
-        m_copiesLeft--;
-        Vector3 direction=TCommon.GetXZLookDirection(transform.position,target.tf_Head.position );
-        SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(m_Identity, transform.position, direction);
-        projectile.F_Speed = F_Speed;
-        projectile.B_Penetrate = B_Penetrate;
-        projectile.PlayerCopyCount(m_DamageInfo.m_detail, direction, transform.position + direction * GameConst.I_ProjectileMaxDistance,m_copiesLeft,0);
-        projectile.m_EntityHitted.AddRange(m_EntityHitted);
-    }
-    #endregion
 #if UNITY_EDITOR
     protected override void EDITOR_DEBUG()
     {

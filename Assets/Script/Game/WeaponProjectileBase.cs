@@ -6,18 +6,17 @@ using UnityEngine;
 
 public class WeaponProjectileBase : WeaponBase
 {
-    public override float F_BaseDamage => GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_BaseSFXWeaponIndex).F_Damage;
     protected override void OnAutoTriggerSuccessful()
     {
         base.OnAutoTriggerSuccessful();
-        FireProjectiles(m_BaseSFXWeaponIndex);
+        FireProjectiles(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(F_BaseDamage));
     }
+
+
     RaycastHit hit;
-    protected void FireProjectiles(int projectileIndex)
+    protected void FireProjectiles(int projectileIndex,DamageInfo damageInfo)
     {
         SFXProjectile projectileData = GameObjectManager.GetSFXWeaponData<SFXProjectile>(projectileIndex);
-        DamageDeliverInfo damageInfo = m_Attacher.m_CharacterInfo.GetDamageBuffInfo();
-
         Vector3 spreadDirection = m_Attacher.tf_WeaponAim.forward;
         Vector3 endPosition = m_Attacher.tf_WeaponAim.position + spreadDirection * GameConst.I_ProjectileMaxDistance;
         if (Physics.Raycast(m_Attacher.tf_WeaponAim.position, spreadDirection, out hit, GameConst.I_ProjectileMaxDistance, GameLayer.Mask.I_ProjectileMask) && GameManager.B_CanSFXHitTarget(hit.collider.Detect(), m_Attacher.m_EntityID))
@@ -40,12 +39,12 @@ public class WeaponProjectileBase : WeaponBase
         GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, spreadDirection, projectileData.I_MuzzleIndex, projectileData.AC_MuzzleClip);
     }
 
-    void FireProjectile(int projectilIndex, SFXProjectile projectileData,DamageDeliverInfo damage, Vector3 direction)
+    void FireProjectile(int projectilIndex, SFXProjectile projectileData,DamageInfo damageInfo, Vector3 direction)
     {
         SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(projectilIndex, m_Muzzle.position, direction);
         projectile.F_Speed = m_Attacher.m_CharacterInfo.F_ProjectileSpeedMuiltiply*projectileData.F_Speed;
         projectile.B_Penetrate = projectileData.B_Penetrate || m_Attacher.m_CharacterInfo.F_PenetrateAdditive > UnityEngine.Random.Range(0, 1);
 
-        projectile.PlayerCopyCount(damage, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance,m_Attacher.m_CharacterInfo.I_ProjectileCopyCount,10);
+        projectile.Play(damageInfo, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance);
     }
 }

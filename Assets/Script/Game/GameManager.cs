@@ -23,22 +23,22 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All",  KeyCode.Alpha0, () => {
             GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
             {
-                character.m_HitCheck.TryHit(new DamageInfo(character.m_Health.m_CurrentHealth, enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));
+                character.m_HitCheck.TryHit(new DamageInfo(-1,character.m_Health.m_CurrentHealth, enum_DamageType.Basic));
             });
         });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Freeze",  KeyCode.Alpha8, "0.5", (string value) =>
         {
             GetCharacters( enum_EntityFlag.Enermy,true).Traversal((EntityCharacterBase entity) => {
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.EffectInfo(-1,0, enum_CharacterEffect.Freeze,float.Parse( value))));
+                    entity.m_HitCheck.TryHit(new DamageInfo(-1,  enum_CharacterEffect.Freeze,float.Parse( value)));
             });
         });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
             GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
         });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1)));});
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal",  KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-int.Parse(damage), enum_DamageType.Basic, DamageDeliverInfo.Default(-1))); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,int.Parse(damage), enum_DamageType.Basic));});
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal",  KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,-int.Parse(damage), enum_DamageType.Basic)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Item",  KeyCode.F1, "1", (string actionIndex) => { GameObjectManager.SpawnInteract<InteractPerkPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(actionIndex)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Select", KeyCode.F2, SpawnBattleFinishReward);
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Coins", KeyCode.F5, "20", (string coins) => { GameObjectManager.SpawnInteract<InteractPickupCoin>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(coins),!m_Battling);});
@@ -416,7 +416,7 @@ public class GameManager : GameManagerBase
         List<EntityCharacterBase> characters = GetCharacters(sourceEntity.m_Flag, targetAlly);
         characters.Traversal((EntityCharacterBase character) =>
         {
-            if (character.m_EntityID == sourceEntity.m_EntityID || !character.m_AvailableTarget)
+            if (character.m_EntityID == sourceEntity.m_EntityID || !character.m_TargetAvailable)
                 return;
 
             float distance = TCommon.GetXZDistance(sourceEntity.tf_Head.position, character.tf_Head.position);

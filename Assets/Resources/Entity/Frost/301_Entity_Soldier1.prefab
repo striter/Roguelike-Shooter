@@ -953,21 +953,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 220
-  ExtraRendererForForest107Only: {fileID: 0}
-  E_SpawnType: 1
   I_DefaultArmor: 0
   F_MovementSpeed: 6
   F_AttackSpread: 0
+  E_SpawnType: 1
   E_AnimatorIndex: 31
   F_AIChaseRange: 1
   F_AIAttackRange: 5
+  F_BaseDamage: 20
+  I_BuffApplyOnHit: 0
+  F_AttackRate: 0
   F_AttackDuration:
     start: 1.5
     length: 1
   F_AttackTimes:
     start: 0
     length: 0
-  F_AttackRate: 0
   F_AttackRotateParam: 0.2
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1

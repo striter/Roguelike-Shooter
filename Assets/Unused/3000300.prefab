@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4550938155433920}
   - component: {fileID: 114579307329279138}
   m_Layer: 9
-  m_Name: 3000200
+  m_Name: 3000300
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4302469275429298}
   - component: {fileID: 96637802621585148}
-  - component: {fileID: 114550232550119966}
+  - component: {fileID: 114434008251161930}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -195,7 +195,7 @@ TrailRenderer:
     generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
---- !u!114 &114550232550119966
+--- !u!114 &114434008251161930
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -218,15 +218,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 0
   F_Speed: 20
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 0}
+  I_TrailIndex: 0
   I_MuzzleIndex: 0
   I_ImpactIndex: 21001
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
-  I_BuffApplyOnHit: 0
   F_Radius: 0.1
   F_Height: 0.5
   RI_CountExtension:
@@ -293,7 +292,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1734660749
+  randomSeed: -1709235281
   InitialModule:
     serializedVersion: 3
     enabled: 1

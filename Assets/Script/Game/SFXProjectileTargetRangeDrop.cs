@@ -32,7 +32,7 @@ public class SFXProjectileTargetRangeDrop : SFXProjectile {
         f_dropCheck -= F_DropDuration;
 
         Vector3 startPos = transform.position + Vector3.forward * Random.Range(F_DropRange, -F_DropRange) + Vector3.right * Random.Range(F_DropRange, -F_DropRange);
-        GameObjectManager.SpawnSFXWeapon<SFXProjectile>(GameExpression.GetWeaponSubIndex(m_Identity), startPos, Vector3.down).Play(m_DamageInfo.m_detail, Vector3.down,startPos+Vector3.down*F_DropStartHeight);
+        GameObjectManager.SpawnSFXWeapon<SFXProjectile>(GameExpression.GetWeaponSubIndex(m_Identity), startPos, Vector3.down).Play(m_DamageInfo, Vector3.down,startPos+Vector3.down*F_DropStartHeight);
 
         i_dropCountCheck++;
         if (i_dropCountCheck >= I_DropCount)

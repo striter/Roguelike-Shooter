@@ -933,7 +933,7 @@ public class TimeCounter
         m_TimeLeftScale = m_TimerDuration == 0 ? 0 : m_TimeCheck / m_TimerDuration;
     }
 
-    public void Reset() => OnTimeCheck(m_TimerDuration);
+    public void Replay() => OnTimeCheck(m_TimerDuration);
     public void Stop() => OnTimeCheck(0);
 
     public void Tick(float deltaTime)

@@ -9,6 +9,6 @@ public class WeaponCastMelee : WeaponCastBase {
         base.OnAnimEvent(eventType);
         if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
             return;
-        ShowCast().Play(m_Attacher.m_CharacterInfo.GetDamageBuffInfo());
+        ShowCast().Play(GetWeaponDamageInfo(F_BaseDamage));
     }
 }

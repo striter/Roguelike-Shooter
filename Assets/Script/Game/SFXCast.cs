@@ -9,10 +9,8 @@ public class SFXCast : SFXWeaponBase {
     public enum_CastTarget E_CastTarget = enum_CastTarget.Invalid;
     public int I_CastParticleIndex=-1;
     public bool B_CastForward = false;
-    public float F_Damage;
     public int I_TickCount = 1;
     public float F_Tick = .5f;
-    public int I_BuffApplyOnCast;
     public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
     public Vector4 V4_CastInfo;
     public int F_DelayDuration;
@@ -27,10 +25,10 @@ public class SFXCast : SFXWeaponBase {
     float f_blastTickChest = 0;
     public bool m_ControlledCast => tf_ControlledCast != null;
     SFXIndicator m_ControlledParticles;
-    public virtual void Play(DamageDeliverInfo buffInfo)
+    public virtual void Play(DamageInfo buffInfo)
     {
-        SetDamageInfo(buffInfo);
-        base.PlayUncontrolled(m_DamageInfo.m_detail.I_SourceID, F_PlayDuration, F_DelayDuration);
+        m_DamageInfo = buffInfo;
+        base.PlayUncontrolled(m_DamageInfo.m_SourceID, F_PlayDuration, F_DelayDuration);
 
         if (I_DelayIndicatorIndex > 0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID,0 ,F_DelayDuration);
@@ -49,9 +47,9 @@ public class SFXCast : SFXWeaponBase {
         }
     }
 
-    public void ControlledCheck(DamageDeliverInfo info)
+    public void ControlledCheck(DamageInfo info)
     {
-        SetDamageInfo(info);
+        m_DamageInfo = info;
         DoCastDealtDamage();
     }
 
@@ -82,13 +80,7 @@ public class SFXCast : SFXWeaponBase {
         if (F_Tick <= 0)
             DoCastDealtDamage();
     }
-
-    void SetDamageInfo(DamageDeliverInfo info)
-    {
-        if (I_BuffApplyOnCast > 0)
-            info.AddExtraBuff( I_BuffApplyOnCast);
-        m_DamageInfo = new DamageInfo(F_Damage, enum_DamageType.Basic, info);
-    }
+    
     protected override void Update()
     {
         base.Update();

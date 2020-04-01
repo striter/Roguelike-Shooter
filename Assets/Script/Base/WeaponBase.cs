@@ -4,15 +4,19 @@ using System;
 
 public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
 {
+    #region PresetData
     public enum_PlayerAnim E_Anim = enum_PlayerAnim.Invalid;
     public bool B_AttachLeft = false;
+    public float F_BaseDamage;
+    public int I_ExtraBuffApply = -1;
+    #endregion
     protected EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
     public int I_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public virtual float F_BaseDamage => 0;
+    public virtual float m_BaseDamage => 0;
     public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
     public float GetSpread() => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_Spread;
     protected WeaponTrigger m_Trigger { get; private set; }
@@ -46,6 +50,8 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         OnShow(true);
     }
 
+    public DamageInfo GetWeaponDamageInfo(float damage) => m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damage, I_ExtraBuffApply, enum_DamageType.Basic);
+
     public virtual void OnDetach()
     {
         m_Attacher = null;
@@ -76,8 +82,8 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     {
         I_AmmoLeft--;
         OnFireRecoil?.Invoke(F_Recoil);
-        m_RefillPauseTimer.Reset();
-        m_BulletRefillTimer.Reset();
+        m_RefillPauseTimer.Replay();
+        m_BulletRefillTimer.Replay();
     }
 
     public virtual void Tick(bool firePausing, float fireTick,float reloadTick)
@@ -108,7 +114,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
             return;
 
         I_AmmoLeft++;
-        m_BulletRefillTimer.Reset();
+        m_BulletRefillTimer.Replay();
     }
     
     public void ForceReloadOnce()=>I_AmmoLeft += 1;

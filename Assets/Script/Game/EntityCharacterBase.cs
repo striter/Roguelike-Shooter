@@ -21,12 +21,14 @@ public class EntityCharacterBase : EntityBase
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
     protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
+    
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
     protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
+
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthChanged);
-    TimeCounter m_DeadCounter = new TimeCounter();
+    TimeCounter m_DeadCounter = new TimeCounter(GameConst.F_EntityDeadFadeTime,true);
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
 
@@ -57,7 +59,7 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterSkinEffect.OnDisable();
     }
-    public bool m_AvailableTarget => !m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_IsDead;
+    public bool m_TargetAvailable => !m_CharacterInfo.B_Effecting(enum_CharacterEffect.Cloak) && !m_IsDead;
     protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
         base.EntityActivate(flag, startHealth);
@@ -121,9 +123,9 @@ public class EntityCharacterBase : EntityBase
         if (!base.OnReceiveDamage(damageInfo, damageDirection))
             return false;
 
-        damageInfo.m_detail.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_detail.I_SourceID, buffInfo); });
-        if (damageInfo.m_detail.m_DamageEffect != enum_CharacterEffect.Invalid)
-            m_CharacterInfo.OnSetEffect(damageInfo.m_detail.m_DamageEffect, damageInfo.m_detail.m_EffectDuration);
+        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_SourceID, buffInfo); });
+        if (damageInfo.m_EffectType != enum_CharacterEffect.Invalid)
+            m_CharacterInfo.OnSetEffect(damageInfo.m_EffectType, damageInfo.m_EffectDuration);
 
         return true;
     }
@@ -137,7 +139,7 @@ public class EntityCharacterBase : EntityBase
         base.OnDead();
         m_CharacterInfo.OnDead();
         m_CharacterSkinEffect.SetDeath();
-        m_DeadCounter.SetTimerDuration(GameConst.F_EntityDeadFadeTime);
+        m_DeadCounter.Replay();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
     public override void DoRecycle()

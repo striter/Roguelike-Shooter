@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class WeaponProjectileRailgun : WeaponProjectileBase {
+public class WeaponProjectileRailgun : WeaponProjectileBase
+{
+    public float F_StoreDamage;
     public int I_ChargeIndicatorIndex;
     protected int m_StoreProjectileDataIndex { get; private set; }
     SFXIndicator m_Indicator;
-    public override float F_BaseDamage => GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_StoreProjectileDataIndex).F_Damage;
+    
     new WeaponTriggerStoring m_Trigger;
     protected override WeaponTrigger GetTrigger()
     {
@@ -22,9 +24,9 @@ public class WeaponProjectileRailgun : WeaponProjectileBase {
         m_StoreProjectileDataIndex = GameExpression.GetPlayerExtraWeaponIndex(m_WeaponInfo.m_Index);
     }
 
-    protected void OnStoreTriggerSuccessful(float storeScale)
+    protected void OnStoreTriggerSuccessful(bool storeScale)
     {
-        FireProjectiles(storeScale == 1? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex);
+        FireProjectiles(storeScale ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex,storeScale?GetWeaponDamageInfo(F_StoreDamage):GetWeaponDamageInfo(F_BaseDamage));
         OnTriggerSuccessful();
         PlayIndicator(false);
     }

@@ -31,8 +31,8 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         Vector2 rollAxisDirection = m_MoveAxisInput == Vector2.zero ? new Vector2(0, 1) : m_MoveAxisInput;
         m_RollDirection = base.CalculateMoveDirection(rollAxisDirection);
         m_Animator.BeginRoll(F_RollDuration);
-        m_RollTimer.Reset();
-        m_RollCooldown.Reset();
+        m_RollTimer.Replay();
+        m_RollCooldown.Replay();
     }
 
     protected override void OnAliveTick(float deltaTime)

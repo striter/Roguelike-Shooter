@@ -13,11 +13,11 @@ public class SFXCastDetonate : SFXCastOverlapSphere
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Model = transform.Find("Model");
     }
-    public override void Play(DamageDeliverInfo buffInfo)
+    public override void Play(DamageInfo damageInfo)
     {
-        base.Play(buffInfo);
+        base.Play(damageInfo);
         m_Model.SetActivate(true);
-        GameObjectManager.PlayMuzzle(buffInfo.I_SourceID,transform.position,Vector3.up,I_MuzzleIndex);
+        GameObjectManager.PlayMuzzle(damageInfo.m_SourceID,transform.position,Vector3.up,I_MuzzleIndex);
     }
     protected override void OnPlay()
     {

@@ -8,21 +8,23 @@ using System;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EntityCharacterAI : EntityCharacterBase {
-    public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
+    #region Preset
     public enum_EnermyType E_SpawnType = enum_EnermyType.Invalid;
-    public override enum_EntityType m_ControllType => enum_EntityType.AIWeaponHelper;
+    public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
     public float F_AIChaseRange;
     public float F_AIAttackRange;
+    public float F_BaseDamage;
+    public int I_BuffApplyOnHit;
+    public float F_AttackRate;
     public RangeFloat F_AttackDuration;
     public RangeInt F_AttackTimes;
-    public float F_AttackRate;
-    WeaponHelperAnimator m_Animator;
-    [Range(0,3)]
-    public float F_AttackRotateParam=1f;
-    [Range(0, 100)]
-    public int I_AttackPreAimPercentage = 50;
+    [Range(0,3)] public float F_AttackRotateParam=1f;
+    [Range(0, 100)] public int I_AttackPreAimPercentage = 50;
     public bool B_AttackMove = true;
     public float F_AttackFrontCheck = 2f;
+    #endregion
+    public override enum_EntityType m_ControllType => enum_EntityType.AIWeaponHelper;
+    WeaponHelperAnimator m_Animator;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_IsDead;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
@@ -30,10 +32,13 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
-        InitAI(WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,m_CharacterInfo.GetDamageBuffInfo));
+        InitAI(WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,GetAIDamageInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new WeaponHelperAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
+
+    public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageBuffInfo(F_BaseDamage,I_BuffApplyOnHit, enum_DamageType.Basic);
+
     public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
     {
         base.OnMainCharacterActivate(_flag);
@@ -99,9 +104,9 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (!base.OnReceiveDamage(damageInfo, damageDirection))
             return false;
 
-        if (GameManager.Instance.CharacterExists(damageInfo.m_detail.I_SourceID))
+        if (GameManager.Instance.CharacterExists(damageInfo.m_SourceID))
         {
-            EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_detail.I_SourceID);
+            EntityCharacterBase entity = GameManager.Instance.GetCharacter(damageInfo.m_SourceID);
             if (GameManager.Instance.EntityOpposite(this, entity))
                 OnBattleReceiveTarget(entity, true);
         }

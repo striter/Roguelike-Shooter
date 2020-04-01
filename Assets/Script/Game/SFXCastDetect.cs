@@ -26,9 +26,9 @@ public class SFXCastDetect : SFXCastDetonate {
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnDetectEntity);
     }
 
-    public override void Play(DamageDeliverInfo buffInfo)
+    public override void Play(DamageInfo damageInfo)
     {
-        base.Play(buffInfo);
+        base.Play(damageInfo);
         m_detector.SetPlay(true);
         base.PlaySFX(m_SourceID, F_PlayDuration, F_DurationSelfDetonate,true);
     }

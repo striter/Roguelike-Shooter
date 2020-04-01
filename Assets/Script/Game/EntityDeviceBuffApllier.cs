@@ -32,10 +32,10 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
             {
                 case enum_EntityType.AIWeaponModel:
                 case enum_EntityType.AIWeaponHelper:
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(m_EntityID,m_AllyBuff)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(m_EntityID,m_AllyBuff));
                     break;
                 case enum_EntityType.Player:
-                    entity.m_HitCheck.TryHit(new DamageInfo(0, enum_DamageType.Basic, DamageDeliverInfo.BuffInfo(m_EntityID,m_PlayerBuff)));
+                    entity.m_HitCheck.TryHit(new DamageInfo(m_EntityID,m_PlayerBuff));
                     break;
             }
         });
