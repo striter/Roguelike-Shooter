@@ -68,6 +68,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         AIDeactivate();
         if (m_Animator != null)
             m_Animator.OnDead();
+        m_Agent.enabled = false;
     }
 
     protected override void OnExpireChange()

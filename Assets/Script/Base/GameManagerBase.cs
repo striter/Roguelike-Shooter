@@ -98,13 +98,13 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     void OnEffectOptionChanged()
     {
-        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect == enum_Option_Effect.High ? DepthTextureMode.Depth : DepthTextureMode.None);
         if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.Normal)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 4, 5, 2);
         else if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.High)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
 
         m_Bloom.SetEnable(OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
+        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect == enum_Option_Effect.High ? DepthTextureMode.Depth : DepthTextureMode.None);
     }
 
     protected void SetPostEffect_Dead()
