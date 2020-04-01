@@ -113,7 +113,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &814172246
+--- !u!1001 &467493007
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -213,22 +213,22 @@ Prefab:
     - target: {fileID: 224377754155092694, guid: 6d244d48650625444941ccfc740ddd56,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 111
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224624259517379180, guid: 6d244d48650625444941ccfc740ddd56,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 140
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224899015630590574, guid: 6d244d48650625444941ccfc740ddd56,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 111
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224340305988575896, guid: 6d244d48650625444941ccfc740ddd56,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 140
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224993813128385860, guid: 6d244d48650625444941ccfc740ddd56,
         type: 2}
@@ -410,19 +410,14 @@ Prefab:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114294046031607418, guid: 6d244d48650625444941ccfc740ddd56, type: 2}
-    - {fileID: 114970525285957682, guid: 6d244d48650625444941ccfc740ddd56, type: 2}
-    - {fileID: 114164871443278016, guid: 6d244d48650625444941ccfc740ddd56, type: 2}
-    - {fileID: 114230170469953044, guid: 6d244d48650625444941ccfc740ddd56, type: 2}
-    - {fileID: 114951091384893314, guid: 6d244d48650625444941ccfc740ddd56, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6d244d48650625444941ccfc740ddd56, type: 2}
   m_IsPrefabParent: 0
---- !u!224 &814172247 stripped
+--- !u!224 &467493008 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224956126577344324, guid: 6d244d48650625444941ccfc740ddd56,
     type: 2}
-  m_PrefabInternal: {fileID: 814172246}
+  m_PrefabInternal: {fileID: 467493007}
 --- !u!1 &943747206
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +584,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 814172247}
+  - {fileID: 467493008}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

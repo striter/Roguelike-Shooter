@@ -83,11 +83,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnAliveTick(deltaTime);
         if (m_Animator != null)
-        {
             m_Animator.SetForward(m_Moving ? 1f:0f);
-            m_Animator.SetPause(m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
-        }
-        AISetSimulate(!m_CharacterInfo.B_Effecting( enum_CharacterEffect.Freeze));
         AITick(Time.deltaTime);
     }
 

@@ -64,7 +64,7 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
     {
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.SetEnable(false); });
         m_Renderers.Traversal((Renderer render) => {
-            render.material.shader = TEffects.SD_Dissolve;
+            render.material.shader = TEffects.SD_ExtraEffects[ enum_Effects.Death];
             render.material.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
             render.material.SetFloat(TEffects.ID_DissolveScale, .1f);
         });

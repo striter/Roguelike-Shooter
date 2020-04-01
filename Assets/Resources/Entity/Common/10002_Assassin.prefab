@@ -1060,7 +1060,7 @@ MonoBehaviour:
   F_AttackSpread: 0
   F_AbilityCooldown: 1
   F_AbilityAttackRange: 5
-  F_AbilityAttackDuration: 0.5
+  F_AbilityAttackDuration: 0.2
   P_NormalFinishPercentage: 25
   P_EliteFinishPercentage: 15
   F_AbilityDamagePerStack: 20
@@ -1105,7 +1105,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 284dedf6ff7185245a99dbdfe4839ecc, type: 2}
+  - {fileID: 2100000, guid: f9e5728f1925e364593e63caa7d0cf8f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

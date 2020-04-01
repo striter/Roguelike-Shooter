@@ -279,102 +279,6 @@ namespace GameSetting
 
     }
 
-    public static class UIConst
-    {
-        public const int I_PlayerDyingMinValue = 10;
-        public const int I_PlayerDyingMaxValue = 50;
-        
-        public const float F_MapAnimateTime = 1.6f;
-
-        public const float F_UIDamageStartOffset = 20f; //血显示区域范围
-
-        public const float F_UIActionBattlePressDuration = .3f; //查看卡片说明长按时间
-    }
-
-    public static class UIExpression
-    {
-        public static Color TipsColor(this enum_UITipsType type)
-        {
-            switch(type)
-            {
-                case enum_UITipsType.Normal:
-                    return Color.green;
-                case enum_UITipsType.Warning:
-                    return Color.yellow;
-                case enum_UITipsType.Error:
-                    return Color.white;
-                default:
-                    return Color.magenta;
-            }
-        }
-
-        public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(0,100,uiDamage);   //武器数据查看ui标准
-        public static float GetUIWeaponRPMValue(float uiRPM) =>  Mathf.InverseLerp(0,400,uiRPM);
-        public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 100, uiStability);
-        public static float GetUIWeaponSpeedValue(float uiSpeed) =>  Mathf.InverseLerp(0, 100, uiSpeed);
-        public static float GetUIDamageScale(float damage) => ((damage / 50 / 10 ) + .9f )/ 2;  //伤害显示比例缩放，默认是两倍大小
-    }
-    
-    public static class UIConvertions
-    {
-        public static string GetInteractIcon(this enum_Interaction type) =>"InteractIcon_" + type;
-        public static string GetNumericVisualizeIcon(this enum_Interaction type)
-        {
-            switch (type)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!");
-                    return "";
-                case enum_Interaction.PickupCoin:
-                    return "NumericIcon_Coin";
-                case enum_Interaction.PickupArmor:
-                    return "NumericIcon_Armor";
-                case enum_Interaction.PickupHealth:
-                case enum_Interaction.PickupHealthPack:
-                    return "NumericIcon_Health";
-            }
-        } 
-        public static Color GetVisualizeAmountColor(this enum_Interaction type)
-        {
-            switch (type)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!");
-                    return Color.magenta;
-                case enum_Interaction.PickupCoin:
-                    return TCommon.GetHexColor("FFCC1FFF");
-                case enum_Interaction.PickupArmor:
-                    return TCommon.GetHexColor("1FF2FFFF");
-                case enum_Interaction.PickupHealth:
-                case enum_Interaction.PickupHealthPack:
-                    return TCommon.GetHexColor("FFA54EFF");
-            }
-        }
-
-        public static string GetLevelIconSprite(this enum_LevelType type) => "map_icon_" + type;
-
-        public static string GetAbilityBackground(bool cooldowning)=>cooldowning?"control_ability_bottom_cooldown":"control_ability_bottom_activate";
-        public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
-        public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
-
-        public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
-        public static string GetUIStatusShadowBackground(this enum_Rarity rarity) => "weapon_shadow_" + rarity;
-        public static string GetUIGameControlBackground(this enum_Rarity rarity) => "control_" + rarity;
-        public static string GetUITextColor(this enum_Rarity rarity)
-        {
-            switch (rarity)
-            {
-                default: return "FFFFFFFF";
-                case enum_Rarity.Ordinary: return "E3E3E3FF";
-                case enum_Rarity.Advanced: return "6F8AFFFF";
-                case enum_Rarity.Rare: return "C26FFFFF";
-                case enum_Rarity.Epic: return "FFCC1FFF";
-            }
-        }
-
-        public static string GetUIGameResultTitleBG(bool win, enum_Option_LanguageRegion language) => "result_title_" + (win ? "win_" : "fail_") + language;
-    }
-
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this EntityExpirePreset buff) => "Buff_Name_" + buff.m_Index;
@@ -855,7 +759,7 @@ namespace GameSetting
         public void OnSetHealth(float reviveHealth)=> m_CurrentHealth = reviveHealth;
         public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
-            if (damageInfo.m_DamageType == enum_DamageType.ArmorOnly)
+            if (damageInfo.m_DamageType == enum_DamageType.Armor)
                 return false;
 
             if (damageInfo.m_AmountApply < 0)
@@ -921,36 +825,43 @@ namespace GameSetting
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthWillChange, damageInfo, m_Entity);
+            
+            if(damageInfo.m_DamageType== enum_DamageType.HealthPenetrate)
+            {
+                damageReduction = 1;
+                healEnhance = 1;
+            }
 
-            float finalAmount = damageInfo.m_AmountApply;
+            float basicAmount = damageInfo.m_AmountApply;
             if (damageInfo.m_AmountApply > 0)    //Damage
             {
                 if (damageReduction <= 0)
                     return false;
-                finalAmount *= damageReduction;
+                basicAmount *= damageReduction;
                 switch (damageInfo.m_DamageType)
                 {
-                    case enum_DamageType.ArmorOnly:
-                        {
-                            if (m_CurrentArmor <= 0)
-                                return false;
-                            DamageArmor(finalAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.DamageArmor);
-                        }
-                        break;
-                    case enum_DamageType.HealthOnly:
-                        {
-                            DamageHealth(finalAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.DamageHealth);
-                        }
-                        break;
                     case enum_DamageType.Basic:
                         {
-                            float healthDamage = finalAmount - m_CurrentArmor;
-                            DamageArmor(finalAmount);
+                            float healthDamage = basicAmount - m_CurrentArmor;
+                            DamageArmor(basicAmount);
                             if (healthDamage > 0)
                                 DamageHealth(healthDamage);
                             OnHealthChanged(healthDamage >= 0 ? enum_HealthChangeMessage.DamageHealth : enum_HealthChangeMessage.DamageArmor);
+                        }
+                        break;
+                    case enum_DamageType.Armor:
+                        {
+                            if (m_CurrentArmor <= 0)
+                                return false;
+                            DamageArmor(basicAmount);
+                            OnHealthChanged(enum_HealthChangeMessage.DamageArmor);
+                        }
+                        break;
+                    case enum_DamageType.HealthPenetrate:
+                    case enum_DamageType.Health:
+                        {
+                            DamageHealth(basicAmount);
+                            OnHealthChanged(enum_HealthChangeMessage.DamageHealth);
                         }
                         break;
                     default:
@@ -962,28 +873,11 @@ namespace GameSetting
             {
                 switch (damageInfo.m_DamageType)
                 {
-                    case enum_DamageType.ArmorOnly:
-                        {
-                            if (m_ArmorFull)
-                                break;
-                            DamageArmor(finalAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
-                        }
-                        break;
-                    case enum_DamageType.HealthOnly:
-                        {
-                            finalAmount *= healEnhance;
-                            if (m_HealthFull || finalAmount > 0)
-                                break;
-                            DamageHealth(finalAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
-                        }
-                        break;
                     case enum_DamageType.Basic:
                         {
-                            finalAmount *= healEnhance;
-                            float armorReceive = finalAmount - m_CurrentHealth + m_MaxHealth;
-                            DamageHealth(finalAmount);
+                            basicAmount *= healEnhance;
+                            float armorReceive = basicAmount - m_CurrentHealth + m_MaxHealth;
+                            DamageHealth(basicAmount);
                             if (armorReceive > 0)
                             {
                                 OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
@@ -994,13 +888,31 @@ namespace GameSetting
                             OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
                         }
                         break;
+                    case enum_DamageType.Armor:
+                        {
+                            if (m_ArmorFull)
+                                break;
+                            DamageArmor(basicAmount);
+                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
+                        }
+                        break;
+                    case enum_DamageType.HealthPenetrate:
+                    case enum_DamageType.Health:
+                        {
+                            basicAmount *= healEnhance;
+                            if (m_HealthFull || basicAmount > 0)
+                                break;
+                            DamageHealth(basicAmount);
+                            OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
+                        }
+                        break;
                     default:
                         Debug.LogError("Error! Invalid Healing Type:" + damageInfo.m_DamageType.ToString());
                         break;
                 }
             }
-            if (finalAmount != 0)
-                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, m_Entity, finalAmount);
+            if (basicAmount != 0)
+                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, m_Entity, basicAmount);
             return true;
         }
     }
@@ -1054,8 +966,6 @@ namespace GameSetting
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
         public void AddExtraBuff(int presetBuffID) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(presetBuffID));
 
-        public enum_CharacterEffect m_EffectType = enum_CharacterEffect.Invalid;
-        public float m_EffectDuration = 0;
 
         public DamageInfo(int sourceID, float damage,float _damageMultiply,float _critcalHitMultiply, enum_DamageType type,int extraBuffID)
         {
@@ -1086,12 +996,6 @@ namespace GameSetting
             m_BaseBuffApply.Add(buffInfo);
         }
 
-        public DamageInfo(int sourceID,enum_CharacterEffect effect,float duration)
-        {
-            m_SourceID = sourceID;
-            m_EffectType=effect;
-            m_EffectDuration = duration;
-        }
         public float m_AmountApply => m_DamageBase * m_BaseDamageMultiply;
         public float m_BaseDamageMultiply=> (1 + m_DamageMultiply + m_DamageCriticalMultipy);
         public bool m_CritcalHitted => m_DamageCriticalMultipy != 0;
@@ -1206,12 +1110,6 @@ namespace GameSetting
         public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
         public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
         public float F_MovementSpeed => m_Entity.m_baseMovementSpeed * F_MovementSpeedMultiply;
-
-
-        protected Dictionary<enum_CharacterEffect, EffectCounterBase> m_Effects = new Dictionary<enum_CharacterEffect, EffectCounterBase>();
-        public bool B_Effecting(enum_CharacterEffect type) => m_Effects[type].m_Effecting;
-        protected void ResetEffect(enum_CharacterEffect type) => m_Effects[type].Reset();
-        public void OnSetEffect(enum_CharacterEffect type, float duration) => m_Effects[type].OnSet(duration);
         
         public bool CheckCriticalHit() => TCommon.RandomLength(1f) < F_CriticalHitRate;
         public float GetCritalDamageMultiply() =>   F_CriticalHitMultiply;
@@ -1228,7 +1126,6 @@ namespace GameSetting
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
             OnExpireInfoChange = _OnExpireChange;
-            TCommon.TraversalEnum((enum_CharacterEffect effect) => { m_Effects.Add(effect, new EffectCounterBase(enum_ExpireRefreshType.AddUp)); });
         }
 
         public virtual void OnActivate()=>Reset();
@@ -1244,13 +1141,12 @@ namespace GameSetting
             if ( damageInfo.m_SourceID == m_Entity.m_EntityID)
             {
                 if (F_HealthDrainMultiply > 0)
-                    m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_EntityID ,- amountApply * F_HealthDrainMultiply, enum_DamageType.HealthOnly));
+                    m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_EntityID ,- amountApply * F_HealthDrainMultiply, enum_DamageType.Health));
                 m_Expires.Traversal((EntityExpireBase expire) => { expire.OnDealtDamage(damageEntity,damageInfo,amountApply); });
             }
         }
         protected virtual void Reset()
         {
-            m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Reset(); });
             m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Preset) RemoveExpire(expire); }, true);
             UpdateExpireInfo();
             UpdateExpireEffect();
@@ -1258,7 +1154,6 @@ namespace GameSetting
 
         public virtual void Tick(float deltaTime) {
             m_Expires.Traversal((EntityExpireBase expire) => { expire.OnTick(deltaTime); });
-            m_Effects.Traversal((enum_CharacterEffect type) => { m_Effects[type].Tick(deltaTime); });
 
             if (b_expireUpdated)
                 return;
@@ -1501,7 +1396,6 @@ namespace GameSetting
         #region Action Helpers
         public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
         {
-            ResetEffect(enum_CharacterEffect.Cloak);
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, F_DamageMultiply+ randomDamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
             m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAttack(info); });
@@ -2079,152 +1973,6 @@ namespace GameSetting
         }
     }
     #endregion
-
-    #endregion
-    #region For UI Usage
-    public enum enum_UI_ActionUpgradeType
-    {
-        Invalid = -1,
-        Upgradeable = 1,
-        LackOfCoins = 2,
-        MaxLevel = 3,
-    }
-    
-    public class UIC_RarityLevel
-    {
-        class RarityLevel
-        {
-            public Image m_HighLight { get; private set; }
-            public Image m_BackGround { get; private set; }
-            public RarityLevel(Transform trans)
-            {
-                m_HighLight = trans.Find("HighLight").GetComponent<Image>();
-                m_BackGround = trans.Find("Background").GetComponent<Image>();
-            }
-            public void SetHighlight(bool show)
-            {
-                m_HighLight.SetActivate(show);
-                m_BackGround.SetActivate(!show);
-            }
-        }
-        public Transform transform { get; private set; }
-        ObjectPoolListComponent<int,Transform> m_Grid;
-        Dictionary<int, RarityLevel> m_Levels = new Dictionary<int, RarityLevel>();
-        public UIC_RarityLevel(Transform _transform)
-        {
-            transform = _transform;
-            m_Grid = new ObjectPoolListComponent<int, Transform>(transform,"GridItem");
-            m_Grid.ClearPool();
-            TCommon.TraversalEnum((enum_Rarity rarity) => { m_Levels.Add((int)rarity,new RarityLevel( m_Grid.AddItem((int)rarity))); });
-        }
-        public void SetRarity(enum_Rarity level)
-        {
-            m_Levels.Traversal((int index, RarityLevel rarity) => rarity.SetHighlight(index <= (int)level));
-        }
-    }
-
-    public class UIC_Button
-    {
-        Button m_Button;
-        Transform m_Show;
-        Transform m_Hide;
-        public UIC_Button(Transform _transform, UnityEngine.Events.UnityAction OnButtonClick)
-        {
-            m_Button = _transform.GetComponent<Button>();
-            m_Button.onClick.AddListener(OnButtonClick);
-            m_Show = _transform.Find("Show");
-            m_Hide = _transform.Find("Hide");
-            SetInteractable(true);
-        }
-        public void SetInteractable(bool interactable)
-        {
-            m_Hide.SetActivate(!interactable);
-            m_Show.SetActivate(interactable);
-            m_Button.interactable = interactable;
-        }
-    }
-    public class UIC_EquipmentData
-    {
-        public Transform transform { get; private set; }
-
-        Image m_Image;
-        UIC_RarityLevel m_Rarity;
-        public UIC_EquipmentData(Transform _transform)
-        {
-            transform = _transform;
-            m_Image = transform.Find("Mask/Image").GetComponent<Image>();
-            m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
-        }
-        public virtual void SetInfo(ExpirePerkBase equipmentInfo)
-        {
-            m_Image.sprite = GameUIManager.Instance.m_ActionSprites[equipmentInfo.m_Index.ToString()];
-            m_Rarity.SetRarity(equipmentInfo.m_Rarity);
-        }
-    }
-
-    public class UIC_EquipmentNameData: UIC_EquipmentData
-{
-        UIT_TextExtend m_Name;
-        public UIC_EquipmentNameData(Transform _transform):base(_transform)
-        {
-            m_Name = transform.Find("Name").GetComponent<UIT_TextExtend>();
-        }
-        public override void SetInfo(ExpirePerkBase equipmentInfo)
-        {
-            base.SetInfo(equipmentInfo);
-            m_Name.localizeKey = equipmentInfo.GetNameLocalizeKey();
-        }
-    }
-
-    public class UIC_EquipmentNameFormatIntro : UIC_EquipmentNameData
-    {
-        UIT_TextExtend  m_Intro;
-
-        public UIC_EquipmentNameFormatIntro(Transform _transform) : base(_transform)
-        {
-
-            m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
-        }
-        public override void SetInfo(ExpirePerkBase equipmentInfo)
-        {
-            base.SetInfo(equipmentInfo);
-            m_Intro.formatText(equipmentInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value3));
-        }
-    }
-    
-    public class UIC_WeaponData
-    {
-        public Transform transform { get; private set; }
-        UIT_TextExtend m_Name;
-        Image m_Background;
-        Image m_Image;
-        Transform tf_AmmoStatus;
-        Text m_Clip, m_Total;
-        public UIC_WeaponData(Transform _transform)
-        {
-            transform = _transform;
-            m_Background = transform.Find("Background").GetComponent<Image>();
-            m_Image = transform.Find("Image").GetComponent<Image>();
-            m_Name = transform.Find("NameStatus/Name").GetComponent<UIT_TextExtend>();
-            tf_AmmoStatus = transform.Find("NameStatus/AmmoStatus");
-            m_Clip = tf_AmmoStatus.Find("Clip").GetComponent<Text>();
-            m_Total = tf_AmmoStatus.Find("Total").GetComponent<Text>();
-        }
-
-        public void UpdateInfo(WeaponBase weapon)
-        {
-            m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
-            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
-            m_Name.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
-            m_Name.color = TCommon.GetHexColor( weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
-        }
-        public void UpdateAmmoInfo(int ammoLeft,int clipAmount)
-        {
-            m_Clip.text = ammoLeft.ToString();
-            m_Total.text = clipAmount.ToString();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
-        }
-    }
 
     #endregion
     #endregion

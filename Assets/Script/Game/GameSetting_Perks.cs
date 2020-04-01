@@ -115,7 +115,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead)
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,-Value1 * m_Stack, enum_DamageType.HealthOnly));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,-Value1 * m_Stack, enum_DamageType.Health));
         }
         public P0010(PerkSaveData saveData) : base(saveData) { }
     }
@@ -364,7 +364,7 @@ namespace GameSetting_Action
         {
             base.OnDealtDamage(receiver, info, applyAmount);
             if (receiver.m_IsDead)
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1 * m_Stack, enum_DamageType.ArmorOnly));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1 * m_Stack, enum_DamageType.Armor));
         }
         public P0025(PerkSaveData saveData) : base(saveData) { }
     }
@@ -403,7 +403,7 @@ namespace GameSetting_Action
         public override void OnLevelFinish()
         {
             base.OnLevelFinish();
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1*m_Stack, enum_DamageType.HealthOnly));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1*m_Stack, enum_DamageType.Health));
         }
         public P0029(PerkSaveData saveData) : base(saveData) { }
     }
