@@ -71,15 +71,14 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
 
     void OnAssassinBlow()
     {
+        m_CharacterSkinEffect.SetCloak(false, 0f, F_AssassinAttackDuration);
+        Teleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         if (m_AssassinTarget.m_IsDead)
             return;
-        m_CharacterSkinEffect.SetCloak(false,0f,F_AssassinAttackDuration);
-        Teleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position- m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
-        m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.F_BaseDamage+ F_AbilityDamagePerStack*m_AssassinDamageStack));
 
+        m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.F_BaseDamage+ F_AbilityDamagePerStack*m_AssassinDamageStack));
         bool isElite = (m_AssassinTarget as EntityCharacterAI != null);
         isElite=isElite&&(m_AssassinTarget as EntityCharacterAI).E_SpawnType== enum_EnermyType.Elite;
-
         if (m_AssassinTarget.m_Health.F_HealthMaxScale > (isElite ? F_eliteFInish : F_normalFinish))
             return;
         m_AssassinTarget.m_HitCheck.TryHit(new DamageInfo(m_EntityID, m_AssassinTarget.m_Health.m_MaxHealth, enum_DamageType.HealthPenetrate));
