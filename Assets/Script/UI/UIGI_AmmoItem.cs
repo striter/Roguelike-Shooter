@@ -11,7 +11,7 @@ public class UIGI_AmmoItem : UIT_GridItem {
         background = tf_Container.Find("Background").GetComponent<Image>();
     }
 
-    public void Set(bool valid)
+    public void SetValid(bool valid)
     {
         image.SetActivate(valid);
         background.SetActivate(!valid);

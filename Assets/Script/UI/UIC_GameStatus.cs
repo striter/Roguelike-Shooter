@@ -174,7 +174,7 @@ public class UIC_GameStatus : UIControlBase
             {
                 m_AmmoGrid.ClearGrid();
                 for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
-                    m_AmmoGrid.AddItem(i);
+                    m_AmmoGrid.AddItem(i).SetValid(i<weaponInfo.I_ClipAmount);
 
                 float size = (m_AmmoGridWidth - m_AmmoLayout.padding.right - m_AmmoLayout.padding.left - (weaponInfo.I_ClipAmount - 1) * m_AmmoLayout.spacing.x) / weaponInfo.I_ClipAmount;
                 m_AmmoLayout.cellSize = new Vector2(size, m_AmmoLayout.cellSize.y);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using LevelSetting;
 using GameSetting;
-using UnityEditor;
 
 public class LevelEditorManager : SingletonMono<LevelEditorManager>
 {
@@ -35,7 +34,9 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
         LevelChunkData m_Data = TResources.GetChunkData(dataName);
         if (!m_Data)
             return;
-        AssetDatabase.DeleteAsset(AssetDatabase.GetAssetPath(m_Data));
+#if UNITY_EDITOR
+        UnityEditor.AssetDatabase.DeleteAsset(UnityEditor.AssetDatabase.GetAssetPath(m_Data));
+#endif
     }
 
     public LevelChunkData Save(string dataName)
