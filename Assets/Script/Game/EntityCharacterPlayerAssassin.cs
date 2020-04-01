@@ -88,4 +88,10 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         if (m_AssassinDamageStack < I_MaxAbilityDamageStack)
             m_AssassinDamageStack += 1;
     }
+
+    protected override void OnDead()
+    {
+        base.OnDead();
+        m_AssassinAttackTimer.Stop();
+    }
 }
