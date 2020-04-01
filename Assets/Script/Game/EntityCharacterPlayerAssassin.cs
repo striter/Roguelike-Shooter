@@ -73,7 +73,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         if (m_AssassinTarget.m_IsDead)
             return;
         m_CharacterSkinEffect.SetCloak(false,0f,F_AssassinAttackDuration);
-        Teleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position- m_AssassinTarget.transform.forward),m_AimingTarget.transform.rotation);
+        Teleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position- m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.F_BaseDamage+ F_AbilityDamagePerStack*m_AssassinDamageStack));
 
         bool isElite = (m_AssassinTarget as EntityCharacterAI != null);

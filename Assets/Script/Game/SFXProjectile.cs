@@ -84,7 +84,7 @@ public class SFXProjectile : SFXWeaponBase
         return true;
     }
 
-    protected void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected virtual void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
         {
