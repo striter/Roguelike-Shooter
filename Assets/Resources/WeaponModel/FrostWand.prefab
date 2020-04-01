@@ -475,5 +475,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 1003
   B_AttachLeft: 0
-  F_BaseDamage: 20
+  F_BaseDamage: 30
   I_ExtraBuffApply: 105
