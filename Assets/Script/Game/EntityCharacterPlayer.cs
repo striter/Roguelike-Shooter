@@ -338,7 +338,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public virtual void OnAbilityDown(bool down)
     {
     }
-    
     #endregion
     #region PlayerInteract
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)

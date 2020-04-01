@@ -1202,7 +1202,7 @@ class EnumSelection : TReflection.UI.CPropertyFillElement
     ObjectPoolListComponent<int, Button> m_ChunkButton;
     public EnumSelection(Transform transform) : base(transform)
     {
-        TReflection.UI.UIPropertyFill(this, transform);
+        m_Text = transform.Find("Text").GetComponent<Text>();
         m_ChunkButton = new ObjectPoolListComponent<int, Button>(transform.Find("Grid"), "GridItem");
         transform.GetComponent<Button>().onClick.AddListener(() => {
             m_ChunkButton.transform.SetActivate(!m_ChunkButton.transform.gameObject.activeSelf);

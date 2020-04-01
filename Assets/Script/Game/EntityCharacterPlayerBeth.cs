@@ -33,6 +33,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         m_Animator.BeginRoll(F_RollDuration);
         m_RollTimer.Replay();
         m_RollCooldown.Replay();
+        m_CharacterInfo.OnAbilityTrigger();
     }
 
     protected override void OnAliveTick(float deltaTime)

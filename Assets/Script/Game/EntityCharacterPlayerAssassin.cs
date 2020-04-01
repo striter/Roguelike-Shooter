@@ -43,6 +43,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         m_AssassinCooldownTimer.Replay();
         m_AssassinAttackTimer.Replay();
         m_CharacterSkinEffect.SetCloak(true,0f,F_AssassinAttackDuration);
+        m_CharacterInfo.OnAbilityTrigger();
     }
 
     protected override void OnAliveTick(float deltaTime)
