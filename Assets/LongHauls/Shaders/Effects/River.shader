@@ -16,6 +16,7 @@
 	SubShader
 	{
 		Tags { "RenderType"="Transparent" "Queue"="Transparent"  }
+		ZWrite On
 		Cull Back
 		CGINCLUDE
 		#include "UnityCG.cginc"
