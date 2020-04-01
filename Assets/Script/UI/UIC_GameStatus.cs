@@ -170,15 +170,20 @@ public class UIC_GameStatus : UIControlBase
             string ammoText = string.Format("{0} / {1}", weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount);
             m_AmmoAmount.text = ammoText;
             m_AmmoAmountProjection.text = ammoText;
+
             if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
             {
                 m_AmmoGrid.ClearGrid();
                 for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
-                    m_AmmoGrid.AddItem(i).SetValid(i<weaponInfo.I_ClipAmount);
+                    m_AmmoGrid.AddItem(i);
 
                 float size = (m_AmmoGridWidth - m_AmmoLayout.padding.right - m_AmmoLayout.padding.left - (weaponInfo.I_ClipAmount - 1) * m_AmmoLayout.spacing.x) / weaponInfo.I_ClipAmount;
                 m_AmmoLayout.cellSize = new Vector2(size, m_AmmoLayout.cellSize.y);
             }
+
+            for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
+                m_AmmoGrid.GetItem(i).SetValid(i < weaponInfo.I_AmmoLeft);
+
         }
     }
 }
