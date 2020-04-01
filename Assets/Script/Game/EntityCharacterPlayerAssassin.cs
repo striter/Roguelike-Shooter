@@ -61,14 +61,14 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
             m_AssassinAttackTimer.Tick(Time.deltaTime);
             if (!m_AssassinAttackTimer.m_Timing)
             {
-                OnAbilityDealtDamage();
+                OnAssassinBlow();
             }
         }
 
         base.OnAliveTick(deltaTime);
     }
 
-    void OnAbilityDealtDamage()
+    void OnAssassinBlow()
     {
         if (m_AssassinTarget.m_IsDead)
             return;

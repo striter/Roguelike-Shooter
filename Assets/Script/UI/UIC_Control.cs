@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Transform tf_InGame;
+    Image m_Main, m_Sub;
     Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
     Image m_Settings;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
@@ -22,6 +23,8 @@ public class UIC_Control : UIControlBase {
         m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
+        m_Main = transform.Find("Main/Image").GetComponent<Image>();
+        m_Sub = transform.Find("Sub/Image").GetComponent<Image>();
         transform.Find("Ability").GetComponent<UIT_EventTriggerListener>().OnPressStatus=OnAbilityButtonDown;
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnMainButtonDown;
         transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
@@ -39,6 +42,7 @@ public class UIC_Control : UIControlBase {
         m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(true);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
     }
     protected override void OnDestroy()
     {
@@ -46,6 +50,7 @@ public class UIC_Control : UIControlBase {
         OptionsManager.event_OptionChanged -= OnOptionsChanged;
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
     }
     public UIC_Control SetInGame(bool inGame)
     {
@@ -129,6 +134,13 @@ public class UIC_Control : UIControlBase {
     {
         m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst);
         m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst);
+    }
+
+    void OnInteractStatus(InteractBase interactItem)
+    {
+        Sprite targetSprite = UIManager.Instance.m_CommonSprites[interactItem.GetInteractMainIcon()];
+        m_Main.sprite = targetSprite;
+        m_Sub.sprite = targetSprite;
     }
 
     class ControlWeaponData
