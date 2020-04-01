@@ -290,7 +290,6 @@ namespace GameSetting
         public static string GetLocalizeIntroKey(this enum_LevelType type) => "UI_Level_" + type + "_Intro";
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
         public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact+"_Title";
-        public static string GetBottomLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Bottom";
         public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;

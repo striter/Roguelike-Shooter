@@ -42,5 +42,4 @@ public class InteractBase : MonoBehaviour
 
     public virtual string GetUITitleKey() => m_InteractType.GetTitleLocalizeKey();
     public virtual string GetUIIntroKey() => m_InteractType.GetIntroLocalizeKey();
-    public virtual string GetUIBottomKey() => m_InteractType.GetBottomLocalizeKey();
 }

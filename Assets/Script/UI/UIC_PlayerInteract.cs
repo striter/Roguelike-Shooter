@@ -15,10 +15,7 @@ public class UIC_PlayerInteract : UIControlBase
     UIT_TextExtend m_CommonTop;
     Transform tf_Weapon;
 
-    Transform tf_Bottom;
-    UIT_TextExtend m_BottomTips;
-    Transform tf_Trade;
-
+    Transform tf_TradeBottom;
     UIT_TextExtend m_TradePrice;
     UIC_EquipmentNameFormatIntro m_EquipmentData;
     UIC_WeaponData m_weaponData;
@@ -34,10 +31,8 @@ public class UIC_PlayerInteract : UIControlBase
         tf_Top = tf_Container.Find("InteractTop");
         m_CommonTop = tf_Top.Find("Common").GetComponent<UIT_TextExtend>();
 
-        tf_Bottom = tf_Container.Find("InteractBottom");
-        m_BottomTips = tf_Bottom.Find("Common").GetComponent<UIT_TextExtend>();
-        tf_Trade = tf_Bottom.Find("Trade");
-        m_TradePrice = tf_Trade.Find("Amount").GetComponent<UIT_TextExtend>();
+        tf_TradeBottom = tf_Container.Find("TradeBottom");
+        m_TradePrice = tf_TradeBottom.Find("Price").GetComponent<UIT_TextExtend>();
 
         tf_Weapon = tf_Top.Find("Weapon");
 
@@ -121,10 +116,7 @@ public class UIC_PlayerInteract : UIControlBase
         m_weaponData.transform.SetActivate(isWeapon);
         m_EquipmentData.transform.SetActivate(isAction);
         bool tradeItem = price >= 0;
-        tf_Trade.SetActivate(tradeItem);
-        m_BottomTips.SetActivate(!tradeItem);
-        if (!tradeItem)
-            m_BottomTips.localizeKey = interactInfo.GetUIBottomKey();
+        tf_TradeBottom.SetActivate(tradeItem);
         m_TradePrice.text = price.ToString();
         LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);
         return true;
