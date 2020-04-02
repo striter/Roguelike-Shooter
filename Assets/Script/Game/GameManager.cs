@@ -464,14 +464,14 @@ public class GameManager : GameManagerBase
         PickupGenerateData pickupGenerateData = enermy.E_SpawnType == enum_EnermyType.E5 ? m_GameLevel.m_InteractGenerate.m_ElitePickupData : m_GameLevel.m_InteractGenerate.m_NormalPickupData;
 
         if (pickupGenerateData.CanGenerateHealth())
-            GameObjectManager.SpawnInteract<InteractPickupHealth>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_HealthPickupAmount, !m_Battling);
+            GameObjectManager.SpawnInteract<InteractPickupHealth>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_HealthPickupAmount, false);
 
         if (pickupGenerateData.CanGenerateArmor())
-            GameObjectManager.SpawnInteract<InteractPickupArmor>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_ArmorPickupAmount, !m_Battling);
+            GameObjectManager.SpawnInteract<InteractPickupArmor>( GetPickupPosition(entity), Quaternion.identity).Play(GameConst.I_ArmorPickupAmount, false);
 
         int amount;
         if (pickupGenerateData.CanGenerateCoins(out amount))
-            GameObjectManager.SpawnInteract<InteractPickupCoin>( GetPickupPosition(entity), Quaternion.identity).Play(amount, !m_Battling);
+            GameObjectManager.SpawnInteract<InteractPickupCoin>( GetPickupPosition(entity), Quaternion.identity).Play(amount, false);
         
         enum_Rarity weaponRarity = TCommon.RandomPercentage(pickupGenerateData.m_WeaponRate, enum_Rarity.Invalid);
         if (weaponRarity != enum_Rarity.Invalid)

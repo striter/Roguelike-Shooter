@@ -7,7 +7,6 @@ public class InteractPickupAmount : InteractGameBase {
     public int m_Amount { get; private set; }
     public override bool B_InteractOnTrigger => true;
     protected override bool B_SelfRecycleOnInteract => true;
-    protected override bool E_InteractOnEnable => false;
     float m_speed;
     EntityCharacterPlayer m_moveTowards;
     public virtual InteractPickupAmount Play(int amount,bool moveTowardsPlayer)
@@ -35,11 +34,7 @@ public class InteractPickupAmount : InteractGameBase {
         return false;
     }
 
-    void OnBattleFinish()
-    {
-        SetInteractable(true);
-        m_moveTowards = GameManager.Instance.m_LocalPlayer;
-    }
+    void OnBattleFinish()=> m_moveTowards = GameManager.Instance.m_LocalPlayer;
     private void Update()
     {
         if (!m_InteractEnable|| m_moveTowards == null)
