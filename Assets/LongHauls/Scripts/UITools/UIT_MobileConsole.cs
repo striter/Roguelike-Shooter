@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 
-    public bool m_ShowErrorOnly = true;
     public bool m_ConsoleOpening { get; private set; } = false;
     public int LogExistCount = 10;
     public int LogSaveCount = 30;
@@ -136,9 +135,6 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
     }
     void OnLogReceived(string info, string trace, LogType type)
     {
-        if (m_ShowErrorOnly && type != LogType.Error && type != LogType.Exception)
-            return;
-
         ConsoleLog tempLog = new ConsoleLog();
         tempLog.logInfo = info;
         tempLog.logTrace = trace;
