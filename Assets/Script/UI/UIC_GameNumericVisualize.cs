@@ -71,7 +71,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         if (applyAmount <= 0)
             return;
 
-        m_DamageGrid.AddItem(visualize++).Play(damageEntity,applyAmount, m_DamageGrid.RemoveItem);
+        m_DamageGrid.AddItem(visualize++).Play( damageEntity, damageInfo.m_CritcalHitted, applyAmount, m_DamageGrid.RemoveItem);
 
         if (!b_showEntityHealthInfo(damageEntity))
             return;
