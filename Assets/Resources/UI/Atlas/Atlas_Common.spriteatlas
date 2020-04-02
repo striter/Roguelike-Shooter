@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3245941
+    totalSpriteSurfaceArea: 3199500
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -57,7 +57,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
   - {fileID: 21300000, guid: 234f89eb50c2edc4e8048a6047a34cb5, type: 3}
   - {fileID: 21300000, guid: 8d752d68d59a02a42b68e58fc4ee5c90, type: 3}
-  - {fileID: 21300000, guid: 71917017662df5d4cb55e4dba0929204, type: 3}
   - {fileID: 21300000, guid: 9ff4ddd5857d6e84e9be010dd6f29daa, type: 3}
   - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
   - {fileID: 21300000, guid: dfc35cd87afdb89468db5389efbfb5ba, type: 3}
@@ -66,7 +65,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 838e3e3f0673e564aafbb7fb60b21e46, type: 3}
   - {fileID: 21300000, guid: 688303c2643cc5c4f8b8e5589e62c0bf, type: 3}
   - {fileID: 21300000, guid: 493c8f27165db8a48a66957e0e7ce49d, type: 3}
-  - {fileID: 21300000, guid: 6cd370de5f59c7c4a952190201ce7ea8, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
   - {fileID: 21300000, guid: 527541f51bd9bcc47a19fa9880ece3d4, type: 3}
@@ -107,7 +105,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 501504280dbebe648b70ebd05ea737ab, type: 3}
   - {fileID: 21300000, guid: 72afadcb6539fa44fa265b3681519e99, type: 3}
   - {fileID: 21300000, guid: 264ebbff55b3fc440b027a93040e6add, type: 3}
-  - {fileID: 21300000, guid: 480b91a16734c544db3229ff36e9162b, type: 3}
   - {fileID: 21300000, guid: fc9516c7cbae83744bdeda41467239b9, type: 3}
   - {fileID: 21300000, guid: ecf5205912130214393bc27cfbe19041, type: 3}
   - {fileID: 21300000, guid: 8d62631dc91e63b43939fb462b9ba730, type: 3}
@@ -141,7 +138,6 @@ SpriteAtlas:
   - setting_label_selected
   - status_level_bg
   - status_bottom
-  - interact_icon_Portal
   - control_main_fire
   - icon_stage
   - bottom_yellow
@@ -150,7 +146,6 @@ SpriteAtlas:
   - bottom_blue
   - status_life
   - status_armor
-  - control_ability_ready
   - control_rocker_move
   - control_ability_Beth
   - coins_bottom
@@ -191,7 +186,6 @@ SpriteAtlas:
   - icon_Life
   - icon_Armor
   - icon_BulletNumber
-  - icon_equip
   - control_bottom_bg
   - UI_common_angle_gray
   - icon_buff_rank

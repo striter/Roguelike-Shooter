@@ -113,7 +113,7 @@ public class UIC_GameStatus : UIControlBase
 
     void OnLevelStart()
     {
-        m_Level_Icon.sprite = GameUIManager.Instance.m_CommonSprites[GameManager.Instance.m_GameLevel.GetLevelIconSprite()];
+        m_Level_Icon.sprite = GameUIManager.Instance.m_InGameSprites[GameManager.Instance.m_GameLevel.GetLevelIconSprite()];
         m_Level_Index.formatText("UI_Level_Index", "<Color=#F8C64BFF>" + (GameManager.Instance.m_GameLevel.m_LevelPassed+1) +"</Color>");
         m_Level_Info.localizeKey = GameManager.Instance.m_GameLevel.GetLevelInfoKey();
     }

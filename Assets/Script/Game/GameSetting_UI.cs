@@ -46,7 +46,21 @@ namespace GameSetting
     public static class UIConvertions
     {
         public static string GetInteractMainIcon(this InteractBase interact) => interact == null ? "control_main_fire" : "control_main_interact";
-        public static string GetInteractIcon(this enum_Interaction type) => "InteractIcon_" + type;
+        public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
+        public static string GetLevelIconSprite(this enum_LevelType type)
+        {
+            switch(type)
+            {
+                default:
+                    return "GameLevel_Icon_Unknown";
+                case enum_LevelType.StageStart:
+                case enum_LevelType.NormalBattle:
+                case enum_LevelType.StageFinalBattle:
+                    return "GameLevel_Icon_" + type; 
+
+            }
+        }
+
         public static string GetNumericVisualizeIcon(this enum_Interaction type)
         {
             switch (type)
@@ -79,8 +93,6 @@ namespace GameSetting
                     return TCommon.GetHexColor("FFA54EFF");
             }
         }
-
-        public static string GetLevelIconSprite(this enum_LevelType type) => "map_icon_" + type;
 
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
