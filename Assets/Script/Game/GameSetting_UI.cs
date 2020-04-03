@@ -36,7 +36,6 @@ namespace GameSetting
             }
         }
 
-        public static Color GetUIVisualizeDamageColor(bool critical) => TCommon.GetHexColor(critical ? "F2F025FF": "F22525FF");
 
         public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(0, 100, uiDamage);   //武器数据查看ui标准
         public static float GetUIWeaponRPMValue(float uiRPM) => Mathf.InverseLerp(0, 400, uiRPM);

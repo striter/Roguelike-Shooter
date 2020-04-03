@@ -148,7 +148,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             if (OnInteract())
                 return;
         }
-        OnWeaponTrigger(down);
+
+        OnWeaponTrigger(true,down);
     }
 
     void OnSubDown(bool down)
@@ -161,7 +162,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 return;
         }
 
-        OnWeaponTrigger(down);
+        OnWeaponTrigger(false,down);
     } 
 
     protected override void OnAliveTick(float deltaTime)
@@ -190,10 +191,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             OnSwapWeapon(mainWeapon);
     }
 
-    void OnWeaponTrigger( bool down)
+    void OnWeaponTrigger(bool weaponFirst,  bool down)
     {
-        if (m_Aiming == down)
+        if (weaponFirst && !m_Weapon1)
             return;
+        if (!weaponFirst && !m_Weapon2)
+            return;
+
+        if (weaponFirst != m_weaponEquipingFirst)
+            return;
+
         m_Aiming = down;
 
         if (m_WeaponCurrent)

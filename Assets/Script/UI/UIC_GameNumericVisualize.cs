@@ -7,6 +7,7 @@ public class UIC_GameNumericVisualize : UIControlBase
     int visualize = 0;
     public UIT_GridControllerGridItem<UIGI_VisualizeHealth> m_HealthGrid { get; private set; }
     public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_DamageGrid { get; private set; }
+    public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_DamageCriticalGrid { get; private set; }
     public  UIT_GridControllerGridItem<UIGI_VisualizePickup> m_PickupGrid { get; private set; }
     public UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate> m_AttackIndicateGrid { get; private set; }
     protected override void Init()
@@ -14,6 +15,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         base.Init();
         m_HealthGrid = new UIT_GridControllerGridItem<UIGI_VisualizeHealth>(transform.Find("HealthGrid"));
         m_DamageGrid = new UIT_GridControllerGridItem<UIGI_VisualizeDamage>(transform.Find("DamageGrid"));
+        m_DamageCriticalGrid = new UIT_GridControllerGridItem<UIGI_VisualizeDamage>(transform.Find( "DamageCriticalGrid"));
         m_PickupGrid = new UIT_GridControllerGridItem<UIGI_VisualizePickup>(transform.Find("PickupGrid"));
         m_AttackIndicateGrid = new UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate>(transform.Find("AttackIndicateGrid"));
     }
@@ -71,7 +73,10 @@ public class UIC_GameNumericVisualize : UIControlBase
         if (applyAmount <= 0)
             return;
 
-        m_DamageGrid.AddItem(visualize++).Play( damageEntity, damageInfo.m_CritcalHitted, applyAmount, m_DamageGrid.RemoveItem);
+        if (damageInfo.m_CritcalHitted)
+            m_DamageCriticalGrid.AddItem(visualize++).Play(damageEntity, applyAmount, m_DamageCriticalGrid.RemoveItem);
+        else
+            m_DamageGrid.AddItem(visualize++).Play(damageEntity, applyAmount, m_DamageGrid.RemoveItem);
 
         if (!b_showEntityHealthInfo(damageEntity))
             return;

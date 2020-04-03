@@ -1076,14 +1076,11 @@ namespace GameSetting
             if (!m_Storing)
                 return;
 
-            if (m_TriggerDown)
+            if ( m_TriggerDown)
             {
                 m_StoreTimer.Tick(deltaTime);
                 return;
             }
-
-            if (paused)
-                return;
 
             OnStoreFinish(! m_StoreTimer.m_Timing);
             m_Storing = false;

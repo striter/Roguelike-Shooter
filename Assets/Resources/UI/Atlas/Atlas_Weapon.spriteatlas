@@ -62,7 +62,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 4e14f959524b95143ab7b7d3fc182a6d, type: 3}
   - {fileID: 21300000, guid: 40e496ba62ca47142a63d66dd29fd551, type: 3}
   - {fileID: 21300000, guid: a5fb550d9a4719940b7c08914de1a723, type: 3}
-  - {fileID: 21300000, guid: d4b4af4278b27c04aba3a763e3182eeb, type: 3}
   - {fileID: 21300000, guid: 1fef2c7d5450c8744afa1b3d6f54b4e1, type: 3}
   - {fileID: 21300000, guid: ec7a57d768a7ab74485adfdbccb405b4, type: 3}
   - {fileID: 21300000, guid: c3fa4231efad43c4d95029b628706fa5, type: 3}
@@ -124,7 +123,6 @@ SpriteAtlas:
   - control_Advanced
   - control_Ordinary
   - control_Rare
-  - icon_000
   - icon_116
   - icon_202
   - icon_114
