@@ -6,16 +6,14 @@ public class UIC_GameNumericVisualize : UIControlBase
 {
     int visualize = 0;
     public UIT_GridControllerGridItem<UIGI_VisualizeHealth> m_HealthGrid { get; private set; }
-    public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_NormalDamageGrid { get; private set; }
-    public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_CriticalDamageGrid { get; private set; }
+    public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_DamageGrid { get; private set; }
     public  UIT_GridControllerGridItem<UIGI_VisualizePickup> m_PickupGrid { get; private set; }
     public UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate> m_AttackIndicateGrid { get; private set; }
     protected override void Init()
     {
         base.Init();
         m_HealthGrid = new UIT_GridControllerGridItem<UIGI_VisualizeHealth>(transform.Find("HealthGrid"));
-        m_NormalDamageGrid = new UIT_GridControllerGridItem<UIGI_VisualizeDamage>(transform.Find("NormalDamageGrid"));
-        m_CriticalDamageGrid = new UIT_GridControllerGridItem<UIGI_VisualizeDamage>(transform.Find("CriticalDamageGrid"));
+        m_DamageGrid = new UIT_GridControllerGridItem<UIGI_VisualizeDamage>(transform.Find("DamageGrid"));
         m_PickupGrid = new UIT_GridControllerGridItem<UIGI_VisualizePickup>(transform.Find("PickupGrid"));
         m_AttackIndicateGrid = new UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate>(transform.Find("AttackIndicateGrid"));
     }
@@ -73,10 +71,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         if (applyAmount <= 0)
             return;
 
-        if (damageInfo.m_CritcalHitted)
-            m_NormalDamageGrid.AddItem(visualize++).Play(damageEntity, applyAmount, m_NormalDamageGrid.RemoveItem);
-        else
-            m_CriticalDamageGrid.AddItem(visualize++).Play(damageEntity, applyAmount, m_CriticalDamageGrid.RemoveItem);
+        m_DamageGrid.AddItem(visualize++).Play( damageEntity, damageInfo.m_CritcalHitted, applyAmount, m_DamageGrid.RemoveItem);
 
         if (!b_showEntityHealthInfo(damageEntity))
             return;
@@ -97,7 +92,7 @@ public class UIC_GameNumericVisualize : UIControlBase
     void ClearAll()
     {
         m_HealthGrid.ClearGrid();
-        m_NormalDamageGrid.ClearGrid();
+        m_DamageGrid.ClearGrid();
         m_PickupGrid.ClearGrid();
         m_AttackIndicateGrid.ClearGrid();
     }
