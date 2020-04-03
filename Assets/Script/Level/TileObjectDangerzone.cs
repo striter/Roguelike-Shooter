@@ -7,13 +7,13 @@ using TTiles;
 using LevelSetting;
 
 public class TileObjectDangerzone : TileObjectBase {
-    TSpecialClasses.AnimationControlBase m_Animation;
+    TSpecialClasses.AnimationClipControl m_Animation;
     TimeCounter m_TimerReset=new TimeCounter(GameConst.F_DangerzoneResetDuration);
     EntityDetector m_EntityDetector;
     public override void OnGenerateItem(ChunkTileData _data, System.Random random)
     {
         base.OnGenerateItem(_data, random);
-        m_Animation = new TSpecialClasses.AnimationControlBase(GetComponent<Animation>());
+        m_Animation = new TSpecialClasses.AnimationClipControl(GetComponent<Animation>());
         m_EntityDetector = GetComponentInChildren<EntityDetector>();
         m_EntityDetector.Init(OnInteractCheck);
     }

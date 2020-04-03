@@ -10,7 +10,7 @@ public class UIGI_ActionBase : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        m_Action = GetActionDataBase(tf_Container);
+        m_Action = GetActionDataBase(rtf_Container);
     }
     public virtual void SetInfo(ExpirePerkBase action)
     {

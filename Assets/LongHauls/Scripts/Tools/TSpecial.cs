@@ -544,10 +544,10 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
     }
 
-    public class AnimationControlBase
+    public class AnimationClipControl
     {
         public Animation m_Animation { get; private set; }
-        public AnimationControlBase(Animation _animation,bool startFromOn=true)
+        public AnimationClipControl(Animation _animation,bool startFromOn=true)
         {
             m_Animation = _animation;
             m_Animation.playAutomatically = false;
@@ -566,7 +566,6 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         {
             m_Animation.Stop();
         }
-
     }
 
     public class ParticleControlBase

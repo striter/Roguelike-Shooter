@@ -15,7 +15,7 @@ public class UIGI_ActionEquipmentPackItem : UIGI_ActionEquipmentSelect {
         bool validAction = action != null;
         m_Button.interactable = validAction;
         m_Empty.SetActivate(!validAction);
-        tf_Container.SetActivate(validAction);
+        rtf_Container.SetActivate(validAction);
         if (validAction)
             base.SetInfo(action);
     }

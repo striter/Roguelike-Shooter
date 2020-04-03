@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,11 +8,12 @@ public class UIGI_VisualizeAttackIndicate : UIT_GridItem {
     
     Action<int> OnAnimFinished;
     Transform m_target;
-    TSpecialClasses.AnimationControlBase m_Animation;
+    TSpecialClasses.AnimationClipControl m_Animation;
     public override void Init()
     {
         base.Init();
-        m_Animation = new TSpecialClasses.AnimationControlBase(transform.GetComponent<Animation>(), true);
+        m_Animation = new TSpecialClasses.AnimationClipControl(transform.GetComponent<Animation>(), true);
+        rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;
     }
 
     public void Play(Transform target, Action<int> _OnAnimFinished)

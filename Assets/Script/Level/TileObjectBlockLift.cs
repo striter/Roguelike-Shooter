@@ -7,12 +7,12 @@ using UnityEngine;
 public class TileObjectBlockLift : TileObjectBase
 {
     public bool m_Lift { get; private set; }
-    TSpecialClasses.AnimationControlBase m_Animation;
+    TSpecialClasses.AnimationClipControl m_Animation;
     Collider m_BlockCollider;
     protected override void Init()
     {
         base.Init();
-        m_Animation = new TSpecialClasses.AnimationControlBase(GetComponent<Animation>(), true);
+        m_Animation = new TSpecialClasses.AnimationClipControl(GetComponent<Animation>(), true);
         m_BlockCollider = m_Model.Find("BlockCollider").GetComponent<Collider>();
     }
     public override void OnGenerateItem(ChunkTileData _data, System.Random random)

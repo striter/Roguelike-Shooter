@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GameSetting;
+using System.Collections;
 using System.Collections.Generic;
 using TSpecialClasses;
 using UnityEngine;
@@ -16,10 +17,11 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        m_HealthBar1 = tf_Container.Find("HealthBar1").GetComponent<Image>();
-        m_HealthBar2 = tf_Container.Find("HealthBar2").GetComponent<Image>();
-        m_HealthBar3 = tf_Container.Find("HealthBar3").GetComponent<Image>();
+        m_HealthBar1 = rtf_Container.Find("HealthBar1").GetComponent<Image>();
+        m_HealthBar2 = rtf_Container.Find("HealthBar2").GetComponent<Image>();
+        m_HealthBar3 = rtf_Container.Find("HealthBar3").GetComponent<Image>();
         m_Graphics = GetComponentsInChildren<Graphic>();
+        rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;
     }
 
     public void Play(EntityBase _attachTo)
