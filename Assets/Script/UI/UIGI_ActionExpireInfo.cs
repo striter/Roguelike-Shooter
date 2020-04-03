@@ -10,8 +10,8 @@ public class UIGI_ActionExpireInfo : UIGI_ActionBase {
     public override void Init()
     {
         base.Init();
-        m_Duration = tf_Container.Find("Duration").GetComponent<UIT_TextExtend>();
-        m_DurationFill = tf_Container.Find("DurationFill").GetComponent<Image>();
+        m_Duration = rtf_Container.Find("Duration").GetComponent<UIT_TextExtend>();
+        m_DurationFill = rtf_Container.Find("DurationFill").GetComponent<Image>();
     }
     public override void SetInfo(ExpirePerkBase action)
     {

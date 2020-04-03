@@ -14,13 +14,16 @@ namespace GameSetting
 
         public const float F_MapAnimateTime = 1.6f;
 
-        public const float F_UIDamageStartOffset = 20f; //血显示区域范围
+        public const float F_UIDamageStartOffset = 40f; //血显示区域范围
 
         public const float F_UIActionBattlePressDuration = .3f; //查看卡片说明长按时间
+
+        public static Vector2 V2_UINumericVisualizeOffset = new Vector2(0, 100f);
     }
 
     public static class UIExpression
     {
+        public static Color GetUIDamageColor(bool criticalHit) => TCommon.GetHexColor(criticalHit ? "F2F025FF" : "F22525FF");
         public static Color TipsColor(this enum_UITipsType type)
         {
             switch (type)
@@ -103,6 +106,7 @@ namespace GameSetting
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
         public static string GetUIStatusShadowBackground(this enum_Rarity rarity) => "weapon_shadow_" + rarity;
         public static string GetUIGameControlBackground(this enum_Rarity rarity) => "control_" + rarity;
+
         public static string GetUITextColor(this enum_Rarity rarity)
         {
             switch (rarity)

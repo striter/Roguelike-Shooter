@@ -13,8 +13,8 @@ public class UIGI_ActionEquipmentSelect : UIGI_ActionBase,IGridHighlight {
     public override void Init()
     {
         base.Init();
-        m_Name = tf_Container.Find("Name").GetComponent<UIT_TextExtend>();
-        m_Selected = tf_Container.Find("Selected");
+        m_Name = rtf_Container.Find("Name").GetComponent<UIT_TextExtend>();
+        m_Selected = rtf_Container.Find("Selected");
         m_Button = GetComponent<Button>();
     }
     public void AttachSelectButton(Action<int> OnButtonClick)=> m_Button.onClick.AddListener(()=> { OnButtonClick(m_Index); });

@@ -7,8 +7,8 @@ public class UIGI_AmmoItem : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        image = tf_Container.Find("Image").GetComponent<Image>();
-        background = tf_Container.Find("Background").GetComponent<Image>();
+        image = rtf_Container.Find("Image").GetComponent<Image>();
+        background = rtf_Container.Find("Background").GetComponent<Image>();
     }
 
     public void SetValid(bool valid)

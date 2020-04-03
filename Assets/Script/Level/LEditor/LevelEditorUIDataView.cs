@@ -11,10 +11,10 @@ public class LevelEditorUIDataView : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        m_Name = tf_Container.Find("Name").GetComponent<Text>();
-        m_Image = tf_Container.Find("Image").GetComponent<RawImage>();
-        tf_Container.Find("Edit").GetComponent<Button>().onClick.AddListener(()=>OnDataEditClick(m_Index));
-        tf_Container.Find("Delete").GetComponent<Button>().onClick.AddListener(() => OnDataDeleteClick(m_Index));
+        m_Name = rtf_Container.Find("Name").GetComponent<Text>();
+        m_Image = rtf_Container.Find("Image").GetComponent<RawImage>();
+        rtf_Container.Find("Edit").GetComponent<Button>().onClick.AddListener(()=>OnDataEditClick(m_Index));
+        rtf_Container.Find("Delete").GetComponent<Button>().onClick.AddListener(() => OnDataDeleteClick(m_Index));
     }
 
 

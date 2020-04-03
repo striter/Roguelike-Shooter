@@ -3,14 +3,14 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIT_GridItem : MonoBehaviour
 {
-    protected Transform tf_Container;
+    protected RectTransform rtf_Container;
     protected RectTransform rtf_RectTransform;
     public RectTransform rectTransform => rtf_RectTransform;
     public int m_Index { get; protected set; }
     public virtual void Init()
     {
         rtf_RectTransform = transform.GetComponent<RectTransform>();
-        tf_Container = transform.Find("Container");
+        rtf_Container = transform.Find("Container") as RectTransform;
     }
     public virtual void OnActivate(int _index)
     {
@@ -23,6 +23,6 @@ public class UIT_GridItem : MonoBehaviour
 
     public void SetShowScrollView(bool show)
     {
-        tf_Container.SetActivate(show);
+        rtf_Container.SetActivate(show);
     }
 }

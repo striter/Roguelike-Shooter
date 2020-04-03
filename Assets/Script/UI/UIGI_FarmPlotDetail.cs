@@ -18,16 +18,16 @@ public class UIGI_FarmPlotDetail : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        m_Acquire = tf_Container.Find("Acquire").GetComponent<Button>();
+        m_Acquire = rtf_Container.Find("Acquire").GetComponent<Button>();
         m_Acquire.onClick.AddListener(OnAcquireClick);
         m_AcquireAmount = m_Acquire.transform.Find("Amount").GetComponent<UIT_TextExtend>();
-        m_Clear = tf_Container.Find("Clear").GetComponent<Button>();
+        m_Clear = rtf_Container.Find("Clear").GetComponent<Button>();
         m_Clear.onClick.AddListener(OnClearClick);
-        tf_Profiting = tf_Container.Find("Profiting");
+        tf_Profiting = rtf_Container.Find("Profiting");
         m_Duration = tf_Profiting.Find("Duration").GetComponent<Slider>();
         m_DurationLeft = tf_Profiting.Find("DurationLeft").GetComponent<UIT_TextExtend>();
         m_Status = tf_Profiting.Find("Status").GetComponent<UIT_TextExtend>();
-        tf_Locked = tf_Container.Find("Locked");
+        tf_Locked = rtf_Container.Find("Locked");
         m_LockProj = tf_Locked.Find("LockProj").GetComponent<UIT_TextExtend>();
         m_LockText = m_LockProj.transform.Find("LockText").GetComponent<UIT_TextExtend>();
     }

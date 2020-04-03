@@ -10,14 +10,15 @@ public class UIGI_VisualizePickup : UIT_GridItem {
     Text m_Amount, m_Projection;
     Action<int> OnAnimFinished;
     Vector3 m_pickupPos;
-    TSpecialClasses.AnimationControlBase m_Animation;
+    TSpecialClasses.AnimationClipControl m_Animation;
     public override void Init()
     {
         base.Init();
-        m_Animation = new TSpecialClasses.AnimationControlBase(transform.GetComponent<Animation>(), true);
-        m_Amount = tf_Container.Find("Amount").GetComponent<Text>();
-        m_Projection = tf_Container.Find("Projection").GetComponent<Text>();
-        m_Image = tf_Container.Find("Image").GetComponent<Image>();
+        m_Animation = new TSpecialClasses.AnimationClipControl(transform.GetComponent<Animation>(), true);
+        m_Amount = rtf_Container.Find("Amount").GetComponent<Text>();
+        m_Projection = rtf_Container.Find("Projection").GetComponent<Text>();
+        m_Image = rtf_Container.Find("Image").GetComponent<Image>();
+        rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;
     }
 
     public void Play(Vector3 position,enum_Interaction interaction, int amount, Action<int> _OnAnimFinished)

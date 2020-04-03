@@ -11,7 +11,7 @@ public class UIGI_TipItem : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        m_TipText = tf_Container.Find("TipText").GetComponent<UIT_TextExtend>();
+        m_TipText = rtf_Container.Find("TipText").GetComponent<UIT_TextExtend>();
         m_Rect = GetComponent<RectTransform>();
     }
 
