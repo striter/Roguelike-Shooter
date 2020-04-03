@@ -139,8 +139,8 @@ namespace GameSetting
 
         public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
 
-        public static SBuff GetEnermyGameBuff(enum_Stage stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .2f+ (difficulty - 1)*.2f );
-        public static float GetEnermyMaxHealthMultiplier(enum_Stage stage, int difficulty) => 1f + ((int)stage - 1) * .2f + (difficulty - 1) * .05f;
+        public static SBuff GetEnermyGameBuff(enum_Stage stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .3f+ (difficulty - 1)*.3f );
+        public static float GetEnermyMaxHealthMultiplier(enum_Stage stage, int difficulty) => 1f + ((int)stage - 1) * .5f + (difficulty - 1) * .05f;
 
         public static int GetRankupExp(int rank) => 100 + 10* rank;
         public static int GetEnermyKillExp(bool isElite,enum_Stage stage)
