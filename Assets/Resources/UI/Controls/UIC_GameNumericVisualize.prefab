@@ -263,7 +263,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224472109714408000}
-  - component: {fileID: 114589985240205688}
   m_Layer: 5
   m_Name: UIC_GameNumericVisualize
   m_TagString: Untagged
@@ -373,7 +372,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224035727970355572}
-  - component: {fileID: 114544320766081442}
   - component: {fileID: 95867624259051926}
   m_Layer: 5
   m_Name: GridItem
@@ -632,17 +630,6 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 12
---- !u!114 &114544320766081442
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1812381559768450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aaaf84e4d370674b8720a23b96f8fd1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114578751511893078
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -670,17 +657,6 @@ MonoBehaviour:
   m_FillAmount: 0.58
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114589985240205688
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1544032871055310}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f83ec8693a92a384bb09813895ae5797, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114707675455568536
 MonoBehaviour:
   m_ObjectHideFlags: 1
