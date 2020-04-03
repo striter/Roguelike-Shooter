@@ -22,7 +22,7 @@ public class UIGI_VisualizeDamage : UIT_GridItem {
 
     public void Play(EntityCharacterBase damageEntity,bool criticalHit,float applyAmount,Action<int> _OnAnimFinished)
     {
-        rtf_SubContainer.anchoredPosition = new Vector2( TCommon.RandomUnitValue()* UIConst.F_UIDamageStartOffset,0);
+        rtf_SubContainer.anchoredPosition = UIExpression.GetUIDamagePositionOffset();
         rtf_RectTransform.SetWorldViewPortAnchor(damageEntity.tf_Head.position, CameraController.MainCamera);
         rtf_SubContainer.localScale = Vector3.one * UIExpression.GetUIDamageScale(applyAmount);
         m_Animator.SetBool(m_AnimatorIDCritical, criticalHit);

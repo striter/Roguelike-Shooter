@@ -11,13 +11,7 @@ namespace GameSetting
     {
         public const int I_PlayerDyingMinValue = 10;
         public const int I_PlayerDyingMaxValue = 50;
-
-        public const float F_MapAnimateTime = 1.6f;
-
-        public const float F_UIDamageStartOffset = 40f; //血显示区域范围
-
-        public const float F_UIActionBattlePressDuration = .3f; //查看卡片说明长按时间
-
+        
         public static Vector2 V2_UINumericVisualizeOffset = new Vector2(0, 100f);
     }
 
@@ -45,6 +39,7 @@ namespace GameSetting
         public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 100, uiStability);
         public static float GetUIWeaponSpeedValue(float uiSpeed) => Mathf.InverseLerp(0, 100, uiSpeed);
         public static float GetUIDamageScale(float damage) => ((damage / 50 / 10) + .9f) / 2;  //伤害显示比例缩放，默认是两倍大小
+        public static Vector2 GetUIDamagePositionOffset() => new Vector2(TCommon.RandomUnitValue() * 40f, TCommon.RandomLength(1) * 20f);
     }
 
     public static class UIConvertions

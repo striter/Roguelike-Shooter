@@ -142,6 +142,7 @@ public class GameManager : GameManagerBase
         m_EnermySpawnPoints.Clear();
         GameLevelManager.Instance.OnStartLevel(m_GameLevel.m_LevelType.GetChunkType(), m_GameLevel.m_Random, OnGenerateLevelGameRelatives);
         m_LocalPlayer.Teleport(m_PlayerStart.pos, m_PlayerStart.rot);
+        CameraController.Instance.SetCameraPosition(CalculateCameraPosition());
 
         if (m_GameLevel.m_BattleLevel)
             OnBattleStart();
