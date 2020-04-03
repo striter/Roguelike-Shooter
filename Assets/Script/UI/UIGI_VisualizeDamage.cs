@@ -17,7 +17,7 @@ public class UIGI_VisualizeDamage : UIT_GridItem {
         m_Projection = rtf_SubContainer.Find("Projection").GetComponent<Text>();
     }
 
-    public void Play(EntityCharacterBase damageEntity,bool criticalHit,float applyAmount,Action<int> _OnAnimFinished)
+    public void Play(EntityCharacterBase damageEntity,float applyAmount,Action<int> _OnAnimFinished)
     {
         m_Animation.Play(true);
         rtf_SubContainer.localScale = Vector3.one * UIExpression.GetUIDamageScale(applyAmount);
@@ -26,7 +26,6 @@ public class UIGI_VisualizeDamage : UIT_GridItem {
         rtf_SubContainer.anchoredPosition = UnityEngine.Random.insideUnitCircle*UIConst.F_UIDamageStartOffset;
         string integer = Mathf.CeilToInt(applyAmount).ToString();
         m_Amount.text = integer;
-        m_Amount.color = UIExpression.GetUIVisualizeDamageColor(criticalHit);
         m_Projection.text = integer;
         OnAnimFinished = _OnAnimFinished;
     }
