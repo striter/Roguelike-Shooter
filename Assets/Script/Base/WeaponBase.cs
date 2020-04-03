@@ -64,8 +64,8 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
 
         if (play)
             return;
-        
-        Trigger(false);
+
+        m_Trigger.OnTriggerStop();
     }
 
     void OnShow(bool show)=>transform.SetActivate(show);

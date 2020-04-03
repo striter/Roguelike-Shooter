@@ -1011,6 +1011,11 @@ namespace GameSetting
             m_TriggerDown = down;
         }
 
+        public virtual void OnTriggerStop()
+        {
+            m_TriggerDown = false;
+        }
+
         public virtual void Tick(bool paused,float deltaTime)
         {
 
@@ -1066,9 +1071,27 @@ namespace GameSetting
             if (!down || !OnStoreBeginCheck())
                 return;
 
-            m_Storing = true;
-            m_StoreTimer.Replay();
+            SetStore(true);
         }
+
+        public override void OnTriggerStop()
+        {
+            base.OnTriggerStop();
+            SetStore(false);
+        }
+
+        void SetStore(bool store)
+        {
+            if (m_Storing == store)
+                return;
+
+            m_Storing = store;
+            if (m_Storing)
+                m_StoreTimer.Replay();
+            else
+                OnStoreFinish(!m_StoreTimer.m_Timing);
+        }
+
         public override void Tick(bool paused, float deltaTime)
         {
             base.Tick(paused,deltaTime);
@@ -1082,9 +1105,12 @@ namespace GameSetting
                 return;
             }
 
-            OnStoreFinish(! m_StoreTimer.m_Timing);
-            m_Storing = false;
+
+            if (paused)
+                return;
+            SetStore(false);
         }
+
     }
     #endregion
 
