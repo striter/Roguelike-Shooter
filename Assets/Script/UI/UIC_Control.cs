@@ -9,12 +9,12 @@ using UnityEngine.UI;
 public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
     Transform tf_InGame;
-    Image m_Main, m_Sub;
-    Image m_AbilityBG,m_AbilityImg,m_AbilityCooldown;
+    Image m_AbilityBG, m_AbilityImg, m_AbilityCooldown;
     Image m_Settings;
     ControlWeaponData m_weapon1Data, m_weapon2Data;
-    Action<bool>  OnCharacterAbility;
-    Action<bool> OnMainDown,OnSubDown;
+    ControlMainButton m_weapon1Btn, m_weapon2Btn;
+    Action<bool> OnCharacterAbility;
+    Action<bool> OnMainDown, OnSubDown;
     TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
     protected override void Init()
     {
@@ -23,16 +23,16 @@ public class UIC_Control : UIControlBase {
         m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
-        m_Main = transform.Find("Main/Image").GetComponent<Image>();
-        m_Sub = transform.Find("Sub/Image").GetComponent<Image>();
-        transform.Find("Ability").GetComponent<UIT_EventTriggerListener>().OnPressStatus=OnAbilityButtonDown;
+        transform.Find("Ability").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnAbilityButtonDown;
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnMainButtonDown;
         transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
 
         transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_Settings = transform.Find("Settings/Image").GetComponent<Image>();
         transform.Find("Equipments").GetComponent<Button>().onClick.AddListener(OnEquipmentBtnClick);
-        
+
+        m_weapon1Btn = new ControlMainButton(transform.Find("Main"));
+        m_weapon2Btn = new ControlMainButton(transform.Find("Sub"));
         m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"));
         m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"));
 
@@ -40,17 +40,17 @@ public class UIC_Control : UIControlBase {
         OnOptionsChanged();
         OptionsManager.event_OptionChanged += OnOptionsChanged;
         m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(true);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OncommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnMainButtonStatus);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
         OptionsManager.event_OptionChanged -= OnOptionsChanged;
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OncommonStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponStatus, OnWeaponStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OncommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnMainButtonStatus);
     }
     public UIC_Control SetInGame(bool inGame)
     {
@@ -60,24 +60,24 @@ public class UIC_Control : UIControlBase {
 
     void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
     bool CheckControlable() => !UIPageBase.m_PageOpening;
-    
+
     void OncommonStatus(EntityCharacterPlayer player)
     {
-        if(!player.m_AbilityAvailable)
+        if (!player.m_AbilityAvailable)
             m_AbilityCooldown.fillAmount = player.m_AbilityCooldownScale;
 
-        if(m_AbilityCooldownChecker.Check(!player.m_AbilityAvailable))
+        if (m_AbilityCooldownChecker.Check(!player.m_AbilityAvailable))
         {
             m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
             m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
         }
-        
+
         m_weapon1Data.Tick(Time.deltaTime);
         m_weapon2Data.Tick(Time.deltaTime);
     }
 
     #region Controls
-    public void DoBinding(EntityCharacterPlayer player,Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action<bool> _OnCharacterAbility)
+    public void DoBinding(EntityCharacterPlayer player, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown, Action<bool> _OnSubDown, Action<bool> _OnCharacterAbility)
     {
         m_TouchDelta.AddLRBinding(_OnLeftDelta, _OnRightDelta, CheckControlable);
         OnMainDown = _OnMainDown;
@@ -95,11 +95,11 @@ public class UIC_Control : UIControlBase {
 
     protected void OnMainButtonDown(bool down, Vector2 pos) => OnMainDown?.Invoke(down);
     protected void OnSubButtonDown(bool down, Vector2 pos) => OnSubDown?.Invoke(down);
-    protected void OnAbilityButtonDown(bool down,Vector2 pos) => OnCharacterAbility?.Invoke(down);
+    protected void OnAbilityButtonDown(bool down, Vector2 pos) => OnCharacterAbility?.Invoke(down);
     public void AddDragBinding(Action<bool, Vector2> _OnDragDown, Action<Vector2> _OnDrag)
     {
         transform.localScale = Vector3.zero;
-        m_TouchDelta.AddDragBinding(_OnDragDown,_OnDrag);
+        m_TouchDelta.AddDragBinding(_OnDragDown, _OnDrag);
     }
     public void RemoveDragBinding()
     {
@@ -130,17 +130,44 @@ public class UIC_Control : UIControlBase {
     }
     #endregion
 
+
     void OnWeaponStatus(EntityCharacterPlayer _player)
     {
         m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst);
         m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst);
+
+        OnMainButtonStatus(_player);
     }
 
-    void OnInteractStatus(InteractBase interactItem)
+    void OnMainButtonStatus(EntityCharacterPlayer player)
     {
-        Sprite targetSprite = UIManager.Instance.m_CommonSprites[interactItem.GetInteractMainIcon()];
-        m_Main.sprite = targetSprite;
-        m_Sub.sprite = targetSprite;
+        m_weapon1Btn.UpdateInfo(player.m_Weapon1,player.m_Interact);
+        m_weapon2Btn.UpdateInfo(player.m_Weapon2, player.m_Interact);
+    }
+
+    class ControlMainButton
+    {
+        Transform transform;
+        Image m_Weapon, m_Interact;
+        public ControlMainButton(Transform transform)
+        {
+            this.transform = transform;
+            m_Weapon = transform.Find("Weapon").GetComponent<Image>();
+            m_Interact = transform.Find("Interact").GetComponent<Image>();
+        }
+
+        public void UpdateInfo(WeaponBase weapon,InteractBase interact)
+        {
+            bool m_weaponValid = weapon;
+            bool m_interactValid = interact;
+            if (m_weaponValid)
+                m_Weapon.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetWeaponMainIcon()];
+            if (m_interactValid)
+                m_Interact.sprite = UIManager.Instance.m_CommonSprites[interact.GetInteractMainIcon()];
+            m_Interact.SetActivate(m_interactValid);
+            m_Weapon.SetActivate(!m_interactValid && m_weaponValid);
+        }
+
     }
 
     class ControlWeaponData

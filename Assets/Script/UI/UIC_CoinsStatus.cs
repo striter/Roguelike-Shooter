@@ -16,13 +16,13 @@ public class UIC_CoinsStatus : UIControlBase {
         m_Coins = transform.Find("CoinData/Data").GetComponent<Text>();
         m_CoinLerp = new ValueLerpSeconds(0f, 20f,1f,(float value)=> { m_Coins.text = ((int)value).ToString(); });
         m_Coins.text = "0";
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OnCommonStatus);
     }
 
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OnCommonStatus);
     }
 
     private void Update()

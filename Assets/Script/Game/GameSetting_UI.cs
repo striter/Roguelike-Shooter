@@ -47,7 +47,7 @@ namespace GameSetting
 
     public static class UIConvertions
     {
-        public static string GetInteractMainIcon(this InteractBase interact) => interact == null ? "control_main_fire" : "control_main_interact";
+        public static string GetInteractMainIcon(this InteractBase interact) =>  "control_main_interact";
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
         public static string GetLevelIconSprite(this enum_LevelType type)
         {
@@ -98,7 +98,8 @@ namespace GameSetting
 
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
-        public static string GetSpriteName(this enum_PlayerWeapon weapon) => ((int)weapon).ToString();
+        public static string GetWeaponMainIcon(this enum_PlayerWeapon weapon) =>"icon_"+ ((int)weapon);
+        public static string GetUIControlDetailSpriteName(this enum_PlayerWeapon weapon) => "detail_"+ ((int)weapon);
 
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
         public static string GetUIStatusShadowBackground(this enum_Rarity rarity) => "weapon_shadow_" + rarity;
@@ -250,7 +251,7 @@ namespace GameSetting
         public void UpdateInfo(WeaponBase weapon)
         {
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
-            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSpriteName()];
+            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetUIControlDetailSpriteName()];
             m_Name.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
             m_Name.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
         }

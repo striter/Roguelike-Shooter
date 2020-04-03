@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 0396c725e26df884a977ed541580352c, type: 3}
-    totalSpriteSurfaceArea: 4128315
+    totalSpriteSurfaceArea: 4088315
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -69,36 +69,32 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c6cd8e1483f387d41b31d3d2ef123818, type: 3}
   - {fileID: 21300000, guid: 55d02c3ed3650f64baec0287f280f6c6, type: 3}
   - {fileID: 21300000, guid: 250b08ae5436d07468096a4880b553ef, type: 3}
-  - {fileID: 21300000, guid: 18bbce71a21d06b4fba893622260e8cd, type: 3}
-  - {fileID: 21300000, guid: f9298d7432f8a4545b726d5600569fca, type: 3}
-  - {fileID: 21300000, guid: 68cf7a5377adff740b8f0245b7274017, type: 3}
-  - {fileID: 21300000, guid: 18baa1b9473c05d479540f1f53ea45f9, type: 3}
   m_PackedSpriteNamesToIndex:
   - weapon_background
-  - 116
-  - 201
-  - 202
-  - 107
-  - 108
-  - 109
-  - 113
-  - 106
-  - 115
-  - 114
-  - 204
-  - 112
-  - 103
-  - 104
-  - 102
-  - 401
-  - 402
-  - 403
-  - 404
-  - 110
-  - 111
-  - 203
-  - 101
-  - 105
+  - detail_116
+  - detail_201
+  - detail_202
+  - detail_107
+  - detail_108
+  - detail_109
+  - detail_113
+  - detail_106
+  - detail_115
+  - detail_114
+  - detail_204
+  - detail_112
+  - detail_103
+  - detail_104
+  - detail_102
+  - detail_401
+  - detail_402
+  - detail_403
+  - detail_404
+  - detail_110
+  - detail_111
+  - detail_203
+  - detail_101
+  - detail_105
   - control_Epic
   - control_Advanced
   - control_Ordinary
@@ -110,9 +106,5 @@ SpriteAtlas:
   - weapon_shadow_Ordinary
   - weapon_shadow_Rare
   - weapon_shadow_Advanced
-  - parts_bottom_normal
-  - parts_bottom_advanced
-  - parts_bottom_rare
-  - parts_bottom_epic
   m_Tag: Atlas_Weapon
   m_IsVariant: 0

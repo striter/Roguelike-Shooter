@@ -44,23 +44,23 @@ public class UIC_PlayerInteract : UIControlBase
         m_CommonImage = tf_Common.Find("Image").GetComponent<Image>();
 
         rtf_InteractData.SetActivate(false);
-        TBroadCaster<enum_BC_UIStatus>.Add<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus,OnInteractStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate,OnInteractStatus);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_UIStatus>.Remove<InteractBase>(enum_BC_UIStatus.UI_PlayerInteractStatus, OnInteractStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnInteractStatus);
     }
     
-    void OnInteractStatus(InteractBase _interact)
+    void OnInteractStatus(EntityCharacterPlayer _player)
     {
-        m_interact = _interact;
+        m_interact = _player.m_Interact;
 
         InteractBase targetItem = null;
         int tradePrice = -1;
         if (m_interact != null)
         {
-            tradePrice = _interact.m_TradePrice;
+            tradePrice = m_interact.m_TradePrice;
             switch (m_interact.m_InteractType)
             {
                 default:

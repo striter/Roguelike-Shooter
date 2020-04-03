@@ -36,12 +36,12 @@ namespace GameSetting
     enum enum_BC_UIStatus
     {
         Invalid = -1,
-        UI_PlayerCommonStatus,
-        UI_PlayerInteractStatus,
+        UI_PlayerCommonUpdate,
+        UI_PlayerInteractUpdate,
         UI_PlayerInteractPickup,
-        UI_PlayerHealthStatus,
+        UI_PlayerHealthUpdate,
         UI_PlayerPerkStatus,
-        UI_PlayerWeaponStatus,
+        UI_PlayerWeaponUpdate,
 
         UI_OnWillAIAttack,
 

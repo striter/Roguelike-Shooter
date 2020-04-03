@@ -425,21 +425,21 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected void OnCommonStatus()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonStatus, this);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonUpdate, this);
     }
     protected void OnInteractStatus()
     {
-        TBroadCaster<enum_BC_UIStatus>.Trigger( enum_BC_UIStatus.UI_PlayerInteractStatus,m_Interact);
+        TBroadCaster<enum_BC_UIStatus>.Trigger( enum_BC_UIStatus.UI_PlayerInteractUpdate,this);
     }
     protected void OnWeaponStatus()
     {
         m_CharacterInfo.RefreshEffects();
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponStatus, this);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponUpdate, this);
     }
     protected override void OnHealthChanged(enum_HealthChangeMessage type)
     {
         base.OnHealthChanged(type);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthStatus, m_Health);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthUpdate, m_Health);
     }
     #endregion
     #region PlayerRevive

@@ -45,7 +45,7 @@ public class UI_WeaponStatus : UIPage {
     
     public void Play(SWeapon weapon,ExpirePerkBase weaponAction)
     {
-        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_Weapon.GetSpriteName()];
+        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_Weapon.GetUIControlDetailSpriteName()];
         m_WeaponName.localizeKey = weapon.m_Weapon.GetLocalizeNameKey();
         m_WeaponName.color = TCommon.GetHexColor(weapon.m_Rarity.GetUITextColor());
         m_WeaponBackgroundShadow.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_Rarity.GetUIStatusShadowBackground()];

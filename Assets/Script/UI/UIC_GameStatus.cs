@@ -80,16 +80,16 @@ public class UIC_GameStatus : UIControlBase
 
         m_DyingCheck = new ValueChecker<bool>(true);
 
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthUpdate, OnHealthStatus);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
         TBroadCaster<enum_BC_GameStatus>.Add<int, float>(enum_BC_GameStatus.OnEndlessData, OnEndlessData);
     }
 
     protected override void OnDestroy()
     {
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonStatus, OnCommonStatus);
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthStatus, OnHealthStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OnCommonStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityPlayerHealth>(enum_BC_UIStatus.UI_PlayerHealthUpdate, OnHealthStatus);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelStart, OnLevelStart);
         TBroadCaster<enum_BC_GameStatus>.Remove<int,float>(enum_BC_GameStatus.OnEndlessData, OnEndlessData);
     }
