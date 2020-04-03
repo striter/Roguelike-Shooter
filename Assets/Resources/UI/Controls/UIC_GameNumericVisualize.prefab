@@ -263,6 +263,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224472109714408000}
+  - component: {fileID: 114892957570889012}
   m_Layer: 5
   m_Name: UIC_GameNumericVisualize
   m_TagString: Untagged
@@ -771,6 +772,17 @@ MonoBehaviour:
   m_FillAmount: 0.58
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114892957570889012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1544032871055310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f83ec8693a92a384bb09813895ae5797, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222083299592844202
 CanvasRenderer:
   m_ObjectHideFlags: 1
