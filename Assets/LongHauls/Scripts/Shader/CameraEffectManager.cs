@@ -14,7 +14,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         T effectBase = new T();
         if(effectBase.m_Supported)
         {
-            effectBase.OnSetEffect(this);
+            effectBase.InitEffect(this);
             m_PostEffects.Add(effectBase);
             ResetPostEffectParams();
             return effectBase;
@@ -114,7 +114,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         m_DepthToWorldMatrix = false;
         m_PostEffects.Traversal((CameraEffectBase effectBase) =>
         {
-            effectBase.OnCheckEffectEnable(m_Camera.depthTextureMode);
+            effectBase.OnCheckEffectTextureEnable(m_Camera.depthTextureMode);
             if (!effectBase.m_Enabled)
                 return;
 

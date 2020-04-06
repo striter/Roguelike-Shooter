@@ -22,7 +22,7 @@ public class CampManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        InitGameEffects( enum_GameStyle.Invalid);
+        InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new PlayerSaveData( enum_PlayerCharacter.Beth, enum_PlayerWeapon.P92),tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_PlayerCameraAttach = player.transform;
         AttachPlayerCamera(tf_PlayerCameraAttach);

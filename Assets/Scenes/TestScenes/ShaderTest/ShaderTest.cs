@@ -5,29 +5,22 @@ using UnityEngine;
 
 public class ShaderTest : MonoBehaviour
 {
-    public Renderer m_renderer1, m_renderer2, m_renderer3;
-    public Color m_Color;
-    MaterialPropertyBlock m_Block;
+    public float m_Stength = 1;
+    public int m_SphereRadius = 10;
+    [Range(0.02f,0.001f)]
+    public float m_FallOff = 0.002f;
+    public Texture m_NoiseTex = null;
+    PE_DepthSSAO m_DepthSSAO;
     void Start ()
     {
-        GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
-        m_Block = new MaterialPropertyBlock();
-        MaterialPropertyBlock m_block2 = new MaterialPropertyBlock();
-        MaterialPropertyBlock m_block3 = new MaterialPropertyBlock();
-        m_block2.SetColor("_Color", Color.red);
-        m_block3.SetColor("_Color", Color.green);
-        m_renderer2.SetPropertyBlock(m_block2);
-        m_renderer3.SetPropertyBlock(m_block3);
-
         //GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.AverageBlur);
-        GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
+        m_DepthSSAO = GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_DepthSSAO>();
+        GetComponent<CameraEffectManager>().SetCameraEffects(DepthTextureMode.Depth);
     }
 
-    private void Update()
-    {;
-        m_Block.SetColor("_Color",m_Color);
-        m_renderer1.SetPropertyBlock(m_Block);
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //    GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().OnCheckMobileCostEnable(!GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_OccludeEnabled);
+    void Update()
+    {
+        m_DepthSSAO.SetEffect(Color.black, m_Stength,m_SphereRadius,m_FallOff, m_NoiseTex,16);
     }
+
 }

@@ -192,7 +192,7 @@ namespace GameSetting
 
     public enum enum_Option_FrameRate { Invalid = -1, Normal = 45, High = 60, }
 
-    public enum enum_Option_Effect { Invalid = -1, Normal, High }
+    public enum enum_Option_Effect { Invalid = -1, Normal,Medium, High }
 
     public enum enum_Option_Bloom { Invalid = -1, Off, Normal, High }
 

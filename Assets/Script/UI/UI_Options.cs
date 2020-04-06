@@ -106,7 +106,7 @@ public class UI_Options : UIPage {
         OnSelectionClick(enum_OptionSelection.Display);
         
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
-        new ValueToggle<enum_Option_Effect>(m_Page[enum_OptionSelection.Display].Find("Effect/BtnToggle"), OnEffectClicked, GetEffectOption(),new List<enum_Option_Effect> {  enum_Option_Effect.Normal, enum_Option_Effect.High});
+        new ValueToggle<enum_Option_Effect>(m_Page[enum_OptionSelection.Display].Find("Effect/BtnToggle"), OnEffectClicked, GetEffectOption(),new List<enum_Option_Effect> {  enum_Option_Effect.Normal, enum_Option_Effect.Medium, enum_Option_Effect.High});
         new ValueToggle<enum_Option_Bloom>(m_Page[enum_OptionSelection.Display].Find("Bloom/BtnToggle"), OnBloomClicked, GetBloomOption(), new List<enum_Option_Bloom> { enum_Option_Bloom.Off, enum_Option_Bloom.Normal, enum_Option_Bloom.High });
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Shadow/BtnToggle"), OnShadowClicked, GetShadowOption());
@@ -148,7 +148,9 @@ public class UI_Options : UIPage {
     enum_Option_Effect GetEffectOption() => OptionsManager.m_OptionsData.m_Effect;
     enum_Option_Effect OnEffectClicked()
     {
-        OptionsManager.m_OptionsData.m_Effect = OptionsManager.m_OptionsData.m_Effect == enum_Option_Effect.Normal ? enum_Option_Effect.High : enum_Option_Effect.Normal;
+        OptionsManager.m_OptionsData.m_Effect++;
+        if (OptionsManager.m_OptionsData.m_Effect > enum_Option_Effect.High)
+            OptionsManager.m_OptionsData.m_Effect = enum_Option_Effect.Normal;
         OptionsManager.OnOptionChanged();
         return GetEffectOption();
     }

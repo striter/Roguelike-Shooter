@@ -9,6 +9,7 @@ using System.Linq;
 
 public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperClass{
     public virtual bool B_InGame => false;
+    public Light m_DirectionalLight { get; private set; }
     protected override void Awake()
     {
         base.Awake();
@@ -19,6 +20,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         GameDataManager.Init();
         PerkDataManager.Init();
         OptionsManager.Init();
+        m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
 
     protected virtual void Start()
@@ -77,11 +79,13 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     }
 
     PE_BloomSpecific m_Bloom;
-    protected void InitGameEffects(enum_GameStyle _levelStyle)
+    PE_DepthSSAO m_DepthSSAO;
+    protected void InitGameEffects(enum_GameStyle _levelStyle, GameRenderData renderData)
     {
+        renderData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect();
+        m_DepthSSAO = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect(renderData.c_shadowColor, 2f,15,0.00025f,null,16);
         m_Bloom = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
@@ -98,13 +102,14 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     void OnEffectOptionChanged()
     {
+        m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
         if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.Normal)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 4, 5, 2);
         else if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.High)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
-
-        m_Bloom.SetEnable(OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
-        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect == enum_Option_Effect.High ? DepthTextureMode.Depth : DepthTextureMode.None);
+        m_DepthSSAO.SetAOEnable(OptionsManager.m_OptionsData.m_Effect>= enum_Option_Effect.High);
+        m_Bloom.SetBloomEnable(OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
+        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect >= enum_Option_Effect.Medium ? DepthTextureMode.Depth : DepthTextureMode.None);
     }
 
     protected void SetPostEffect_Dead()

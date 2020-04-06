@@ -13,7 +13,6 @@ Shader "Game/Effect/PlantsWaving_Vertex"
 		SubShader
 		{
 			Tags { "RenderType" = "Opaque" "Queue"="Geometry" }
-			Cull Off
 
 			CGINCLUDE
 			#include "UnityCG.cginc"

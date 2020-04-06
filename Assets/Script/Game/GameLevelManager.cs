@@ -12,7 +12,6 @@ using System.Linq;
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
     LevelChunkGame m_GameChunk;
-    public Light m_DirectionalLight { get; private set; }
     public Vector3 m_LevelCenter { get; private set; }
     public float m_LevelHeight { get; private set; }
     public float m_LevelWidth { get; private set; }
@@ -22,9 +21,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         base.Awake();
         m_GameChunk = transform.Find("GameChunk").GetComponent<LevelChunkGame>();
         m_GameChunk.Init();
-        m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
         m_ChunkDatas = TResources.GetChunkDatas();
-        OptionsManager.event_OptionChanged += OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
@@ -33,22 +30,14 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     {
         base.OnDestroy();
         NavigationManager.ClearNavMeshDatas();
-        OptionsManager.event_OptionChanged -= OnOptionChanged;
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
-    void OnOptionChanged()
-    {
-        m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
-    }
     
-    public void GenerateStage(enum_GameStyle style, System.Random random)
+    public void GenerateStage(enum_GameStyle style)
     {
         m_GameChunk.Clear();
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
-        GameRenderData[] customizations = TResources.GetRenderData(style);
-        GameRenderData randomData = customizations.Length == 0 ? GameRenderData.Default() : customizations.RandomItem(random);
-        randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
     }
     
     public void OnStartLevel(enum_ChunkType levelType,System.Random _random , Action<enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)

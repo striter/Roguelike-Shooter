@@ -113,8 +113,9 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoad);
         yield return null;
         m_GameLevel.StageInit();
-        InitGameEffects(m_GameLevel.m_GameStyle);
-        GameLevelManager.Instance.GenerateStage(m_GameLevel.m_GameStyle, m_GameLevel.m_Random);
+
+        InitGameEffects(m_GameLevel.m_GameStyle, TResources.GetRenderData(m_GameLevel.m_GameStyle).RandomItem(m_GameLevel.m_Random));
+        GameLevelManager.Instance.GenerateStage(m_GameLevel.m_GameStyle);
 
         EntityDicReset();
         GameObjectManager.Clear();

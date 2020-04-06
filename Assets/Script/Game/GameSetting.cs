@@ -491,8 +491,8 @@ namespace GameSetting
         {
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
             m_FrameRate = enum_Option_FrameRate.High;
-            m_Effect = enum_Option_Effect.High;
-            m_Bloom = enum_Option_Bloom.High;
+            m_Effect = enum_Option_Effect.Medium;
+            m_Bloom = enum_Option_Bloom.Normal;
             m_Region = enum_Option_LanguageRegion.CN;
             m_ShadowOff = false;
             m_SensitiveTap = 5;
