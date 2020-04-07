@@ -105,6 +105,7 @@ namespace GameSetting
         GameBegin,
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
         TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, WeaponPickup, PerkSelect,
+        WeaponBlueprint,
         Portal,
         GameEnd,
 
@@ -169,12 +170,6 @@ namespace GameSetting
         FrostWand = 403,
     }
 
-    public enum enum_WeaponTrigger
-    {
-        Invalid = -1,
-        Auto = 0,
-        Storing = 1,
-    }
 
     public enum enum_GameVFX
     {
@@ -185,6 +180,7 @@ namespace GameSetting
 
         PlayerRevive,
     }
+
 
     public enum enum_GameMusic { Invalid = -1, StyledStart = 1, Relax, StyledEnd = 10, Fight }
 
@@ -197,7 +193,6 @@ namespace GameSetting
     public enum enum_Option_Bloom { Invalid = -1, Off, Normal, High }
     
     public enum enum_UITipsType { Invalid = -1, Normal = 0, Warning = 1, Error = 2 }
-
     #endregion
 
     public static class GameEnumConvertions

@@ -98,13 +98,8 @@ namespace GameSetting
         public const int I_RewardLevelRate = 40;
         public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, };
         public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkRareSelect, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
-        
-        public const int I_CampActionStorageNormalCount = 10;
-        public const int I_CampActionStorageOutstandingCount = 30;
-        public const int I_CampActionStorageEpicCount = 60;
 
-        public const int I_CampActionCreditGainPerRequestSurplus = 100;
-        public const int I_CampActionStorageRequestStampDuration = 30;//36000 //10 hours
+        public static readonly Dictionary<enum_Rarity, float> m_WeaponBlueprintRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f}, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f }, };
     }
 
     public static class GameExpression
@@ -364,15 +359,13 @@ namespace GameSetting
     public class CGameSave : ISave
     {
         public float f_Credits;
-        public float f_TechPoints;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public enum_PlayerCharacter m_CharacterSelected;
         public int m_StorageRequestStamp;
         public CGameSave()
         {
-            f_Credits = 0;
-            f_TechPoints = 0;
+            f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
             m_StorageRequestStamp = -1;
@@ -398,11 +391,13 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_Stage m_Stage;
         public int m_LevelPassed;
+        public List<enum_PlayerWeapon> m_WeaponBlueprints;
         public PlayerSaveData m_PlayerData;
         public CBattleSave()
         {
             m_Stage = enum_Stage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
+            m_WeaponBlueprints = new List<enum_PlayerWeapon>();
             m_PlayerData = new PlayerSaveData( enum_PlayerCharacter.Assassin, enum_PlayerWeapon.DE);
         }
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
@@ -410,10 +405,26 @@ namespace GameSetting
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_StageIndex;
             m_LevelPassed = _level.m_LevelPassed;
+            m_WeaponBlueprints = _level.m_WeaponBlueprints;
             m_PlayerData = new PlayerSaveData(_player);
         }
 
         void ISave.DataRecorrect()
+        {
+        }
+    }
+
+    public class CWeaponData:ISave
+    {
+        public List<enum_PlayerWeapon> m_WeaponsUnlocked;
+        public List<enum_PlayerWeapon> m_WeaponBlueprints;
+        public CWeaponData()
+        {
+            m_WeaponsUnlocked = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.P92, enum_PlayerWeapon.UMP45, enum_PlayerWeapon.Kar98, enum_PlayerWeapon.AKM, enum_PlayerWeapon.S686, enum_PlayerWeapon.Minigun, enum_PlayerWeapon.RocketLauncher, enum_PlayerWeapon.FrostWand };
+            m_WeaponBlueprints = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.HeavySword, enum_PlayerWeapon.Flamer };
+        }
+
+        public void DataRecorrect()
         {
         }
     }
@@ -939,7 +950,6 @@ namespace GameSetting
     #region WeaponTriggers
     public class WeaponTrigger
     {
-        public virtual enum_WeaponTrigger m_TriggerType => enum_WeaponTrigger.Invalid;
         public bool m_TriggerDown { get; protected set; }
         public virtual void OnSetTrigger(bool down)
         {
@@ -958,7 +968,6 @@ namespace GameSetting
     }
     public class WeaponTriggerAuto : WeaponTrigger
     {
-        public override enum_WeaponTrigger m_TriggerType => enum_WeaponTrigger.Auto;
         protected Func<bool> OnTriggerCheck;
         Action OnTriggerSuccessful;
         TimeCounter m_TriggerTimer = new TimeCounter();
@@ -987,7 +996,6 @@ namespace GameSetting
 
     public class WeaponTriggerStoring:WeaponTrigger
     {
-        public override enum_WeaponTrigger m_TriggerType => enum_WeaponTrigger.Auto;
          Func<bool> OnStoreBeginCheck;
         Action<bool> OnStoreFinish;
         TimeCounter m_StoreTimer = new TimeCounter();

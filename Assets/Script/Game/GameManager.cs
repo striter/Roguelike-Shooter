@@ -181,7 +181,7 @@ public class GameManager : GameManagerBase
                         GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.left, objectData.rot).Play(GameExpression.GetEventTradePrice( enum_Interaction.PerkPickup,rarity).Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractPerkPickup>( objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerk(rarity, m_GameLevel.m_Random)));
 
                         rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon, m_GameLevel.m_Random);
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractWeaponPickup>( Vector3.zero,Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[rarity].RandomItem(m_GameLevel.m_Random))));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractWeaponPickup>( Vector3.zero,Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[rarity].RandomItem(m_GameLevel.m_Random))));
 
                         GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.right, objectData.rot).Play(GameExpression.GetEventTradePrice(enum_Interaction.PickupHealthPack).Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractPickupHealthPack>( objectData.pos, objectData.rot).Play(GameConst.I_HealthPackAmount,false));
                         break;
@@ -234,7 +234,7 @@ public class GameManager : GameManagerBase
         {
             m_GameLevel.StageFinished();
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinished);
-            GameDataManager.AdjustInGameData(m_LocalPlayer, m_GameLevel);
+            GameDataManager.StageFinishSaveData(m_LocalPlayer, m_GameLevel);
             OnPortalEnter(1f, tf_CameraAttach, LoadStage);
             return;
         }
@@ -457,7 +457,7 @@ public class GameManager : GameManagerBase
         GameObjectManager.SpawnInteract<InteractPerkSelect>( GetPickupPosition(m_LocalPlayer), Quaternion.identity).Play(PerkDataManager.RandomPerks(3,GameConst.D_BattleFinishPerkGenerate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
     }
 
-    void SpawnBattleEntityDeadDrops(EntityCharacterBase entity)
+    void SpawnBattleEnermyDeadDrops(EntityCharacterBase entity)
     {
         EntityCharacterAI enermy = entity as EntityCharacterAI;
         if (enermy==null|| enermy.E_SpawnType== enum_EnermyType.Invalid)
@@ -477,7 +477,15 @@ public class GameManager : GameManagerBase
         
         enum_Rarity weaponRarity = TCommon.RandomPercentage(pickupGenerateData.m_WeaponRate, enum_Rarity.Invalid);
         if (weaponRarity != enum_Rarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractWeaponPickup>( GetPickupPosition(entity), Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[weaponRarity].RandomItem()));
+            GameObjectManager.SpawnInteract<InteractWeaponPickup>( GetPickupPosition(entity), Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[weaponRarity].RandomItem()));
+
+
+        enum_PlayerWeapon weaponBlueprint = enum_PlayerWeapon.Invalid;
+        enum_Rarity blueprintRarity = TCommon.RandomPercentage(GameConst.m_WeaponBlueprintRarities, enum_Rarity.Invalid);
+        if (blueprintRarity != enum_Rarity.Invalid)
+            weaponBlueprint = m_GameLevel.SpawnWeaponBlueprint(blueprintRarity);
+        if (weaponBlueprint != enum_PlayerWeapon.Invalid)
+            GameObjectManager.SpawnInteract<InteractWeaponBlueprint>(GetPickupPosition(entity), Quaternion.identity).Play(weaponBlueprint);
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere()* 1.5f);
@@ -507,8 +515,8 @@ public class GameManager : GameManagerBase
         if (character.m_Flag != enum_EntityFlag.Enermy)
             return;
 
-        SpawnBattleEntityDeadDrops(character);
         m_GameLevel.OnBattleEnermyKilled();
+        SpawnBattleEnermyDeadDrops(character);
 
         if (GetCharacters(enum_EntityFlag.Enermy, true).Any(p => !p.m_IsDead))
             return;
@@ -560,6 +568,7 @@ public class GameProgressManager
     public enum_GameStyle m_GameStyle => m_StageStyle[m_StageIndex];
     public bool m_GameWin { get; private set; }
     public int m_LevelPassed { get; private set; }
+    public List<enum_PlayerWeapon> m_WeaponBlueprints { get; private set; }
     #endregion
     #region LevelData
     public System.Random m_Random { get; private set; }
@@ -584,6 +593,7 @@ public class GameProgressManager
         m_GameSeed =_battleSave.m_GameSeed;
         m_LevelPassed = _battleSave.m_LevelPassed;
         m_Random = new System.Random(m_GameSeed.GetHashCode());
+        m_WeaponBlueprints = _battleSave.m_WeaponBlueprints;
         List<enum_GameStyle> styleList = TCommon.GetEnumList<enum_GameStyle>();
         TCommon.TraversalEnum((enum_Stage level) => {
             enum_GameStyle style = styleList.RandomItem(m_Random);
@@ -610,7 +620,15 @@ public class GameProgressManager
         }
         m_SelectLevelIndexes.Sort((int a, int b) => a - b);
     }
-
+    #region WeaponData
+    public enum_PlayerWeapon SpawnWeaponBlueprint(enum_Rarity aimRarity)
+    {
+        enum_PlayerWeapon bluePrint = GameDataManager.GetAvailableWeaponBlueprint(m_WeaponBlueprints,aimRarity); 
+        if (bluePrint != enum_PlayerWeapon.Invalid)
+            m_WeaponBlueprints.Add(bluePrint);
+        return bluePrint;
+    }
+    #endregion
     #region BattleData
     public SEnermyGenerate OnBattleStart()
     {
@@ -665,6 +683,9 @@ public class GameProgressManager
         Debug.LogError("Invalid Battle Wave Data Found!");
         return new SEnermyGenerate();
     }
+    public void StageFinished() => m_StageIndex++;
+
+    public void GameFinished(bool win) => m_GameWin = win;
     #endregion
     #region Level
     public GameLevelPortalData GetNextLevelGenerate(EntityCharacterPlayer player)
@@ -703,10 +724,7 @@ public class GameProgressManager
         m_LevelType = nextLevel;
     }
     #endregion
-    public void StageFinished()=>  m_StageIndex++;
     
-    public void GameFinished(bool win)=> m_GameWin = win;
-
     #region CalculateData
     public float F_Completion => GameExpression.GetResultCompletion(m_GameWin, m_StageIndex, 0);
     public float F_CompletionScore => GameExpression.GetResultLevelScore(m_StageIndex, 0);

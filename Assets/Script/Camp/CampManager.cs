@@ -43,12 +43,7 @@ public class CampManager : GameManagerBase
         GameDataManager.OnCreditStatus(creditChange);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDataStatus);
     }
-
-    public void OnTechPointStatus(float techPoint)
-    {
-        GameDataManager.OnTechPointStatus(techPoint);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDataStatus);
-    }
+    
 
 #if UNITY_EDITOR
     private void Update()
@@ -57,10 +52,6 @@ public class CampManager : GameManagerBase
             OnCreditStatus(100);
         if (Input.GetKeyDown(KeyCode.KeypadMinus))
             OnCreditStatus(-50);
-        if (Input.GetKeyDown(KeyCode.Equals))
-            OnTechPointStatus(20);
-        if (Input.GetKeyDown(KeyCode.Minus))
-            OnTechPointStatus(-15);
         if (Input.GetKeyDown(KeyCode.Equals))
             OnSceneItemInteract();
     }

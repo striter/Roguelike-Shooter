@@ -25,7 +25,7 @@ public class InteractSafeCrack : InteractGameBase {
 
         int weaponCount = GameConst.RI_EventSafeWeaponCount.Random();
         for (int i = 0; i < weaponCount; i++)
-            GameObjectManager.SpawnInteract<InteractWeaponPickup>(transform.position + TCommon.RandomXZCircle(), Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_WeaponRarities[TCommon.RandomPercentage(GameConst.D_EventSafeWeaponRate)].RandomItem()));
+            GameObjectManager.SpawnInteract<InteractWeaponPickup>(transform.position + TCommon.RandomXZCircle(), Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventSafeWeaponRate)].RandomItem()));
         return false;
     }
 
