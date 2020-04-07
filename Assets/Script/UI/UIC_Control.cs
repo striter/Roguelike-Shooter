@@ -149,9 +149,9 @@ public class UIC_Control : UIControlBase {
     {
         Transform transform;
         Image m_Weapon, m_Interact;
-        public ControlMainButton(Transform transform)
+        public ControlMainButton(Transform _transform)
         {
-            this.transform = transform;
+            transform = _transform;
             m_Weapon = transform.Find("Weapon").GetComponent<Image>();
             m_Interact = transform.Find("Interact").GetComponent<Image>();
         }
