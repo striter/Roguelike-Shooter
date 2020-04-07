@@ -106,7 +106,7 @@ public class UIC_PlayerInteract : UIControlBase
                     isCommon = true;
                     m_CommonTop.localizeKey = interactInfo.GetUITitleKey();
                     m_CommonIntro.localizeKey = interactInfo.GetUIIntroKey();
-                    m_CommonImage.sprite = GameUIManager.Instance.m_InGameSprites[interactInfo.m_InteractType.GetInteractIcon()];
+                    m_CommonImage.sprite = UIManager.Instance.m_CommonSprites[interactInfo.m_InteractType.GetInteractIcon()];
                     break;
             }
         }

@@ -11,7 +11,6 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     protected UIC_Control m_UIControl { get; private set; }
     protected UIC_PlayerInteract m_Interact { get; private set; }
     protected UIC_GameStatus m_PlayerStatus { get; private set; }
-    public UIC_Indicates m_Indicates { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -52,7 +51,6 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_PlayerStatus = ShowControls<UIC_GameStatus>();
         m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
         m_Interact = ShowControls<UIC_PlayerInteract>();
-        m_Indicates = ShowControls<UIC_Indicates>();
     }
 
     protected override void OnDestroy()

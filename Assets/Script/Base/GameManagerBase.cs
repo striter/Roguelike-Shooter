@@ -242,7 +242,6 @@ public static class GameDataManager
         SheetProperties<SEnermyGenerate>.Init();
 
         TGameData<CGameSave>.Init();
-        TGameData<CFarmSave>.Init();
         TGameData<CBattleSave>.Init();
 
         Properties<SWeapon>.PropertiesList.Traversal((SWeapon weapon) =>
@@ -257,7 +256,6 @@ public static class GameDataManager
     }
     #region GameSave
     public static CGameSave m_GameData => TGameData<CGameSave>.Data;
-    public static CFarmSave m_CampFarmData => TGameData<CFarmSave>.Data;
     public static CBattleSave m_BattleData => TGameData<CBattleSave>.Data;
     public static void AdjustInGameData(EntityCharacterPlayer data, GameProgressManager level)
     {
@@ -271,8 +269,6 @@ public static class GameDataManager
 
         if (!win)
             return;
-        m_CampFarmData.UnlockPlot(m_GameData.m_GameDifficulty);
-        TGameData<CFarmSave>.Save();
 
         m_GameData.UnlockDifficulty();
         TGameData<CGameSave>.Save();
@@ -305,17 +301,6 @@ public static class GameDataManager
         return m_GameData.m_GameDifficulty;
     }
 
-    public static void RecreateCampFarmData()
-    {
-        TGameData<CFarmSave>.Reset();
-        TGameData<CFarmSave>.Save();
-    }
-    public static void SaveCampFarmData(CampFarmManager farmManager)
-    {
-        m_CampFarmData.Save(farmManager);
-        TGameData<CFarmSave>.Save();
-    }
-    
     public static void SaveActionStorageData()
     {
         TGameData<CGameSave>.Save();

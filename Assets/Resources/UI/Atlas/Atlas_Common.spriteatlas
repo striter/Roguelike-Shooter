@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3172604
+    totalSpriteSurfaceArea: 3177732
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -48,7 +48,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 15d05e6f933533347985283c2f86695c, type: 3}
   - {fileID: 21300000, guid: 6ad81d33339312847ac3d99a5b456c92, type: 3}
   - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
-  - {fileID: 21300000, guid: affc1d5f4fd1e014fb6d263ca566f832, type: 3}
   - {fileID: 21300000, guid: 75b51447202270e4d9204d6422607ef7, type: 3}
   - {fileID: 21300000, guid: 89096d0a6e9b00d44abd5207403cc172, type: 3}
   - {fileID: 21300000, guid: 05ba41a082cc1a74288fcc4bf6947a85, type: 3}
@@ -57,6 +56,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
   - {fileID: 21300000, guid: 234f89eb50c2edc4e8048a6047a34cb5, type: 3}
   - {fileID: 21300000, guid: 8d752d68d59a02a42b68e58fc4ee5c90, type: 3}
+  - {fileID: 21300000, guid: 71917017662df5d4cb55e4dba0929204, type: 3}
   - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
   - {fileID: 21300000, guid: dfc35cd87afdb89468db5389efbfb5ba, type: 3}
   - {fileID: 21300000, guid: f8ed2f2aa40fed549b97c3b6a03dc61c, type: 3}
@@ -70,6 +70,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 389b60b53720261438d8fdcd07fc2234, type: 3}
   - {fileID: 21300000, guid: a386833f607b4ba478930b8dfe4656ee, type: 3}
   - {fileID: 21300000, guid: 9047f140630863245ae8f4d97a50502d, type: 3}
+  - {fileID: 21300000, guid: 8d9d6752fb320bd438f49a5bec44867c, type: 3}
+  - {fileID: 21300000, guid: 5299f3520a85ed74fac7a3636bdc9238, type: 3}
   - {fileID: 21300000, guid: 980515194edb6e643ba473774b4a2065, type: 3}
   - {fileID: 21300000, guid: c75679ed2a1160d438a8626363103ae3, type: 3}
   - {fileID: 21300000, guid: 9dc5878f1eae4214fa5e911da3fb90bd, type: 3}
@@ -128,7 +130,6 @@ SpriteAtlas:
   - UI_title_orange_medium
   - icon_coins
   - UI_title_orange_small
-  - indicates_caution_bottom
   - control_weapon_empty
   - UI_common_info_title
   - UI_common_circle
@@ -137,6 +138,7 @@ SpriteAtlas:
   - setting_label_selected
   - status_level_bg
   - status_bottom
+  - Interact_Icon_Portal
   - icon_stage
   - bottom_yellow
   - bottom_black90
@@ -150,6 +152,8 @@ SpriteAtlas:
   - control_main_interact
   - control_setting_bottom
   - bottom_black
+  - interact_text_bottom
+  - interact_bottom
   - icon_rarity
   - UI_common_white20_line
   - UI_common_white10

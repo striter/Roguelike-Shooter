@@ -108,7 +108,7 @@ namespace GameSetting
         Portal,
         GameEnd,
 
-        CampBegin, CampStage, CampDifficult, CampFarm, CampAction, CampEnd,
+        CampBegin, GameStart, Difficulty, Weapons, CampEnd,
     }
 
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -195,9 +195,7 @@ namespace GameSetting
     public enum enum_Option_Effect { Invalid = -1, Normal,Medium, High }
 
     public enum enum_Option_Bloom { Invalid = -1, Off, Normal, High }
-
-    public enum enum_CampFarmItemStatus { Invalid = -1, Empty = 0, Locked = 1, Decayed = 2, Progress1 = 10, Progress2, Progress3, Progress4, Progress5 }
-
+    
     public enum enum_UITipsType { Invalid = -1, Normal = 0, Warning = 1, Error = 2 }
 
     #endregion

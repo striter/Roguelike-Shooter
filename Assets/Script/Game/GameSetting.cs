@@ -94,21 +94,11 @@ namespace GameSetting
             public const int I_AIIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
-
-        public static readonly Dictionary<enum_CampFarmItemStatus, int> DP_FarmGeneratePercentage = new Dictionary<enum_CampFarmItemStatus, int>() { { enum_CampFarmItemStatus.Progress1, 60 }, { enum_CampFarmItemStatus.Progress2, 30 }, { enum_CampFarmItemStatus.Progress3, 6 }, { enum_CampFarmItemStatus.Progress4, 3 }, { enum_CampFarmItemStatus.Progress5, 1 } };   //Farm生成等级百分比
-        public static readonly Dictionary<enum_CampFarmItemStatus, float> GetFarmCreditPerSecond = new Dictionary<enum_CampFarmItemStatus, float> { { enum_CampFarmItemStatus.Progress1, .1f / 60f }, { enum_CampFarmItemStatus.Progress2, .2f / 60f }, { enum_CampFarmItemStatus.Progress3, .3f / 60f }, { enum_CampFarmItemStatus.Progress4, .5f / 60f }, { enum_CampFarmItemStatus.Progress5, 1f / 60f } };      //Farm 等级,每秒Credit
-
+        
         public const int I_RewardLevelRate = 40;
         public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, };
         public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkRareSelect, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
-
-        public const int I_CampFarmPlot4UnlockDifficulty = 3;
-        public const int I_CampFarmPlot5UnlockDifficulty = 10;
-        public const int I_CampFarmPlot6UnlockTechPoints = 3000;
-        public const int I_CampFarmItemAcquire = 50;
-        public const int I_CampFarmDecayDuration = 20;
-        public const float F_CampFarmItemTickAmount = 0.05f;
-
+        
         public const int I_CampActionStorageNormalCount = 10;
         public const int I_CampActionStorageOutstandingCount = 30;
         public const int I_CampActionStorageEpicCount = 60;
@@ -263,20 +253,6 @@ namespace GameSetting
             }
         }
         
-        public static bool CanGenerateprofit(this enum_CampFarmItemStatus status)
-        {
-            switch(status)
-            {
-                default: return false;
-                case enum_CampFarmItemStatus.Progress1:
-                case enum_CampFarmItemStatus.Progress2:
-                case enum_CampFarmItemStatus.Progress3:
-                case enum_CampFarmItemStatus.Progress4:
-                case enum_CampFarmItemStatus.Progress5:
-                    return true;
-            }
-        }
-
     }
 
     public static class LocalizationKeyJoint
@@ -294,7 +270,6 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
-        public static string GetLocalizeKey(this enum_CampFarmItemStatus status) => "UI_Farm_" + status;
         public static string SetActionIntro(this ExpirePerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
@@ -418,38 +393,6 @@ namespace GameSetting
         }
     }
 
-    public class CFarmSave : ISave
-    {
-        public int m_OffsiteProfitStamp;
-        public List<CampFarmPlotData> m_PlotStatus;
-        public CFarmSave()
-        {
-            m_OffsiteProfitStamp = TTime.TTimeTools.GetTimeStampNow();
-            m_PlotStatus = new List<CampFarmPlotData>() { CampFarmPlotData.Create( enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
-        }
-        public void Save(CampFarmManager manager)
-        {
-            m_PlotStatus.Clear();
-            m_OffsiteProfitStamp = manager.m_LastProfitStamp; 
-            for (int i=0;i< manager.m_Plots.Count; i++)
-                m_PlotStatus.Add(CampFarmPlotData.SaveData(manager.m_Plots[i]));
-        }
-
-        public void UnlockPlot(int difficulty)
-        {
-            if (difficulty >=GameConst.I_CampFarmPlot4UnlockDifficulty && m_PlotStatus[3].m_Status == enum_CampFarmItemStatus.Locked)
-                m_PlotStatus[3] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
-            if (difficulty >= GameConst.I_CampFarmPlot5UnlockDifficulty && m_PlotStatus[4].m_Status == enum_CampFarmItemStatus.Locked)
-                m_PlotStatus[4] = CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty);
-        }
-
-        void ISave.DataRecorrect()
-        {
-            if(m_PlotStatus.Count!=6)
-                m_PlotStatus= new List<CampFarmPlotData>() { CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Empty), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked), CampFarmPlotData.Create(enum_CampFarmItemStatus.Locked) };
-        }
-    }
-
     public class CBattleSave : ISave
     {
         public string m_GameSeed;
@@ -570,15 +513,7 @@ namespace GameSetting
             return data;
         }
     }
-
-    public struct CampFarmPlotData : IXmlPhrase
-    {
-        public int m_StartStamp { get; private set; }
-        public enum_CampFarmItemStatus m_Status { get; private set; }
-
-        public static CampFarmPlotData Create(enum_CampFarmItemStatus _status) => new CampFarmPlotData { m_StartStamp = -1, m_Status = _status };
-        public static CampFarmPlotData SaveData(CampFarmPlot _plot) => new CampFarmPlotData { m_StartStamp = _plot.m_StartStamp, m_Status = _plot.m_Status };
-    }
+    
     #endregion
 
     #region ExcelData

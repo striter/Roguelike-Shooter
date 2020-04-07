@@ -26,7 +26,6 @@ public class CampManager : GameManagerBase
         EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new PlayerSaveData( enum_PlayerCharacter.Beth, enum_PlayerWeapon.P92),tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_PlayerCameraAttach = player.transform;
         AttachPlayerCamera(tf_PlayerCameraAttach);
-        CampFarmManager.Instance.OnCampEnter();
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
     }
@@ -39,24 +38,6 @@ public class CampManager : GameManagerBase
         });
     }
 
-    public bool B_Farming { get; private set; } = false;
-    public void OnFarmNPCChatted()
-    {
-        if (B_Farming)
-            return;
-
-        B_Farming = true;
-        AttachSceneCamera(CampFarmManager.Instance.Begin(OnFarmExit));
-    }
-    void OnFarmExit()
-    {
-        B_Farming = false;
-        AttachPlayerCamera(tf_PlayerCameraAttach);
-    }
-
-    public void OnActionNPCChatted()
-    {
-    }
     public void OnCreditStatus(float creditChange)
     {
         GameDataManager.OnCreditStatus(creditChange);

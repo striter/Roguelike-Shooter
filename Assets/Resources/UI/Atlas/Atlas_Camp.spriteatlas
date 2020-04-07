@@ -29,24 +29,10 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 332cb824ad5c7bb478575d43c3af34ec, type: 3}
-    totalSpriteSurfaceArea: 110561
+    totalSpriteSurfaceArea: 0
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites:
-  - {fileID: 21300000, guid: c458f125c8d91ef4bb79ea78c9fb0238, type: 3}
-  - {fileID: 21300000, guid: eb17a6e291e6dfb4fa0d4187d7a8e530, type: 3}
-  - {fileID: 21300000, guid: 849bbee604ffcf64aa5d79c32f6a2868, type: 3}
-  - {fileID: 21300000, guid: 2724861cd5f0c584f9d0fea92dbc2ff0, type: 3}
-  - {fileID: 21300000, guid: 1012c825c56be7d439f6efc979076e30, type: 3}
-  - {fileID: 21300000, guid: b78da02bcd2db544abdad55c9eeac061, type: 3}
-  - {fileID: 21300000, guid: ec814bcf312ca8c4f961a63f033c10ba, type: 3}
-  m_PackedSpriteNamesToIndex:
-  - farm_operating_bottom
-  - farm_remainingtime_progress_bottom
-  - farm_shovel
-  - farm_mushroom
-  - farm_remainingtime_progress
-  - farm_remainingtime_progress_light
-  - farm_lock
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
   m_Tag: Atlas_Camp
   m_IsVariant: 0

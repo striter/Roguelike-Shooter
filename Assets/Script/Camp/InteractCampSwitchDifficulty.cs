@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class InteractCampSwitchDifficulty : InteractCamp {
-    public override enum_Interaction m_InteractType => enum_Interaction.CampDifficult;
+    public override enum_Interaction m_InteractType => enum_Interaction.Difficulty;
     Text m_Text;
     protected override void Awake()
     {
