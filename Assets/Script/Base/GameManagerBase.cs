@@ -296,6 +296,7 @@ public static class GameDataManager
                 Debug.LogError("Error!Weapon Unlocked  Contains" + weapon);
                 return;
             }
+
             if (m_WeaponData.m_WeaponBlueprints.Contains(weapon))
             {
                 Debug.LogError("Error!Weapon Blueprint Contains" + weapon);
@@ -338,7 +339,7 @@ public static class GameDataManager
             if (weapon.m_Hidden)
                 return;
             m_AvailableWeapons.Add(weapon.m_Weapon,weapon);
-            if (!m_WeaponData.m_WeaponsUnlocked.Contains(weapon.m_Weapon))
+            if (!m_WeaponData.m_WeaponsUnlocked.Contains(weapon.m_Weapon)&&!m_WeaponData.m_WeaponBlueprints.Contains(weapon.m_Weapon))
             {
                 if (!m_GameWeaponBlueprint.ContainsKey(weapon.m_Rarity))
                     m_GameWeaponBlueprint.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());
