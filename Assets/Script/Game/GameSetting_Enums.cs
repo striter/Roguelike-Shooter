@@ -109,7 +109,7 @@ namespace GameSetting
         Portal,
         GameEnd,
 
-        CampBegin, GameEnter, Difficulty, Armory, CampEnd,
+        CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard, CampEnd,
     }
 
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };

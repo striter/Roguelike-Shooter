@@ -15,13 +15,14 @@ public class CampManager : GameManagerBase
     #endregion
     public static CampManager nInstance;
     public static new CampManager Instance => nInstance;
-    Transform tf_PlayerStart;
-    public Transform tf_PlayerCameraAttach { get; private set; }
+    Transform tf_PlayerStart,tf_CameraAttach;
+    EntityCharacterPlayer m_player;
     protected override void Awake()
     {
         nInstance = this;
         base.Awake();
         tf_PlayerStart = transform.Find("PlayerStart");
+        tf_CameraAttach = transform.Find("CameraAttach");
     }
     protected override void OnDestroy()
     {
@@ -32,27 +33,49 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
-        EntityCharacterPlayer player = GameObjectManager.SpawnEntityPlayer(new PlayerSaveData( enum_PlayerCharacter.Beth, enum_PlayerWeapon.P92),tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_PlayerCameraAttach = player.transform;
-        AttachPlayerCamera(tf_PlayerCameraAttach);
+        m_player = GameObjectManager.SpawnEntityPlayer(new PlayerSaveData( enum_PlayerCharacter.Beth, enum_PlayerWeapon.P92),tf_PlayerStart.position, tf_PlayerStart.rotation);
+        tf_CameraAttach.position = m_player.transform.position;
+        AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
     }
-    
+
+    private void Update()
+    {
+        tf_CameraAttach.position = m_player.transform.position;
+    }
+
     public void OnGameSceneInteract()
     {
-        OnPortalEnter(1f,tf_PlayerCameraAttach, () => {
+        OnPortalEnter(1f, tf_CameraAttach, () => {
             LoadingManager.Instance.ShowLoading(enum_Stage.Rookie);
             SwitchScene( enum_Scene.Game);
         });
     }
 
-    public void OnArmoryInteract()
+    public void OnArmoryInteract(Transform cameraPos)
     {
         if (UIPageBase.m_PageOpening)
             return;
-        CampUIManager.Instance.ShowCurrentcyPage<UI_Armory>(true, .1f).Play();
+
+        AttachSceneCamera(cameraPos);
+        CampUIManager.Instance.ShowPage<UI_Armory>(true, ResetPlayerCamera, .1f).Play();
     }
+
+    public void OnDailyRewardInteract()
+    {
+
+    }
+
+    public void OnBillboardInteract(Transform cameraPos)
+    {
+        if (UIPage.m_PageOpening)
+            return;
+        AttachSceneCamera(cameraPos);
+        CampUIManager.Instance.ShowPage<UI_Billboard>(true, ResetPlayerCamera, .1f);
+    }
+
+    void ResetPlayerCamera()=> AttachPlayerCamera(tf_CameraAttach);
 
     public void OnCreditStatus(float creditChange)
     {

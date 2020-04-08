@@ -6,6 +6,7 @@ using UnityEngine;
 public class CampUIManager : UIManager {
     public static new CampUIManager Instance { get; private set; }
     UIControlBase m_Coins, m_OverlayControl;
+    Action OnCampPageExit;
     protected override void Init()
     {
         base.Init();
@@ -17,10 +18,11 @@ public class CampUIManager : UIManager {
         m_Coins=ShowControls<UIC_CurrencyStatus>(false);
     }
 
-    public T ShowCurrentcyPage<T>(bool animate, float bulletTime = 1f) where T : UIPage
+    public T ShowPage<T>(bool animate, Action OnPageExit,float bulletTime = 1f) where T : UIPage
     {
         m_OverlayControl = m_Coins;
         SetControlViewMode(m_OverlayControl, true);
+        OnCampPageExit = OnPageExit;
         return ShowPage<T>(animate, bulletTime);
     }
 
@@ -31,6 +33,8 @@ public class CampUIManager : UIManager {
             return;
         SetControlViewMode(m_OverlayControl, false);
         m_OverlayControl = null;
+        OnCampPageExit?.Invoke();
+        OnCampPageExit = null;
     }
 
     protected override void OnAdjustPageSibling()

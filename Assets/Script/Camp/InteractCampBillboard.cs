@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractCampArmory : InteractCampBase {
-    public override enum_Interaction m_InteractType => enum_Interaction.CampArmory;
+public class InteractCampBillboard : InteractCampBase {
+    public override enum_Interaction m_InteractType => enum_Interaction.CampBillboard;
     Transform m_CameraPos;
     protected override void Awake()
     {
@@ -14,7 +14,7 @@ public class InteractCampArmory : InteractCampBase {
     protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedCheck(_interactor);
-        CampManager.Instance.OnArmoryInteract(m_CameraPos);
+        CampManager.Instance.OnBillboardInteract(m_CameraPos);
         return true;
     }
 }

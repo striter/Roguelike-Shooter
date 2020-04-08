@@ -6,15 +6,17 @@ public enum enum_TouchCheckType
 {
     Invalid=-1,
     TouchLR=1,
-    TouchDrag=2
+    TouchDrag=2,
+    TouchClick=3,
 }
 public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
 {
     public enum_TouchCheckType m_CheckType => m_Check.Count==0 ? enum_TouchCheckType.Invalid : m_Check.Peek().m_Type;
     Stack<TouchCheckBase> m_Check=new Stack<TouchCheckBase>();
 
-    public void AddLRBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Func<bool> _OnCanSendDelta)=>Push(new TouchCheckBaseLR(_OnLeftDelta,_OnRightDelta,_OnCanSendDelta));
-    public void AddDragBinding(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag) => Push(new TouchCheckExtraDrag(_OnDragDown,_OnDrag));
+    public void AddLRBinding(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Func<bool> _OnCanSendDelta)=>Push(new TouchCheckLRJoystick(_OnLeftDelta,_OnRightDelta,_OnCanSendDelta));
+    public void AddDragBinding(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag) => Push(new TouchCheckScreenDrag(_OnDragDown,_OnDrag));
+    public void AddPressBinding(Action<bool, Vector2> _OnDown) => Push(new TouchCheckScreenCheck(_OnDown));
 
     public void RemoveExtraBinding()
     {
@@ -58,14 +60,14 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
         public abstract void Tick(float deltaTime);
         public abstract void Disable();
     }
-    class TouchCheckBaseLR : TouchCheckBase
+    class TouchCheckLRJoystick : TouchCheckBase
     {
         public override enum_TouchCheckType m_Type => enum_TouchCheckType.TouchLR;
         TouchTracker m_TrackLeft, m_TrackRight;
         Action<Vector2> OnLeftDelta, OnRightDelta;
         Func<bool> OnCanSendDelta;
         Vector2 m_leftDelta, m_rightDelta;
-        public TouchCheckBaseLR(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Func<bool> _OnCanSendDelta)
+        public TouchCheckLRJoystick(Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Func<bool> _OnCanSendDelta)
         {
             m_leftDelta = Vector2.zero;
             m_rightDelta = Vector2.zero;
@@ -153,13 +155,13 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
             OnRightDelta?.Invoke(m_rightDelta);
         }
     }
-    class TouchCheckExtraDrag : TouchCheckBase
+    class TouchCheckScreenDrag : TouchCheckBase
     {
         public override enum_TouchCheckType m_Type => enum_TouchCheckType.TouchDrag;
         Action<bool,Vector2> OnDragDown;
         Action<Vector2> OnDrag;
         int m_DragTrackID;
-        public TouchCheckExtraDrag(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag)
+        public TouchCheckScreenDrag(Action<bool,Vector2> _OnDragDown, Action<Vector2> _OnDrag)
         {
             OnDragDown = _OnDragDown;
             OnDrag = _OnDrag;
@@ -208,6 +210,46 @@ public class TouchDeltaManager : SingletonMono<TouchDeltaManager>
             OnDragDown(false,Vector2.zero);
         }
     }
+    class TouchCheckScreenCheck:TouchCheckBase
+    {
+        public override enum_TouchCheckType m_Type => enum_TouchCheckType.TouchClick;
+        Action<bool, Vector2> OnDown;
+        public TouchCheckScreenCheck( Action<bool, Vector2> _OnDown)
+        {
+            OnDown = _OnDown;
+        }
+
+        public override void Tick(float deltaTime)
+        {
+#if UNITY_EDITOR
+            if (Input.GetMouseButtonDown(0))
+                OnDown(true, Input.mousePosition);
+            else if (Input.GetMouseButtonUp(0))
+                OnDown(false, Input.mousePosition);
+#endif
+
+            foreach (Touch touch in Input.touches)
+            {
+                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                {
+                    OnDown(false, touch.position);
+                }
+                else if (touch.phase == TouchPhase.Began)
+                {
+                    OnDown(true, touch.position);
+                }
+            }
+        }
+
+        public override void Disable()
+        {
+        }
+
+        public override void Enable()
+        {
+        }
+    }
+
     class TouchTracker
     {
         static float f_halfHorizontal = Screen.width / 2;

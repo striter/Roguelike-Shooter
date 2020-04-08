@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using GameSetting;
 
-public class InteractCamp : InteractBase {
+public class InteractCampBase : InteractBase {
     protected virtual void Awake()
     {
         base.Play();
