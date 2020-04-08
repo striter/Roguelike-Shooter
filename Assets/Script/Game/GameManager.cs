@@ -16,7 +16,7 @@ public class GameManager : GameManagerBase
     {
         base.AddConsoleBinding();
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed", KeyCode.None, () => { Debug.LogError(m_GameLevel.m_GameSeed); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextLevelGenerate(m_LocalPlayer).m_PortalMain); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextLevelGenerate().m_PortalMain); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_LevelType.GameWin : enum_LevelType.StageEnd); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test Level", KeyCode.Backspace, (int)enum_LevelType.Trader, enum_LevelType.Trader, (int index) => { OnChunkPortalEnter((enum_LevelType)index); });
 
@@ -218,7 +218,7 @@ public class GameManager : GameManagerBase
 
     void OnGenerateLevelPortals()
     {
-        GameLevelPortalData data = m_GameLevel.GetNextLevelGenerate(m_LocalPlayer);
+        GameLevelPortalData data = m_GameLevel.GetNextLevelGenerate();
         GameObjectManager.SpawnInteract<InteractPortal>( m_PortalMain.pos, m_PortalMain.rot).Play(data.m_PortalMain, OnChunkPortalEnter);
 
         if(data.m_PortalExtra!= enum_LevelType.Invalid)
@@ -583,7 +583,7 @@ public class GameProgressManager
     #region Get
     public bool m_FinalStage => m_StageIndex == enum_Stage.Ranger;
     public bool m_BattleLevel => m_LevelType.IsBattleLevel();
-    public bool m_FinalLevel => m_LevelIndex == 9;
+    public bool m_FinalLevel => m_LevelIndex == GameConst.I_LevelCountPerStage-1;
     #endregion
     public GameProgressManager(CGameSave _gameSave,CBattleSave _battleSave)
     {
@@ -609,9 +609,14 @@ public class GameProgressManager
         m_LevelIndex = 0;
         m_LevelType = enum_LevelType.StageStart;
 
-        List<int> selectionIndex = new List<int>() { 1, 2, 3, 4, 5, 6, 7 };
+        List<int> selectionIndex = new List<int>();
+        for (int i = 1; i < GameConst.I_LevelCountPerStage - 2; i++)
+        {
+            selectionIndex.Add(i);
+            Debug.Log(i);
+        }
         m_SelectLevelIndexes.Clear();
-        for (int i=0;i<3;i++)
+        for (int i=0;i<GameConst.I_EventCountPerStage;i++)
         {
             int randomSelect = selectionIndex.RandomItem(m_Random);
             selectionIndex.Remove(randomSelect);
@@ -687,20 +692,20 @@ public class GameProgressManager
     public void GameFinished(bool win) => m_GameWin = win;
     #endregion
     #region Level
-    public GameLevelPortalData GetNextLevelGenerate(EntityCharacterPlayer player)
+    public GameLevelPortalData GetNextLevelGenerate()
     {
-        if (m_LevelIndex == 8)
+        if (m_LevelIndex == GameConst.I_LevelCountPerStage-2)
             return new GameLevelPortalData(enum_LevelType.StageFinalBattle, enum_LevelType.Invalid);
 
         if (m_FinalLevel)
-            return new GameLevelPortalData(m_FinalStage? enum_LevelType.GameWin:enum_LevelType.StageEnd, enum_LevelType.EndlessBattle);
+            return new GameLevelPortalData(m_FinalStage? enum_LevelType.GameWin:enum_LevelType.StageEnd, m_FinalStage? enum_LevelType.EndlessBattle: enum_LevelType.Invalid);
 
         int selectionIndex = m_SelectLevelIndexes.FindIndex(p=>p==m_LevelIndex);
         if (selectionIndex == -1)
             return new GameLevelPortalData(enum_LevelType.NormalBattle, enum_LevelType.Invalid);
 
-        enum_LevelType _mainType = (player.m_CharacterInfo.m_Coins <= 10 || TCommon.RandomBool(m_Random)) ? enum_LevelType.NormalBattle : GetNextPortal(enum_LevelType.Invalid, m_Random);
-        enum_LevelType _subType = selectionIndex == 1 ? enum_LevelType.Trader : GetNextPortal(_mainType, m_Random);
+        enum_LevelType _mainType = TCommon.RandomBool(m_Random) ? enum_LevelType.NormalBattle : GetNextPortal(enum_LevelType.Invalid, m_Random);
+        enum_LevelType _subType = GetNextPortal(_mainType, m_Random);
         return new GameLevelPortalData(_mainType, _subType);
     }
 
