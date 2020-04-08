@@ -206,7 +206,6 @@ public static class OptionsManager
 {
     public static event Action event_OptionChanged;
     public static CGameOptions m_OptionsData => TGameData<CGameOptions>.Data;
-    public static float m_Sensitive=1f;
     public static void Init()
     {
         TGameData<CGameOptions>.Init();
@@ -219,11 +218,7 @@ public static class OptionsManager
         OnOptionChanged();
     }
 
-    public static void OnOptionChanged()
-    {
-        m_Sensitive = GameExpression.F_PlayerSensitive(m_OptionsData.m_SensitiveTap);
-        event_OptionChanged?.Invoke();
-    }
+    public static void OnOptionChanged()=>event_OptionChanged?.Invoke();
     public static float F_SFXVolume =>GameExpression.F_GameVFXVolume(m_OptionsData.m_VFXVolumeTap);
     public static float F_MusicVolume => GameExpression.F_GameMusicVolume(m_OptionsData.m_MusicVolumeTap);
 }

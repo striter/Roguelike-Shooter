@@ -80,10 +80,15 @@ namespace GameSetting
         WeaponRecycle,
         PerkRare,
         PerkFill,
+        PerkSelectNormal,
+        PerkLottery,
+        PerkShrine,
+        BloodShrine,
+        HealShrine,
 
         WeaponVendorRare,
         SafeCrack,
-        PerkRareSelect,
+        PerkSelectRare,
 
         StageEnd,
         GameWin,
@@ -105,7 +110,7 @@ namespace GameSetting
         GameBegin,
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
         TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, WeaponPickup, PerkSelect,
-        WeaponBlueprint,
+        WeaponBlueprint,PerkLottery,PerkShrine,BloodShrine,HealShrine,
         Portal,
         GameEnd,
 
@@ -242,12 +247,17 @@ namespace GameSetting
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkFill:
                 case enum_LevelType.PerkRare:
-                case enum_LevelType.PerkRareSelect:
+                case enum_LevelType.PerkSelectRare:
                 case enum_LevelType.WeaponReforge:
                 case enum_LevelType.WeaponRecycle:
                 case enum_LevelType.WeaponVendorRare:
                 case enum_LevelType.WeaponVendorNormal:
                 case enum_LevelType.SafeCrack:
+                case enum_LevelType.PerkSelectNormal:
+                case enum_LevelType.PerkLottery:
+                case enum_LevelType.PerkShrine:
+                case enum_LevelType.HealShrine:
+                case enum_LevelType.BloodShrine:
                     return enum_ChunkType.Event;
             }
         }
@@ -269,10 +279,15 @@ namespace GameSetting
                 case enum_LevelType.PerkRare:
                 case enum_LevelType.WeaponReforge:
                 case enum_LevelType.WeaponRecycle:
+                case enum_LevelType.PerkSelectNormal:
+                case enum_LevelType.PerkLottery:
+                case enum_LevelType.PerkShrine:
+                case enum_LevelType.HealShrine:
+                case enum_LevelType.BloodShrine:
                     return enum_ChunkPortalType.Event;
                 case enum_LevelType.StageEnd:
                 case enum_LevelType.GameWin:
-                case enum_LevelType.PerkRareSelect:
+                case enum_LevelType.PerkSelectRare:
                 case enum_LevelType.WeaponVendorRare:
                 case enum_LevelType.SafeCrack:
                 case enum_LevelType.EndlessBattle:

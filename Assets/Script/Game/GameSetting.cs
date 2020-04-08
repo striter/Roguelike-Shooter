@@ -16,9 +16,61 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        public const int I_LevelCountPerStage = 20;
-        public const int I_EventCountPerStage = 8;
+        #region Level
+        public const int I_TotalLevelCountPerStage = 20;
+        public const int I_EventLevelCountPerStage = 8;
 
+        public const int I_RewardLevelRate = 40;
+        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, enum_LevelType.BloodShrine, enum_LevelType.HealShrine, enum_LevelType.PerkShrine, enum_LevelType.PerkSelectNormal, enum_LevelType.PerkLottery };
+        public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkSelectRare, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
+        #endregion
+        #region Interacts
+        public const float F_PickupMaxSpeed = 100f;
+        public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
+        public const int I_HealthPickupAmount = 25;
+        public const int I_ArmorPickupAmount = 25;
+        public const int I_HealthPackAmount = 50;
+
+        public const int I_DangerzoneDamage = 50;
+        public const float F_DangerzoneResetDuration = 2f;
+
+        public static readonly Dictionary<enum_Rarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_Rarity, RangeInt>() { { enum_Rarity.Ordinary, new RangeInt(5, 5) }, { enum_Rarity.Advanced, new RangeInt(10, 5) }, { enum_Rarity.Rare, new RangeInt(20, 5) }, { enum_Rarity.Epic, new RangeInt(30, 5) } };
+
+        public static readonly Dictionary<enum_Rarity, int> D_BattleFinishPerkGenerate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+
+        public const int I_WeaponVendorMachineNormalPrice = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+        public const int I_WeaponVendorMachineRarePrice = 15;
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 5 }, { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 45 }, { enum_Rarity.Epic, 30 } };
+        public const int I_EventPerkLotteryPrice = 5;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
+        public const int I_EventPerkRarePrice = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkNormalPrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
+        public const int I_EventPerkSelectRarePrice = 15;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRareRate = new Dictionary<enum_Rarity, int>() { {enum_Rarity.Advanced,20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
+        public const int I_EventPerkSelectNormalPrice = 5;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 35 }, { enum_Rarity.Rare, 15 } };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkFillRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced , 30 }, { enum_Rarity.Rare, 8 },{ enum_Rarity.Epic,2} };
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
+        public const int I_EventWeaponReforgeSecondPrice = 10;
+        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
+        public const int I_EventSafeCrackPrice = 20;
+        public const int I_EventSafeCoinsCount = 5;
+        public const int I_EventSafeCoinsAmount = 7;
+        public static readonly RangeInt RI_EventSafeWeaponCount = new RangeInt(1, 1);
+        public static readonly Dictionary<enum_Rarity, int> D_EventSafeWeaponRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
+        public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
+        public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
+
+        public const int I_PerkShrineTryCountMax = 5;
+        public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 10 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
+        public const int I_BloodShrineTryCountMax = 5;
+        public const int I_BloodShrineCoinsRate = 50;
+        public const int I_BloodShrineCoinsAmount = 15;
+        public const int I_HealShrineTryCountMax = 5;
+        public const float F_HealShrineHealthReceive = 30f;
+        #endregion        
+        #region Entities
         public const float F_BlastShakeMultiply = .5f;
         public const float F_DamageImpactMultiply = 1f;
 
@@ -39,46 +91,13 @@ namespace GameSetting
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
 
         public const int I_PlayerReviveBuffIndex = 40004;
+
+        public const float F_EliteBuffTimerDurationWhenFullHealth = 15f; //触发tick值
+        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
         public static readonly RangeInt RI_GameFinalBattleEnermySpawnCheck = new RangeInt(10, 5); //BOSS关小怪刷新检测时间
         public const float F_FinalBattleEnermySpawnEliteHealthScaleOffset = .1f; //BOSS血量减少百分比会判断刷新小怪
-
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010, 12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
-        public const float F_EliteBuffTimerDurationWhenFullHealth=15f; //触发tick值
-        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
-
-        public const int I_DangerzoneDamage = 50;
-        public const float F_DangerzoneResetDuration = 2f;
-
-        public const float F_PickupMaxSpeed = 100f;
-        public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
-        public const int I_HealthPickupAmount = 25;
-        public const int I_ArmorPickupAmount = 25;
-        public const int I_HealthPackAmount = 50;
-
-        public static readonly Dictionary<enum_Rarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_Rarity, RangeInt>() { { enum_Rarity.Ordinary, new RangeInt(5, 5) }, { enum_Rarity.Advanced, new RangeInt(10, 5) }, { enum_Rarity.Rare, new RangeInt(20, 5) }, { enum_Rarity.Epic, new RangeInt(30, 5) } };
-
-        public static readonly Dictionary<enum_Rarity, int> D_BattleFinishPerkGenerate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
-
-        public const int I_WeaponVendorMachineNormalPrice = 10;
-        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
-        public const int I_WeaponVendorMachineRarePrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 5 }, { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 45 }, { enum_Rarity.Epic, 30 } };
-        public const int I_EventPerkRarePrice = 10;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
-        public const int I_EventPerkRareSelectPrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkRareSelectRate = new Dictionary<enum_Rarity, int>() { {enum_Rarity.Advanced,20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkFillRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced , 30 }, { enum_Rarity.Rare, 8 },{ enum_Rarity.Epic,2} };
-        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
-        public const int I_EventWeaponReforgeSecondPrice = 10;
-        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
-        public const int I_EventSafeCrackPrice = 20;
-        public const int I_EventSafeCoinsCount = 5;
-        public const int I_EventSafeCoinsAmount = 7;
-        public static readonly RangeInt RI_EventSafeWeaponCount = new RangeInt(1, 1);
-        public static readonly Dictionary<enum_Rarity, int> D_EventSafeWeaponRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
-        public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
-        public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
-
+        #endregion
         public static class AI
         {
             public const float F_AIShowDistance = 30f;
@@ -96,11 +115,6 @@ namespace GameSetting
             public const int I_AIIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
-        
-        public const int I_RewardLevelRate = 40;
-        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, };
-        public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkRareSelect, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
-
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f}, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f }, };
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
     }
@@ -120,8 +134,7 @@ namespace GameSetting
         public static int GetPlayerPerkSFXWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
-
-        public static float F_PlayerSensitive(int sensitiveTap) => sensitiveTap / 5f;
+        
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 
@@ -129,26 +142,17 @@ namespace GameSetting
 
         public static SBuff GetEnermyGameBuff(enum_Stage stage,int difficulty) => SBuff.CreateGameEnermyBuff(difficulty, ((int)stage - 1) * .3f+ (difficulty - 1)*.3f );
         public static float GetEnermyMaxHealthMultiplier(enum_Stage stage, int difficulty) => 1f + ((int)stage - 1) * .5f + (difficulty - 1) * .05f;
-
-        public static int GetRankupExp(int rank) => 100 + 10* rank;
-        public static int GetEnermyKillExp(bool isElite,enum_Stage stage)
-        {
-            if (!isElite)
-                return 25;
-            switch (stage)
-            {
-                default: Debug.LogError("Invalid Convertions Here!") ; return 0;
-                case enum_Stage.Rookie: return 200;
-                case enum_Stage.Veteran: return 300;
-                case enum_Stage.Ranger: return 400;
-            }
-        }
         
         public static float GetResultCompletion(bool win, enum_Stage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_Stage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultDifficultyBonus(int _difficulty) =>1f+ _difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
+        #region Interacts
 
+        public static int GetPerkShrinePrice(int tryCount) =>5+ 5 * tryCount;
+        public static int GetBloodShrinePrice(int tryCount) => 5 + 3 * tryCount;
+        public static float GetBloodShrineHealthCostMultiple(int count) => .1f + .05f * count;
+        public static int GetHealShrinePrice(int tryCount) => 5 + 2 * tryCount;
         public static RangeInt GetEventTradePrice(enum_Interaction interactType,enum_Rarity perkRarity= enum_Rarity.Invalid,enum_Rarity weaponRarity= enum_Rarity.Invalid)
         {
             switch (interactType)
@@ -180,7 +184,7 @@ namespace GameSetting
                     }
             }
         }
-
+        #endregion
         public static float GetLevelObjectHealth(enum_TileObjectType objectType)
         {
             switch(objectType)
@@ -210,9 +214,7 @@ namespace GameSetting
                     return 900;
             }
         }
-
-        public static int GetActionRemovePrice(enum_Stage stage, int removeTimes) => 10 * (removeTimes + 1) ;
-        public static int GetActionUpgradePrice(enum_Stage stage, int upgradeTimes) => 10 * (upgradeTimes + 1) ;
+        
         public static StageInteractGenerateData GetInteractGenerate(enum_Stage level)
         {
             switch (level)

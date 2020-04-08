@@ -460,7 +460,12 @@ public static class PerkDataManager
             m_PerkRarities[perk.m_Rarity].Add(perk.m_Index);
         }), PerkSaveData.New(-1));
     }
-    public static int RandomPerk(enum_Rarity rarity, System.Random seed) => m_AllPerks.RandomKey(seed);
+    public static int RandomPerk(enum_Rarity rarity, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random=null)
+    {
+        List<int> rarityIDs = m_PerkRarities[rarity].DeepCopy();
+        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Rarity == rarity && perk.m_Stack == perk.m_MaxStack) rarityIDs.Remove(perk.m_Index); });
+        return rarityIDs.RandomItem(random);
+    }
 
     public static List<int> RandomPerks(int perkCount,Dictionary<enum_Rarity,int> perkGenerate,Dictionary<int,ExpirePerkBase> playerPerks,System.Random random=null)
     {
