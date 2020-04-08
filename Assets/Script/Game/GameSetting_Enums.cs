@@ -47,7 +47,7 @@ namespace GameSetting
 
         UI_ChunkTeleportUnlock,
 
-        UI_CampDataStatus,
+        UI_GameCurrencyStatus,
 
         UI_PageOpen,
         UI_PageClose,
@@ -109,7 +109,7 @@ namespace GameSetting
         Portal,
         GameEnd,
 
-        CampBegin, GameStart, Difficulty, Weapons, CampEnd,
+        CampBegin, GameEnter, Difficulty, Armory, CampEnd,
     }
 
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };

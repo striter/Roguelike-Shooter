@@ -8,6 +8,13 @@ using TGameSave;
 using System.Linq;
 
 public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperClass{
+    #region Test
+    protected virtual void AddConsoleBinding()
+    {
+        UIT_MobileConsole.Instance.InitConsole((bool show)=> { Time.timeScale = show ? .1f : 1f; });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
+    }
+    #endregion
     public virtual bool B_InGame => false;
     public Light m_DirectionalLight { get; private set; }
     protected override void Awake()
@@ -30,6 +37,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         GameObjectManager.PresetRegistCommonObject();
         UIManager.Activate(B_InGame);
 
+        AddConsoleBinding();
         OnCommonOptionChanged();
         OptionsManager.event_OptionChanged += OnCommonOptionChanged;
         OptionsManager.event_OptionChanged += OnEffectOptionChanged;
@@ -227,7 +235,7 @@ public static class GameDataManager
 {
     public static CGameSave m_GameData => TGameData<CGameSave>.Data;
     public static CBattleSave m_BattleData => TGameData<CBattleSave>.Data;
-    public static CWeaponData m_WeaponData=> TGameData<CWeaponData>.Data;
+    public static CArmoryData m_ArmoryData=> TGameData<CArmoryData>.Data;
     public static bool m_Inited { get; private set; } = false;
     public static void Init()
     {
@@ -239,9 +247,9 @@ public static class GameDataManager
 
         TGameData<CGameSave>.Init();
         TGameData<CBattleSave>.Init();
-        TGameData<CWeaponData>.Init();
+        TGameData<CArmoryData>.Init();
 
-        AdjustWeaponDataStatus();
+        AdjustArmoryDataStatus();
     }
     #region GameSave
     public static void StageFinishSaveData(EntityCharacterPlayer data, GameProgressManager level)
@@ -255,7 +263,7 @@ public static class GameDataManager
         if (win)
         {
             m_GameData.UnlockDifficulty();
-            OnWeaponBlueprintsIncome(m_BattleData.m_WeaponBlueprints);
+            OnArmoryBlueprintsIncome(m_BattleData.m_WeaponBlueprints);
         }
         TGameData<CBattleSave>.Reset();
         TGameData<CBattleSave>.Save();
@@ -267,6 +275,7 @@ public static class GameDataManager
             return;
         m_GameData.f_Credits += credit;
         TGameData<CGameSave>.Save();
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameCurrencyStatus);
     }
 
     public static int OnCampDifficultySwitch()
@@ -284,51 +293,57 @@ public static class GameDataManager
     public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();
     public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
     public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponBlueprint { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
-    static void OnWeaponBlueprintsIncome(List<enum_PlayerWeapon> weapons)
+    static void OnArmoryBlueprintsIncome(List<enum_PlayerWeapon> weapons)
     {
         if (weapons.Count == 0)
             return;
 
         weapons.Traversal((enum_PlayerWeapon weapon) =>
         {
-            if (m_WeaponData.m_WeaponsUnlocked.Contains(weapon))
+            if (m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
             {
                 Debug.LogError("Error!Weapon Unlocked  Contains" + weapon);
                 return;
             }
 
-            if (m_WeaponData.m_WeaponBlueprints.Contains(weapon))
+            if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
             {
                 Debug.LogError("Error!Weapon Blueprint Contains" + weapon);
                 return;
             }
 
-            m_WeaponData.m_WeaponBlueprints.Add(weapon);
+            m_ArmoryData.m_WeaponBlueprints.Add(weapon);
         });
-        TGameData<CWeaponData>.Save();
-        AdjustWeaponDataStatus();
+        TGameData<CArmoryData>.Save();
+        AdjustArmoryDataStatus();
     }
-
-    public static void OnWeaponUnlock(enum_PlayerWeapon weapon)
+    public static float GetArmoryUnlockPrice(enum_PlayerWeapon weapon)=> GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
+    public static bool CanArmoryUnlock(enum_PlayerWeapon weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
+    public static void OnArmoryUnlock(enum_PlayerWeapon weapon)
     {
-        if (!m_WeaponData.m_WeaponBlueprints.Contains(weapon))
+        if (!m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
         {
             Debug.LogError("Error! Unlock A None Blueprint Weapon" + weapon);
             return;
         }
-
-        if(m_WeaponData.m_WeaponsUnlocked.Contains(weapon))
+        if(m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
         {
             Debug.LogError("Error! Unlock A Unlocked Weapon" + weapon);
             return;
         }
-        m_WeaponData.m_WeaponBlueprints.Remove(weapon);
-        m_WeaponData.m_WeaponsUnlocked.Add(weapon);
-        TGameData<CWeaponData>.Save();
-        AdjustWeaponDataStatus();
+        if (!CanArmoryUnlock(weapon))
+        {
+            Debug.LogError("Invalid Unlock Behaviour!");
+            return;
+        }
+        OnCreditStatus(-GetArmoryUnlockPrice(weapon));
+        m_ArmoryData.m_WeaponBlueprints.Remove(weapon);
+        m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
+        TGameData<CArmoryData>.Save();
+        AdjustArmoryDataStatus();
     }
 
-    static void AdjustWeaponDataStatus()
+    static void AdjustArmoryDataStatus()
     {
         m_AvailableWeapons.Clear();
         m_GameWeaponUnlocked.Clear();
@@ -339,7 +354,7 @@ public static class GameDataManager
             if (weapon.m_Hidden)
                 return;
             m_AvailableWeapons.Add(weapon.m_Weapon,weapon);
-            if (!m_WeaponData.m_WeaponsUnlocked.Contains(weapon.m_Weapon)&&!m_WeaponData.m_WeaponBlueprints.Contains(weapon.m_Weapon))
+            if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon.m_Weapon)&&!m_ArmoryData.m_WeaponBlueprints.Contains(weapon.m_Weapon))
             {
                 if (!m_GameWeaponBlueprint.ContainsKey(weapon.m_Rarity))
                     m_GameWeaponBlueprint.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());

@@ -12,34 +12,34 @@ public class GameManager : GameManagerBase
     #region Test
     public string M_TESTSEED = "";
     public bool B_PhysicsDebugGizmos = true;
-    void AddConsoleBinddings()
+    protected override void AddConsoleBinding()
     {
-        UIT_MobileConsole.Instance.InitConsole((bool show) => { Time.timeScale = show ? .1f : 1f; });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed",KeyCode.None,()=> { Debug.LogError(m_GameLevel.m_GameSeed); });
+        base.AddConsoleBinding();
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed", KeyCode.None, () => { Debug.LogError(m_GameLevel.m_GameSeed); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextLevelGenerate(m_LocalPlayer).m_PortalMain); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_LevelType.GameWin : enum_LevelType.StageEnd); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test Level", KeyCode.Backspace, (int)enum_LevelType.Trader, enum_LevelType.Trader,(int index)=> { OnChunkPortalEnter((enum_LevelType)index); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test Level", KeyCode.Backspace, (int)enum_LevelType.Trader, enum_LevelType.Trader, (int index) => { OnChunkPortalEnter((enum_LevelType)index); });
 
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All",  KeyCode.Alpha0, () => {
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All", KeyCode.Alpha0, () => {
             GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
             {
-                character.m_HitCheck.TryHit(new DamageInfo(-1,character.m_Health.m_CurrentHealth, enum_DamageType.Basic));
+                character.m_HitCheck.TryHit(new DamageInfo(-1, character.m_Health.m_CurrentHealth, enum_DamageType.Basic));
             });
         });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
             GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
         });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,int.Parse(damage), enum_DamageType.Basic));});
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal",  KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1,-int.Parse(damage), enum_DamageType.Basic)); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Item",  KeyCode.F1, "1", (string actionIndex) => { GameObjectManager.SpawnInteract<InteractPerkPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(actionIndex)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1, int.Parse(damage), enum_DamageType.Basic)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal", KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1, -int.Parse(damage), enum_DamageType.Basic)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Item", KeyCode.F1, "1", (string actionIndex) => { GameObjectManager.SpawnInteract<InteractPerkPickup>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(actionIndex)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Perk Select", KeyCode.F2, SpawnBattleFinishReward);
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Coins", KeyCode.F5, "20", (string coins) => { GameObjectManager.SpawnInteract<InteractPickupCoin>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(coins),!m_Battling);});
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Health", KeyCode.F6, "20", (string health) => {GameObjectManager.SpawnInteract<InteractPickupHealth>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()*5f), Quaternion.identity).Play(int.Parse(health), !m_Battling);});
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => {GameObjectManager.SpawnInteract<InteractPickupArmor>(  NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(int.Parse(armor), !m_Battling);});
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, (int)enum_PlayerWeapon.Railgun, enum_PlayerWeapon.Railgun,(int weaponIdentity) => {
-            GameObjectManager.SpawnInteract<InteractWeaponPickup>( NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere()* 5f), Quaternion.identity).Play(WeaponSaveData.CreateNew((enum_PlayerWeapon)weaponIdentity)); }); UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None,()=> GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Coins", KeyCode.F5, "20", (string coins) => { GameObjectManager.SpawnInteract<InteractPickupCoin>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(coins), !m_Battling); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Health", KeyCode.F6, "20", (string health) => { GameObjectManager.SpawnInteract<InteractPickupHealth>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(health), !m_Battling); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => { GameObjectManager.SpawnInteract<InteractPickupArmor>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(armor), !m_Battling); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, (int)enum_PlayerWeapon.Railgun, enum_PlayerWeapon.Railgun, (int weaponIdentity) => {
+            GameObjectManager.SpawnInteract<InteractWeaponPickup>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.CreateNew((enum_PlayerWeapon)weaponIdentity));
+        }); UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None, () => GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
     }
     #endregion
     protected static GameManager nInstance;
@@ -82,7 +82,6 @@ public class GameManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        AddConsoleBinddings();
         LoadStage();
     }
 
@@ -481,9 +480,9 @@ public class GameManager : GameManagerBase
 
 
         enum_PlayerWeapon weaponBlueprint = enum_PlayerWeapon.Invalid;
-        enum_Rarity blueprintRarity = TCommon.RandomPercentage(GameConst.m_WeaponBlueprintRarities, enum_Rarity.Invalid);
+        enum_Rarity blueprintRarity = TCommon.RandomPercentage(GameConst.m_ArmoryBlueprintRarities, enum_Rarity.Invalid);
         if (blueprintRarity != enum_Rarity.Invalid)
-            weaponBlueprint = m_GameLevel.SpawnWeaponBlueprint(blueprintRarity);
+            weaponBlueprint = m_GameLevel.TrySpawnWeaponBlueprint(blueprintRarity);
         if (weaponBlueprint != enum_PlayerWeapon.Invalid)
             GameObjectManager.SpawnInteract<InteractWeaponBlueprint>(GetPickupPosition(entity), Quaternion.identity).Play(weaponBlueprint);
     }
@@ -621,7 +620,7 @@ public class GameProgressManager
         m_SelectLevelIndexes.Sort((int a, int b) => a - b);
     }
     #region WeaponData
-    public enum_PlayerWeapon SpawnWeaponBlueprint(enum_Rarity aimRarity)
+    public enum_PlayerWeapon TrySpawnWeaponBlueprint(enum_Rarity aimRarity)
     {
         enum_PlayerWeapon bluePrint = GameDataManager.GetAvailableWeaponBlueprint(m_WeaponBlueprints,aimRarity); 
         if (bluePrint != enum_PlayerWeapon.Invalid)

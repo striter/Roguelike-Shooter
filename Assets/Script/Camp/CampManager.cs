@@ -4,6 +4,15 @@ using UnityEngine;
 using GameSetting;
 public class CampManager : GameManagerBase
 {
+    #region Test
+    protected override void AddConsoleBinding()
+    {
+        base.AddConsoleBinding();
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Plus, "100", (string value) => { OnCreditStatus(int.Parse(value)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Minus, "-50", (string value) => { OnCreditStatus(int.Parse(value)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Plus,OnGameSceneInteract);
+    }
+    #endregion
     public static CampManager nInstance;
     public static new CampManager Instance => nInstance;
     Transform tf_PlayerStart;
@@ -30,7 +39,7 @@ public class CampManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
     }
     
-    public void OnSceneItemInteract()
+    public void OnGameSceneInteract()
     {
         OnPortalEnter(1f,tf_PlayerCameraAttach, () => {
             LoadingManager.Instance.ShowLoading(enum_Stage.Rookie);
@@ -38,22 +47,17 @@ public class CampManager : GameManagerBase
         });
     }
 
+    public void OnArmoryInteract()
+    {
+        if (UIPageBase.m_PageOpening)
+            return;
+        CampUIManager.Instance.ShowCurrentcyPage<UI_Armory>(true, .1f).Play();
+    }
+
     public void OnCreditStatus(float creditChange)
     {
         GameDataManager.OnCreditStatus(creditChange);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDataStatus);
     }
     
-
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.KeypadPlus))
-            OnCreditStatus(100);
-        if (Input.GetKeyDown(KeyCode.KeypadMinus))
-            OnCreditStatus(-50);
-        if (Input.GetKeyDown(KeyCode.Equals))
-            OnSceneItemInteract();
-    }
-#endif
+    
 }

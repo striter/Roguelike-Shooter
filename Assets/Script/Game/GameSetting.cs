@@ -99,7 +99,8 @@ namespace GameSetting
         public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, };
         public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkRareSelect, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
 
-        public static readonly Dictionary<enum_Rarity, float> m_WeaponBlueprintRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f}, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f }, };
+        public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f}, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f }, };
+        public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
     }
 
     public static class GameExpression
@@ -414,11 +415,11 @@ namespace GameSetting
         }
     }
 
-    public class CWeaponData:ISave
+    public class CArmoryData:ISave
     {
         public List<enum_PlayerWeapon> m_WeaponsUnlocked;
         public List<enum_PlayerWeapon> m_WeaponBlueprints;
-        public CWeaponData()
+        public CArmoryData()
         {
             m_WeaponsUnlocked = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.P92, enum_PlayerWeapon.UMP45, enum_PlayerWeapon.Kar98, enum_PlayerWeapon.AKM, enum_PlayerWeapon.S686, enum_PlayerWeapon.Minigun, enum_PlayerWeapon.RocketLauncher, enum_PlayerWeapon.FrostWand };
             m_WeaponBlueprints = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.HeavySword, enum_PlayerWeapon.Flamer };

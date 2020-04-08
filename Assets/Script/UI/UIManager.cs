@@ -10,7 +10,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     public Camera m_Camera { get; private set; }
     protected UIC_Control m_UIControl { get; private set; }
     protected UIC_PlayerInteract m_Interact { get; private set; }
-    protected UIC_GameStatus m_PlayerStatus { get; private set; }
+    protected UIC_PlayerStatus m_PlayerStatus { get; private set; }
 
     public CameraEffectManager m_Effect { get; private set; }
     CB_GenerateOverlayUIGrabBlurTexture m_Blur;
@@ -26,7 +26,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         else
             manager = uiObj.AddComponent<CampUIManager>();
         manager.Init();
-        manager.InitGameControls(inGame);
+        manager.InitControls(inGame);
     }
 
     protected override void Init()
@@ -46,9 +46,9 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_Blur.SetEffect(2, 2f, 2);
     }
 
-    protected virtual void InitGameControls(bool inGame)
+    protected virtual void InitControls(bool inGame)
     {
-        m_PlayerStatus = ShowControls<UIC_GameStatus>();
+        m_PlayerStatus = ShowControls<UIC_PlayerStatus>();
         m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
         m_Interact = ShowControls<UIC_PlayerInteract>();
     }

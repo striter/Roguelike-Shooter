@@ -14,6 +14,7 @@ public class UIGI_ArmoryItem : UIT_GridItem {
         base.Init();
         m_Text = GetComponentInChildren<Text>();
         m_Button = GetComponentInChildren<Button>();
+        m_Button.onClick.AddListener(OnButtonClick);
     }
 
     public void Play(Action<enum_PlayerWeapon> OnClick)
