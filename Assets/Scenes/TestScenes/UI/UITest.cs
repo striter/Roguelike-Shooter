@@ -2,16 +2,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UITest : UIT_EventTriggerListener {
-    RawImage image;
+public class UITest : MonoBehaviour {
+    public Mesh m_Mesh;
     private void Awake()
     {
-        image = GetComponent<RawImage>();
-        base.OnLocalDown = this.OnDownLocal;
+        CanvasRenderer renderer = GetComponent<CanvasRenderer>();
+        renderer.SetMesh(m_Mesh);
     }
 
-    void OnDownLocal(bool down,Vector2 localPos)
+    private void Update()
     {
-        Debug.Log(localPos+" "+ (image.mainTexture as Texture2D).GetPixel((int)localPos.x, (int)localPos.y));
+        Canvas.ForceUpdateCanvases();
     }
 }
