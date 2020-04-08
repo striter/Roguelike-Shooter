@@ -62,10 +62,7 @@ public class CampManager : GameManagerBase
         CampUIManager.Instance.ShowPage<UI_Armory>(true, ResetPlayerCamera, .1f).Play();
     }
 
-    public void OnDailyRewardInteract()
-    {
-
-    }
+    public bool OnAcquireDailyRewardInteract()=>GameDataManager.OnDailyRewardRequire();
 
     public void OnBillboardInteract(Transform cameraPos)
     {

@@ -268,6 +268,8 @@ public static class GameDataManager
         TGameData<CBattleSave>.Reset();
         TGameData<CBattleSave>.Save();
     }
+    #endregion
+    #region GameData
     public static bool CanUseCredit(float credit) => m_GameData.f_Credits >= credit;
     public static void OnCreditStatus(float credit)
     {
@@ -288,6 +290,13 @@ public static class GameDataManager
         return m_GameData.m_GameDifficulty;
     }
 
+    public static bool OnDailyRewardRequire()
+    {
+        if (!m_GameData.CheckDailyReward())
+            return false;
+        OnCreditStatus(500f);
+        return true;
+    }
     #endregion
     #region WeaponData
     public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();

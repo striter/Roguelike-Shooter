@@ -409,13 +409,15 @@ namespace TTime
 {
     public static class TTimeTools
     {
+        public const int m_StampADay = 86400;
+        public const int m_StampAnHour = 3600;
+        public static readonly DateTime m_StampBegin = new DateTime(1970, 1, 1, 8, 0, 0);
+
         public static int GetTimeStampNow() => GetTimeStamp(DateTime.Now);
-        public static int GetTimeStamp(DateTime dt)
-        {
-            DateTime dateStart = new DateTime(1970, 1, 1, 8, 0, 0);
-            int timeStamp = Convert.ToInt32((dt - dateStart).TotalSeconds);
-            return timeStamp;
-        }
+        public static int GetTimeStamp(DateTime dt)=> (int)(dt - m_StampBegin).TotalSeconds;
+
+        public static int GetDayStampNow() => GetDayStamp(DateTime.Now);
+        public static int GetDayStamp(DateTime dt)=> (int)(dt - m_StampBegin).TotalDays;
 
         public static string GetHMS(int stamp)
         {

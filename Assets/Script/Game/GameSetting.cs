@@ -363,13 +363,13 @@ namespace GameSetting
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
         public enum_PlayerCharacter m_CharacterSelected;
-        public int m_StorageRequestStamp;
+        public int m_LastDailyRewardStamp;
         public CGameSave()
         {
             f_Credits = 100;
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
-            m_StorageRequestStamp = -1;
+            m_LastDailyRewardStamp = -1;
             m_CharacterSelected = enum_PlayerCharacter.Beth;
         }
 
@@ -380,6 +380,15 @@ namespace GameSetting
 
             m_DifficultyUnlocked++;
             m_GameDifficulty++;
+        }
+
+        public bool CheckDailyReward()
+        {
+            int currentDayStamp = TTime.TTimeTools.GetDayStampNow();
+            if (currentDayStamp<=m_LastDailyRewardStamp)
+                return false;
+            m_LastDailyRewardStamp = currentDayStamp;
+            return true;
         }
 
         public void DataRecorrect()

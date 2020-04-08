@@ -8,7 +8,8 @@ public class InteractCampDailyReward : InteractCampBase {
     protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedCheck(_interactor);
-        CampManager.Instance.OnDailyRewardInteract();
+        if (CampManager.Instance.OnAcquireDailyRewardInteract())
+            GameObjectManager.PlayMuzzle(-1,transform.position,Vector3.up,10021);
         return true;
     }
 }
