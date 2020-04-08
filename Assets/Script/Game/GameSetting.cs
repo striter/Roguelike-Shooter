@@ -221,9 +221,9 @@ namespace GameSetting
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } },        //Trade Perk
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 100 }, { enum_Rarity.Rare, 0 }, { enum_Rarity.Epic, 0 } },        //Trade Weapon
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 0 }, { enum_Rarity.Epic, 0 } },        //Reward Weapon
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),       //Normal Pickups
+                        PickupGenerateData.Create(10, 10, 100, new RangeInt(1, 0),       //Normal Pickups
                         new Dictionary<enum_Rarity, float> {{ enum_Rarity.Ordinary, 6 },{ enum_Rarity.Advanced,3} }),          //Normal Weapon Pikcups
-                        PickupGenerateData.Create(10, 100, 50, new RangeInt(10, 5),     //Elite Pickups
+                        PickupGenerateData.Create(10, 100, 100, new RangeInt(1, 0),     //Elite Pickups
                         new Dictionary<enum_Rarity, float> { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 100 } })        //Elite Weapon Pickups
                         );
                 case enum_Stage.Veteran:
@@ -231,9 +231,9 @@ namespace GameSetting
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } },        //Trade Perk
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 }, { enum_Rarity.Rare, 100 }, { enum_Rarity.Epic, 0 } },
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced,50 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 0 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        PickupGenerateData.Create(10, 10, 100, new RangeInt(1, 0),
                         new Dictionary<enum_Rarity, float> {{ enum_Rarity.Advanced, 3.8f },{ enum_Rarity.Rare,1.9f} }),
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(10, 5),
+                        PickupGenerateData.Create(10, 100, 100, new RangeInt(1, 0),
                         new Dictionary<enum_Rarity, float> { { enum_Rarity.Rare, 100 } })
                         );
                 case enum_Stage.Ranger:
@@ -241,7 +241,7 @@ namespace GameSetting
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } },        //Trade Perk
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 }, { enum_Rarity.Rare, 0 }, { enum_Rarity.Epic, 100 } },
                         new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 50 } },
-                        PickupGenerateData.Create(10, 10, 30, new RangeInt(2, 3),
+                        PickupGenerateData.Create(10, 10, 100, new RangeInt(1, 0),
                         new Dictionary<enum_Rarity, float> {{ enum_Rarity.Rare, 2.8f },{ enum_Rarity.Epic, 2.8f} }),
                         PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
                         new Dictionary<enum_Rarity, float> { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 } })
