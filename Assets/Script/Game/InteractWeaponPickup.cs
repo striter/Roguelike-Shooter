@@ -22,6 +22,13 @@ public class InteractWeaponPickup : InteractGameBase {
         m_Weapon.transform.localRotation = Quaternion.identity;
         return this;
     }
+    private void OnDisable()
+    {
+        if (!m_Weapon)
+            return;
+        m_Weapon.DoItemRecycle();
+        m_Weapon = null;
+    }
     protected override bool OnInteractedCheck(EntityCharacterPlayer _interactTarget)
     {
         base.OnInteractedCheck(_interactTarget);
