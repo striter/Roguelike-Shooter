@@ -35,9 +35,7 @@ namespace GameSetting
         public const float F_DangerzoneResetDuration = 2f;
 
         public static readonly Dictionary<enum_Rarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_Rarity, RangeInt>() { { enum_Rarity.Ordinary, new RangeInt(5, 5) }, { enum_Rarity.Advanced, new RangeInt(10, 5) }, { enum_Rarity.Rare, new RangeInt(20, 5) }, { enum_Rarity.Epic, new RangeInt(30, 5) } };
-
-        public static readonly Dictionary<enum_Rarity, int> D_BattleFinishPerkGenerate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
-
+        
         public const int I_WeaponVendorMachineNormalPrice = 10;
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_WeaponVendorMachineRarePrice = 15;

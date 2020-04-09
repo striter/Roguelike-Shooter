@@ -465,10 +465,6 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region Game Item Management
-    void SpawnBattleFinishReward()
-    {
-        GameObjectManager.SpawnInteract<InteractPerkSelect>( GetPickupPosition(m_LocalPlayer), Quaternion.identity).Play(PerkDataManager.RandomPerks(3,GameConst.D_BattleFinishPerkGenerate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
-    }
 
     void SpawnBattleEnermyDeadDrops(EntityCharacterBase entity)
     {
@@ -553,7 +549,6 @@ public class GameManager : GameManagerBase
     {
         m_Battling = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
-        SpawnBattleFinishReward();
         OnGenerateLevelPortals();
     }
 
