@@ -381,7 +381,7 @@ public static class GameDataManager
         enum_PlayerWeapon bluePrint = enum_PlayerWeapon.Invalid;
         if (_blueprintAvailable.ContainsKey(_spawnRarity))
             bluePrint = _blueprintAvailable[_spawnRarity].RandomItem();
-        else if (_blueprintAvailable[enum_Rarity.Ordinary].Count > 0)
+        else if (_blueprintAvailable.ContainsKey(enum_Rarity.Ordinary))
             bluePrint = _blueprintAvailable[enum_Rarity.Ordinary].RandomItem();
         return bluePrint;
     }
