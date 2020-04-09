@@ -405,13 +405,11 @@ namespace GameSetting
         public string m_GameSeed;
         public enum_Stage m_Stage;
         public int m_LevelPassed;
-        public List<enum_PlayerWeapon> m_WeaponBlueprints;
         public PlayerSaveData m_PlayerData;
         public CBattleSave()
         {
             m_Stage = enum_Stage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
-            m_WeaponBlueprints = new List<enum_PlayerWeapon>();
             m_PlayerData = new PlayerSaveData( enum_PlayerCharacter.Assassin, enum_PlayerWeapon.DE);
         }
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
@@ -419,7 +417,6 @@ namespace GameSetting
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_StageIndex;
             m_LevelPassed = _level.m_LevelPassed;
-            m_WeaponBlueprints = _level.m_WeaponBlueprints;
             m_PlayerData = new PlayerSaveData(_player);
         }
 

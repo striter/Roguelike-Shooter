@@ -496,12 +496,9 @@ public class GameManager : GameManagerBase
         enum_PlayerWeapon weaponBlueprint = enum_PlayerWeapon.Invalid;
         enum_Rarity blueprintRarity = TCommon.RandomPercentage(GameConst.m_ArmoryBlueprintRarities, enum_Rarity.Invalid);
         if (blueprintRarity != enum_Rarity.Invalid)
-            weaponBlueprint = m_GameLevel.TrySpawnWeaponBlueprint(blueprintRarity);
+            weaponBlueprint = GameDataManager.UnlockArmoryBlueprint(blueprintRarity);
         if (weaponBlueprint != enum_PlayerWeapon.Invalid)
-        {
-            GameDataManager.OnArmoryBlueprint(weaponBlueprint);
             GameObjectManager.SpawnInteract<InteractArmoryBlueprint>(GetPickupPosition(entity), Quaternion.identity).Play(weaponBlueprint,false);
-        }
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere()* 1.5f);
@@ -584,7 +581,6 @@ public class GameProgressManager
     public enum_GameStyle m_GameStyle => m_StageStyle[m_StageIndex];
     public bool m_GameWin { get; private set; }
     public int m_LevelPassed { get; private set; }
-    public List<enum_PlayerWeapon> m_WeaponBlueprints { get; private set; }
     #endregion
     #region LevelData
     public System.Random m_Random { get; private set; }
@@ -609,7 +605,6 @@ public class GameProgressManager
         m_GameSeed =_battleSave.m_GameSeed;
         m_LevelPassed = _battleSave.m_LevelPassed;
         m_Random = new System.Random(m_GameSeed.GetHashCode());
-        m_WeaponBlueprints = _battleSave.m_WeaponBlueprints;
         List<enum_GameStyle> styleList = TCommon.GetEnumList<enum_GameStyle>();
         TCommon.TraversalEnum((enum_Stage level) => {
             enum_GameStyle style = styleList.RandomItem(m_Random);
@@ -638,15 +633,6 @@ public class GameProgressManager
         }
         m_SelectLevelIndexes.Sort((int a, int b) => a - b);
     }
-    #region WeaponData
-    public enum_PlayerWeapon TrySpawnWeaponBlueprint(enum_Rarity aimRarity)
-    {
-        enum_PlayerWeapon bluePrint = GameDataManager.GetAvailableWeaponBlueprint(m_WeaponBlueprints,aimRarity); 
-        if (bluePrint != enum_PlayerWeapon.Invalid)
-            m_WeaponBlueprints.Add(bluePrint);
-        return bluePrint;
-    }
-    #endregion
     #region BattleData
     public SEnermyGenerate OnBattleStart()
     {
@@ -719,7 +705,7 @@ public class GameProgressManager
             return new GameLevelPortalData(enum_LevelType.NormalBattle, enum_LevelType.Invalid);
 
         enum_LevelType _mainType = TCommon.RandomBool(m_Random) ? enum_LevelType.NormalBattle : GetNextPortal(enum_LevelType.Invalid, m_Random);
-        enum_LevelType _subType = GetNextPortal(_mainType, m_Random);
+        enum_LevelType _subType = TCommon.RandomBool(m_Random) ? enum_LevelType.PerkLottery : GetNextPortal(_mainType, m_Random);
         return new GameLevelPortalData(_mainType, _subType);
     }
 

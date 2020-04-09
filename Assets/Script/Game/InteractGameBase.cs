@@ -26,14 +26,12 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
         base.OnInteractedCheck(_interactor);
         GameObjectManager.PlayMuzzle(_interactor.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
         if (B_SelfRecycleOnInteract)
-            OnRecycle();
+        {
+            SetInteractable(false);
+            GameObjectManager.RecycleInteract(this);
+        }
         return false;
     }
 
-    protected virtual void OnRecycle()
-    {
-        SetInteractable(false);
-        GameObjectManager.RecycleInteract(this);
-    }
 
 }
