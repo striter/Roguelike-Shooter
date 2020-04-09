@@ -117,7 +117,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
         m_DepthSSAO.SetAOEnable(OptionsManager.m_OptionsData.m_Effect>= enum_Option_Effect.High);
         m_Bloom.SetBloomEnable(OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
-        CameraController.Instance.m_Effect.SetCameraRenderMode(OptionsManager.m_OptionsData.m_Effect >= enum_Option_Effect.Medium );
+        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect >= enum_Option_Effect.Medium );
     }
 
     protected void SetPostEffect_Dead()
