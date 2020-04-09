@@ -266,8 +266,7 @@ public class GameManager : GameManagerBase
     void OnGameFinished(bool win)
     {
         m_GameLevel.GameFinished(win);
-        GameDataManager.OnGameFinished(win);
-        GameDataManager.OnCreditStatus(m_GameLevel.F_CreditGain);
+        GameDataManager.OnGameResult(m_GameLevel);
         GameUIManager.Instance.OnGameFinished(m_GameLevel, OnGameExit);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
@@ -499,7 +498,10 @@ public class GameManager : GameManagerBase
         if (blueprintRarity != enum_Rarity.Invalid)
             weaponBlueprint = m_GameLevel.TrySpawnWeaponBlueprint(blueprintRarity);
         if (weaponBlueprint != enum_PlayerWeapon.Invalid)
-            GameObjectManager.SpawnInteract<InteractWeaponBlueprint>(GetPickupPosition(entity), Quaternion.identity).Play(weaponBlueprint);
+        {
+            GameDataManager.OnArmoryBlueprint(weaponBlueprint);
+            GameObjectManager.SpawnInteract<InteractArmoryBlueprint>(GetPickupPosition(entity), Quaternion.identity).Play(weaponBlueprint,false);
+        }
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere()* 1.5f);

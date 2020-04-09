@@ -110,7 +110,7 @@ namespace GameSetting
         GameBegin,
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
         TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, WeaponPickup, PerkSelect,
-        WeaponBlueprint,PerkLottery,PerkShrine,BloodShrine,HealShrine,
+        ArmoryBlueprint,PerkLottery,PerkShrine,BloodShrine,HealShrine,
         Portal,
         GameEnd,
 

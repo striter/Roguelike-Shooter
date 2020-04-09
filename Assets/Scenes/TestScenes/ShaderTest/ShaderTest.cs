@@ -13,8 +13,11 @@ public class ShaderTest : MonoBehaviour
     PE_DepthSSAO m_DepthSSAO;
     void Start ()
     {
+        CameraEffectManager m_Effect = GetComponent<CameraEffectManager>();
+
         //GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect( PE_Blurs.enum_BlurType.AverageBlur);
-        m_DepthSSAO = GetComponent<CameraEffectManager>().GetOrAddCameraEffect<PE_DepthSSAO>();
+        //m_Effect.GetOrAddCameraEffect<CB_GenerateFreeDepthTexture>();
+        m_DepthSSAO = m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>();
         //GetComponent<CameraEffectManager>().SetCameraEffects(DepthTextureMode.Depth);
     }
 

@@ -15,13 +15,14 @@ public class UIGI_TipItem : UIT_GridItem {
         m_Rect = GetComponent<RectTransform>();
     }
 
-    public void ShowTips(string key,enum_UITipsType type,Action<int> _OnPlayFinished)
+    public UIT_TextExtend Play(enum_UITipsType type,Action<int> _OnPlayFinished)
     {
         m_TipText.color = type.TipsColor();
-        m_TipText.localizeKey = key;
         OnPlayFinished = _OnPlayFinished;
         f_timeCheck = 2f;
+        return m_TipText;
     }
+
     private void Update()
     {
         if (f_timeCheck <= 0)

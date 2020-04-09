@@ -25,21 +25,22 @@ public class ShaderTest2 : MonoBehaviour {
         int Width = _Camera.pixelWidth;
         int Height = _Camera.pixelHeight;
 
-        depthTex = new RenderTexture(Width, Height, 0, RenderTextureFormat.RHalf);
-        depthTex.name = "SceneDepthTex";
+        //depthTex = new RenderTexture(Width, Height, 0, RenderTextureFormat.RHalf);
+        //depthTex.name = "SceneDepthTex";
 
         _Camera.SetTargetBuffers(colorRT.colorBuffer, depthRT.depthBuffer);
 
-        _cbDepth = new CommandBuffer();
-        _cbDepth.name = "CommandBuffer_DepthBuffer";
-        _cbDepth.Blit(depthRT.depthBuffer, depthTex.colorBuffer);
-        _cbDepth.SetGlobalTexture("_CameraDepthTexture", depthTex);
-        _Camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, _cbDepth);
+        Shader.SetGlobalTexture("_CameraFreeDepthTexture", depthRT);
+        //_cbDepth = new CommandBuffer();
+        //_cbDepth.name = "CommandBuffer_DepthBuffer";
+        //_cbDepth.Blit(depthRT.depthBuffer, depthTex.colorBuffer);
+        //_cbDepth.SetGlobalTexture("_CameraDepthTexture", depthTex);
+        //_Camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, _cbDepth);
 
     }
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        Graphics.Blit(depthRT, destination);
+        Graphics.Blit(colorRT, destination);
     }
 
     private void OnDestroy()

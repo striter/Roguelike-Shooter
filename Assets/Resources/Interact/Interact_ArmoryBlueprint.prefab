@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 114976746417282348}
   - component: {fileID: 114359031915955250}
   m_Layer: 0
-  m_Name: Interact_WeaponBluePrint
+  m_Name: Interact_ArmoryBlueprint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

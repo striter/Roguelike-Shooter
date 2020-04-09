@@ -253,13 +253,12 @@ public static class GameDataManager
         TGameData<CBattleSave>.Save();
     }
 
-    public static void OnGameFinished(bool win)
+    public static void OnGameResult(GameProgressManager progress)
     {
-        if (win)
-        {
+        if (progress.m_GameWin)
             m_GameData.UnlockDifficulty();
-            OnArmoryBlueprintsIncome(m_BattleData.m_WeaponBlueprints);
-        }
+        OnCreditStatus(progress.F_CreditGain);
+
         TGameData<CBattleSave>.Reset();
         TGameData<CBattleSave>.Save();
     }
@@ -297,27 +296,20 @@ public static class GameDataManager
     public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();
     public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
     public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponBlueprint { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
-    static void OnArmoryBlueprintsIncome(List<enum_PlayerWeapon> weapons)
+    public static void OnArmoryBlueprint(enum_PlayerWeapon weapon)
     {
-        if (weapons.Count == 0)
-            return;
-
-        weapons.Traversal((enum_PlayerWeapon weapon) =>
+        if (m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
         {
-            if (m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
-            {
-                Debug.LogError("Error!Weapon Unlocked  Contains" + weapon);
-                return;
-            }
+            Debug.LogError("Error!Weapon Unlocked  Contains" + weapon);
+            return;
+        }
 
-            if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
-            {
-                Debug.LogError("Error!Weapon Blueprint Contains" + weapon);
-                return;
-            }
-
-            m_ArmoryData.m_WeaponBlueprints.Add(weapon);
-        });
+        if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
+        {
+            Debug.LogError("Error!Weapon Blueprint Contains" + weapon);
+            return;
+        }
+        m_ArmoryData.m_WeaponBlueprints.Add(weapon);
         TGameData<CArmoryData>.Save();
         AdjustArmoryDataStatus();
     }
