@@ -29,9 +29,9 @@ public class InteractWeaponPickup : InteractGameBase {
         m_Weapon.DoItemRecycle();
         m_Weapon = null;
     }
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactTarget)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactTarget)
     {
-        base.OnInteractedCheck(_interactTarget);
+        base.OnInteractedContinousCheck(_interactTarget);
         m_Weapon = _interactTarget.ObtainWeapon(m_Weapon);
         if (!m_Weapon)
             return false;

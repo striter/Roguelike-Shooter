@@ -13,9 +13,9 @@ public class InteractArmoryBlueprint : InteractPickup {
         m_Weapon = weapon;
     }
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         UIManager.Instance.m_Indicate.NewTip(enum_UITipsType.Normal).formatKey("UI_Game_Blueprint",m_Weapon.GetLocalizeNameKey());
-        return base.OnInteractedCheck(_interactor);
+        return base.OnInteractedContinousCheck(_interactor);
     }
 }

@@ -14,9 +14,9 @@ public class InteractPerkShrine : InteractGameBase {
         m_TradePrice = GameExpression.GetPerkShrinePrice(m_TryCount);
     }
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         m_TryCount++;
         m_TradePrice = GameExpression.GetPerkShrinePrice(m_TryCount);
         enum_Rarity rarity = TCommon.RandomPercentage(GameConst.D_PerkShrineRate, enum_Rarity.Invalid);

@@ -60,7 +60,7 @@ public class UIC_PlayerInteract : UIControlBase
         int tradePrice = -1;
         if (m_interact != null)
         {
-            tradePrice = m_interact.m_TradePrice;
+            tradePrice = m_interact.m_InteractType.IsGameInteract()?(m_interact as InteractGameBase) .m_TradePrice:0;
             switch (m_interact.m_InteractType)
             {
                 default:
@@ -115,7 +115,7 @@ public class UIC_PlayerInteract : UIControlBase
         tf_Weapon.SetActivate(isWeapon);
         m_weaponData.transform.SetActivate(isWeapon);
         m_EquipmentData.transform.SetActivate(isAction);
-        bool tradeItem = price >= 0;
+        bool tradeItem = price > 0;
         tf_TradeBottom.SetActivate(tradeItem);
         m_TradePrice.text = price.ToString();
         LayoutRebuilder.ForceRebuildLayoutImmediate(tf_Container as RectTransform);

@@ -12,9 +12,9 @@ public class InteractSafeCrack : InteractGameBase {
         return this;
     }
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
 
         for(int i=0;i<GameConst.I_EventSafeCoinsCount;i++)
         GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position + TCommon.RandomXZCircle(), Quaternion.identity).Play(GameConst.I_EventSafeCoinsAmount, true);

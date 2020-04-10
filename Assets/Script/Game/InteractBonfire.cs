@@ -25,9 +25,9 @@ public class InteractBonfire : InteractGameBase {
         return this;
     }
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         m_Interactor = _interactor;
         GameUIManager.Instance.ShowPage<UI_BonfireSelection>(true, 0f).Play(OnBonfireSelect);
         return false;

@@ -11,9 +11,9 @@ public class InteractCampArmory : InteractCampBase {
         base.Awake();
         m_CameraPos = transform.Find("CameraPos");
     }
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         CampManager.Instance.OnArmoryInteract(m_CameraPos);
         return true;
     }

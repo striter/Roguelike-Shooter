@@ -23,9 +23,9 @@ public class InteractTradeContainer : InteractGameBase {
 
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=>base.OnTryInteractCheck(_interactor) &&  m_TradeInteract.TryInteract(_interactor); 
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         return false;
     }
 

@@ -56,7 +56,6 @@ namespace GameSetting
                 case enum_LevelType.NormalBattle:
                 case enum_LevelType.StageFinalBattle:
                     return "GameLevel_Icon_" + type; 
-
             }
         }
 

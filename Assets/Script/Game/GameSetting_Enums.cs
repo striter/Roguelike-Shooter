@@ -114,7 +114,7 @@ namespace GameSetting
         Portal,
         GameEnd,
 
-        CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard, CampEnd,
+        CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampEquipmentDepot, CampEnd,
     }
 
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -217,6 +217,8 @@ namespace GameSetting
                 case enum_HitCheck.Interact: return GameLayer.I_Interact;
             }
         }
+
+        public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
 
         public static bool IsBattleLevel(this enum_LevelType levelType)
         {

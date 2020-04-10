@@ -12,9 +12,9 @@ public class InteractWeaponRecycle : InteractGameBase {
     }
 
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=> base.OnTryInteractCheck(_interactor)&& _interactor.m_Weapon1 && _interactor.m_Weapon2;
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         WeaponBase weapon = _interactor.RecycleWeapon();
         weapon.DoItemRecycle();
         _interactor.m_CharacterInfo.OnCoinsGain(GameConst.D_EventWeaponRecyclePrice[weapon.m_WeaponInfo.m_Rarity]);

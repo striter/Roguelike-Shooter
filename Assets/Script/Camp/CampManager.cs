@@ -16,7 +16,7 @@ public class CampManager : GameManagerBase
     public static CampManager nInstance;
     public static new CampManager Instance => nInstance;
     Transform tf_PlayerStart,tf_CameraAttach;
-    EntityCharacterPlayer m_player;
+    public EntityCharacterPlayer m_LocalPlayer { get; private set; }
     protected override void Awake()
     {
         nInstance = this;
@@ -33,8 +33,8 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
-        m_player = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_CameraAttach.position = m_player.transform.position;
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,tf_PlayerStart.position, tf_PlayerStart.rotation);
+        tf_CameraAttach.position = m_LocalPlayer.transform.position;
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
@@ -42,7 +42,7 @@ public class CampManager : GameManagerBase
 
     private void Update()
     {
-        tf_CameraAttach.position = m_player.transform.position;
+        tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
 
     public void OnGameSceneInteract()

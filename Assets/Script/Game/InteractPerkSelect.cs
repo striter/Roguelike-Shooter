@@ -23,9 +23,9 @@ public class InteractPerkSelect : InteractGameBase
     }
 
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         m_Particles.Stop();
         GameUIManager.Instance.ShowPage<UI_PerkSelect>(true, .5f).Show(m_PerkIDs,_interactor.m_CharacterInfo.OnActionPerkAcquire);
         return false;
