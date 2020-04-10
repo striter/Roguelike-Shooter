@@ -74,6 +74,7 @@ public class UI_Armory : UIPage {
         if (m_Unlocked)
             GameDataManager.OnArmorySelect(m_SelectingWeapon);
 
+        CampManager.Instance.m_LocalPlayer.ReforgeWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(m_SelectingWeapon)));
         OnWeaponClick(m_SelectingWeapon);
     }
 

@@ -321,6 +321,7 @@ public static class GameDataManager
         OnCreditStatus(-GetArmoryUnlockPrice(weapon));
         m_ArmoryData.m_WeaponBlueprints.Remove(weapon);
         m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
+        m_ArmoryData.m_WeaponSelected = weapon;
         TGameData<CArmoryData>.Save();
         InitArmory();
     }

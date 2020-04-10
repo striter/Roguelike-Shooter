@@ -259,24 +259,24 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         return recycleWeapon;
     }
 
-    public WeaponBase ReforgeWeapon(WeaponBase _reforceWeapon)
+    public void ReforgeWeapon(WeaponBase _reforgeWeapon)
     {
-        _reforceWeapon.OnAttach(this, _reforceWeapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
+        _reforgeWeapon.OnAttach(this, _reforgeWeapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
         WeaponBase exchangeWeapon = m_WeaponCurrent;
         m_WeaponCurrent.OnDetach();
         if (m_weaponEquipingFirst)
         {
-            m_Weapon1 = _reforceWeapon;
+            m_Weapon1 = _reforgeWeapon;
             OnSwapWeapon(true);
         }
         else
         {
-            m_Weapon2 = _reforceWeapon;
+            m_Weapon2 = _reforgeWeapon;
             OnSwapWeapon(false);
         }
-        return exchangeWeapon;
+        exchangeWeapon.DoItemRecycle();
     }
-
+    
     void OnSwapWeapon(bool isFirst)
     {
         if (m_WeaponCurrent)
