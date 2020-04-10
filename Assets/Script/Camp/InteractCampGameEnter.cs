@@ -7,7 +7,7 @@ public class InteractCampGameEnter : InteractCampBase
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        CampManager.Instance.OnGameSceneInteract();
+        CampManager.Instance.OnStartGameInteract();
         return false;
     }
 }

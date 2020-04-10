@@ -191,7 +191,7 @@ namespace GameSetting
         }
         public virtual void SetInfo(ExpirePerkBase equipmentInfo)
         {
-            m_Image.sprite = GameUIManager.Instance.m_ActionSprites[equipmentInfo.m_Index.ToString()];
+            m_Image.sprite = GameUIManager.Instance.m_ExpireSprites[equipmentInfo.m_Index.ToString()];
             m_Rarity.SetRarity(equipmentInfo.m_Rarity);
         }
     }

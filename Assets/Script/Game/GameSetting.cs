@@ -256,8 +256,11 @@ namespace GameSetting
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this EntityExpirePreset buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this ExpirePerkBase action) => "Action_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this ExpirePerkBase action) => "Action_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this ExpirePerkBase action) => "Perk_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this ExpirePerkBase action) => "Perk_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Name_" + equipment.m_Index;
+        public static string GetIntroLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Name_" + equipment.m_Index;
+        public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
         public static string GetLocalizeKey(this enum_Stage stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_LevelType type) => "UI_Level_" + type + "_Name";
@@ -463,8 +466,8 @@ namespace GameSetting
     public class CEquipmentDepotData:ISave
     {
         public List<EquipmentSaveData> m_Equipments;
-        public List<int> m_Selections;
-
+        public List<int> m_Equpping;
+        public List<int> m_Locking;
         public CEquipmentDepotData()
         {
             m_Equipments = new List<EquipmentSaveData>() {
@@ -473,14 +476,15 @@ namespace GameSetting
                 new EquipmentSaveData(20002,0, enum_Rarity.Advanced,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.Health,20),new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,5)}),
                 new EquipmentSaveData(20001,5, enum_Rarity.Rare,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.Armor,50),new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,10)}),
             };
-            m_Selections = new List<int>() {0,1,3};
+            m_Equpping = new List<int>() {0,1,3};
+            m_Locking = new List<int>() { 3 };
         }
 
         public List<EquipmentSaveData> GetSelectedEquipments()
         {
             List<EquipmentSaveData> datas = new List<EquipmentSaveData>();
-            for (int i = 0; i < m_Selections.Count; i++)
-                datas.Add(m_Equipments[m_Selections[i]]);
+            for (int i = 0; i < m_Equpping.Count; i++)
+                datas.Add(m_Equipments[m_Equpping[i]]);
             return datas;
         }
 
@@ -558,10 +562,11 @@ namespace GameSetting
     public struct EquipmentSaveData:IXmlPhrase
     {
         public int m_Index { get; private set; }
-        public int m_Level { get; private set; }
+        public int m_Enhance { get; private set; }
+        public int m_AcquireStamp { get; private set; }
         public enum_Rarity m_Rarity { get; private set; }
         public List<EquipmentEntrySaveData> m_Entries { get; private set; }
-        public EquipmentSaveData(int index,int level, enum_Rarity rarity, List<EquipmentEntrySaveData> entries){ m_Index = index;m_Level = level; m_Rarity = rarity; m_Entries = entries; }
+        public EquipmentSaveData(int index,int level, enum_Rarity rarity, List<EquipmentEntrySaveData> entries){ m_Index = index;m_Enhance = level; m_Rarity = rarity; m_AcquireStamp = TTime.TTimeTools.GetTimeStampNow(); m_Entries = entries; }
     }
 
     public struct EquipmentEntrySaveData :IXmlPhrase

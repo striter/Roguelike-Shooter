@@ -10,7 +10,7 @@ public class CampManager : GameManagerBase
         base.AddConsoleBinding();
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Plus, "100", (string value) => { OnCreditStatus(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Minus, "-50", (string value) => { OnCreditStatus(int.Parse(value)); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Plus,OnGameSceneInteract);
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Plus,OnStartGameInteract);
     }
     #endregion
     public static CampManager nInstance;
@@ -33,7 +33,7 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,tf_PlayerStart.position, tf_PlayerStart.rotation);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(new CPlayerBattleSave(),tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
@@ -45,9 +45,10 @@ public class CampManager : GameManagerBase
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
 
-    public void OnGameSceneInteract()
+    public void OnStartGameInteract()
     {
         OnPortalEnter(1f, tf_CameraAttach, () => {
+            GameDataManager.OnNewGame();
             LoadingManager.Instance.ShowLoading(enum_Stage.Rookie);
             SwitchScene( enum_Scene.Game);
         });
@@ -59,7 +60,14 @@ public class CampManager : GameManagerBase
             return;
 
         AttachSceneCamera(cameraPos);
-        CampUIManager.Instance.ShowPage<UI_Armory>(true, ResetPlayerCamera, .1f).Play();
+        CampUIManager.Instance.ShowPage<UI_Armory>(true, ResetPlayerCamera, .1f);
+    }
+
+    public void OnEquipmentDepotInteract()
+    {
+        if (UIPageBase.m_PageOpening)
+            return;
+        CampUIManager.Instance.ShowPage<UI_EquipmentDepot>(true, 1f);
     }
 
     public bool OnAcquireDailyRewardInteract()=>GameDataManager.OnDailyRewardRequire();

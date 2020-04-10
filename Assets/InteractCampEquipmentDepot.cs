@@ -8,7 +8,7 @@ public class InteractCampEquipmentDepot : InteractCampBase {
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-
+        CampManager.Instance.OnEquipmentDepotInteract();
         return true;
     }
 }

@@ -18,9 +18,10 @@ public class UI_Armory : UIPage {
         m_ButtonTitle = m_UnlockButton.GetComponentInChildren<Text>();
         m_Title = rtf_Container.Find("Title").GetComponent<Text>();
         m_UnlockButton.onClick.AddListener(OnUnlockButtonClick);
+        InitArmory();
     }
 
-    public void Play()
+    void InitArmory()
     {
         m_UnlockedGrid.ClearGrid();
         m_BlueprintGrid.ClearGrid();
@@ -34,6 +35,7 @@ public class UI_Armory : UIPage {
         });
         OnWeaponClick(enum_PlayerWeapon.Invalid);
     }
+
 
     bool m_Blueprint=false;
     bool m_Unlocked=false;
@@ -69,7 +71,10 @@ public class UI_Armory : UIPage {
     void OnUnlockButtonClick()
     {
         if (m_Blueprint)
+        {
             GameDataManager.OnArmoryUnlock(m_SelectingWeapon);
+            InitArmory();
+        }
 
         if (m_Unlocked)
             GameDataManager.OnArmorySelect(m_SelectingWeapon);

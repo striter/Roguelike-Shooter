@@ -251,6 +251,12 @@ public static class GameDataManager
         InitEquipment();
     }
     #region GameSave
+    public static void OnNewGame()
+    {
+        TGameData<CPlayerBattleSave>.Reset();
+        TGameData<CPlayerBattleSave>.Save();
+    }
+
     public static void StageFinishSaveData(EntityCharacterPlayer data, GameProgressManager level)
     {
         m_BattleData.Adjust(data, level);
