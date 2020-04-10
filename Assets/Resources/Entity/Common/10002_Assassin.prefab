@@ -1058,14 +1058,14 @@ MonoBehaviour:
   I_DefaultArmor: 100
   F_MovementSpeed: 8
   F_AttackSpread: 0
-  F_AbilityCooldown: 1
-  F_AbilityAttackRange: 5
-  F_AbilityAttackDuration: 0.2
-  P_NormalFinishPercentage: 25
-  P_EliteFinishPercentage: 15
+  F_AssasinTriggerCooldown: 1
+  F_AssassinttackRange: 15
+  F_AssassinAttackDuration: 0.2
+  F_normalFinish: 0.25
+  F_eliteFInish: 0.15
   F_AbilityDamagePerStack: 20
   I_MaxAbilityDamageStack: 5
-  F_AbilityDamageStackExpireDuration: 20
+  F_AssassinDamageStackResetDuration: 20
 --- !u!135 &135432215870104796
 SphereCollider:
   m_ObjectHideFlags: 1

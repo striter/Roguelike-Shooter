@@ -40,13 +40,13 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_WeaponVendorMachineRarePrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 5 }, { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 45 }, { enum_Rarity.Epic, 30 } };
-        public const int I_EventPerkLotteryPrice = 5;
+        public const int I_EventPerkLotteryPrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
         public const int I_EventPerkRarePrice = 10;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkNormalPrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
         public const int I_EventPerkSelectRarePrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRareRate = new Dictionary<enum_Rarity, int>() { {enum_Rarity.Advanced,20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
-        public const int I_EventPerkSelectNormalPrice = 5;
+        public const int I_EventPerkSelectNormalPrice = 25;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 35 }, { enum_Rarity.Rare, 15 } };
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkFillRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced , 30 }, { enum_Rarity.Rare, 8 },{ enum_Rarity.Epic,2} };
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
