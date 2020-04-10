@@ -35,7 +35,7 @@ namespace GameSetting
         public const float F_DangerzoneResetDuration = 2f;
 
         public static readonly Dictionary<enum_Rarity, RangeInt> D_EventWeaponTradePrice = new Dictionary<enum_Rarity, RangeInt>() { { enum_Rarity.Ordinary, new RangeInt(5, 5) }, { enum_Rarity.Advanced, new RangeInt(10, 5) }, { enum_Rarity.Rare, new RangeInt(20, 5) }, { enum_Rarity.Epic, new RangeInt(30, 5) } };
-        
+
         public const int I_WeaponVendorMachineNormalPrice = 10;
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_WeaponVendorMachineRarePrice = 15;
@@ -45,10 +45,10 @@ namespace GameSetting
         public const int I_EventPerkRarePrice = 10;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkNormalPrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Rare, 70 }, { enum_Rarity.Epic, 30 } };
         public const int I_EventPerkSelectRarePrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRareRate = new Dictionary<enum_Rarity, int>() { {enum_Rarity.Advanced,20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRareRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
         public const int I_EventPerkSelectNormalPrice = 25;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectNormalRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 35 }, { enum_Rarity.Rare, 15 } };
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkFillRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced , 30 }, { enum_Rarity.Rare, 8 },{ enum_Rarity.Epic,2} };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkFillRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 60 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 8 }, { enum_Rarity.Epic, 2 } };
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
         public const int I_EventWeaponReforgeSecondPrice = 10;
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
@@ -113,8 +113,48 @@ namespace GameSetting
             public const int I_AIIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
-        public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f}, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f }, };
+
+        #region Cultivate
+        public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
+
+        public static readonly Dictionary<enum_Rarity, float> m_EquipmentGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
+        #region Entry
+        public static readonly Dictionary<enum_Rarity, Dictionary<int, int>> m_EquipmentGenerateEntryCount = new Dictionary<enum_Rarity, Dictionary<int, int>>()  {{ enum_Rarity.Ordinary, new Dictionary<int, int>(){ { 0,50},{ 1,50} } } ,{ enum_Rarity.Advanced, new Dictionary<int, int>(){ { 1,50},{ 2,50} } } ,{ enum_Rarity.Rare, new Dictionary<int, int>(){ { 1,35},{ 2,35},{ 3,30} } } , { enum_Rarity.Epic, new Dictionary<int, int>(){ { 2,50},{ 3,50} } } ,  };
+
+        public static readonly Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>> m_EquipmentEntryStart_Main = new Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>>() {
+            { enum_EquipmentEntryType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,50},{ enum_Rarity.Advanced,70},{ enum_Rarity.Rare,90},{ enum_Rarity.Epic,110} } },
+            { enum_EquipmentEntryType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,30},{ enum_Rarity.Advanced,50},{ enum_Rarity.Rare, 70},{ enum_Rarity.Epic,90} } },
+            { enum_EquipmentEntryType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,12},{ enum_Rarity.Rare, 14},{ enum_Rarity.Epic,16} } },
+            { enum_EquipmentEntryType.CriticalRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,10},{ enum_Rarity.Rare, 15},{ enum_Rarity.Epic,20} } },
+            { enum_EquipmentEntryType.FireRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,20},{ enum_Rarity.Rare, 30},{ enum_Rarity.Epic,40} } },
+            { enum_EquipmentEntryType.Damage,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,20},{ enum_Rarity.Rare, 30},{ enum_Rarity.Epic,40} } } };
+
+        public static readonly Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>> m_EquipmentEntryUpgrade_Main = new Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>>() {
+            { enum_EquipmentEntryType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,14},{ enum_Rarity.Rare, 18},{ enum_Rarity.Epic,22} } },
+            { enum_EquipmentEntryType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,14},{ enum_Rarity.Rare, 18},{ enum_Rarity.Epic,22} } },
+            { enum_EquipmentEntryType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,3},{ enum_Rarity.Rare, 4},{ enum_Rarity.Epic,5} } },
+            { enum_EquipmentEntryType.CriticalRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,2},{ enum_Rarity.Rare, 3},{ enum_Rarity.Epic,4} } },
+            { enum_EquipmentEntryType.FireRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,1.2f},{ enum_Rarity.Rare, 1.4f},{ enum_Rarity.Epic,1.6f} } },
+            { enum_EquipmentEntryType.Damage,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,4},{ enum_Rarity.Rare, 5},{ enum_Rarity.Epic,8} } } };
+
+        public static readonly Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, RangeFloat>> m_EquipmentEntryStart_Sub = new Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, RangeFloat>>() {
+            { enum_EquipmentEntryType.Health,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary,new RangeFloat(25,25)},{ enum_Rarity.Advanced, new RangeFloat(35,35)},{ enum_Rarity.Rare, new RangeFloat(45,45)},{ enum_Rarity.Epic, new RangeFloat(55,55)} } },
+            { enum_EquipmentEntryType.Armor,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(15,15)},{ enum_Rarity.Advanced, new RangeFloat(25,25)},{ enum_Rarity.Rare, new RangeFloat(35,35)},{ enum_Rarity.Epic, new RangeFloat(45,45)} } },
+            { enum_EquipmentEntryType.MovementSpeed,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(6,6)},{ enum_Rarity.Rare, new RangeFloat(7,7)},{ enum_Rarity.Epic, new RangeFloat(8,8)} } },
+            { enum_EquipmentEntryType.CriticalRate,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(2.5f,2.5f)},{ enum_Rarity.Advanced, new RangeFloat(5,5)},{ enum_Rarity.Rare, new RangeFloat(7.5f,7.5f)},{ enum_Rarity.Epic, new RangeFloat(10,10)} } },
+            { enum_EquipmentEntryType.FireRate,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(10,10)},{ enum_Rarity.Rare, new RangeFloat(15,15)},{ enum_Rarity.Epic, new RangeFloat(20,20)} } },
+            { enum_EquipmentEntryType.Damage,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(10,10)},{ enum_Rarity.Rare, new RangeFloat(15,15)},{ enum_Rarity.Epic, new RangeFloat(20, 20) } } } };
+        
+        public static readonly Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>> m_EquipmentEntryUpgrade_Upgrade = new Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>>() {
+            { enum_EquipmentEntryType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,7},{ enum_Rarity.Rare, 9},{ enum_Rarity.Epic,11} } },
+            { enum_EquipmentEntryType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,7},{ enum_Rarity.Rare, 9},{ enum_Rarity.Epic,11} } },
+            { enum_EquipmentEntryType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,3},{ enum_Rarity.Rare, 4},{ enum_Rarity.Epic,5} } },
+            { enum_EquipmentEntryType.CriticalRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,2},{ enum_Rarity.Rare, 3},{ enum_Rarity.Epic,4} } },
+            { enum_EquipmentEntryType.FireRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,1.2f},{ enum_Rarity.Rare, 1.4f},{ enum_Rarity.Epic,1.6f} } },
+            { enum_EquipmentEntryType.Damage,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,4},{ enum_Rarity.Rare, 5},{ enum_Rarity.Epic,8} } } };
+        #endregion
+        #endregion
     }
 
     public static class GameExpression
@@ -470,14 +510,10 @@ namespace GameSetting
         public List<int> m_Locking;
         public CEquipmentDepotData()
         {
-            m_Equipments = new List<EquipmentSaveData>() {
-                new EquipmentSaveData(20000,0, enum_Rarity.Ordinary,new List<EquipmentEntrySaveData>() { new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,10)}) ,
-                new EquipmentSaveData(20001,0, enum_Rarity.Ordinary,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.MovementSpeed,10)}),
-                new EquipmentSaveData(20002,0, enum_Rarity.Advanced,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.Health,20),new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,5)}),
-                new EquipmentSaveData(20001,5, enum_Rarity.Rare,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.Armor,50),new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,10)}),
+            m_Equipments = new List<EquipmentSaveData>() { GameDataManager.RandomRarityEquipment( enum_Rarity.Ordinary), GameDataManager.RandomRarityEquipment( enum_Rarity.Ordinary), GameDataManager.RandomRarityEquipment( enum_Rarity.Advanced), GameDataManager.RandomRarityEquipment( enum_Rarity.Rare), GameDataManager.RandomRarityEquipment( enum_Rarity.Epic),
             };
-            m_Equipping = new List<int>() {0,1,3};
-            m_Locking = new List<int>() { 3 };
+            m_Equipping = new List<int>() {0,1,2};
+            m_Locking = new List<int>() { };
         }
 
         public List<EquipmentSaveData> GetSelectedEquipments()
@@ -968,6 +1004,11 @@ namespace GameSetting
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
         public void AddExtraBuff(int presetBuffID) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(presetBuffID));
 
+        public void AddExtraDamage(float damageMultiply, float damageAdditive)
+        {
+            m_DamageMultiply += damageMultiply;
+            damageAdditive += damageAdditive;
+        }
 
         public DamageInfo(int sourceID, float damage,float _damageMultiply,float _critcalHitMultiply, enum_DamageType type,int extraBuffID)
         {
@@ -1297,9 +1338,8 @@ namespace GameSetting
         protected float F_DamageAdditive = 0f;
 
         protected Vector3 m_prePos;
-
+        public List<ExpireInteractBase> m_ExpireInteracts { get; private set; } = new List<ExpireInteractBase>();
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
-        public List<ExpireEquipmentBase> m_Equipments { get; private set; } = new List<ExpireEquipmentBase>();
         public float m_Coins { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
@@ -1328,12 +1368,12 @@ namespace GameSetting
             bool activated = false;
             _battleSave.m_Equipments.Traversal((EquipmentSaveData equipmentData) => {
                 enum_EquipmentPassitveType equipmentPassiveType = enum_EquipmentPassitveType.Deactivated;
-                if (_battleSave.m_Equipments.FindAll(p => p.m_Index == equipmentData.m_Index).Count==2)
+                if (_battleSave.m_Equipments.FindAll(p => p.m_Index == equipmentData.m_Index).Count == 2)
                 {
                     equipmentPassiveType = activated ? enum_EquipmentPassitveType.ElseActivated : enum_EquipmentPassitveType.Activated;
                     activated = true;
-                }   
-                AddExpire(GameDataManager.CreateEquipment(equipmentPassiveType,equipmentData));
+                }
+                AddExpire(GameDataManager.CreateGameEquipment(equipmentPassiveType, equipmentData));
             });
             _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
@@ -1355,6 +1395,8 @@ namespace GameSetting
         protected override void AddExpire(EntityExpireBase expire)
         {
             base.AddExpire(expire);
+            if (expire.m_ExpireType.IsInteractExpire())
+                m_ExpireInteracts.Add(expire as ExpireInteractBase);
             switch (expire.m_ExpireType)
             {
                 case enum_ExpireType.Perk:
@@ -1367,8 +1409,6 @@ namespace GameSetting
                     break;
                 case enum_ExpireType.Equipment:
                     {
-                        ExpireEquipmentBase targetExpire = expire as ExpireEquipmentBase;
-                        m_Equipments.Add(targetExpire);
                     }
                     break;
             }
@@ -1377,7 +1417,10 @@ namespace GameSetting
         protected override void RemoveExpire(EntityExpireBase expire)
         {
             base.RemoveExpire(expire);
-            switch(expire.m_ExpireType)
+            if(expire.m_ExpireType.IsInteractExpire())
+                m_ExpireInteracts.Remove(expire as ExpireInteractBase);
+
+            switch (expire.m_ExpireType)
             {
                 case enum_ExpireType.Perk:
                     {
@@ -1387,7 +1430,6 @@ namespace GameSetting
                     break;
                 case enum_ExpireType.Equipment:
                     {
-                        m_Equipments.Remove(expire as ExpireEquipmentBase);
                     }
                     break;
             }
@@ -1453,18 +1495,18 @@ namespace GameSetting
             if (F_CoinsCostMultiply < 0) F_CoinsCostMultiply = 0;
         }
         #endregion
-        #region Action Helpers
+        #region Expire Interacts
         public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
             DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, F_DamageMultiply+ randomDamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
-            m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAttack(info); });
+            m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAttack(info); });
             return info;
         }
 
-        public void OnMove(float distance) => m_ExpirePerks.Traversal((ExpirePerkBase perk) => { perk.OnMove(distance); });
-        public void OnAbilityTrigger() => m_ExpirePerks.Traversal((ExpirePerkBase perk) => { perk.OnAbilityTrigger(); });
-        public void OnLevelFinish() => m_ExpirePerks.Traversal((ExpirePerkBase perk) => { perk.OnLevelFinish(); });
+        public void OnMove(float distance) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnMove(distance); });
+        public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAbilityTrigger(); });
+        public void OnLevelFinish() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnLevelFinish(); });
 
         public void OnEntityActivate(EntityBase targetEntity)
         {
@@ -1476,8 +1518,8 @@ namespace GameSetting
                 ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
         }
 
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity)=> m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnBeforeDealtDamage(damageEntity, damageInfo); });
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnBeforeReceiveDamage(damageInfo); });
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
         public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
             base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
@@ -1485,9 +1527,9 @@ namespace GameSetting
             if (damageEntity.m_EntityID == m_Player.m_EntityID)
             {
                 if (amountApply > 0)
-                    m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnAfterReceiveDamage(damageInfo, amountApply); });
+                    m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAfterReceiveDamage(damageInfo, amountApply); });
                 else
-                    m_ExpirePerks.Traversal((ExpirePerkBase action) => { action.OnReceiveHealing(damageInfo, amountApply); });
+                    m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
         #endregion
@@ -1606,7 +1648,31 @@ namespace GameSetting
         }
     }
     
-    public class ExpireEquipmentBase: EntityExpireBase
+    public class ExpireInteractBase:EntityExpireBase
+    {
+        public virtual float m_DamageAdditive => 0;
+        public virtual float m_MaxHealthAdditive => 0;
+        public virtual float m_MaxArmorAdditive => 0;
+
+        public EntityCharacterPlayer m_Attacher { get; private set; }
+        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
+
+        public virtual float Value1 => 0;
+        public virtual float Value2 => 0;
+        public virtual float Value3 => 0;
+
+        public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
+        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnAttack(DamageInfo info) { }
+        public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
+        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
+        public virtual void OnMove(float distsance) { }
+        public virtual bool OnCheckRevive() { return false; }
+        public virtual void OnAbilityTrigger() { }
+        public virtual void OnLevelFinish() { }
+    }
+
+    public class ExpireEquipmentBase: ExpireInteractBase
     {
         public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Equipment;
         public enum_EquipmentPassitveType m_PassiveActivateType { get; private set; }
@@ -1622,10 +1688,10 @@ namespace GameSetting
         public override float m_CriticalRateAdditive => m_EntryCriticalRateAdditive;
         public override float m_MovementSpeedMultiply => m_EntryMovementSpeedAdditive;
         public override float m_FireRateMultiply => m_EntryFireRateAdditive;
-        public virtual float m_MaxArmorAdditive => m_EntryArmorAdditive;
-        public virtual float m_MaxHealthAdditive => m_EntryHealthAdditive;
-        public virtual float m_DamageAdditive => m_EntryHealthAdditive;
-
+        public override float m_MaxArmorAdditive => m_EntryArmorAdditive;
+        public override float m_MaxHealthAdditive => m_EntryHealthAdditive;
+        public override float m_DamageAdditive => m_EntryHealthAdditive;
+        
         public ExpireEquipmentBase(enum_EquipmentPassitveType passiveActivate, EquipmentSaveData data)
         {
             m_PassiveActivateType = passiveActivate;
@@ -1646,7 +1712,7 @@ namespace GameSetting
         }
     }
 
-    public class ExpirePerkBase: EntityExpireBase
+    public class ExpirePerkBase: ExpireInteractBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Perk;
         public virtual enum_Rarity m_Rarity { get; private set; } = enum_Rarity.Invalid;
@@ -1657,16 +1723,8 @@ namespace GameSetting
         public virtual float m_RecordData { get; protected set; }
         public ExpirePerkBase(PerkSaveData data) { m_Stack = data.m_PerkStack; m_RecordData = data.m_RecordData; }
         
-        public EntityCharacterPlayer m_Attacher { get; private set; }
-        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
         public void OnStackUp() => m_Stack++;
 
-        public virtual float Value1 => 0;
-        public virtual float Value2 => 0;
-        public virtual float Value3 => 0;
-        public virtual float m_DamageAdditive => 0;
-        public virtual float m_MaxHealthAdditive => 0;
-        public virtual float m_MaxArmorAdditive => 0;
         public virtual float F_SpreadReduction => 0;
         public virtual float F_AimPressureReduction => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
@@ -1677,18 +1735,6 @@ namespace GameSetting
         public virtual float F_AimRangeAdditive => 0;
         public virtual float F_AllyHealthMultiplierAdditive => 0;
         public virtual float F_Discount => 0f;
-
-        #region Interact
-        public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
-        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
-        public virtual void OnAttack(DamageInfo info) { }
-        public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
-        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
-        public virtual void OnMove(float distsance) { }
-        public virtual bool OnCheckRevive() { return false; }
-        public virtual void OnAbilityTrigger() { }
-        public virtual void OnLevelFinish() { }
-        #endregion
     }
 
     #endregion

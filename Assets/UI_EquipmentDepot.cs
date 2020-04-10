@@ -32,7 +32,7 @@ public class UI_EquipmentDepot : UIPage {
         m_RightBtnText = rtf_Container.Find("RightBtn/Text").GetComponent<Text>();
         SetUpgrading(false);
         UpdateEquipments();
-        UpdateBtnStatus();
+        OnEquipmentClick(0);
     }
 
     void OnLeftButtonClick() => SetUpgrading(!m_Upgrading);

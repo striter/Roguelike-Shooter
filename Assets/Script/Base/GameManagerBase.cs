@@ -241,14 +241,16 @@ public static class GameDataManager
         Properties<SBuff>.Init();
         SheetProperties<SEnermyGenerate>.Init();
 
+        InitPerks();
+        InitArmory();
+        InitEquipment();
+
         TGameData<CGameSave>.Init();
         TGameData<CEquipmentDepotData>.Init();
         TGameData<CArmoryData>.Init();
         TGameData<CPlayerBattleSave>.Init();
 
-        InitPerks();
-        InitArmory();
-        InitEquipment();
+        InitArmoryGameWeaponUnlocked();
     }
     #region GameSave
     public static void OnNewGame()
@@ -305,6 +307,33 @@ public static class GameDataManager
     #region ArmoryData
     public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();
     public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
+
+    static void InitArmory()
+    {
+        m_AvailableWeapons.Clear();
+
+        Properties<SWeapon>.PropertiesList.Traversal((SWeapon weapon) =>
+        {
+            if (weapon.m_Hidden)
+                return;
+            m_AvailableWeapons.Add(weapon.m_Weapon, weapon);
+        });
+    }
+
+    static void InitArmoryGameWeaponUnlocked()
+    {
+        m_GameWeaponUnlocked.Clear();
+        m_AvailableWeapons.Traversal((SWeapon weapon) =>
+        {
+            if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon.m_Weapon))
+                return;
+            if (!m_GameWeaponUnlocked.ContainsKey(weapon.m_Rarity))
+                m_GameWeaponUnlocked.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());
+            m_GameWeaponUnlocked[weapon.m_Rarity].Add(weapon.m_Weapon);
+        });
+    }
+
+
     public static float GetArmoryUnlockPrice(enum_PlayerWeapon weapon)=> GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
     public static bool CanArmoryUnlock(enum_PlayerWeapon weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
     public static void OnArmoryUnlock(enum_PlayerWeapon weapon)
@@ -329,7 +358,7 @@ public static class GameDataManager
         m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
         m_ArmoryData.m_WeaponSelected = weapon;
         TGameData<CArmoryData>.Save();
-        InitArmory();
+        InitArmoryGameWeaponUnlocked();
     }
     
     public static void OnArmorySelect(enum_PlayerWeapon weapon)
@@ -347,26 +376,6 @@ public static class GameDataManager
         m_ArmoryData.m_WeaponSelected = weapon;
         TGameData<CArmoryData>.Save();
     }
-
-    static void InitArmory()
-    {
-        m_AvailableWeapons.Clear();
-        m_GameWeaponUnlocked.Clear();
-
-        Properties<SWeapon>.PropertiesList.Traversal((SWeapon weapon) =>
-        {
-            if (weapon.m_Hidden)
-                return;
-            m_AvailableWeapons.Add(weapon.m_Weapon,weapon);
-
-            if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon.m_Weapon))
-                return;
-            if (!m_GameWeaponUnlocked.ContainsKey(weapon.m_Rarity))
-                m_GameWeaponUnlocked.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());
-            m_GameWeaponUnlocked[weapon.m_Rarity].Add(weapon.m_Weapon);
-        });
-    }
-
 
     public static enum_PlayerWeapon UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
     {
@@ -390,7 +399,7 @@ public static class GameDataManager
         {
             m_ArmoryData.m_WeaponBlueprints.Add(bluePrint);
             TGameData<CArmoryData>.Save();
-            InitArmory();
+            InitArmoryGameWeaponUnlocked();
         }
 
         return bluePrint;
@@ -406,12 +415,34 @@ public static class GameDataManager
         }),enum_EquipmentPassitveType.Invalid,new EquipmentSaveData(-1,-1, enum_Rarity.Invalid,new List<EquipmentEntrySaveData>()));
     }
 
-    public static ExpireEquipmentBase CreateEquipment(enum_EquipmentPassitveType passiveType, EquipmentSaveData data)
+    public static ExpireEquipmentBase CreateGameEquipment(enum_EquipmentPassitveType passiveType, EquipmentSaveData data)
     {
         if (!m_AllEquipments.ContainsKey(data.m_Index))
             Debug.LogError("Error Equipment:" + data.m_Index + " ,Does not exist");
         ExpireEquipmentBase equipment = TReflection.CreateInstance<ExpireEquipmentBase>(m_AllEquipments[data.m_Index].GetType(),passiveType, data);
         return equipment;
+    }
+
+    public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
+    {
+        EquipmentSaveData data = new EquipmentSaveData(m_AllEquipments.RandomKey(), 0, rarity, new List<EquipmentEntrySaveData>());
+        int entryCount = TCommon.RandomPercentage(GameConst.m_EquipmentGenerateEntryCount[rarity]);
+        for (int i = 0; i < entryCount; i++)
+            data.AcquireRandomEntry();
+        return data;
+    }
+
+    static void AcquireRandomEntry(this EquipmentSaveData data)
+    {
+        enum_EquipmentEntryType entryType = TCommon.RandomEnumValues<enum_EquipmentEntryType>();
+        float startValue = data.m_Entries.Count == 0 ? GameConst.m_EquipmentEntryStart_Main[entryType][data.m_Rarity] : GameConst.m_EquipmentEntryStart_Sub[entryType][data.m_Rarity].Random();
+        data.m_Entries.Add(new EquipmentEntrySaveData(entryType,startValue));
+    }
+
+    public static void AcquireEquipment(EquipmentSaveData data)
+    {
+        m_EquipmentDepotData.m_Equipments.Add(data);
+        TGameData<CEquipmentDepotData>.Save();
     }
 
     public static void DoEquipmentEquip(int equipmentIndex,bool equip)

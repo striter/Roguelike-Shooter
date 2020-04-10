@@ -110,7 +110,8 @@ namespace GameSetting
         GameBegin,
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
         TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, WeaponPickup, PerkSelect,
-        ArmoryBlueprint,PerkLottery,PerkShrine,BloodShrine,HealShrine,
+        PerkLottery,PerkShrine,BloodShrine,HealShrine,
+        PickupArmoryBlueprint,PickupEquipment,
         Portal,
         GameEnd,
 
@@ -217,6 +218,8 @@ namespace GameSetting
                 case enum_HitCheck.Interact: return GameLayer.I_Interact;
             }
         }
+
+        public static bool IsInteractExpire(this enum_ExpireType type) => type == enum_ExpireType.Equipment || type == enum_ExpireType.Perk;
 
         public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
 
