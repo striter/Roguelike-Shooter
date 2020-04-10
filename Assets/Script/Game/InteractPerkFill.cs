@@ -12,9 +12,9 @@ public class InteractPerkFill : InteractGameBase {
         m_PerkIDs = perkIDs;
         return this;
     }
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         m_PerkIDs.Traversal((int perkID) => { _interactor.m_CharacterInfo.OnActionPerkAcquire(perkID); });
         return false;
     }

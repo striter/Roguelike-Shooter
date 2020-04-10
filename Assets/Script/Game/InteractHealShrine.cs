@@ -14,9 +14,9 @@ public class InteractHealShrine : InteractGameBase {
         m_TradePrice = GameExpression.GetHealShrinePrice(m_TryCount);
     }
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         m_TryCount++;
         m_TradePrice = GameExpression.GetHealShrinePrice(m_TryCount);
         _interactor.m_HitCheck.TryHit(new DamageInfo(-1, -GameConst.F_HealShrineHealthReceive, enum_DamageType.HealthPenetrate));

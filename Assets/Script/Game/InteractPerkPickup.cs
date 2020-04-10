@@ -17,9 +17,9 @@ public class InteractPerkPickup : InteractGameBase {
     }
 
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         _interactor.m_CharacterInfo.OnActionPerkAcquire(m_PerkID);
         return false;
     }

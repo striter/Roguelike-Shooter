@@ -13,9 +13,9 @@ public class InteractPerkLottery : InteractGameBase {
         m_TradePrice =price;
     }
 
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         GameObjectManager.SpawnInteract<InteractPerkPickup>(transform.position, Quaternion.identity).Play(m_perkID);
         return false;
     }

@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class InteractCampDailyReward : InteractCampBase {
     public override enum_Interaction m_InteractType => enum_Interaction.CampDailyReward;
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         if (CampManager.Instance.OnAcquireDailyRewardInteract())
             GameObjectManager.PlayMuzzle(-1,transform.position,Vector3.up,10021);
         return true;

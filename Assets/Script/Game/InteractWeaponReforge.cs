@@ -13,9 +13,9 @@ public class InteractWeaponReforge : InteractGameBase
         m_ReforgeTime = 0;
         return this;
     }
-    protected override bool OnInteractedCheck(EntityCharacterPlayer _interactor)
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        base.OnInteractedCheck(_interactor);
+        base.OnInteractedContinousCheck(_interactor);
         _interactor.ReforgeWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, null)].RandomItem())))?.DoItemRecycle();
         m_ReforgeTime++;
         if (m_ReforgeTime == 1)

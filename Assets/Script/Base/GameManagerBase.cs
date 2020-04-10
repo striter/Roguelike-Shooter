@@ -324,6 +324,22 @@ public static class GameDataManager
         TGameData<CArmoryData>.Save();
         InitArmory();
     }
+    
+    public static void OnArmorySelect(enum_PlayerWeapon weapon)
+    {
+        if(!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
+        {
+            Debug.LogError("Error! Equipping A Locked Weapon!");
+            return;
+        }
+        if(weapon== m_ArmoryData.m_WeaponSelected)
+        {
+            Debug.LogError("Error! Equipping A Selcted Weapon!");
+            return;
+        }
+        m_ArmoryData.m_WeaponSelected = weapon;
+        TGameData<CArmoryData>.Save();
+    }
 
     static void InitArmory()
     {
