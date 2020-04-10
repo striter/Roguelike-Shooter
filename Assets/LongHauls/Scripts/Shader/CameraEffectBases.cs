@@ -4,11 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+public enum enum_CameraEffectSorting
+{
+    Invalid=-1,
+    Main=1,
+    CommandBuffer=2,
+    PostEffect=3,
+}
+
 public class CameraEffectBase
 {
+    public virtual enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.Invalid;
     public virtual DepthTextureMode m_DepthTextureRequire => DepthTextureMode.None;
     public virtual bool m_DepthToWorldMatrix => false;
-    public virtual bool m_IsPostEffect => false;
+    public virtual bool m_DoGraphicBlitz => false;
     protected CameraEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
     public bool m_Enabled { get; private set; }
@@ -37,12 +46,48 @@ public class CameraEffectBase
     {
     }
 }
+
+#region Main
+public class CM_GenerateFreeDepthTexture : CameraEffectBase
+{
+    public override enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.Main;
+    public override bool m_DoGraphicBlitz => true;
+    readonly int ID_CameraDepthTexture = Shader.PropertyToID("_CameraDepthTexture");
+    private RenderTexture m_depthRT;
+    private RenderTexture m_colorRT;
+    public override void InitEffect(CameraEffectManager _manager)
+    {
+        base.InitEffect(_manager);
+
+        m_depthRT = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 24, RenderTextureFormat.Depth);
+        m_depthRT.name = "MainDepthBuffer";
+        m_colorRT = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 0, RenderTextureFormat.RGB111110Float);
+        m_colorRT.name = "MainColorBuffer";
+        m_Manager.m_Camera.SetTargetBuffers(m_colorRT.colorBuffer, m_depthRT.depthBuffer);
+        Shader.SetGlobalTexture(ID_CameraDepthTexture, m_depthRT);
+    }
+
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        Graphics.Blit(m_colorRT, destination);
+    }
+
+    public override void OnDestroy()
+    {
+        RenderTexture.ReleaseTemporary(m_colorRT);
+        RenderTexture.ReleaseTemporary(m_depthRT);
+        base.OnDestroy();
+    }
+}
+#endregion
+
 #region PostEffect
 public class PostEffectBase: CameraEffectBase
 {
+    public override enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.PostEffect;
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
-    public override bool m_IsPostEffect => true;
+    public override bool m_DoGraphicBlitz => true;
     protected override bool OnCreate()
     {
         m_Material = CreateMaterial(this.GetType());
@@ -461,6 +506,7 @@ public class PE_DepthSSAO : PostEffectBase
 #region CommandBuffer
 public class CommandBufferBase:CameraEffectBase
 {
+    public override enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.CommandBuffer;
     protected CommandBuffer m_Buffer;
     protected virtual CameraEvent m_BufferEvent => 0;
     public override void InitEffect(CameraEffectManager _manager)
@@ -477,33 +523,6 @@ public class CommandBufferBase:CameraEffectBase
     }
 }
 
-public class CB_GenerateFreeDepthTexture:CommandBufferBase
-{
-    readonly int ID_CameraDepthTexture = Shader.PropertyToID("_CameraDepthTexture");
-    protected override CameraEvent m_BufferEvent => CameraEvent.AfterForwardOpaque;
-    private RenderTexture m_depthRT;
-    private RenderTexture m_colorRT;
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-
-        m_depthRT = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 24, RenderTextureFormat.Depth);
-        m_depthRT.name = "MainDepthBuffer";
-        m_colorRT = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 0, RenderTextureFormat.RGB111110Float);
-        m_colorRT.name = "MainColorBuffer";
-        m_Manager.m_Camera.SetTargetBuffers(m_colorRT.colorBuffer, m_depthRT.depthBuffer);
-
-        m_Buffer.Blit(m_colorRT, BuiltinRenderTextureType.CurrentActive);
-        m_Buffer.SetGlobalTexture(ID_CameraDepthTexture, m_depthRT);
-    }
-
-    public override void OnDestroy()
-    {
-        RenderTexture.ReleaseTemporary(m_colorRT);
-        RenderTexture.ReleaseTemporary(m_depthRT);
-        base.OnDestroy();
-    }
-}
 
 public class CB_GenerateOpaqueTexture:CommandBufferBase
 {

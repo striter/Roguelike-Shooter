@@ -15,27 +15,27 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         if(effectBase.m_Supported)
         {
             effectBase.InitEffect(this);
-            m_PostEffects.Add(effectBase);
+            m_CameraEffects.Add(effectBase);
             ResetPostEffectParams();
             return effectBase;
         }
         return null;
     }
 
-    public T GetCameraEffect<T>() where T : CameraEffectBase => m_PostEffects.Find(p => p.GetType() ==typeof(T)) as T;
+    public T GetCameraEffect<T>() where T : CameraEffectBase => m_CameraEffects.Find(p => p.GetType() ==typeof(T)) as T;
     public void RemoveCameraEffect<T>() where T : CameraEffectBase, new()
     {
         T effect = GetCameraEffect<T>();
         if (effect == null)
             return;
 
-        m_PostEffects.Remove(effect);
+        m_CameraEffects.Remove(effect);
         ResetPostEffectParams();
     }
     public void RemoveAllPostEffect()
     {
-        m_PostEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
-        m_PostEffects.Clear();
+        m_CameraEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
+        m_CameraEffects.Clear();
         ResetPostEffectParams();
     }
 
@@ -60,10 +60,10 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     }
     
     #endregion
-    List<CameraEffectBase> m_PostEffects=new List<CameraEffectBase>();
+    List<CameraEffectBase> m_CameraEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
     public bool m_DepthToWorldMatrix { get; private set; } = false;
-    public bool m_PostEffectEnabled { get; private set; } = false;
+    public bool m_DoGraphicBlitz { get; private set; } = false;
     RenderTexture tempTexture1, tempTexture2;
     protected void Awake()
     {
@@ -80,7 +80,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
             CalculateViewProjectionMatrixInverse();
         }
 
-        if(!m_PostEffectEnabled)
+        if(!m_DoGraphicBlitz)
         {
             Graphics.Blit(source, destination);
             return;
@@ -88,13 +88,13 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
 
         tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
         Graphics.Blit(source, tempTexture1);
-        for (int i = 0; i < m_PostEffects.Count; i++)
+        for (int i = 0; i < m_CameraEffects.Count; i++)
         {
-            if (! m_PostEffects[i].m_Enabled)
+            if (! m_CameraEffects[i].m_Enabled)
                 continue;
 
             tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-            m_PostEffects[i].OnRenderImage(tempTexture1,tempTexture2);
+            m_CameraEffects[i].OnRenderImage(tempTexture1,tempTexture2);
             Graphics.Blit(tempTexture2, tempTexture1);
             RenderTexture.ReleaseTemporary(tempTexture2);
         }
@@ -110,15 +110,16 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     void ResetPostEffectParams()
     {
         Shader.SetGlobalInt(m_GlobalCameraDepthTextureMode, (int)m_Camera.depthTextureMode);
-        m_PostEffectEnabled = false;
+        m_CameraEffects.Sort((a, b) => a.m_EffectSorting - b.m_EffectSorting);
+        m_DoGraphicBlitz = false;
         m_DepthToWorldMatrix = false;
-        m_PostEffects.Traversal((CameraEffectBase effectBase) =>
+        m_CameraEffects.Traversal((CameraEffectBase effectBase) =>
         {
             effectBase.OnCheckEffectTextureEnable(m_Camera.depthTextureMode);
             if (!effectBase.m_Enabled)
                 return;
 
-            m_PostEffectEnabled |=effectBase.m_IsPostEffect;
+            m_DoGraphicBlitz |=effectBase.m_DoGraphicBlitz;
             m_DepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
         });
     }

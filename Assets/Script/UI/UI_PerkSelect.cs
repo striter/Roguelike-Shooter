@@ -28,7 +28,7 @@ public class UI_PerkSelect : UIPage
 
         m_Grid.ClearGrid();
         _perks.Traversal((int perk) => {
-            m_Grid.AddItem(perk).SetInfo(PerkDataManager.GetPerkData( perk));
+            m_Grid.AddItem(perk).SetInfo(GameDataManager.GetPerkData( perk));
         });
         m_Grid.OnItemClick(_perks[0]);
     }
@@ -36,7 +36,7 @@ public class UI_PerkSelect : UIPage
     void OnItemSelect(int index)
     {
         m_SelectPerkIndex = index;
-        m_Selecting.SetInfo(PerkDataManager.GetPerkData(m_SelectPerkIndex));
+        m_Selecting.SetInfo(GameDataManager.GetPerkData(m_SelectPerkIndex));
     }
     void OnConfirm()
     {

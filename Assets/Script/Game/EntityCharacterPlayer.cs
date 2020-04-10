@@ -80,18 +80,18 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
-    public void OnPlayerActivate(PlayerSaveData m_saveData)
+    public void OnPlayerActivate(CPlayerBattleSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
-        m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, m_saveData.m_Health >= 0 ? m_saveData.m_Health : I_MaxHealth);
-        m_CharacterInfo.SetInfoData(m_saveData);
+        m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, _battleSave.m_Health >= 0 ? _battleSave.m_Health : I_MaxHealth);
+        m_CharacterInfo.SetInfoData(_battleSave);
 
         m_CharacterRotation = transform.rotation;
         m_Agent.enabled = true;
 
-        ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_Weapon1));
-        if (m_saveData.m_Weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
-            ObtainWeapon(GameObjectManager.SpawnWeapon(m_saveData.m_Weapon2));
+        ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
+        if (_battleSave.m_Weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
+            ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon2));
         OnSwapWeapon(true);
     }
 

@@ -23,7 +23,7 @@ public class InteractPerkShrine : InteractGameBase {
         Debug.Log(rarity);
         if (rarity != enum_Rarity.Invalid)
         {
-            _interactor.m_CharacterInfo.OnActionPerkAcquire(PerkDataManager.RandomPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));
+            _interactor.m_CharacterInfo.OnActionPerkAcquire(GameDataManager.RandomPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));
             GameObjectManager.PlayMuzzle(-1,_interactor.transform.position,Vector3.up, I_MuzzleSuccess);
         }
         return m_TryCount < GameConst.I_PerkShrineTryCountMax;

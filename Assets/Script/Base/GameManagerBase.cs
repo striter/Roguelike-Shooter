@@ -25,7 +25,6 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         TBroadCaster<enum_BC_UIStatus>.Init();
         GameIdentificationManager.Init();
         GameDataManager.Init();
-        PerkDataManager.Init();
         OptionsManager.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
@@ -93,7 +92,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         renderData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        m_DepthSSAO = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect(renderData.c_shadowColor, 2f,15,0.00025f,null,16);
+        m_DepthSSAO = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect(renderData.c_shadowColor, 2f,15,0.00035f,null,16);
         m_Bloom = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
         switch (_levelStyle)
@@ -229,8 +228,10 @@ public static class GameWeaponDataManager
 public static class GameDataManager
 {
     public static CGameSave m_GameData => TGameData<CGameSave>.Data;
-    public static CBattleSave m_BattleData => TGameData<CBattleSave>.Data;
     public static CArmoryData m_ArmoryData=> TGameData<CArmoryData>.Data;
+    public static CEquipmentDepotData m_EquipmentDepotData => TGameData<CEquipmentDepotData>.Data;
+    public static CPlayerBattleSave m_BattleData => TGameData<CPlayerBattleSave>.Data;
+
     public static bool m_Inited { get; private set; } = false;
     public static void Init()
     {
@@ -241,16 +242,19 @@ public static class GameDataManager
         SheetProperties<SEnermyGenerate>.Init();
 
         TGameData<CGameSave>.Init();
-        TGameData<CBattleSave>.Init();
+        TGameData<CEquipmentDepotData>.Init();
         TGameData<CArmoryData>.Init();
+        TGameData<CPlayerBattleSave>.Init();
 
-        AdjustArmoryDataStatus();
+        InitPerks();
+        InitArmory();
+        InitEquipment();
     }
     #region GameSave
     public static void StageFinishSaveData(EntityCharacterPlayer data, GameProgressManager level)
     {
         m_BattleData.Adjust(data, level);
-        TGameData<CBattleSave>.Save();
+        TGameData<CPlayerBattleSave>.Save();
     }
 
     public static void OnGameResult(GameProgressManager progress)
@@ -259,8 +263,8 @@ public static class GameDataManager
             m_GameData.UnlockDifficulty();
         OnCreditStatus(progress.F_CreditGain);
 
-        TGameData<CBattleSave>.Reset();
-        TGameData<CBattleSave>.Save();
+        TGameData<CPlayerBattleSave>.Reset();
+        TGameData<CPlayerBattleSave>.Save();
     }
     #endregion
     #region GameData
@@ -292,7 +296,7 @@ public static class GameDataManager
         return true;
     }
     #endregion
-    #region WeaponData
+    #region ArmoryData
     public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();
     public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
     public static float GetArmoryUnlockPrice(enum_PlayerWeapon weapon)=> GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
@@ -318,10 +322,10 @@ public static class GameDataManager
         m_ArmoryData.m_WeaponBlueprints.Remove(weapon);
         m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
         TGameData<CArmoryData>.Save();
-        AdjustArmoryDataStatus();
+        InitArmory();
     }
 
-    static void AdjustArmoryDataStatus()
+    static void InitArmory()
     {
         m_AvailableWeapons.Clear();
         m_GameWeaponUnlocked.Clear();
@@ -363,10 +367,82 @@ public static class GameDataManager
         {
             m_ArmoryData.m_WeaponBlueprints.Add(bluePrint);
             TGameData<CArmoryData>.Save();
-            AdjustArmoryDataStatus();
+            InitArmory();
         }
 
         return bluePrint;
+    }
+    #endregion
+    #region EquipmentData
+    static Dictionary<int, ExpireEquipmentBase> m_AllEquipments=new Dictionary<int, ExpireEquipmentBase>();
+
+    public static void InitEquipment()
+    {
+        TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentBase perk) => {
+            m_AllEquipments.Add(perk.m_Index, perk);
+        }),enum_EquipmentPassitveType.Invalid,new EquipmentSaveData(-1,-1, enum_Rarity.Invalid,new List<EquipmentEntrySaveData>()));
+    }
+
+    public static ExpireEquipmentBase CreateEquipment(enum_EquipmentPassitveType passiveType, EquipmentSaveData data)
+    {
+        if (!m_AllEquipments.ContainsKey(data.m_Index))
+            Debug.LogError("Error Equipment:" + data.m_Index + " ,Does not exist");
+        ExpireEquipmentBase equipment = TReflection.CreateInstance<ExpireEquipmentBase>(m_AllEquipments[data.m_Index].GetType(),passiveType, data);
+        return equipment;
+    }
+    #endregion
+    #region PerkData
+    static Dictionary<int, ExpirePerkBase> m_AllPerks = new Dictionary<int, ExpirePerkBase>();
+    static Dictionary<enum_Rarity, List<int>> m_PerkRarities = new Dictionary<enum_Rarity, List<int>>();
+    public static void InitPerks()
+    {
+        m_AllPerks.Clear();
+        m_PerkRarities.Clear();
+        TReflection.TraversalAllInheritedClasses(((Type type, ExpirePerkBase perk) => {
+            m_AllPerks.Add(perk.m_Index, perk);
+            if (perk.m_DataHidden)
+                return;
+            if (!m_PerkRarities.ContainsKey(perk.m_Rarity))
+                m_PerkRarities.Add(perk.m_Rarity, new List<int>());
+            m_PerkRarities[perk.m_Rarity].Add(perk.m_Index);
+        }), PerkSaveData.New(-1));
+    }
+    public static int RandomPerk(enum_Rarity rarity, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random = null)
+    {
+        List<int> rarityIDs = m_PerkRarities[rarity].DeepCopy();
+        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Rarity == rarity && perk.m_Stack == perk.m_MaxStack) rarityIDs.Remove(perk.m_Index); });
+        return rarityIDs.RandomItem(random);
+    }
+
+    public static List<int> RandomPerks(int perkCount, Dictionary<enum_Rarity, int> perkGenerate, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random = null)
+    {
+        Dictionary<enum_Rarity, List<int>> _perkIDs = m_PerkRarities.DeepCopy();
+        Dictionary<enum_Rarity, int> _rarities = perkGenerate.DeepCopy();
+
+        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Stack == perk.m_MaxStack) _perkIDs[perk.m_Rarity].Remove(perk.m_Index); });
+
+        List<int> randomIDs = new List<int>();
+        for (int i = 0; i < perkCount; i++)
+        {
+            enum_Rarity rarity = TCommon.RandomPercentage(_rarities, random);
+            if (_perkIDs[rarity].Count == 0)
+                rarity = enum_Rarity.Ordinary;
+
+            int perkID = _perkIDs[rarity].RandomItem(random);
+            _perkIDs[rarity].Remove(perkID);
+            randomIDs.Add(perkID);
+        }
+        return randomIDs;
+    }
+
+    public static ExpirePerkBase GetPerkData(int index) => m_AllPerks[index];
+
+    public static ExpirePerkBase CreatePerk(PerkSaveData data)
+    {
+        if (!m_AllPerks.ContainsKey(data.m_Index))
+            Debug.LogError("Error Perk:" + data.m_Index + " ,Does not exist");
+        ExpirePerkBase equipment = TReflection.CreateInstance<ExpirePerkBase>(m_AllPerks[data.m_Index].GetType(), data);
+        return equipment;
     }
     #endregion
     #region ExcelData
@@ -384,7 +460,7 @@ public static class GameDataManager
             return Properties<SWeapon>.PropertiesList.Find(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetLocalizeNameKey()) == weaponIdentity).m_Weapon;
 
         Debug.LogError("Invalid Player Weapon Found!");
-        return  enum_PlayerWeapon.Invalid;
+        return enum_PlayerWeapon.Invalid;
     }
 
     public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
@@ -403,11 +479,11 @@ public static class GameDataManager
             Debug.LogError("Error Properties Found Of Index:" + index);
         return buff;
     }
-    public static Dictionary<bool,List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage,enum_GameStyle style)
+    public static Dictionary<bool, List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage, enum_GameStyle style)
     {
         int sheetIndex = ((int)style - 1) * 3 + (int)stage - 1;
         Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>() { { true, new List<SEnermyGenerate>() }, { false, new List<SEnermyGenerate>() } };
-        SheetProperties<SEnermyGenerate>.GetPropertiesList(sheetIndex).Traversal((SEnermyGenerate generate)=> {   m_GenerateDic[generate.m_IsFinal].Add(generate); });
+        SheetProperties<SEnermyGenerate>.GetPropertiesList(sheetIndex).Traversal((SEnermyGenerate generate) => { m_GenerateDic[generate.m_IsFinal].Add(generate); });
         return m_GenerateDic;
     }
     #endregion
@@ -491,7 +567,7 @@ public static class GameObjectManager
 
     public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) => character.OnSubCharacterActivate(_flag, spawnerID, startHealth==0?character.I_MaxHealth:startHealth));
 
-    public static EntityCharacterPlayer SpawnEntityPlayer(PlayerSaveData playerSave, Vector3 position, Quaternion rotation) => SpawnEntity((int)playerSave.m_Character, position, rotation, (EntityCharacterPlayer player) => player.OnPlayerActivate(playerSave));
+    public static EntityCharacterPlayer SpawnEntityPlayer( CPlayerBattleSave battleSave, Vector3 position, Quaternion rotation) => SpawnEntity((int)battleSave.m_Character, position, rotation, (EntityCharacterPlayer player) => player.OnPlayerActivate(battleSave));
 
     public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Quaternion rot) => SpawnEntity((int)npc, toPosition, rot, (EntityNPC npcCharacter) => npcCharacter.OnActivate());
 

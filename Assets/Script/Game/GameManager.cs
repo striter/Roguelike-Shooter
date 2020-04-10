@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 public class GameManager : GameManagerBase
 {
     #region Test
-    public string M_TESTSEED = "";
     public bool B_PhysicsDebugGizmos = true;
     protected override void AddConsoleBinding()
     {
@@ -60,8 +59,6 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        if (M_TESTSEED!="")
-            GameDataManager.m_BattleData.m_GameSeed = M_TESTSEED;
         m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_BattleData);
         tf_CameraAttach = transform.Find("CameraAttach");
     }
@@ -125,7 +122,7 @@ public class GameManager : GameManagerBase
         GC.Collect();
         yield return null;
 
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData.m_PlayerData, Vector3.zero, Quaternion.identity);
+        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData, Vector3.zero, Quaternion.identity);
         AttachPlayerCamera(tf_CameraAttach);
         OnLevelStart();
 
@@ -171,12 +168,12 @@ public class GameManager : GameManagerBase
                 switch (m_GameLevel.m_LevelType)
                 {
                     case enum_LevelType.StageStart:
-                         GameObjectManager.SpawnInteract<InteractPerkSelect>(objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkSelectRareRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
+                         GameObjectManager.SpawnInteract<InteractPerkSelect>(objectData.pos, objectData.rot).Play(GameDataManager.RandomPerks(3, GameConst.D_EventPerkSelectRareRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
                         break;
                     case enum_LevelType.Trader:
                         enum_Rarity rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradePerk, m_GameLevel.m_Random);
 
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.left, objectData.rot).Play(GameExpression.GetEventTradePrice( enum_Interaction.PerkPickup,rarity).Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractPerkPickup>( objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerk(rarity, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random)));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.left, objectData.rot).Play(GameExpression.GetEventTradePrice( enum_Interaction.PerkPickup,rarity).Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractPerkPickup>( objectData.pos, objectData.rot).Play(GameDataManager.RandomPerk(rarity, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random)));
 
                         rarity = TCommon.RandomPercentage(m_GameLevel.m_InteractGenerate.m_TradeWeapon, m_GameLevel.m_Random);
                         GameObjectManager.SpawnInteract<InteractTradeContainer>( objectData.pos + LevelConst.I_TileSize * Vector3.forward, objectData.rot).Play(GameConst.D_EventWeaponTradePrice[rarity].Random(m_GameLevel.m_Random), GameObjectManager.SpawnInteract<InteractWeaponPickup>( Vector3.zero,Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[rarity].RandomItem(m_GameLevel.m_Random))));
@@ -202,19 +199,19 @@ public class GameManager : GameManagerBase
                         GameObjectManager.SpawnInteract<InteractSafeCrack>(objectData.pos, objectData.rot).Play();
                         break;
                     case enum_LevelType.PerkFill:
-                        GameObjectManager.SpawnInteract<InteractPerkFill>(objectData.pos, objectData.rot).Play(PerkDataManager.RandomPerks(2,GameConst.D_EventPerkRareRate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
+                        GameObjectManager.SpawnInteract<InteractPerkFill>(objectData.pos, objectData.rot).Play(GameDataManager.RandomPerks(2,GameConst.D_EventPerkRareRate,m_LocalPlayer.m_CharacterInfo.m_ExpirePerks));
                         break;
                     case enum_LevelType.PerkLottery:
-                        GameObjectManager.SpawnInteract<InteractPerkLottery>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkLotteryPrice, PerkDataManager.RandomPerk(TCommon.RandomPercentage(GameConst.D_EventPerkSelectNormalRate), m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random));
+                        GameObjectManager.SpawnInteract<InteractPerkLottery>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkLotteryPrice, GameDataManager.RandomPerk(TCommon.RandomPercentage(GameConst.D_EventPerkSelectNormalRate), m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random));
                         break;
                     case enum_LevelType.PerkRare:
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkRarePrice, GameObjectManager.SpawnInteract<InteractPerkPickup>(Vector3.zero, Quaternion.identity).Play(PerkDataManager.RandomPerk(enum_Rarity.Rare, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random)));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkRarePrice, GameObjectManager.SpawnInteract<InteractPerkPickup>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerk(enum_Rarity.Rare, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random)));
                         break;
                     case enum_LevelType.PerkSelectNormal:
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkSelectNormalPrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkSelectNormalRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkSelectNormalPrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerks(3, GameConst.D_EventPerkSelectNormalRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
                         break;
                     case enum_LevelType.PerkSelectRare:
-                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkSelectRarePrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(PerkDataManager.RandomPerks(3, GameConst.D_EventPerkSelectRareRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
+                        GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkSelectRarePrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerks(3, GameConst.D_EventPerkSelectRareRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
                         break;
                     case enum_LevelType.PerkShrine:
                         GameObjectManager.SpawnInteract<InteractPerkShrine>(objectData.pos, objectData.rot).Play();
@@ -592,7 +589,7 @@ public class GameProgressManager
     public bool m_BattleLevel => m_LevelType.IsBattleLevel();
     public bool m_FinalLevel => m_LevelIndex == GameConst.I_TotalLevelCountPerStage-1;
     #endregion
-    public GameProgressManager(CGameSave _gameSave,CBattleSave _battleSave)
+    public GameProgressManager(CGameSave _gameSave,CPlayerBattleSave _battleSave)
     {
         m_StageIndex = _battleSave.m_Stage;
         m_GameDifficulty = _gameSave.m_GameDifficulty;

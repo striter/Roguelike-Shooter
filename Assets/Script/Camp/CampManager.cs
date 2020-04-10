@@ -33,7 +33,7 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
-        m_player = GameObjectManager.SpawnEntityPlayer(new PlayerSaveData( enum_PlayerCharacter.Beth, enum_PlayerWeapon.P92),tf_PlayerStart.position, tf_PlayerStart.rotation);
+        m_player = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData,tf_PlayerStart.position, tf_PlayerStart.rotation);
         tf_CameraAttach.position = m_player.transform.position;
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);

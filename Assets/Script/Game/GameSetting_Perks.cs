@@ -5,65 +5,65 @@ using System.Collections.Generic;
 
 namespace GameSetting_Action
 {
-    public class P0000Bonefire : ExpirePerkBase
+    public class P10000Bonefire : ExpirePerkBase
     {
-        public override int m_Index => 0;
+        public override int m_Index => 10000;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 50;
         public override float m_MaxHealthAdditive => Value1 * m_Stack;
         public override bool m_DataHidden => true;
-        public P0000Bonefire(PerkSaveData saveData) : base(saveData) { }
+        public P10000Bonefire(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0001 : ExpirePerkBase
+    public class P10001 : ExpirePerkBase
     {
-        public override int m_Index => 0001;
+        public override int m_Index => 10001;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 3.3f;
         public override float m_DamageAdditive => Value1 * m_Stack;
-        public P0001(PerkSaveData saveData) : base(saveData) { }
+        public P10001(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0002 : ExpirePerkBase
+    public class P10002 : ExpirePerkBase
     {
-        public override int m_Index => 0002;
+        public override int m_Index => 10002;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 20f;
         public override float m_FireRateMultiply => Value1 / 100f * m_Stack;
-        public P0002(PerkSaveData saveData) : base(saveData) { }
+        public P10002(PerkSaveData saveData) : base(saveData) { }
     }
 
 
-    public class P0003 : ExpirePerkBase
+    public class P10003 : ExpirePerkBase
     {
-        public override int m_Index => 0003;
+        public override int m_Index => 10003;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 20f;
         public override float m_ReloadRateMultiply => Value1 / 100f * m_Stack;
-        public P0003(PerkSaveData saveData) : base(saveData) { }
+        public P10003(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0004 : ExpirePerkBase
+    public class P10004 : ExpirePerkBase
     {
-        public override int m_Index => 0004;
+        public override int m_Index => 10004;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 10f;
-        public override float m_CriticalChangeAdditive => Value1 / 100f * m_Stack;
-        public P0004(PerkSaveData saveData) : base(saveData) { }
+        public override float m_CriticalRateAdditive => Value1 / 100f * m_Stack;
+        public P10004(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0005 : ExpirePerkBase
+    public class P10005 : ExpirePerkBase
     {
-        public override int m_Index => 0005;
+        public override int m_Index => 10005;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 30f;
         public override float m_CriticalHitMultiplyAdditive => Value1 / 100f * m_Stack;
-        public P0005(PerkSaveData saveData) : base(saveData) { }
+        public P10005(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0006 : ExpirePerkBase
+    public class P10006 : ExpirePerkBase
     {
-        public override int m_Index => 0006;
+        public override int m_Index => 10006;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 10f;
         static readonly List<int> m_BuffID = new List<int>() { 103, 104, 105 };
@@ -76,39 +76,39 @@ namespace GameSetting_Action
                     info.AddExtraBuff(m_BuffID.RandomItem());
             }
         }
-        public P0006(PerkSaveData saveData) : base(saveData) { }
+        public P10006(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0007 : ExpirePerkBase
+    public class P10007 : ExpirePerkBase
     {
-        public override int m_Index => 0007;
+        public override int m_Index => 10007;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 5;
         public override float m_MaxArmorAdditive => Value1 * m_Stack;
-        public P0007(PerkSaveData saveData) : base(saveData) { }
+        public P10007(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0008 : ExpirePerkBase
+    public class P10008 : ExpirePerkBase
     {
-        public override int m_Index => 0008;
+        public override int m_Index => 10008;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 10;
         public override float m_MaxHealthAdditive => Value1 * m_Stack;
-        public P0008(PerkSaveData saveData) : base(saveData) { }
+        public P10008(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0009 : ExpirePerkBase
+    public class P10009 : ExpirePerkBase
     {
-        public override int m_Index => 0009;
+        public override int m_Index => 10009;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 10f;
         public override float m_MovementSpeedMultiply => Value1 / 100f * m_Stack;
-        public P0009(PerkSaveData saveData) : base(saveData) { }
+        public P10009(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0010 : ExpirePerkBase
+    public class P10010 : ExpirePerkBase
     {
-        public override int m_Index => 0010;
+        public override int m_Index => 10010;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 2f;
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
@@ -117,12 +117,12 @@ namespace GameSetting_Action
             if (receiver.m_IsDead)
                 m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,-Value1 * m_Stack, enum_DamageType.Health));
         }
-        public P0010(PerkSaveData saveData) : base(saveData) { }
+        public P10010(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0011 : ExpirePerkBase
+    public class P10011 : ExpirePerkBase
     {
-        public override int m_Index => 0011;
+        public override int m_Index => 10011;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override int m_MaxStack => 1;
         public override float Value1 => 3f;
@@ -146,12 +146,12 @@ namespace GameSetting_Action
                 projectile.Stop();
             });
         }
-        public P0011(PerkSaveData saveData) : base(saveData) { }
+        public P10011(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0012 : ExpirePerkBase
+    public class P10012 : ExpirePerkBase
     {
-        public override int m_Index => 0012;
+        public override int m_Index => 10012;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_EffectIndex => m_TimerActivate.m_Timing ? 40004 : 0;
         public override int m_MaxStack => 1;
@@ -175,12 +175,12 @@ namespace GameSetting_Action
             m_TimerActivate.Tick(deltaTime);
         }
 
-        public P0012(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value1); m_TimerCoolDown = new TimeCounter(Value2); }
+        public P10012(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value1); m_TimerCoolDown = new TimeCounter(Value2); }
     }
 
-    public class P0013 : ExpirePerkBase
+    public class P10013 : ExpirePerkBase
     {
-        public override int m_Index => 0013;
+        public override int m_Index => 10013;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override int m_MaxStack => 1;
         public override float Value1 => 1;
@@ -192,12 +192,12 @@ namespace GameSetting_Action
 
             m_Attacher.m_WeaponCurrent.ForceReloadOnce();
         }
-        public P0013(PerkSaveData saveData) : base(saveData) { }
+        public P10013(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0014 : ExpirePerkBase
+    public class P10014 : ExpirePerkBase
     {
-        public override int m_Index => 0014;
+        public override int m_Index => 10014;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_EffectIndex => m_TimerActivate.m_Timing ? 40004 : 0;
         public override int m_MaxStack => 1;
@@ -217,12 +217,12 @@ namespace GameSetting_Action
             m_TimerActivate.Replay();
         }
 
-        public P0014(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value2); m_TimerCoolDown = new TimeCounter(Value1); }
+        public P10014(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value2); m_TimerCoolDown = new TimeCounter(Value1); }
     }
 
-    public class P0015:ExpirePerkBase
+    public class P10015:ExpirePerkBase
     {
-        public override int m_Index => 0015;
+        public override int m_Index => 10015;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_MaxStack => 1;
         public override bool OnCheckRevive()
@@ -230,12 +230,12 @@ namespace GameSetting_Action
             DoExpire();
             return true;
         }
-        public P0015(PerkSaveData saveData) : base(saveData) { }
+        public P10015(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0016: PerkSFXweapon
+    public class P10016: PerkSFXweapon
     {
-        public override int m_Index => 0016;
+        public override int m_Index => 10016;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_MaxStack => 1;
         public override float Value1 => 50f;
@@ -249,12 +249,12 @@ namespace GameSetting_Action
             m_CurrentDamage = info.m_AmountApply;
             m_SFXWeapon.OnPlay(false, receiver);
         }
-        public P0016(PerkSaveData saveData) : base(saveData) { }
+        public P10016(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0017:PerkSFXweapon
+    public class P10017:PerkSFXweapon
     {
-        public override int m_Index => 0017;
+        public override int m_Index => 10017;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override int m_MaxStack => 1;
         public override float Value1 => 25f;
@@ -266,12 +266,12 @@ namespace GameSetting_Action
                 return;
             m_SFXWeapon.OnPlay(false, receiver);
         }
-        public P0017(PerkSaveData saveData) : base(saveData) { }
+        public P10017(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0018 : ExpirePerkBase
+    public class P10018 : ExpirePerkBase
     {
-        public override int m_Index => 0018;
+        public override int m_Index => 10018;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override int m_MaxStack => 1;
         public override float Value1 => 3f;
@@ -297,19 +297,19 @@ namespace GameSetting_Action
             base.OnTick(deltaTime);
             m_Timer.Tick(deltaTime);
         }
-        public P0018(PerkSaveData saveData) : base(saveData) { m_Timer = new TimeCounter(Value1); }
+        public P10018(PerkSaveData saveData) : base(saveData) { m_Timer = new TimeCounter(Value1); }
     }
 
-    public class P0019:ExpirePerkBase
+    public class P10019:ExpirePerkBase
     {
-        public override int m_Index => 0019;
+        public override int m_Index => 10019;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 40f;
         public override float m_HealAdditive => Value1 / 100f*m_Stack;
-        public P0019(PerkSaveData saveData) : base(saveData) {}
+        public P10019(PerkSaveData saveData) : base(saveData) {}
     }
 
-    public class P0020:ExpirePerkBase
+    public class P10020:ExpirePerkBase
     {
         public override int m_Index => 0020;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
@@ -317,14 +317,14 @@ namespace GameSetting_Action
         public override float Value2 => 20f;
         public override float m_DamageMultiply => Value1 / 100f * m_Stack;
         public override float m_DamageReduction => -Value2 / 100f * m_Stack;
-        public P0020(PerkSaveData saveData) : base(saveData) { }
+        public P10020(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0021:ExpirePerkBase
+    public class P10021:ExpirePerkBase
     {
-        public override int m_Index => 0021;
+        public override int m_Index => 10021;
         public override bool m_DataHidden => true;
-        public P0021(PerkSaveData saveData) : base(saveData) { }
+        public P10021(PerkSaveData saveData) : base(saveData) { }
     }
 
     public class P0022:ExpirePerkBase
@@ -337,27 +337,27 @@ namespace GameSetting_Action
         public P0022(PerkSaveData saveData) : base(saveData) { }
     }
     
-    public class P0023:ExpirePerkBase
+    public class P10023:ExpirePerkBase
     {
-        public override int m_Index => 0023;
+        public override int m_Index => 10023;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 5f;
         public override float m_DamageAdditive => m_Attacher.m_Health.m_HealthFull ? Value1 * m_Stack : 0;
-        public P0023(PerkSaveData saveData) : base(saveData) { }
+        public P10023(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0024:ExpirePerkBase
+    public class P10024:ExpirePerkBase
     {
-        public override int m_Index => 0024;
+        public override int m_Index => 10024;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 3f;
         public override float m_HealthDrainMultiply => Value1 /100f* m_Stack;
-        public P0024(PerkSaveData saveData) : base(saveData) { }
+        public P10024(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0025:ExpirePerkBase
+    public class P10025:ExpirePerkBase
     {
-        public override int m_Index => 0025;
+        public override int m_Index => 10025;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 5f;
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
@@ -366,38 +366,38 @@ namespace GameSetting_Action
             if (receiver.m_IsDead)
                 m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1 * m_Stack, enum_DamageType.Armor));
         }
-        public P0025(PerkSaveData saveData) : base(saveData) { }
+        public P10025(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0026:ExpirePerkBase
+    public class P10026:ExpirePerkBase
     {
-        public override int m_Index => 0026;
+        public override int m_Index => 10026;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 20f;
         public override float m_MovementSpeedMultiply => m_Attacher.m_Aiming ? Value1 / 100f * m_Stack : 0;
-        public P0026(PerkSaveData saveData) : base(saveData) { }
+        public P10026(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0027:ExpirePerkBase
+    public class P10027:ExpirePerkBase
     {
-        public override int m_Index => 0027;
+        public override int m_Index => 10027;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override int m_MaxStack => 1;
         public override float Value1 => 20f;
         public override float F_Discount => Value1 / 100f;
-        public P0027(PerkSaveData saveData) : base(saveData) { }
+        public P10027(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0028:ExpirePerkBase
+    public class P10028:ExpirePerkBase
     {
-        public override int m_Index => 0028;
+        public override int m_Index => 10028;
         public override bool m_DataHidden => true;
-        public P0028(PerkSaveData saveData) : base(saveData) { }
+        public P10028(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0029:ExpirePerkBase
+    public class P10029:ExpirePerkBase
     {
-        public override int m_Index => 0029;
+        public override int m_Index => 10029;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 5f;
         public override void OnLevelFinish()
@@ -405,12 +405,12 @@ namespace GameSetting_Action
             base.OnLevelFinish();
             m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1*m_Stack, enum_DamageType.Health));
         }
-        public P0029(PerkSaveData saveData) : base(saveData) { }
+        public P10029(PerkSaveData saveData) : base(saveData) { }
     }
     
-    public class P0030:PerkSFXweapon
+    public class P10030:PerkSFXweapon
     {
-        public override int m_Index => 0030;
+        public override int m_Index => 10030;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 20f;
         public override float Value2 => 20f;
@@ -423,7 +423,7 @@ namespace GameSetting_Action
 
             m_SFXWeapon.OnPlay(null,m_Attacher.tf_Head.position+ m_Attacher.tf_Head.forward*50f);
         }
-        public P0030(PerkSaveData saveData) : base(saveData) { }
+        public P10030(PerkSaveData saveData) : base(saveData) { }
     }
 
     public class PerkSFXweapon : ExpirePerkBase
@@ -442,60 +442,3 @@ namespace GameSetting_Action
         public PerkSFXweapon(PerkSaveData data):base(data) { }
     }
 }
-#region DataHelper
-public static class PerkDataManager
-{
-    static Dictionary<enum_Rarity, List<int>> m_PerkRarities = new Dictionary<enum_Rarity, List<int>>();
-    static Dictionary<int, ExpirePerkBase> m_AllPerks = new Dictionary<int, ExpirePerkBase>();
-    public static void Init()
-    {
-        m_AllPerks.Clear();
-        m_PerkRarities.Clear();
-        TReflection.TraversalAllInheritedClasses(((Type type, ExpirePerkBase perk) => {
-            m_AllPerks.Add(perk.m_Index, perk);
-            if (perk.m_DataHidden)
-                return;
-            if (!m_PerkRarities.ContainsKey(perk.m_Rarity))
-                m_PerkRarities.Add(perk.m_Rarity, new List<int>());
-            m_PerkRarities[perk.m_Rarity].Add(perk.m_Index);
-        }), PerkSaveData.New(-1));
-    }
-    public static int RandomPerk(enum_Rarity rarity, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random=null)
-    {
-        List<int> rarityIDs = m_PerkRarities[rarity].DeepCopy();
-        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Rarity == rarity && perk.m_Stack == perk.m_MaxStack) rarityIDs.Remove(perk.m_Index); });
-        return rarityIDs.RandomItem(random);
-    }
-
-    public static List<int> RandomPerks(int perkCount,Dictionary<enum_Rarity,int> perkGenerate,Dictionary<int,ExpirePerkBase> playerPerks,System.Random random=null)
-    {
-        Dictionary<enum_Rarity, List<int>> _perkIDs =m_PerkRarities.DeepCopy();
-        Dictionary<enum_Rarity, int> _rarities = perkGenerate.DeepCopy();
-
-        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Stack == perk.m_MaxStack) _perkIDs[perk.m_Rarity].Remove(perk.m_Index); });
-
-        List<int> randomIDs = new List<int>();
-        for (int i = 0; i < perkCount; i++)
-        {
-            enum_Rarity rarity = TCommon.RandomPercentage(_rarities, random);
-            if (_perkIDs[rarity].Count == 0)
-                rarity = enum_Rarity.Ordinary;
-
-            int perkID = _perkIDs[rarity].RandomItem(random);
-            _perkIDs[rarity].Remove(perkID);
-            randomIDs.Add(perkID);
-        }
-        return randomIDs;
-    }
-
-    public static ExpirePerkBase GetPerkData(int index) => m_AllPerks[index];
-
-    public static ExpirePerkBase CreatePerk(PerkSaveData data)
-    {
-        if (!m_AllPerks.ContainsKey(data.m_Index))
-            Debug.LogError("Error Action Equipment:" + data.m_Index + " ,Does not exist");
-        ExpirePerkBase equipment = TReflection.CreateInstance<ExpirePerkBase>(m_AllPerks[data.m_Index].GetType(), data);
-        return equipment;
-    }
-}
-#endregion
