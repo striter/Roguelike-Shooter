@@ -352,7 +352,7 @@ public static class GameDataManager
         {
             if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon) || m_ArmoryData.m_WeaponsUnlocked.Contains(weapon) )
                 return;
-            if (_blueprintAvailable.ContainsKey(weaponData.m_Rarity))
+            if (!_blueprintAvailable.ContainsKey(weaponData.m_Rarity))
                 _blueprintAvailable.Add(weaponData.m_Rarity, new List<enum_PlayerWeapon>());
             _blueprintAvailable[weaponData.m_Rarity].Add(weapon);
         });
