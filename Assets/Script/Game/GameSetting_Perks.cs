@@ -311,7 +311,7 @@ namespace GameSetting_Action
 
     public class P10020:ExpirePerkBase
     {
-        public override int m_Index => 0020;
+        public override int m_Index => 10020;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 20f;
         public override float Value2 => 20f;
