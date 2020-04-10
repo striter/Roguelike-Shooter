@@ -327,14 +327,14 @@ namespace GameSetting_Action
         public P10021(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P0022:ExpirePerkBase
+    public class P10022:ExpirePerkBase
     {
-        public override int m_Index => 0022;
+        public override int m_Index => 10022;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 3f;
         public override float Value2 => 2f;
         public override float m_FireRateMultiply => (m_Attacher.m_Health.m_MaxHealth - m_Attacher.m_Health.m_CurrentHealth) / Value1 * Value2*m_Stack / 100f;
-        public P0022(PerkSaveData saveData) : base(saveData) { }
+        public P10022(PerkSaveData saveData) : base(saveData) { }
     }
     
     public class P10023:ExpirePerkBase
