@@ -466,7 +466,7 @@ namespace GameSetting
     public class CEquipmentDepotData:ISave
     {
         public List<EquipmentSaveData> m_Equipments;
-        public List<int> m_Equpping;
+        public List<int> m_Equipping;
         public List<int> m_Locking;
         public CEquipmentDepotData()
         {
@@ -476,15 +476,15 @@ namespace GameSetting
                 new EquipmentSaveData(20002,0, enum_Rarity.Advanced,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.Health,20),new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,5)}),
                 new EquipmentSaveData(20001,5, enum_Rarity.Rare,new List<EquipmentEntrySaveData>(){ new EquipmentEntrySaveData( enum_EquipmentEntryType.Armor,50),new EquipmentEntrySaveData( enum_EquipmentEntryType.Damage,10)}),
             };
-            m_Equpping = new List<int>() {0,1,3};
+            m_Equipping = new List<int>() {0,1,3};
             m_Locking = new List<int>() { 3 };
         }
 
         public List<EquipmentSaveData> GetSelectedEquipments()
         {
             List<EquipmentSaveData> datas = new List<EquipmentSaveData>();
-            for (int i = 0; i < m_Equpping.Count; i++)
-                datas.Add(m_Equipments[m_Equpping[i]]);
+            for (int i = 0; i < m_Equipping.Count; i++)
+                datas.Add(m_Equipments[m_Equipping[i]]);
             return datas;
         }
 

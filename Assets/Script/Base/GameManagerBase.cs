@@ -413,6 +413,32 @@ public static class GameDataManager
         ExpireEquipmentBase equipment = TReflection.CreateInstance<ExpireEquipmentBase>(m_AllEquipments[data.m_Index].GetType(),passiveType, data);
         return equipment;
     }
+
+    public static void DoEquipmentEquip(int equipmentIndex,bool equip)
+    {
+        if(equip)
+        {
+            if (m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex))
+            {
+                Debug.LogError("Can't Equip Equiped!" + equipmentIndex);
+                return;
+            }
+            if (m_EquipmentDepotData.m_Equipping.Count >= 3)
+                m_EquipmentDepotData.m_Equipping.RemoveAt(0);
+            m_EquipmentDepotData.m_Equipping.Add(equipmentIndex);
+        }
+        else
+        {
+            if (!m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex))
+            {
+                Debug.LogError("Can't Dequip UnEquiped!"+equipmentIndex);
+                return;
+            }
+            m_EquipmentDepotData.m_Equipping.Remove(equipmentIndex);
+        }
+        TGameData<CEquipmentDepotData>.Save();
+    }
+
     #endregion
     #region PerkData
     static Dictionary<int, ExpirePerkBase> m_AllPerks = new Dictionary<int, ExpirePerkBase>();

@@ -68,17 +68,20 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
 
 public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem
 {
-    public UIT_GridControllerGridItemScrollView(Transform _transform) : base(_transform)
+    ScrollRect m_ScrollRect;
+    int m_VisibleCount;
+    public UIT_GridControllerGridItemScrollView(Transform _transform,int visibleCount) : base(_transform.Find("Viewport/Content"))
     {
-
+        m_VisibleCount = visibleCount;
+        m_ScrollRect = _transform.GetComponent<ScrollRect>();
     }
 
-    public void CheckVisible(float verticalNormalized,int visibleSize)
+    public void Tick()
     {
         int total = m_Pool.m_ActiveItemDic.Count;
-        int current = (int)(verticalNormalized * total);
-        int rangeMin = current - visibleSize;
-        int rangeMax = current + visibleSize;
+        int current = (int)(m_ScrollRect.verticalNormalizedPosition * total);
+        int rangeMin = current - m_VisibleCount;
+        int rangeMax = current + m_VisibleCount;
         foreach (int index in m_Pool.m_ActiveItemDic.Keys)
         {
             int position = total  - index;

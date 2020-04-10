@@ -20,8 +20,5 @@ public class UIT_GridItem : MonoBehaviour
     {
     }
 
-    public void SetShowScrollView(bool show)
-    {
-        rtf_Container.SetActivate(show);
-    }
+    public void SetShowScrollView(bool show)=> rtf_Container.SetActivate(show);
 }
