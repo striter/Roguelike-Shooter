@@ -16,9 +16,8 @@ public class UIT_GridItem : MonoBehaviour
     {
         m_Index = _index;
     }
-    public virtual void Reset()
+    public virtual void OnDeactivate()
     {
-        //To Be Continued···
     }
 
     public void SetShowScrollView(bool show)

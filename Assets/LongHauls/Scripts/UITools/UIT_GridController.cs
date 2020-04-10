@@ -54,7 +54,7 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
     public new void RemoveItem(int identity)
     {
         T item = GetItem(identity);
-        item.Reset();
+        item.OnDeactivate();
         base.RemoveItem(identity);
     }
     public void SortChildrenSibling()

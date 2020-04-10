@@ -13,7 +13,7 @@ public class UIGI_EquipmentItemBase : UIT_GridItem {
         m_Enhance = rtf_Container.Find("Enhance").GetComponent<Text>();
     }
 
-    public virtual void Play(EquipmentSaveData equipmentData)
+    protected void Play(EquipmentSaveData equipmentData)
     {
         m_Name.text = equipmentData.GetNameLocalizeKey();
         m_Enhance.text = "+" + equipmentData.m_Enhance;
