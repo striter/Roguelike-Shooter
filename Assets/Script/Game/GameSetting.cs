@@ -113,7 +113,7 @@ namespace GameSetting
             public const int I_AIIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
-
+        public const int m_DefaultEquipmentCombinationIdentity = 20000;
         #region Cultivate
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
@@ -1340,6 +1340,7 @@ namespace GameSetting
         protected Vector3 m_prePos;
         public List<ExpireInteractBase> m_ExpireInteracts { get; private set; } = new List<ExpireInteractBase>();
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
+        public ExpireEquipmentCombination m_Equipment;
         public float m_Coins { get; private set; } = 0;
 
         public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
@@ -1365,16 +1366,7 @@ namespace GameSetting
         public void SetInfoData(CPlayerBattleSave _battleSave)
         {
             m_Coins = _battleSave.m_Coins;
-            bool activated = false;
-            _battleSave.m_Equipments.Traversal((EquipmentSaveData equipmentData) => {
-                enum_EquipmentPassitveType equipmentPassiveType = enum_EquipmentPassitveType.Deactivated;
-                if (_battleSave.m_Equipments.FindAll(p => p.m_Index == equipmentData.m_Index).Count == 2)
-                {
-                    equipmentPassiveType = activated ? enum_EquipmentPassitveType.ElseActivated : enum_EquipmentPassitveType.Activated;
-                    activated = true;
-                }
-                AddExpire(GameDataManager.CreateGameEquipment(equipmentPassiveType, equipmentData));
-            });
+            AddExpire(GameDataManager.CreateEquipmentCombination(_battleSave.m_Equipments));
             _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
@@ -1408,8 +1400,10 @@ namespace GameSetting
                     }
                     break;
                 case enum_ExpireType.Equipment:
-                    {
-                    }
+                    if (m_Equipment != null)
+                        Debug.LogError("Can't Add Extra Equipment Combination!");
+
+                    m_Equipment = expire as ExpireEquipmentCombination;
                     break;
             }
         }
@@ -1430,6 +1424,7 @@ namespace GameSetting
                     break;
                 case enum_ExpireType.Equipment:
                     {
+                        Debug.LogError("Can't Remove Equipment Combination!");
                     }
                     break;
             }
@@ -1459,7 +1454,7 @@ namespace GameSetting
             {
                 case enum_ExpireType.Equipment:
                     {
-                        ExpireEquipmentBase equipment = expire as ExpireEquipmentBase;
+                        ExpireEquipmentCombination equipment = expire as ExpireEquipmentCombination;
                         F_DamageAdditive += equipment.m_DamageAdditive;
                         F_MaxHealthAdditive += equipment.m_MaxHealthAdditive;
                         F_MaxArmorAdditive += equipment.m_MaxArmorAdditive;
@@ -1672,12 +1667,10 @@ namespace GameSetting
         public virtual void OnLevelFinish() { }
     }
 
-    public class ExpireEquipmentBase: ExpireInteractBase
+    public class ExpireEquipmentCombination: ExpireInteractBase
     {
         public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Equipment;
-        public enum_EquipmentPassitveType m_PassiveActivateType { get; private set; }
-        public bool m_PassiveActivated => m_PassiveActivateType == enum_EquipmentPassitveType.Activated;
-        public EquipmentSaveData m_Data { get; private set; }
+        public List< EquipmentSaveData> m_Data { get; private set; }
         protected float m_EntryDamageAdditive { get; private set; }
         protected float m_EntryHealthAdditive { get; private set; }
         protected float m_EntryArmorAdditive { get; private set; }
@@ -1692,22 +1685,23 @@ namespace GameSetting
         public override float m_MaxHealthAdditive => m_EntryHealthAdditive;
         public override float m_DamageAdditive => m_EntryHealthAdditive;
         
-        public ExpireEquipmentBase(enum_EquipmentPassitveType passiveActivate, EquipmentSaveData data)
+        public ExpireEquipmentCombination(List< EquipmentSaveData> datas)
         {
-            m_PassiveActivateType = passiveActivate;
-            m_Data = data;
-            m_Data.m_Entries.Traversal((EquipmentEntrySaveData entry) =>
-            {
-                switch(entry.m_Type)
+            m_Data = datas;
+            m_Data.Traversal((EquipmentSaveData data)=>{
+                data.m_Entries.Traversal((EquipmentEntrySaveData entry) =>
                 {
-                    default:Debug.LogError("Invalid Convertions Here!" + entry.m_Type);break;
-                    case enum_EquipmentEntryType.Armor:m_EntryArmorAdditive += entry.m_Value; break;
-                    case enum_EquipmentEntryType.Damage: m_EntryDamageAdditive += entry.m_Value; break;
-                    case enum_EquipmentEntryType.Health: m_EntryHealthAdditive += entry.m_Value; break;
-                    case enum_EquipmentEntryType.CriticalRate:m_EntryCriticalRateAdditive += entry.m_Value / 100f;  break;
-                    case enum_EquipmentEntryType.FireRate:m_EntryFireRateAdditive += entry.m_Value / 100f;  break;
-                    case enum_EquipmentEntryType.MovementSpeed:m_EntryMovementSpeedAdditive += entry.m_Value / 100f;  break;
-                }
+                    switch (entry.m_Type)
+                    {
+                        default: Debug.LogError("Invalid Convertions Here!" + entry.m_Type); break;
+                        case enum_EquipmentEntryType.Armor: m_EntryArmorAdditive += entry.m_Value; break;
+                        case enum_EquipmentEntryType.Damage: m_EntryDamageAdditive += entry.m_Value; break;
+                        case enum_EquipmentEntryType.Health: m_EntryHealthAdditive += entry.m_Value; break;
+                        case enum_EquipmentEntryType.CriticalRate: m_EntryCriticalRateAdditive += entry.m_Value / 100f; break;
+                        case enum_EquipmentEntryType.FireRate: m_EntryFireRateAdditive += entry.m_Value / 100f; break;
+                        case enum_EquipmentEntryType.MovementSpeed: m_EntryMovementSpeedAdditive += entry.m_Value / 100f; break;
+                    }
+                });
             });
         }
     }

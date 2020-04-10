@@ -406,26 +406,37 @@ public static class GameDataManager
     }
     #endregion
     #region EquipmentData
-    static Dictionary<int, ExpireEquipmentBase> m_AllEquipments=new Dictionary<int, ExpireEquipmentBase>();
-
+    static Dictionary<int, ExpireEquipmentCombination> m_AllEquipments=new Dictionary<int, ExpireEquipmentCombination>();
+    static List<int> m_AvailableEquipments = new List<int>();
     public static void InitEquipment()
     {
-        TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentBase perk) => {
-            m_AllEquipments.Add(perk.m_Index, perk);
-        }),enum_EquipmentPassitveType.Invalid,new EquipmentSaveData(-1,-1, enum_Rarity.Invalid,new List<EquipmentEntrySaveData>()));
+        TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentCombination equipment) => {
+            m_AllEquipments.Add(equipment.m_Index, equipment);
+            if (equipment.m_Index != GameConst.m_DefaultEquipmentCombinationIdentity)
+                m_AvailableEquipments.Add(equipment.m_Index);
+        }), new List<EquipmentSaveData>());
     }
 
-    public static ExpireEquipmentBase CreateGameEquipment(enum_EquipmentPassitveType passiveType, EquipmentSaveData data)
+    public static ExpireEquipmentCombination CreateEquipmentCombination(List< EquipmentSaveData> datas)
     {
-        if (!m_AllEquipments.ContainsKey(data.m_Index))
-            Debug.LogError("Error Equipment:" + data.m_Index + " ,Does not exist");
-        ExpireEquipmentBase equipment = TReflection.CreateInstance<ExpireEquipmentBase>(m_AllEquipments[data.m_Index].GetType(),passiveType, data);
-        return equipment;
+        int equipmentIndex = datas.Find(p => datas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
+
+        if (equipmentIndex <= 0)
+        {
+            equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
+        }
+        else if (!m_AllEquipments.ContainsKey(equipmentIndex))
+        {
+            Debug.LogError("Error Equipment:" + equipmentIndex + " ,Does not exist");
+            equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
+        }
+
+        return TReflection.CreateInstance<ExpireEquipmentCombination>(m_AllEquipments[equipmentIndex].GetType(), datas);
     }
 
     public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
     {
-        EquipmentSaveData data = new EquipmentSaveData(m_AllEquipments.RandomKey(), 0, rarity, new List<EquipmentEntrySaveData>());
+        EquipmentSaveData data = new EquipmentSaveData(m_AvailableEquipments.RandomItem(), 0, rarity, new List<EquipmentEntrySaveData>());
         int entryCount = TCommon.RandomPercentage(GameConst.m_EquipmentGenerateEntryCount[rarity]);
         for (int i = 0; i < entryCount; i++)
             data.AcquireRandomEntry();
