@@ -31,15 +31,9 @@ public class UIT_TextExtend : Text
     }
 
     public string formatText(string formatKey, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), subItems);
-    public string formatKey(string formatKey, string key) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), TLocalization.GetKeyLocalized(key));
+    public string formatKey(string formatKey, string subKey) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey),TLocalization.GetKeyLocalized( subKey));
+
     public string localizeKey
-    {
-        set
-        {
-            text = TLocalization.GetKeyLocalized(value);
-        }
-    }
-    public string autoLocalizeText
     {
         set
         {

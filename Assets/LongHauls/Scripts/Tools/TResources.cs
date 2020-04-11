@@ -163,16 +163,6 @@ public class TResources
     }
 
     #endregion
-    public static TextAsset GetExcelData(string dataSource, bool extraSheets = false)
-    {
-        TextAsset asset = Resources.Load<TextAsset>("Excel/" + dataSource);
-        if (asset == null)
-        {
-            Debug.LogError("Path: Resources/Excel/" + dataSource + ".bytes Not Found");
-            return null;
-        }
-        return asset;
-    }
 
     public static T LoadResourceSync<T>(string bundlePath, string name) where T:UnityEngine.Object
     {

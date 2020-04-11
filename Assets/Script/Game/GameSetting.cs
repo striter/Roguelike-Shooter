@@ -5,11 +5,8 @@ using System;
 using TTiles;
 using TPhysics;
 using System.Linq;
-using GameSetting_Action;
-using UnityEngine.UI;
 using TGameSave;
 using LevelSetting;
-using TSpecialClasses;
 #pragma warning disable 0649
 namespace GameSetting
 {
@@ -559,14 +556,14 @@ namespace GameSetting
         }
     }
 
-    public struct WeaponSaveData : IXmlConvert
+    public struct WeaponSaveData : IDataConvert
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
         public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
         public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
     }
 
-    public struct MercenarySaveData:IXmlConvert
+    public struct MercenarySaveData:IDataConvert
     {
         public enum_MercenaryCharacter m_MercenaryCharacter { get; private set; }
         public WeaponSaveData m_Weapon { get; private set; }
@@ -580,7 +577,7 @@ namespace GameSetting
         }
     }
     
-    public struct PerkSaveData:IXmlConvert
+    public struct PerkSaveData:IDataConvert
     {
         public int m_Index { get; private set; }
         public int m_PerkStack { get; private set; }
@@ -595,7 +592,7 @@ namespace GameSetting
         }
     }
 
-    public struct EquipmentSaveData:IXmlConvert
+    public struct EquipmentSaveData:IDataConvert
     {
         public int m_Index { get; private set; }
         public int m_Enhance { get; private set; }
@@ -605,7 +602,7 @@ namespace GameSetting
         public EquipmentSaveData(int index,int level, enum_Rarity rarity, List<EquipmentEntrySaveData> entries){ m_Index = index;m_Enhance = level; m_Rarity = rarity; m_AcquireStamp = TTime.TTimeTools.GetTimeStampNow(); m_Entries = entries; }
     }
 
-    public struct EquipmentEntrySaveData :IXmlConvert
+    public struct EquipmentEntrySaveData :IDataConvert
     {
         public enum_EquipmentEntryType m_Type { get; private set; }
         public float m_Value { get; private set; }
@@ -623,38 +620,22 @@ namespace GameSetting
     #region ExcelData
     public struct SWeapon : ISExcel
     {
-        int index;
-        bool b_hidden;
-        int i_rarity;
-        float f_fireRate;
-        int i_clipAmount;
-        float f_spread;
-        float f_bulletRefill;
-        int i_PelletsPerShot;
-        float f_weight;
-        float f_recoil;
+        public int m_Index { get; private set; }
+        public bool m_Hidden { get; private set; }
+        public enum_Rarity m_Rarity { get; private set; }
+        public float m_FireRate { get; private set; }
+        public int m_ClipAmount { get; private set; }
+        public float m_Spread { get; private set; }
+        public float m_BulletRefillTime { get; private set; }
+        public int m_PelletsPerShot { get; private set; }
+        public float m_Weight { get; private set; }
+        public float m_RecoilPerShot { get; private set; }
 
-        float f_UIDamage;
-        float f_UIRPM;
-        float f_UIStability;
-        float f_UISpeed;
-
-        public int m_Index => index;
-        public bool m_Hidden => b_hidden;
-        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)index;
-        public enum_Rarity m_Rarity => (enum_Rarity)i_rarity;
-        public float m_FireRate => f_fireRate;
-        public int m_ClipAmount => i_clipAmount;
-        public float m_Spread => f_spread;
-        public float m_BulletRefillTime => f_bulletRefill;
-        public int m_PelletsPerShot => i_PelletsPerShot;
-        public float m_Weight => f_weight;
-        public float m_RecoilPerShot =>f_recoil;
-
-        public float m_UIDamage => f_UIDamage;
-        public float m_UIRPM => f_UIRPM;
-        public float m_UIStability => f_UIStability;
-        public float m_UISpeed => f_UISpeed;
+        public float m_UIDamage { get; private set; }
+        public float m_UIRPM { get; private set; }
+        public float m_UIStability { get; private set; }
+        public float m_UISpeed { get; private set; }
+        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)m_Index;
 
         public void InitAfterSet()
         {
@@ -663,67 +644,52 @@ namespace GameSetting
 
     public struct SBuff : ISExcel
     {
-        int index;
-        int i_addType;
-        float f_expireDuration;
-        int i_effect;
-        float f_movementSpeedMultiply;
-        float f_fireRateMultiply;
-        float f_reloadRateMultiply;
-        float f_healthDrainMultiply;
-        float f_damageMultiply;
-        float f_damageReduce;
-        int i_extraBuffApply;
-        float f_damageTickTime;
-        float f_damagePerTick;
-        int i_damageType;
-        public int m_Index => index;
-        public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)i_addType;
-        public float m_ExpireDuration => f_expireDuration;
-        public int m_EffectIndex => i_effect;
-        public float m_MovementSpeedMultiply => f_movementSpeedMultiply;
-        public float m_FireRateMultiply => f_fireRateMultiply;
-        public float m_ReloadRateMultiply => f_reloadRateMultiply;
-        public float m_HealthDrainMultiply => f_healthDrainMultiply;
-        public float m_DamageMultiply => f_damageMultiply;
-        public float m_DamageReduction => f_damageReduce;
-        public int m_ExtraBuffApply => i_extraBuffApply;
-        public float m_DamageTickTime => f_damageTickTime;
-        public float m_DamagePerTick => f_damagePerTick;
-        public enum_DamageType m_DamageType => (enum_DamageType)i_damageType;
+        public int m_Index { get; private set; }
+        public int m_Refresh { get; private set; }
+        public float m_ExpireDuration { get; private set; }
+        public int m_EffectIndex { get; private set; }
+        public float m_MovementSpeedMultiply { get; private set; }
+        public float m_FireRateMultiply { get; private set; }
+        public float m_ReloadRateMultiply { get; private set; }
+        public float m_HealthDrainMultiply { get; private set; }
+        public float m_DamageMultiply { get; private set; }
+        public float m_DamageReduction { get; private set; }
+        public int m_ExtraBuffApply { get; private set; }
+        public float m_DamageTickTime { get; private set; }
+        public float m_DamagePerTick { get; private set; }
+        public enum_DamageType m_DamageType { get; private set; }
+        public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)m_Refresh;
         public void InitAfterSet()
         {
-            f_movementSpeedMultiply /= 100f;
-            f_fireRateMultiply /= 100f;
-            f_reloadRateMultiply /= 100f;
-            f_damageMultiply /= 100f;
-            f_damageReduce /= 100f;
-            f_healthDrainMultiply /= 100f;
+            m_MovementSpeedMultiply /= 100f;
+            m_FireRateMultiply /= 100f;
+            m_ReloadRateMultiply /= 100f;
+            m_DamageMultiply /= 100f;
+            m_DamageReduction /= 100f;
+            m_HealthDrainMultiply /= 100f;
         }
         //Normally In Excel 0-99
        //1000-9999
         public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
         {
             SBuff buff = new SBuff();
-            buff.index = 1000 + difficulty;
-            buff.i_addType = (int)enum_ExpireRefreshType.Refresh;
-            buff.f_damageMultiply = damageMultiply;
+            buff.m_Index = 1000 + difficulty;
+            buff.m_Refresh = (int)enum_ExpireRefreshType.Refresh;
+            buff.m_DamageMultiply = damageMultiply;
             return buff;
         }
     }
 
     public struct SEnermyGenerate : ISExcel
     {
-        bool b_isFinal;
-        int i_MeleeCount;
-        int i_E2Count;
-        int i_E3Count;
-        int i_E4Count;
-        int i_E5Count;
-        int i_E6Count;
-        int i_EliteCount;
-
-        public bool m_IsFinal => b_isFinal;
+        public bool m_IsFinal { get; private set; }
+        public int m_MeleeCount { get; private set; }
+        public int m_E2Count { get; private set; }
+        public  int m_E3Count { get; private set; }
+        public int m_E4Count { get; private set; }
+        public int m_E5Count { get; private set; }
+        public int m_E6Count { get; private set; }
+        public int m_EliteCount { get; private set; }
 
         public void InitAfterSet()
         {
@@ -731,32 +697,32 @@ namespace GameSetting
 
         public static SEnermyGenerate operator +(SEnermyGenerate data1,SEnermyGenerate data2)
         {
-            data1.i_MeleeCount += data2.i_MeleeCount;
-            data1.i_E2Count += data2.i_E2Count;
-            data1.i_E3Count += data2.i_E3Count;
-            data1.i_E4Count += data2.i_E4Count;
-            data1.i_E5Count += data2.i_E5Count;
-            data1.i_E6Count += data2.i_E6Count;
-            data1.i_EliteCount += data2.i_EliteCount;
+            data1.m_MeleeCount += data2.m_MeleeCount;
+            data1.m_E2Count += data2.m_E2Count;
+            data1.m_E3Count += data2.m_E3Count;
+            data1.m_E4Count += data2.m_E4Count;
+            data1.m_E5Count += data2.m_E5Count;
+            data1.m_E6Count += data2.m_E6Count;
+            data1.m_EliteCount += data2.m_EliteCount;
             return data1;
         }
         
         public List<int> GetEnermyIDList(Dictionary<enum_EnermyType, int> m_EnermyIDs)
         {
             List<int> enermyID = new List<int>();
-            for (int i = 0; i < i_MeleeCount; i++)
+            for (int i = 0; i < m_MeleeCount; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.Melee]);
-            for (int i = 0; i < i_E2Count; i++)
+            for (int i = 0; i < m_E2Count; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.E2]);
-            for (int i = 0; i < i_E3Count; i++)
+            for (int i = 0; i < m_E3Count; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.E3]);
-            for (int i = 0; i < i_E4Count; i++)
+            for (int i = 0; i < m_E4Count; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.E4]);
-            for (int i = 0; i < i_E5Count; i++)
+            for (int i = 0; i < m_E5Count; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.E5]);
-            for (int i = 0; i < i_E6Count; i++)
+            for (int i = 0; i < m_E6Count; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.E6]);
-            for (int i = 0; i < i_EliteCount; i++)
+            for (int i = 0; i < m_EliteCount; i++)
                 enermyID.Add(m_EnermyIDs[enum_EnermyType.Elite]);
             return enermyID;
         }

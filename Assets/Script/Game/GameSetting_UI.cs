@@ -249,7 +249,7 @@ namespace GameSetting
         {
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetUIControlDetailSpriteName()];
-            m_Name.autoLocalizeText = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+            m_Name.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
             m_Name.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
         }
         public void UpdateAmmoInfo(int ammoLeft, int clipAmount)

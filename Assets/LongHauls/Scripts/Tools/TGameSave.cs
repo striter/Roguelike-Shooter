@@ -39,8 +39,8 @@ namespace TGameSave
         public static void Reset() => m_Data = new T();
 
 
-        static readonly string s_Directory = Application.persistentDataPath + "/Save";
-        static string s_BasePath=> s_Directory + "/" + typeof(T).Name + ".xml";
+        public static readonly string s_Directory = Application.persistentDataPath + "/Save";
+        public static readonly string s_FilePath = s_Directory + "/" + typeof(T).Name + ".xml";
         #region Tools
         static XmlDocument m_Doc;
         static XmlNode m_ParentNode;
@@ -56,11 +56,11 @@ namespace TGameSave
 
             try    //Check If File Complete
             {
-                if (!File.Exists(s_BasePath))
-                    throw new Exception("None Xml Data Found:" + s_BasePath);
+                if (!File.Exists(s_FilePath))
+                    throw new Exception("None Xml Data Found:" + s_FilePath);
 
                 m_Doc = new XmlDocument();
-                m_Doc.Load(s_BasePath);
+                m_Doc.Load(s_FilePath);
                 m_ParentNode = m_Doc.SelectSingleNode(typeof(T).Name);
 
                 if (m_ParentNode != null)
@@ -90,7 +90,7 @@ namespace TGameSave
                 for (int i = 0; i < m_fieldInfo.Length; i++)
                 {
                     string data = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name).InnerText;
-                    m_fieldInfo[i].SetValue(temp, TXmlConvert.Convert(m_fieldInfo[i].FieldType, data));
+                    m_fieldInfo[i].SetValue(temp, TDataConvert.Convert(m_fieldInfo[i].FieldType, data));
                 }
 
                 temp.DataRecorrect();
@@ -108,17 +108,17 @@ namespace TGameSave
             for (int i = 0; i < m_fieldInfo.Length; i++)
             {
                 temp_SubNode = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name);
-                temp_SubNode.InnerText = TXmlConvert.Convert(m_fieldInfo[i].GetValue(data));
+                temp_SubNode.InnerText = TDataConvert.Convert(m_fieldInfo[i].GetValue(data));
                 m_ParentNode.AppendChild(temp_SubNode);
             }
-            m_Doc.Save(s_BasePath);
+            m_Doc.Save(s_FilePath);
         }
 
         static T CreateDefaultDoc()
         {
             Debug.LogWarning("New Default Xml Doc Created.");
-            if (File.Exists(s_BasePath))
-                File.Delete(s_BasePath);
+            if (File.Exists(s_FilePath))
+                File.Delete(s_FilePath);
 
             T temp = new T();
 
@@ -129,7 +129,7 @@ namespace TGameSave
             for (int i = 0; i < m_fieldInfo.Length; i++)
             {
                 temp_Element = m_Doc.CreateElement(m_fieldInfo[i].Name);
-                temp_Element.InnerText = TXmlConvert.Convert(m_fieldInfo[i].GetValue(temp));
+                temp_Element.InnerText = TDataConvert.Convert(m_fieldInfo[i].GetValue(temp));
                 m_ParentNode.AppendChild(temp_Element);
             }
 

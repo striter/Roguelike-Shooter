@@ -20,15 +20,16 @@ public struct RangeFloat
 }
 
 #region DataPhrase
-public interface IXmlConvert
+public interface IDataConvert
 {
 }
-public static class TXmlConvert
+public static class TDataConvert
 {
     static readonly char[] m_PhraseLiterateBreakPoints = new char[9] { '[', ']', '{', '}', '(', ')', '/', '|', '/' };
     const char m_PhraseBaseBreakPoint = ',';
 
     public static string Convert(object value) => ConvertToString(value.GetType(), value, 0);
+    public static T Convert<T>(string xmlData) => (T)ConvertToObject(typeof(T), xmlData, 0);
     public static object Convert(Type type, string xmlData) => ConvertToObject(type, xmlData, 0);
     public static object Default(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
     static string ConvertToString(Type type, object value, int iteration)
@@ -129,7 +130,7 @@ public static class TXmlConvert
     }
     #endregion
     #region IXmlConvertType
-    static readonly Type m_XmlPhraseType = typeof(IXmlConvert);
+    static readonly Type m_XmlPhraseType = typeof(IDataConvert);
     static Dictionary<Type, FieldInfo[]> m_XmlConvertFieldInfos = new Dictionary<Type, FieldInfo[]>();
     static bool CheckIXmlParseType(Type type)
     {

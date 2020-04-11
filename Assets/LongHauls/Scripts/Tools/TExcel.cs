@@ -33,7 +33,7 @@ namespace TExcel
         }
         public static void Init()
         {
-            m_Properties =  Tools.GetFieldData<T>(Tools.ReadExcelFirstSheetData(TResources.GetExcelData(typeof(T).Name, false)));
+            m_Properties =  Tools.GetFieldData<T>(Tools.ReadExcelFirstSheetData(Resources.Load<TextAsset>("Excel/"+typeof(T).Name)));
         }
         public static void Clear()
         {
@@ -67,13 +67,12 @@ namespace TExcel
                 Debug.LogError(typeof(T).ToString() + ",Excel Not Inited,Shoulda Init Property First");
                 return null;
             }
-            Debug.Log("Using Excel Properties"+m_AllProperties[i].m_SheetName);
             return m_AllProperties[i].m_Properties;
         }
         public static void Init()
         {
             m_AllProperties = new Dictionary<int, SheetProperty<T>>();
-            Dictionary<string, List<string[]>> m_AllDatas = Tools.ReadExcelMultipleSheetData(TResources.GetExcelData(typeof(T).Name));
+            Dictionary<string, List<string[]>> m_AllDatas = Tools.ReadExcelMultipleSheetData(Resources.Load<TextAsset>("Excel/"+typeof(T).Name));
             foreach(string sheetName in m_AllDatas.Keys)
                 m_AllProperties.Add(m_AllProperties.Count, SheetProperty<T>.Create(sheetName, Tools.GetFieldData<T>(m_AllDatas[sheetName])));
         }
@@ -114,23 +113,15 @@ namespace TExcel
 
         public static List<T> GetFieldData<T>(List<string[]> data) where T : ISExcel
         {
-            FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo[] fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.DeclaredOnly | BindingFlags.Instance);
             List<T> targetData = new List<T>();
             try
             {
                 Type type = typeof(T);
 
-                for (int i = 0; i < fields.Length; i++)
-                {
-                    string temp = data[0][i].ToString();
-                    if (!temp.Equals(fields[i].Name) && !temp.Equals(-1))
-                    {
-                        throw new Exception(" Struct Or Excel Pos Not Equals:(" + type.ToString() + "Struct Property:(Column:" + i + "|" + fields[i].Name + ") Excel Property:(Row:" + i + "|" + temp + ")");
-                    }
-                }
                 for (int i = 0; i < data.Count; i++)
                 {
-                    if (i <= 1)     //Ignore Row 0 and 1
+                    if (i == 0)     //Ignore Row 0 and 1
                         continue;
 
                     object obj = Activator.CreateInstance(type, true);
@@ -142,9 +133,9 @@ namespace TExcel
                             object value = null;
                             string phraseValue = data[i][j].ToString();
                             if (phraseValue.Length == 0)
-                                value = TXmlConvert.Default(phraseType);
+                                value = TDataConvert.Default(phraseType);
                             else
-                                value = TXmlConvert.Convert(phraseType, phraseValue);
+                                value = TDataConvert.Convert(phraseType, phraseValue);
                             fields[j].SetValue(obj, value);
                         }
                         catch (Exception e)
