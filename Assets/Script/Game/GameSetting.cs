@@ -559,14 +559,14 @@ namespace GameSetting
         }
     }
 
-    public struct WeaponSaveData : IXmlPhrase
+    public struct WeaponSaveData : IXmlConvert
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
         public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
         public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
     }
 
-    public struct MercenarySaveData:IXmlPhrase
+    public struct MercenarySaveData:IXmlConvert
     {
         public enum_MercenaryCharacter m_MercenaryCharacter { get; private set; }
         public WeaponSaveData m_Weapon { get; private set; }
@@ -580,7 +580,7 @@ namespace GameSetting
         }
     }
     
-    public struct PerkSaveData:IXmlPhrase
+    public struct PerkSaveData:IXmlConvert
     {
         public int m_Index { get; private set; }
         public int m_PerkStack { get; private set; }
@@ -595,7 +595,7 @@ namespace GameSetting
         }
     }
 
-    public struct EquipmentSaveData:IXmlPhrase
+    public struct EquipmentSaveData:IXmlConvert
     {
         public int m_Index { get; private set; }
         public int m_Enhance { get; private set; }
@@ -605,7 +605,7 @@ namespace GameSetting
         public EquipmentSaveData(int index,int level, enum_Rarity rarity, List<EquipmentEntrySaveData> entries){ m_Index = index;m_Enhance = level; m_Rarity = rarity; m_AcquireStamp = TTime.TTimeTools.GetTimeStampNow(); m_Entries = entries; }
     }
 
-    public struct EquipmentEntrySaveData :IXmlPhrase
+    public struct EquipmentEntrySaveData :IXmlConvert
     {
         public enum_EquipmentEntryType m_Type { get; private set; }
         public float m_Value { get; private set; }
@@ -656,7 +656,7 @@ namespace GameSetting
         public float m_UIStability => f_UIStability;
         public float m_UISpeed => f_UISpeed;
 
-        public void InitOnValueSet()
+        public void InitAfterSet()
         {
         }
     }
@@ -691,7 +691,7 @@ namespace GameSetting
         public float m_DamageTickTime => f_damageTickTime;
         public float m_DamagePerTick => f_damagePerTick;
         public enum_DamageType m_DamageType => (enum_DamageType)i_damageType;
-        public void InitOnValueSet()
+        public void InitAfterSet()
         {
             f_movementSpeedMultiply /= 100f;
             f_fireRateMultiply /= 100f;
@@ -725,7 +725,7 @@ namespace GameSetting
 
         public bool m_IsFinal => b_isFinal;
 
-        public void InitOnValueSet()
+        public void InitAfterSet()
         {
         }
 

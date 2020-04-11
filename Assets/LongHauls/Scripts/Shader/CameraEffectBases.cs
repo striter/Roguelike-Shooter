@@ -4,17 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public enum enum_CameraEffectSorting
-{
-    Invalid=-1,
-    Main=1,
-    CommandBuffer=2,
-    PostEffect=3,
-}
-
 public class CameraEffectBase
 {
-    public virtual enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.Invalid;
     public virtual DepthTextureMode m_DepthTextureRequire => DepthTextureMode.None;
     public virtual bool m_DepthToWorldMatrix => false;
     public virtual bool m_DoGraphicBlitz => false;
@@ -47,44 +38,114 @@ public class CameraEffectBase
     }
 }
 
-#region Main
-public class CM_GenerateFreeDepthTexture : CameraEffectBase
+
+#region CommandBuffer
+public class CommandBufferBase : CameraEffectBase
 {
-    public override enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.Main;
-    public override bool m_DoGraphicBlitz => true;
-    readonly int ID_CameraDepthTexture = Shader.PropertyToID("_CameraDepthTexture");
-    private RenderTexture m_depthRT;
-    private RenderTexture m_colorRT;
+    protected CommandBuffer m_Buffer;
+    protected virtual CameraEvent m_BufferEvent => 0;
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
-
-        m_depthRT = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 24, RenderTextureFormat.Depth);
-        m_depthRT.name = "MainDepthBuffer";
-        m_colorRT = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 0, RenderTextureFormat.RGB111110Float);
-        m_colorRT.name = "MainColorBuffer";
-        m_Manager.m_Camera.SetTargetBuffers(m_colorRT.colorBuffer, m_depthRT.depthBuffer);
-        Shader.SetGlobalTexture(ID_CameraDepthTexture, m_depthRT);
+        m_Buffer = new CommandBuffer();
+        m_Buffer.name = this.GetType().ToString();
+        m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
     }
-
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        Graphics.Blit(m_colorRT, destination);
-    }
-
     public override void OnDestroy()
     {
-        RenderTexture.ReleaseTemporary(m_colorRT);
-        RenderTexture.ReleaseTemporary(m_depthRT);
+        m_Buffer.Clear();
+        m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent, m_Buffer);
+    }
+}
+
+public class CB_GenerateOpaqueTexture : CommandBufferBase
+{
+    readonly int ID_GlobalOpaqueTexture = Shader.PropertyToID("_CameraOpaqueTexture");
+    protected override CameraEvent m_BufferEvent => CameraEvent.BeforeForwardAlpha;
+    readonly int ID_TempTexture = Shader.PropertyToID("_OpaqueTempRT");
+    public override void InitEffect(CameraEffectManager _manager)
+    {
+        base.InitEffect(_manager);
+        m_Buffer.GetTemporaryRT(ID_TempTexture, -2, -2, 0, FilterMode.Bilinear);
+        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture);
+        m_Buffer.SetGlobalTexture(ID_GlobalOpaqueTexture, ID_TempTexture);
+    }
+}
+
+public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
+{
+    public PE_Blurs m_GaussianBlur { get; private set; }
+    protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
+    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_CameraUIOverlayBlurTexture");
+    readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
+    readonly int ID_TempTexture2 = Shader.PropertyToID("_UIBlurTempRT2");
+    public override void InitEffect(CameraEffectManager _manager)
+    {
+        base.InitEffect(_manager);
+        m_GaussianBlur = new PE_Blurs();
+        m_GaussianBlur.InitEffect(_manager);
+    }
+    public void SetEffect(int iterations = 3, float blurSpread = 1.5f, int _downSample = 2)
+    {
+        m_GaussianBlur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
+        m_Buffer.GetTemporaryRT(ID_TempTexture1, -_downSample, -_downSample, 0, FilterMode.Bilinear);
+        m_Buffer.GetTemporaryRT(ID_TempTexture2, -_downSample, -_downSample, 0, FilterMode.Bilinear);
+        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture1);
+        for (int i = 0; i < iterations; i++)
+        {
+            m_Buffer.Blit(ID_TempTexture1, ID_TempTexture2, m_GaussianBlur.m_Material, 1);
+            m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 2);
+        }
+        m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
+    }
+    public override void OnDestroy()
+    {
+        m_Buffer.ReleaseTemporaryRT(ID_TempTexture1);
+        m_Buffer.ReleaseTemporaryRT(ID_TempTexture2);
         base.OnDestroy();
+        m_GaussianBlur.OnDestroy();
+    }
+}
+
+public class CB_DepthOfFieldSpecificStatic : CommandBufferBase
+{
+    public PE_Blurs m_GaussianBlur { get; private set; }
+    List<Renderer> m_targets = new List<Renderer>();
+    protected override CameraEvent m_BufferEvent => CameraEvent.AfterImageEffects;
+    public override void InitEffect(CameraEffectManager _manager)
+    {
+        base.InitEffect(_manager);
+        m_GaussianBlur = new PE_Blurs();
+        m_GaussianBlur.InitEffect(_manager);
+    }
+    public void SetStaticTarget(params Renderer[] targets)
+    {
+        targets.Traversal((Renderer renderer) => {
+            if (m_targets.Contains(renderer))
+                return;
+            m_targets.Add(renderer);
+            renderer.enabled = false;
+            m_Buffer.DrawRenderer(renderer, renderer.sharedMaterial);
+        });
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        m_GaussianBlur.OnRenderImage(source, destination);
+    }
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        m_GaussianBlur.OnDestroy();
+        m_targets.Traversal((Renderer renderer) => {
+            renderer.enabled = true;
+        });
+        m_targets.Clear();
     }
 }
 #endregion
-
 #region PostEffect
 public class PostEffectBase: CameraEffectBase
 {
-    public override enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.PostEffect;
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
     public override bool m_DoGraphicBlitz => true;
@@ -403,7 +464,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderBloomShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render_Bloom");
         m_RenderOcclusionShader = Shader.Find("Hidden/PostEffect/PE_BloomSpecific_Render_Occlusion");
         if (m_RenderBloomShader == null||m_RenderOcclusionShader==null)
-            Debug.LogError("Null Blom Specific Shader Found!");
+            Debug.LogError("Null Bloom Specific Shader Found!");
 
         GameObject temp = new GameObject("Render Camera");
         temp.transform.SetParentResetTransform(m_Manager.m_Camera.transform);
@@ -502,110 +563,4 @@ public class PE_DepthSSAO : PostEffectBase
     }
 }
 
-#endregion
-#region CommandBuffer
-public class CommandBufferBase:CameraEffectBase
-{
-    public override enum_CameraEffectSorting m_EffectSorting => enum_CameraEffectSorting.CommandBuffer;
-    protected CommandBuffer m_Buffer;
-    protected virtual CameraEvent m_BufferEvent => 0;
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-        m_Buffer=new CommandBuffer();
-        m_Buffer.name = this.GetType().ToString();
-        m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
-    }
-    public override void OnDestroy()
-    {
-        m_Buffer.Clear();
-        m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent,m_Buffer);
-    }
-}
-
-
-public class CB_GenerateOpaqueTexture:CommandBufferBase
-{
-    readonly int ID_GlobalOpaqueTexture = Shader.PropertyToID("_CameraOpaqueTexture");
-    protected override CameraEvent m_BufferEvent =>CameraEvent.BeforeForwardAlpha;
-    readonly int ID_TempTexture = Shader.PropertyToID("_OpaqueTempRT");
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-        m_Buffer.GetTemporaryRT(ID_TempTexture,-2,-2,0, FilterMode.Bilinear);
-        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive,ID_TempTexture);
-        m_Buffer.SetGlobalTexture(ID_GlobalOpaqueTexture, ID_TempTexture);
-    }
-}
-
-public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
-{
-    public PE_Blurs m_GaussianBlur { get; private set; }
-    protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
-    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_CameraUIOverlayBlurTexture");
-    readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
-    readonly int ID_TempTexture2 = Shader.PropertyToID("_UIBlurTempRT2");
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-        m_GaussianBlur = new PE_Blurs();
-        m_GaussianBlur.InitEffect(_manager);
-    }
-    public void SetEffect(int iterations=3, float blurSpread=1.5f,int _downSample=2)
-    {
-        m_GaussianBlur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
-        m_Buffer.GetTemporaryRT(ID_TempTexture1, -_downSample, -_downSample, 0, FilterMode.Bilinear);
-        m_Buffer.GetTemporaryRT(ID_TempTexture2, -_downSample, -_downSample, 0, FilterMode.Bilinear);
-        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture1);
-        for (int i = 0; i < iterations; i++)
-        {
-            m_Buffer.Blit(ID_TempTexture1, ID_TempTexture2, m_GaussianBlur.m_Material, 1);
-            m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 2);
-        }
-        m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
-    }
-    public override void OnDestroy()
-    {
-        m_Buffer.ReleaseTemporaryRT(ID_TempTexture1);
-        m_Buffer.ReleaseTemporaryRT(ID_TempTexture2);
-        base.OnDestroy();
-        m_GaussianBlur.OnDestroy();
-    }
-}
-
-public class CB_DepthOfFieldSpecificStatic : CommandBufferBase
-{
-    public PE_Blurs m_GaussianBlur { get; private set; }
-    List<Renderer> m_targets = new List<Renderer>();
-    protected override CameraEvent m_BufferEvent => CameraEvent.AfterImageEffects;
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-        m_GaussianBlur = new PE_Blurs();
-        m_GaussianBlur.InitEffect(_manager);
-    }
-    public void SetStaticTarget(params Renderer[] targets)
-    {
-        targets.Traversal((Renderer renderer)=> {
-            if (m_targets.Contains(renderer))
-                return;
-            m_targets.Add(renderer);
-            renderer.enabled = false;
-            m_Buffer.DrawRenderer(renderer, renderer.sharedMaterial);
-        });
-    }
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        m_GaussianBlur.OnRenderImage(source, destination);
-    }
-    public override void OnDestroy()
-    {
-        base.OnDestroy();
-        m_GaussianBlur.OnDestroy();
-        m_targets.Traversal((Renderer renderer) =>{
-            renderer.enabled = true;
-        });
-        m_targets.Clear();
-    }
-}
 #endregion

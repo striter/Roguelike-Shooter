@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
-
+using TPhysics;
 public class SFXCast : SFXWeaponBase {
     #region PresetInfo
     public enum_CastControllType E_CastType = enum_CastControllType.Invalid;

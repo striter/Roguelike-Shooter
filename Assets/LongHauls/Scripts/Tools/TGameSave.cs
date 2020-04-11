@@ -90,7 +90,7 @@ namespace TGameSave
                 for (int i = 0; i < m_fieldInfo.Length; i++)
                 {
                     string data = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name).InnerText;
-                    m_fieldInfo[i].SetValue(temp, TXmlPhrase.Phrase[m_fieldInfo[i].FieldType, data]);
+                    m_fieldInfo[i].SetValue(temp, TXmlConvert.Convert(m_fieldInfo[i].FieldType, data));
                 }
 
                 temp.DataRecorrect();
@@ -108,7 +108,7 @@ namespace TGameSave
             for (int i = 0; i < m_fieldInfo.Length; i++)
             {
                 temp_SubNode = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name);
-                temp_SubNode.InnerText = TXmlPhrase.Phrase[m_fieldInfo[i].GetValue(data)];
+                temp_SubNode.InnerText = TXmlConvert.Convert(m_fieldInfo[i].GetValue(data));
                 m_ParentNode.AppendChild(temp_SubNode);
             }
             m_Doc.Save(s_BasePath);
@@ -129,7 +129,7 @@ namespace TGameSave
             for (int i = 0; i < m_fieldInfo.Length; i++)
             {
                 temp_Element = m_Doc.CreateElement(m_fieldInfo[i].Name);
-                temp_Element.InnerText = TXmlPhrase.Phrase[m_fieldInfo[i].GetValue(temp)];
+                temp_Element.InnerText = TXmlConvert.Convert(m_fieldInfo[i].GetValue(temp));
                 m_ParentNode.AppendChild(temp_Element);
             }
 

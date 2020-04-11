@@ -110,7 +110,6 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     void ResetPostEffectParams()
     {
         Shader.SetGlobalInt(m_GlobalCameraDepthTextureMode, (int)m_Camera.depthTextureMode);
-        m_CameraEffects.Sort((a, b) => a.m_EffectSorting - b.m_EffectSorting);
         m_DoGraphicBlitz = false;
         m_DepthToWorldMatrix = false;
         m_CameraEffects.Traversal((CameraEffectBase effectBase) =>

@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using TSpecialClasses;
 using GameSetting;
 using System;
+using TPhysics;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class EntityCharacterAI : EntityCharacterBase {

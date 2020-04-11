@@ -9,7 +9,6 @@ public class UIC_PlayerStatus : UIControlBase
     RawImage img_Dying;
     
     EntityCharacterPlayer m_Player;
-
     UIT_GridControllerGridItem<UIGI_ActionExpireInfo> m_ActionExpireGrid;
     
     Transform tf_StatusData;

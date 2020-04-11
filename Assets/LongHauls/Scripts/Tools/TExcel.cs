@@ -11,7 +11,7 @@ namespace TExcel
 {
     public interface ISExcel
     {
-        void InitOnValueSet();
+        void InitAfterSet();
     }
 
     class Properties<T> where T : struct,ISExcel
@@ -41,6 +41,7 @@ namespace TExcel
             m_Properties = null;
         }
     }
+
     struct SheetProperty<T> where T : struct,ISExcel
     {
         public string m_SheetName { get; private set; }
@@ -77,7 +78,6 @@ namespace TExcel
                 m_AllProperties.Add(m_AllProperties.Count, SheetProperty<T>.Create(sheetName, Tools.GetFieldData<T>(m_AllDatas[sheetName])));
         }
         
-
         public static void Clear()
         {
             m_AllProperties.Clear();
@@ -142,9 +142,9 @@ namespace TExcel
                             object value = null;
                             string phraseValue = data[i][j].ToString();
                             if (phraseValue.Length == 0)
-                                value = TXmlPhrase.Phrase.GetDefault(phraseType);
+                                value = TXmlConvert.Default(phraseType);
                             else
-                                value = TXmlPhrase.Phrase[phraseType, phraseValue];
+                                value = TXmlConvert.Convert(phraseType, phraseValue);
                             fields[j].SetValue(obj, value);
                         }
                         catch (Exception e)
@@ -152,9 +152,9 @@ namespace TExcel
                             throw new Exception("Inner Info:|" + data[i + 1][j].ToString() + "|,Field:" + fields[j].Name + "|" + fields[j].FieldType.ToString() + ", Rows/Column:" + (i + 1).ToString() + "/" + (j + 1).ToString() + "    Message:" + e.Message);
                         }
                     }
-                    T temp = (T)obj;
-                    temp.InitOnValueSet();
-                    targetData.Add(temp);
+                    T dataObject = (T)obj;
+                    dataObject.InitAfterSet();
+                    targetData.Add(dataObject);
                 }
             }
             catch (Exception e)

@@ -498,7 +498,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!hitBox)
             hitBox = transform.GetComponentInChildren<CapsuleCollider>();
         Gizmos.color = Color.green;
-        Gizmos_Extend.DrawWireCapsule(transform.position+transform.up*hitBox.height/2*hitBox.transform.localScale.y,Quaternion.LookRotation(transform.forward,transform.up), hitBox.transform.localScale, hitBox.radius,hitBox.height);
+         Gizmos_Extend.DrawWireCapsule(transform.position+transform.up*hitBox.height/2*hitBox.transform.localScale.y,Quaternion.LookRotation(transform.forward,transform.up), hitBox.transform.localScale, hitBox.radius,hitBox.height);
     }
 #endif
 }

@@ -908,8 +908,6 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     }
     #endregion
 }
-#region Extra Structs/Classes
-
 public class TimeCounter
 {
     public float m_TimerDuration { get; private set; } = 0;
@@ -947,238 +945,7 @@ public class TimeCounter
     }
 }
 
-[Serializable]
-public struct RangeFloat
-{
-    public float start;
-    public float length;
-    public float end => start + length;
-    public RangeFloat(float _start, float _length)
-    {
-        start = _start;
-        length = _length;
-    }
-}
 
-[Serializable]
-public struct RangeInt
-{
-    public int start;
-    public int length;
-    public int end => start + length;
-    public RangeInt(int _start, int _length)
-    {
-        start = _start;
-        length = _length;
-    }
-}
-public interface IXmlPhrase 
-{
-}
-public class TXmlPhrase : SingleTon<TXmlPhrase>
-{
-    Dictionary<Type, FieldInfo[]> dic_xmlParseFieldInfos = new Dictionary<Type, FieldInfo[]>();
-    static readonly char[] m_PhraseLiterateBreakPoints = new char[9] {  '[', ']', '{', '}' ,'(',')','/','|','/'};
-    const char m_PhraseBaseBreakPoint = ',';
-
-    public static TXmlPhrase Phrase=>Instance;
-
-    public string this[object value]=>this[value.GetType(),value];
-    public string this[Type type, object value]=>PhraseString(type,value,0);
-    public object this[Type type, string xmlData]=>PhraseObject(type,xmlData,0);
-    static readonly Type m_XmlPhraseType = typeof(IXmlPhrase);
-
-    public object GetDefault(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
-    protected string PhraseString(Type type,object value,int iteration)
-    {
-        if (type.IsEnum)
-            return value.ToString();
-
-        if (dic_valueToXmlData.ContainsKey(type))
-            return dic_valueToXmlData[type](value);
-
-        if (CheckIXmlParseType(type))
-            return IXmlPhraseToString(type, value,iteration+1);
-
-        if (CheckListPhrase(type))
-            return ListPhraseToString(type, value, iteration + 1);
-
-        Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Base Type To Phrase");
-        return null;
-    }
-    protected object PhraseObject(Type type,string xmlData,int iteration)
-    {
-        if (type.IsEnum)
-            return Enum.Parse(type, xmlData);
-
-        if (dic_xmlDataToValue.ContainsKey(type))
-            return dic_xmlDataToValue[type](xmlData);
-
-        if (CheckIXmlParseType(type))
-            return IXmlPraseToData(type, xmlData,iteration+1);
-
-        if (CheckListPhrase(type))
-            return ListPhraseToData(type, xmlData, iteration + 1);
-
-        Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
-        return null;
-    }
-
-    #region BasePhrase
-    Dictionary<Type, Func<object, string>> dic_valueToXmlData = new Dictionary<Type, Func<object, string>>();
-    Dictionary<Type, Func<string, object>> dic_xmlDataToValue = new Dictionary<Type, Func<string, object>>();
-    public TXmlPhrase()     //Common Smaller Forms Translate/Retranslate
-    {
-        dic_valueToXmlData.Add(typeof(int), (object target) => { return target.ToString(); });
-        dic_xmlDataToValue.Add(typeof(int), (string xmlData) => { return int.Parse(xmlData); });
-        dic_valueToXmlData.Add(typeof(long), (object target) => { return target.ToString(); });
-        dic_xmlDataToValue.Add(typeof(long), (string xmlData) => { return long.Parse(xmlData); });
-        dic_valueToXmlData.Add(typeof(double), (object target) => { return target.ToString(); });
-        dic_xmlDataToValue.Add(typeof(double), (string xmlData) => { return double.Parse(xmlData); });
-        dic_valueToXmlData.Add(typeof(float), (object target) => { return target.ToString(); });
-        dic_xmlDataToValue.Add(typeof(float), (string xmlData) => { return float.Parse(xmlData); });
-        dic_valueToXmlData.Add(typeof(string), (object target) => { return target as string; });
-        dic_xmlDataToValue.Add(typeof(string), (string xmlData) => { return xmlData; });
-        dic_valueToXmlData.Add(typeof(bool), (object data) => { return (((bool)data ? 1 : 0)).ToString(); });
-        dic_xmlDataToValue.Add(typeof(bool), (string xmlData) => { return int.Parse(xmlData) == 1; });
-        dic_valueToXmlData.Add(typeof(RangeInt), (object data) => { return ((RangeInt)data).start.ToString() + m_PhraseBaseBreakPoint + ((RangeInt)data).length.ToString(); });
-        dic_xmlDataToValue.Add(typeof(RangeInt), (string xmlData) => { string[] split = xmlData.Split(m_PhraseBaseBreakPoint); return new RangeInt(int.Parse(split[0]), int.Parse(split[1])); });
-        dic_valueToXmlData.Add(typeof(RangeFloat), (object data) => { return ((RangeFloat)data).start.ToString() + m_PhraseBaseBreakPoint + ((RangeFloat)data).length.ToString(); });
-        dic_xmlDataToValue.Add(typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(m_PhraseBaseBreakPoint); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); });
-    }
-    #endregion
-    #region ListPhrase
-    bool CheckListPhrase(Type type) => type.GetGenericTypeDefinition() == typeof(List<>);
-
-    string ListPhraseToString(Type type,object data,int iteration)
-    {
-        if (iteration >= m_PhraseLiterateBreakPoints.Length)
-        {
-            Debug.LogError("Iteration Max Reached!");
-            return "";
-        }
-        StringBuilder sb_xmlData = new StringBuilder();
-        Type listType = type.GetGenericArguments()[0];
-        char dataBreak = m_PhraseLiterateBreakPoints[iteration];
-        foreach (object obj in data as IEnumerable)
-        {
-            sb_xmlData.Append(PhraseString(listType, obj, iteration + 1));
-            sb_xmlData.Append(dataBreak);
-        }
-        if (sb_xmlData.Length != 0)
-            sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
-        return sb_xmlData.ToString();
-    }
-
-    object ListPhraseToData(Type type, string xmlData,int iteration)
-    {
-        if (iteration >= m_PhraseLiterateBreakPoints.Length)
-        {
-            Debug.LogError("Iteration Max Reached!");
-            return null;
-        }
-        char dataBreak = m_PhraseLiterateBreakPoints[iteration];
-        Type listType = type.GetGenericArguments()[0];
-        IList iList_Target = (IList)Activator.CreateInstance(type);
-        string[] list_Split = xmlData.Split(dataBreak);
-        if (list_Split.Length != 1 || list_Split[0] != "")
-            for (int i = 0; i < list_Split.Length; i++)
-                iList_Target.Add(PhraseObject(listType, list_Split[i], iteration + 1));
-        return iList_Target;
-    }
-    #endregion
-    #region IXmlPhrase
-    bool CheckIXmlParseType(Type type)
-    {
-        if (!m_XmlPhraseType.IsAssignableFrom(type))
-            return false;
-
-        if (!dic_xmlParseFieldInfos.ContainsKey(type))
-            dic_xmlParseFieldInfos.Add(type, type.GetFields(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.NonPublic));
-        return true;
-    }
-
-    string IXmlPhraseToString(Type type, object data,int iteration)
-    {
-        string phrase = "";
-        if (iteration >= m_PhraseLiterateBreakPoints.Length)
-        {
-            Debug.LogError("Iteration Max Reached!");
-            return phrase;
-        }
-        char dataBreak = m_PhraseLiterateBreakPoints[iteration];
-        int fieldLength = dic_xmlParseFieldInfos[type].Length;
-        for (int i = 0; i < fieldLength; i++)
-        {
-            FieldInfo field = dic_xmlParseFieldInfos[type][i];
-            object fieldValue= field.GetValue(data);
-            string fieldString = PhraseString(field.FieldType, fieldValue, iteration);
-            phrase += fieldString;
-            if (i != fieldLength - 1)
-                phrase += dataBreak;
-        }
-        return phrase;
-    }
-
-    object IXmlPraseToData(Type type,string data,int iteration)
-    {
-        object objectData=Activator.CreateInstance(type);
-        if (iteration >= m_PhraseLiterateBreakPoints.Length)
-        {
-            Debug.LogError("Iteration Max Reached!");
-            return null;
-        }
-        char dataBreak = m_PhraseLiterateBreakPoints[iteration];
-        int fieldLength = dic_xmlParseFieldInfos[type].Length;
-        string[] splitString = data.Split(dataBreak);
-        if (splitString.Length != fieldLength)
-            throw new Exception("Field Not Match!");
-        for (int i = 0; i < fieldLength; i++)
-        {
-            FieldInfo field = dic_xmlParseFieldInfos[type][i];
-            string fieldString = splitString[i];
-            object fieldValule = PhraseObject(field.FieldType, fieldString, iteration); 
-            field.SetValue(objectData, fieldValule);
-        }
-        return objectData;
-    }
-    #endregion
-}
-public static class Physics_Extend
-{
-    public static RaycastHit[] BoxCastAll(Vector3 position,Vector3 forward,Vector3 up,Vector3 boxBounds,int layerMask=-1)
-    {
-        float castBoxLength = .1f;
-        return Physics.BoxCastAll(position + forward* castBoxLength / 2f, new Vector3(boxBounds.x / 2, boxBounds.y / 2, castBoxLength/2), forward, Quaternion.LookRotation(forward, up), boxBounds.z - castBoxLength, layerMask);
-    }
-
-    public static RaycastHit[] TrapeziumCastAll(Vector3 position, Vector3 forward,Vector3 up,Vector4 trapeziumInfo,int layerMask=-1,int castCount=8)
-    {
-        List<RaycastHit> hitsList = new List<RaycastHit>();
-        float castLength = trapeziumInfo.z / castCount;
-        for (int i = 0; i < castCount; i++)
-        {
-            Vector3 boxPos = position + forward * castLength * i;
-            Vector3 boxInfo = new Vector3(trapeziumInfo.x+(trapeziumInfo.w-trapeziumInfo.x)*i/castCount,trapeziumInfo.y,castLength);
-            RaycastHit[] hits = BoxCastAll(boxPos,forward,up,boxInfo,layerMask);
-            for (int j = 0; j < hits.Length; j++)
-            {
-                bool b_continue=false;
-
-                for (int k = 0; k < hitsList.Count; k++)
-                    if (hitsList[k].collider == hits[j].collider)
-                        b_continue = true;
-
-                if (b_continue)
-                    continue;
-
-                hitsList.Add(hits[j]);
-            }
-        }
-        return hitsList.ToArray();
-    }
-}
-#endregion
 #region UI Classes
 public class AtlasLoader
 {
@@ -1269,17 +1036,16 @@ class EnumSelection : TReflection.UI.CPropertyFillElement
 #endregion
 
 #if UNITY_EDITOR
-#region Editor Class
-
+#region GizmosExtend
 public static class Gizmos_Extend
 {
     public static void DrawWireCapsule(Vector3 _pos, Quaternion _rot, Vector3 _scale, float _radius, float _height)
     {
         using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, _scale)))
         {
-            if (_height > _radius*2)
+            if (_height > _radius * 2)
             {
-                Vector3 offsetPoint =  Vector3.up * (_height - (_radius * 2)) / 2;
+                Vector3 offsetPoint = Vector3.up * (_height - (_radius * 2)) / 2;
 
                 UnityEditor.Handles.DrawWireArc(offsetPoint, Vector3.forward, Vector3.right, 180, _radius);
                 UnityEditor.Handles.DrawWireArc(offsetPoint, Vector3.right, Vector3.forward, -180, _radius);
@@ -1307,9 +1073,9 @@ public static class Gizmos_Extend
         using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, UnityEditor.Handles.matrix.lossyScale)))
         {
             float halfWidth, halfHeight, halfLength;
-            halfWidth = _cubeSize.x/2;
-            halfHeight = _cubeSize.y/2;
-            halfLength = _cubeSize.z/2;
+            halfWidth = _cubeSize.x / 2;
+            halfHeight = _cubeSize.y / 2;
+            halfLength = _cubeSize.z / 2;
 
             UnityEditor.Handles.DrawLine(new Vector3(halfWidth, halfHeight, halfLength), new Vector3(-halfWidth, halfHeight, halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(halfWidth, halfHeight, -halfLength), new Vector3(-halfWidth, halfHeight, -halfLength));
@@ -1321,7 +1087,7 @@ public static class Gizmos_Extend
             UnityEditor.Handles.DrawLine(new Vector3(halfWidth, halfHeight, -halfLength), new Vector3(halfWidth, -halfHeight, -halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(-halfWidth, halfHeight, -halfLength), new Vector3(-halfWidth, -halfHeight, -halfLength));
 
-            UnityEditor.Handles.DrawLine(new Vector3(halfWidth,halfHeight,halfLength), new Vector3(halfWidth, halfHeight, -halfLength));
+            UnityEditor.Handles.DrawLine(new Vector3(halfWidth, halfHeight, halfLength), new Vector3(halfWidth, halfHeight, -halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(-halfWidth, halfHeight, halfLength), new Vector3(-halfWidth, halfHeight, -halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(halfWidth, -halfHeight, halfLength), new Vector3(halfWidth, -halfHeight, -halfLength));
             UnityEditor.Handles.DrawLine(new Vector3(-halfWidth, -halfHeight, halfLength), new Vector3(-halfWidth, -halfHeight, -halfLength));
@@ -1331,22 +1097,22 @@ public static class Gizmos_Extend
     {
         using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, UnityEditor.Handles.matrix.lossyScale)))
         {
-            Vector3 capBottom = Vector3.forward * _arrowSize.z/2;
+            Vector3 capBottom = Vector3.forward * _arrowSize.z / 2;
             Vector3 capTop = Vector3.forward * _arrowSize.z;
             float rootRadius = _arrowSize.x / 4;
-            float capBottomSize = _arrowSize.x/2;
+            float capBottomSize = _arrowSize.x / 2;
             UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, rootRadius);
             UnityEditor.Handles.DrawWireDisc(capBottom, Vector3.forward, rootRadius);
-            UnityEditor.Handles.DrawLine(Vector3.up*rootRadius,capBottom+Vector3.up*rootRadius);
+            UnityEditor.Handles.DrawLine(Vector3.up * rootRadius, capBottom + Vector3.up * rootRadius);
             UnityEditor.Handles.DrawLine(-Vector3.up * rootRadius, capBottom - Vector3.up * rootRadius);
             UnityEditor.Handles.DrawLine(Vector3.right * rootRadius, capBottom + Vector3.right * rootRadius);
             UnityEditor.Handles.DrawLine(-Vector3.right * rootRadius, capBottom - Vector3.right * rootRadius);
 
             UnityEditor.Handles.DrawWireDisc(capBottom, Vector3.forward, capBottomSize);
-            UnityEditor.Handles.DrawLine(capBottom+Vector3.up * capBottomSize, capTop);
+            UnityEditor.Handles.DrawLine(capBottom + Vector3.up * capBottomSize, capTop);
             UnityEditor.Handles.DrawLine(capBottom - Vector3.up * capBottomSize, capTop);
-            UnityEditor.Handles.DrawLine(capBottom+Vector3.right * capBottomSize, capTop);
-            UnityEditor.Handles.DrawLine(capBottom +- Vector3.right * capBottomSize, capTop);
+            UnityEditor.Handles.DrawLine(capBottom + Vector3.right * capBottomSize, capTop);
+            UnityEditor.Handles.DrawLine(capBottom + -Vector3.right * capBottomSize, capTop);
         }
     }
     public static void DrawCylinder(Vector3 _pos, Quaternion _rot, float _radius, float _height)
@@ -1358,7 +1124,7 @@ public static class Gizmos_Extend
             UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, _radius);
             UnityEditor.Handles.DrawWireDisc(top, Vector3.forward, _radius);
 
-            UnityEditor.Handles.DrawLine(Vector3.right*_radius,top+Vector3.right*_radius);
+            UnityEditor.Handles.DrawLine(Vector3.right * _radius, top + Vector3.right * _radius);
             UnityEditor.Handles.DrawLine(-Vector3.right * _radius, top - Vector3.right * _radius);
             UnityEditor.Handles.DrawLine(Vector3.up * _radius, top + Vector3.up * _radius);
             UnityEditor.Handles.DrawLine(-Vector3.up * _radius, top - Vector3.up * _radius);
@@ -1366,32 +1132,32 @@ public static class Gizmos_Extend
     }
     public static void DrawTrapezium(Vector3 _pos, Quaternion _rot, Vector4 trapeziumInfo)
     {
-        using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot,UnityEditor.Handles.matrix.lossyScale)))
+        using (new UnityEditor.Handles.DrawingScope(Gizmos.color, Matrix4x4.TRS(_pos, _rot, UnityEditor.Handles.matrix.lossyScale)))
         {
-                Vector3 backLeftUp = -Vector3.right * trapeziumInfo.x / 2 + Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
-                Vector3 backLeftDown = -Vector3.right * trapeziumInfo.x / 2 - Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
-                Vector3 backRightUp = Vector3.right * trapeziumInfo.x / 2 + Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
-                Vector3 backRightDown = Vector3.right * trapeziumInfo.x / 2 - Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+            Vector3 backLeftUp = -Vector3.right * trapeziumInfo.x / 2 + Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+            Vector3 backLeftDown = -Vector3.right * trapeziumInfo.x / 2 - Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+            Vector3 backRightUp = Vector3.right * trapeziumInfo.x / 2 + Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
+            Vector3 backRightDown = Vector3.right * trapeziumInfo.x / 2 - Vector3.forward * trapeziumInfo.y / 2 - Vector3.up * trapeziumInfo.z / 2;
 
-                Vector3 forwardLeftUp = -Vector3.right * trapeziumInfo.w / 2 + Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
-                Vector3 forwardLeftDown = -Vector3.right * trapeziumInfo.w / 2 - Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
-                Vector3 forwardRightUp = Vector3.right * trapeziumInfo.w / 2 + Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
-                Vector3 forwardRightDown = Vector3.right * trapeziumInfo.w / 2 - Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+            Vector3 forwardLeftUp = -Vector3.right * trapeziumInfo.w / 2 + Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+            Vector3 forwardLeftDown = -Vector3.right * trapeziumInfo.w / 2 - Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+            Vector3 forwardRightUp = Vector3.right * trapeziumInfo.w / 2 + Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
+            Vector3 forwardRightDown = Vector3.right * trapeziumInfo.w / 2 - Vector3.forward * trapeziumInfo.y / 2 + Vector3.up * trapeziumInfo.z / 2;
 
-                UnityEditor.Handles.DrawLine(backLeftUp, backLeftDown);
-                UnityEditor.Handles.DrawLine(backLeftDown, backRightDown);
-                UnityEditor.Handles.DrawLine(backRightDown, backRightUp);
-                UnityEditor.Handles.DrawLine(backRightUp, backLeftUp);
+            UnityEditor.Handles.DrawLine(backLeftUp, backLeftDown);
+            UnityEditor.Handles.DrawLine(backLeftDown, backRightDown);
+            UnityEditor.Handles.DrawLine(backRightDown, backRightUp);
+            UnityEditor.Handles.DrawLine(backRightUp, backLeftUp);
 
-                UnityEditor.Handles.DrawLine(forwardLeftUp, forwardLeftDown);
-                UnityEditor.Handles.DrawLine(forwardLeftDown, forwardRightDown);
-                UnityEditor.Handles.DrawLine(forwardRightDown, forwardRightUp);
-                UnityEditor.Handles.DrawLine(forwardRightUp, forwardLeftUp);
+            UnityEditor.Handles.DrawLine(forwardLeftUp, forwardLeftDown);
+            UnityEditor.Handles.DrawLine(forwardLeftDown, forwardRightDown);
+            UnityEditor.Handles.DrawLine(forwardRightDown, forwardRightUp);
+            UnityEditor.Handles.DrawLine(forwardRightUp, forwardLeftUp);
 
-                UnityEditor.Handles.DrawLine(backLeftUp, forwardLeftUp);
-                UnityEditor.Handles.DrawLine(backLeftDown, forwardLeftDown);
-                UnityEditor.Handles.DrawLine(backRightUp, forwardRightUp);
-                UnityEditor.Handles.DrawLine(backRightDown, forwardRightDown);
+            UnityEditor.Handles.DrawLine(backLeftUp, forwardLeftUp);
+            UnityEditor.Handles.DrawLine(backLeftDown, forwardLeftDown);
+            UnityEditor.Handles.DrawLine(backRightUp, forwardRightUp);
+            UnityEditor.Handles.DrawLine(backRightDown, forwardRightDown);
         }
     }
 }
