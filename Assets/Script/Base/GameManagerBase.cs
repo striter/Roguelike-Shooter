@@ -25,7 +25,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         TBroadCaster<enum_BC_UIStatus>.Init();
         GameIdentificationManager.Init();
         GameDataManager.Init();
-        OptionsManager.Init();
+        OptionsDataManager.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
 
@@ -38,16 +38,16 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
         AddConsoleBinding();
         OnCommonOptionChanged();
-        OptionsManager.event_OptionChanged += OnCommonOptionChanged;
-        OptionsManager.event_OptionChanged += OnEffectOptionChanged;
+        OptionsDataManager.event_OptionChanged += OnCommonOptionChanged;
+        OptionsDataManager.event_OptionChanged += OnEffectOptionChanged;
         SetBulletTime(false);
     }
 
     protected virtual void OnDisable()
     {
         this.StopAllSingleCoroutines();
-        OptionsManager.event_OptionChanged -= OnCommonOptionChanged;
-        OptionsManager.event_OptionChanged -= OnEffectOptionChanged;
+        OptionsDataManager.event_OptionChanged -= OnCommonOptionChanged;
+        OptionsDataManager.event_OptionChanged -= OnEffectOptionChanged;
     }
 
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
@@ -61,8 +61,8 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     void OnCommonOptionChanged()
     {
-        TLocalization.SetRegion(OptionsManager.m_OptionsData.m_Region);
-        Application.targetFrameRate = (int)OptionsManager.m_OptionsData.m_FrameRate;
+        TLocalization.SetRegion(OptionsDataManager.m_OptionsData.m_Region);
+        Application.targetFrameRate = (int)OptionsDataManager.m_OptionsData.m_FrameRate;
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
@@ -109,14 +109,14 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     void OnEffectOptionChanged()
     {
-        m_DirectionalLight.shadows = OptionsManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
-        if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.Normal)
+        m_DirectionalLight.shadows = OptionsDataManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
+        if (OptionsDataManager.m_OptionsData.m_Bloom == enum_Option_Bloom.Normal)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 4, 5, 2);
-        else if (OptionsManager.m_OptionsData.m_Bloom == enum_Option_Bloom.High)
+        else if (OptionsDataManager.m_OptionsData.m_Bloom == enum_Option_Bloom.High)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
-        m_DepthSSAO.SetAOEnable(OptionsManager.m_OptionsData.m_Effect>= enum_Option_Effect.High);
-        m_Bloom.SetBloomEnable(OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
-        CameraController.Instance.m_Effect.SetCameraEffects(OptionsManager.m_OptionsData.m_Effect >= enum_Option_Effect.Medium? DepthTextureMode.Depth: DepthTextureMode.None );
+        m_DepthSSAO.SetAOEnable(OptionsDataManager.m_OptionsData.m_Effect>= enum_Option_Effect.High);
+        m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsDataManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
+        CameraController.Instance.m_Effect.SetCameraEffects(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Medium? DepthTextureMode.Depth: DepthTextureMode.None );
     }
 
     protected void SetPostEffect_Dead()
@@ -201,384 +201,6 @@ public class GameIdentificationManager
     }
 }
 
-public static class OptionsManager
-{
-    public static event Action event_OptionChanged;
-    public static CGameOptions m_OptionsData => TGameData<CGameOptions>.Data;
-    public static void Init()
-    {
-        TGameData<CGameOptions>.Init();
-        OnOptionChanged();
-    }
-
-    public static void Save()
-    {
-        TGameData<CGameOptions>.Save();
-        OnOptionChanged();
-    }
-
-    public static void OnOptionChanged()=>event_OptionChanged?.Invoke();
-    public static float F_SFXVolume =>GameExpression.F_GameVFXVolume(m_OptionsData.m_VFXVolumeTap);
-    public static float F_MusicVolume => GameExpression.F_GameMusicVolume(m_OptionsData.m_MusicVolumeTap);
-}
-public static class GameWeaponDataManager
-{
-
-}
-public static class GameDataManager
-{
-    public static CGameSave m_GameData => TGameData<CGameSave>.Data;
-    public static CArmoryData m_ArmoryData=> TGameData<CArmoryData>.Data;
-    public static CEquipmentDepotData m_EquipmentDepotData => TGameData<CEquipmentDepotData>.Data;
-    public static CPlayerBattleSave m_BattleData => TGameData<CPlayerBattleSave>.Data;
-
-    public static bool m_Inited { get; private set; } = false;
-    public static void Init()
-    {
-        if (m_Inited) return;
-        m_Inited = true;
-        Properties<SWeapon>.Init();
-        Properties<SBuff>.Init();
-        SheetProperties<SEnermyGenerate>.Init();
-
-        InitPerks();
-        InitArmory();
-        InitEquipment();
-
-        TGameData<CGameSave>.Init();
-        TGameData<CEquipmentDepotData>.Init();
-        TGameData<CArmoryData>.Init();
-        TGameData<CPlayerBattleSave>.Init();
-
-        InitArmoryGameWeaponUnlocked();
-    }
-    #region GameSave
-    public static void OnNewGame()
-    {
-        TGameData<CPlayerBattleSave>.Reset();
-        TGameData<CPlayerBattleSave>.Save();
-    }
-
-    public static void StageFinishSaveData(EntityCharacterPlayer data, GameProgressManager level)
-    {
-        m_BattleData.Adjust(data, level);
-        TGameData<CPlayerBattleSave>.Save();
-    }
-
-    public static void OnGameResult(GameProgressManager progress)
-    {
-        if (progress.m_GameWin)
-            m_GameData.UnlockDifficulty();
-        OnCreditStatus(progress.F_CreditGain);
-
-        TGameData<CPlayerBattleSave>.Reset();
-        TGameData<CPlayerBattleSave>.Save();
-    }
-    #endregion
-    #region GameData
-    public static bool CanUseCredit(float credit) => m_GameData.f_Credits >= credit;
-    public static void OnCreditStatus(float credit)
-    {
-        if (credit == 0)
-            return;
-        m_GameData.f_Credits += credit;
-        TGameData<CGameSave>.Save();
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameCurrencyStatus);
-    }
-
-    public static int OnCampDifficultySwitch()
-    {
-        m_GameData.m_GameDifficulty += 1;
-        if (m_GameData.m_GameDifficulty > m_GameData.m_DifficultyUnlocked)
-            m_GameData.m_GameDifficulty = 1;
-
-        TGameData<CGameSave>.Save();
-        return m_GameData.m_GameDifficulty;
-    }
-
-    public static bool OnDailyRewardRequire()
-    {
-        if (!m_GameData.CheckDailyReward())
-            return false;
-        OnCreditStatus(500f);
-        return true;
-    }
-    #endregion
-    #region ArmoryData
-    public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();
-    public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
-
-    static void InitArmory()
-    {
-        m_AvailableWeapons.Clear();
-
-        Properties<SWeapon>.PropertiesList.Traversal((SWeapon weapon) =>
-        {
-            if (weapon.m_Hidden)
-                return;
-            m_AvailableWeapons.Add(weapon.m_Weapon, weapon);
-        });
-    }
-
-    static void InitArmoryGameWeaponUnlocked()
-    {
-        m_GameWeaponUnlocked.Clear();
-        m_AvailableWeapons.Traversal((SWeapon weapon) =>
-        {
-            if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon.m_Weapon))
-                return;
-            if (!m_GameWeaponUnlocked.ContainsKey(weapon.m_Rarity))
-                m_GameWeaponUnlocked.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());
-            m_GameWeaponUnlocked[weapon.m_Rarity].Add(weapon.m_Weapon);
-        });
-    }
-
-
-    public static float GetArmoryUnlockPrice(enum_PlayerWeapon weapon)=> GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
-    public static bool CanArmoryUnlock(enum_PlayerWeapon weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
-    public static void OnArmoryUnlock(enum_PlayerWeapon weapon)
-    {
-        if (!m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
-        {
-            Debug.LogError("Error! Unlock A None Blueprint Weapon" + weapon);
-            return;
-        }
-        if(m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
-        {
-            Debug.LogError("Error! Unlock A Unlocked Weapon" + weapon);
-            return;
-        }
-        if (!CanArmoryUnlock(weapon))
-        {
-            Debug.LogError("Invalid Unlock Behaviour!");
-            return;
-        }
-        OnCreditStatus(-GetArmoryUnlockPrice(weapon));
-        m_ArmoryData.m_WeaponBlueprints.Remove(weapon);
-        m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
-        m_ArmoryData.m_WeaponSelected = weapon;
-        TGameData<CArmoryData>.Save();
-        InitArmoryGameWeaponUnlocked();
-    }
-    
-    public static void OnArmorySelect(enum_PlayerWeapon weapon)
-    {
-        if(!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
-        {
-            Debug.LogError("Error! Equipping A Locked Weapon!");
-            return;
-        }
-        if(weapon== m_ArmoryData.m_WeaponSelected)
-        {
-            Debug.LogError("Error! Equipping A Selcted Weapon!");
-            return;
-        }
-        m_ArmoryData.m_WeaponSelected = weapon;
-        TGameData<CArmoryData>.Save();
-    }
-
-    public static enum_PlayerWeapon UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
-    {
-        Dictionary<enum_Rarity, List<enum_PlayerWeapon>> _blueprintAvailable = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
-        m_AvailableWeapons.Traversal((enum_PlayerWeapon weapon,SWeapon weaponData) =>
-        {
-            if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon) || m_ArmoryData.m_WeaponsUnlocked.Contains(weapon) )
-                return;
-            if (!_blueprintAvailable.ContainsKey(weaponData.m_Rarity))
-                _blueprintAvailable.Add(weaponData.m_Rarity, new List<enum_PlayerWeapon>());
-            _blueprintAvailable[weaponData.m_Rarity].Add(weapon);
-        });
-
-        enum_PlayerWeapon bluePrint = enum_PlayerWeapon.Invalid;
-        if (_blueprintAvailable.ContainsKey(_spawnRarity))
-            bluePrint = _blueprintAvailable[_spawnRarity].RandomItem();
-        else if (_blueprintAvailable.ContainsKey(enum_Rarity.Ordinary))
-            bluePrint = _blueprintAvailable[enum_Rarity.Ordinary].RandomItem();
-
-        if(bluePrint!= enum_PlayerWeapon.Invalid)
-        {
-            m_ArmoryData.m_WeaponBlueprints.Add(bluePrint);
-            TGameData<CArmoryData>.Save();
-            InitArmoryGameWeaponUnlocked();
-        }
-
-        return bluePrint;
-    }
-    #endregion
-    #region EquipmentData
-    static Dictionary<int, ExpireEquipmentCombination> m_AllEquipments=new Dictionary<int, ExpireEquipmentCombination>();
-    static List<int> m_AvailableEquipments = new List<int>();
-    public static void InitEquipment()
-    {
-        TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentCombination equipment) => {
-            m_AllEquipments.Add(equipment.m_Index, equipment);
-            if (equipment.m_Index != GameConst.m_DefaultEquipmentCombinationIdentity)
-                m_AvailableEquipments.Add(equipment.m_Index);
-        }), new List<EquipmentSaveData>());
-    }
-
-    public static ExpireEquipmentCombination CreateEquipmentCombination(List< EquipmentSaveData> datas)
-    {
-        int equipmentIndex = datas.Find(p => datas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
-
-        if (equipmentIndex <= 0)
-        {
-            equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
-        }
-        else if (!m_AllEquipments.ContainsKey(equipmentIndex))
-        {
-            Debug.LogError("Error Equipment:" + equipmentIndex + " ,Does not exist");
-            equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
-        }
-
-        return TReflection.CreateInstance<ExpireEquipmentCombination>(m_AllEquipments[equipmentIndex].GetType(), datas);
-    }
-
-    public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
-    {
-        EquipmentSaveData data = new EquipmentSaveData(m_AvailableEquipments.RandomItem(), 0, rarity, new List<EquipmentEntrySaveData>());
-        int entryCount = TCommon.RandomPercentage(GameConst.m_EquipmentGenerateEntryCount[rarity]);
-        for (int i = 0; i < entryCount; i++)
-            data.AcquireRandomEntry();
-        return data;
-    }
-
-    static void AcquireRandomEntry(this EquipmentSaveData data)
-    {
-        enum_EquipmentEntryType entryType = TCommon.RandomEnumValues<enum_EquipmentEntryType>();
-        float startValue = data.m_Entries.Count == 0 ? GameConst.m_EquipmentEntryStart_Main[entryType][data.m_Rarity] : GameConst.m_EquipmentEntryStart_Sub[entryType][data.m_Rarity].Random();
-        data.m_Entries.Add(new EquipmentEntrySaveData(entryType,startValue));
-    }
-
-    public static void AcquireEquipment(EquipmentSaveData data)
-    {
-        m_EquipmentDepotData.m_Equipments.Add(data);
-        TGameData<CEquipmentDepotData>.Save();
-    }
-
-    public static void DoEquipmentEquip(int equipmentIndex,bool equip)
-    {
-        if(equip)
-        {
-            if (m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex))
-            {
-                Debug.LogError("Can't Equip Equiped!" + equipmentIndex);
-                return;
-            }
-            if (m_EquipmentDepotData.m_Equipping.Count >= 3)
-                m_EquipmentDepotData.m_Equipping.RemoveAt(0);
-            m_EquipmentDepotData.m_Equipping.Add(equipmentIndex);
-        }
-        else
-        {
-            if (!m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex))
-            {
-                Debug.LogError("Can't Dequip UnEquiped!"+equipmentIndex);
-                return;
-            }
-            m_EquipmentDepotData.m_Equipping.Remove(equipmentIndex);
-        }
-        TGameData<CEquipmentDepotData>.Save();
-    }
-
-    #endregion
-    #region PerkData
-    static Dictionary<int, ExpirePerkBase> m_AllPerks = new Dictionary<int, ExpirePerkBase>();
-    static Dictionary<enum_Rarity, List<int>> m_PerkRarities = new Dictionary<enum_Rarity, List<int>>();
-    public static void InitPerks()
-    {
-        m_AllPerks.Clear();
-        m_PerkRarities.Clear();
-        TReflection.TraversalAllInheritedClasses(((Type type, ExpirePerkBase perk) => {
-            m_AllPerks.Add(perk.m_Index, perk);
-            if (perk.m_DataHidden)
-                return;
-            if (!m_PerkRarities.ContainsKey(perk.m_Rarity))
-                m_PerkRarities.Add(perk.m_Rarity, new List<int>());
-            m_PerkRarities[perk.m_Rarity].Add(perk.m_Index);
-        }), PerkSaveData.New(-1));
-    }
-    public static int RandomPerk(enum_Rarity rarity, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random = null)
-    {
-        List<int> rarityIDs = m_PerkRarities[rarity].DeepCopy();
-        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Rarity == rarity && perk.m_Stack == perk.m_MaxStack) rarityIDs.Remove(perk.m_Index); });
-        return rarityIDs.RandomItem(random);
-    }
-
-    public static List<int> RandomPerks(int perkCount, Dictionary<enum_Rarity, int> perkGenerate, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random = null)
-    {
-        Dictionary<enum_Rarity, List<int>> _perkIDs = m_PerkRarities.DeepCopy();
-        Dictionary<enum_Rarity, int> _rarities = perkGenerate.DeepCopy();
-
-        playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Stack == perk.m_MaxStack) _perkIDs[perk.m_Rarity].Remove(perk.m_Index); });
-
-        List<int> randomIDs = new List<int>();
-        for (int i = 0; i < perkCount; i++)
-        {
-            enum_Rarity rarity = TCommon.RandomPercentage(_rarities, random);
-            if (_perkIDs[rarity].Count == 0)
-                rarity = enum_Rarity.Ordinary;
-
-            int perkID = _perkIDs[rarity].RandomItem(random);
-            _perkIDs[rarity].Remove(perkID);
-            randomIDs.Add(perkID);
-        }
-        return randomIDs;
-    }
-
-    public static ExpirePerkBase GetPerkData(int index) => m_AllPerks[index];
-
-    public static ExpirePerkBase CreatePerk(PerkSaveData data)
-    {
-        if (!m_AllPerks.ContainsKey(data.m_Index))
-            Debug.LogError("Error Perk:" + data.m_Index + " ,Does not exist");
-        ExpirePerkBase equipment = TReflection.CreateInstance<ExpirePerkBase>(m_AllPerks[data.m_Index].GetType(), data);
-        return equipment;
-    }
-    #endregion
-    #region ExcelData
-    public static enum_PlayerWeapon TryGetWeaponEnum(string weaponIdentity)
-    {
-        int idTry = -1;
-        if (int.TryParse(weaponIdentity, out idTry) && Enum.IsDefined(typeof(enum_PlayerWeapon), idTry))
-            return (enum_PlayerWeapon)idTry;
-
-        enum_PlayerWeapon targetWeapon = enum_PlayerWeapon.Invalid;
-        if (Enum.TryParse(weaponIdentity, out targetWeapon))
-            return targetWeapon;
-
-        if (Properties<SWeapon>.PropertiesList.Any(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetLocalizeNameKey()) == weaponIdentity))
-            return Properties<SWeapon>.PropertiesList.Find(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetLocalizeNameKey()) == weaponIdentity).m_Weapon;
-
-        Debug.LogError("Invalid Player Weapon Found!");
-        return enum_PlayerWeapon.Invalid;
-    }
-
-    public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
-    {
-        SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
-        if (weapon.m_Weapon == 0)
-            Debug.LogError("Error Properties Found Of Index:" + type.ToString() + "|" + ((int)type));
-        else if (weapon.m_Hidden)
-            Debug.LogWarning("You've Spawned A Hidden Weapon!");
-        return weapon;
-    }
-    public static SBuff GetPresetBuff(int index)
-    {
-        SBuff buff = Properties<SBuff>.PropertiesList.Find(p => p.m_Index == index);
-        if (buff.m_Index == 0)
-            Debug.LogError("Error Properties Found Of Index:" + index);
-        return buff;
-    }
-    public static Dictionary<bool, List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage, enum_GameStyle style)
-    {
-        int sheetIndex = ((int)style - 1) * 3 + (int)stage - 1;
-        Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>() { { true, new List<SEnermyGenerate>() }, { false, new List<SEnermyGenerate>() } };
-        SheetProperties<SEnermyGenerate>.GetPropertiesList(sheetIndex).Traversal((SEnermyGenerate generate) => { m_GenerateDic[generate.m_IsFinal].Add(generate); });
-        return m_GenerateDic;
-    }
-    #endregion
-}
 
 public static class GameObjectManager
 {

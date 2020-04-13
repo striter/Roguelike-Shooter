@@ -1,13 +1,8 @@
 ﻿using UnityEngine;
-using TExcel;
 using System.Collections.Generic;
 using System;
-using TTiles;
-using TPhysics;
 using System.Linq;
-using TGameSave;
 using LevelSetting;
-#pragma warning disable 0649
 namespace GameSetting
 {
     #region For Designers Use
@@ -116,6 +111,7 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
 
         public static readonly Dictionary<enum_Rarity, float> m_EquipmentGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
+        public const int m_EquipmentEnhanceMaxLevel = 15;
         #region Entry
         public static readonly Dictionary<enum_Rarity, Dictionary<int, int>> m_EquipmentGenerateEntryCount = new Dictionary<enum_Rarity, Dictionary<int, int>>()  {{ enum_Rarity.Ordinary, new Dictionary<int, int>(){ { 0,50},{ 1,50} } } ,{ enum_Rarity.Advanced, new Dictionary<int, int>(){ { 1,50},{ 2,50} } } ,{ enum_Rarity.Rare, new Dictionary<int, int>(){ { 1,35},{ 2,35},{ 3,30} } } , { enum_Rarity.Epic, new Dictionary<int, int>(){ { 2,50},{ 3,50} } } ,  };
 
@@ -287,7 +283,11 @@ namespace GameSetting
                         );
             }
         }
-        
+
+        #region Cultivate
+        public static int GetEquipmentEnhanceRequirement(enum_Rarity rarity, int level) => (1000 + 500 * (int)rarity) + (500 + (int)rarity * 250) * level;
+        public static int GetEquipmentDeconstruct(enum_Rarity rarity, int level) => (500 + 250 * (int)rarity) + (250 + (int)rarity * 125) * level;
+        #endregion
     }
 
     public static class LocalizationKeyJoint
@@ -333,22 +333,17 @@ namespace GameSetting
     #endregion
 
     #region For Developers Use
-
     #region Structs
-    #region Default Readonly
-
     public struct GameLevelPortalData
     {
         public enum_LevelType m_PortalMain { get; private set; }
         public enum_LevelType m_PortalExtra { get; private set; }
-        public GameLevelPortalData(enum_LevelType _mainType,enum_LevelType _subType)
+        public GameLevelPortalData(enum_LevelType _mainType, enum_LevelType _subType)
         {
             m_PortalMain = _mainType;
             m_PortalExtra = _subType;
         }
-        
     }
-
 
     public struct PickupGenerateData
     {
@@ -360,27 +355,27 @@ namespace GameSetting
 
         public bool CanGenerateHealth() => TCommon.RandomPercentage() <= m_HealthRate;
         public bool CanGenerateArmor() => TCommon.RandomPercentage() <= m_ArmorRate;
-        public bool CanGenerateCoins( out int amount)
+        public bool CanGenerateCoins(out int amount)
         {
             amount = -1;
-            if (TCommon.RandomPercentage() <=  m_CoinRate)
+            if (TCommon.RandomPercentage() <= m_CoinRate)
             {
                 amount = m_CoinRange.Random();
                 return true;
             }
             return false;
         }
-        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_Rarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount, m_WeaponRate=_weaponRate };
+        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_Rarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount, m_WeaponRate = _weaponRate };
     }
 
     public struct StageInteractGenerateData
     {
-        public Dictionary<enum_Rarity,int> m_TradePerk { get; private set; }
+        public Dictionary<enum_Rarity, int> m_TradePerk { get; private set; }
         public Dictionary<enum_Rarity, int> m_TradeWeapon { get; private set; }
         public Dictionary<enum_Rarity, int> m_RewardWeapon { get; private set; }
         public PickupGenerateData m_NormalPickupData { get; private set; }
         public PickupGenerateData m_ElitePickupData { get; private set; }
-        public static StageInteractGenerateData Create(Dictionary<enum_Rarity, int>  _tradePerkRate,Dictionary<enum_Rarity,int> _tradeWeaponRate, Dictionary<enum_Rarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate,PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradePerk=_tradePerkRate, m_TradeWeapon =_tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData=_normalGenerate,m_ElitePickupData=_eliteGenerate};
+        public static StageInteractGenerateData Create(Dictionary<enum_Rarity, int> _tradePerkRate, Dictionary<enum_Rarity, int> _tradeWeaponRate, Dictionary<enum_Rarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate, PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradePerk = _tradePerkRate, m_TradeWeapon = _tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData = _normalGenerate, m_ElitePickupData = _eliteGenerate };
     }
 
     public struct EliteBuffCombine
@@ -394,343 +389,10 @@ namespace GameSetting
             m_IndicatorIndex = _indicatorIndex;
             m_MuzzleIndex = _muzzleIndex;
         }
-     }
-    
-    #endregion
-
-    #region SaveData
-    public class CGameSave : ISave
-    {
-        public float f_Credits;
-        public int m_GameDifficulty;
-        public int m_DifficultyUnlocked;
-        public enum_PlayerCharacter m_CharacterSelected;
-        public int m_LastDailyRewardStamp;
-        public CGameSave()
-        {
-            f_Credits = 100;
-            m_GameDifficulty = 1;
-            m_DifficultyUnlocked = 1;
-            m_LastDailyRewardStamp = -1;
-            m_CharacterSelected = enum_PlayerCharacter.Assassin;
-        }
-
-        public void UnlockDifficulty()
-        {
-            if (m_GameDifficulty != m_DifficultyUnlocked)
-                return;
-
-            m_DifficultyUnlocked++;
-            m_GameDifficulty++;
-        }
-
-        public bool CheckDailyReward()
-        {
-            int currentDayStamp = TTime.TTimeTools.GetDayStampNow();
-            if (currentDayStamp<=m_LastDailyRewardStamp)
-                return false;
-            m_LastDailyRewardStamp = currentDayStamp;
-            return true;
-        }
-
-        public void DataRecorrect()
-        {
-        }
-    }
-
-    public class CPlayerBattleSave : ISave
-    {
-        public string m_GameSeed;
-        public enum_Stage m_Stage;
-        public int m_LevelPassed;
-        public float m_Health;
-        public float m_Coins;
-        public enum_PlayerCharacter m_Character;
-        public WeaponSaveData m_Weapon1;
-        public WeaponSaveData m_Weapon2;
-        public List<PerkSaveData> m_Perks;
-        public List<EquipmentSaveData> m_Equipments;
-        public CPlayerBattleSave():this(GameDataManager.m_GameData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected,GameDataManager.m_EquipmentDepotData.GetSelectedEquipments())
-        {
-        }
-        public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments)
-        {
-            m_Coins = 0;
-            m_Health = -1;
-            m_Character = character;
-            m_Equipments = equipments;
-            m_Perks = new List<PerkSaveData>();
-            m_Weapon1 = WeaponSaveData.CreateNew(weapon);
-            m_Weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
-            m_Stage = enum_Stage.Rookie;
-            m_GameSeed = DateTime.Now.ToLongTimeString();
-        }
-
-        public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
-        {
-            m_GameSeed = _level.m_GameSeed;
-            m_Stage = _level.m_StageIndex;
-            m_LevelPassed = _level.m_LevelPassed;
-            m_Coins = _player.m_CharacterInfo.m_Coins;
-            m_Health = _player.m_Health.m_CurrentHealth;
-            m_Weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
-            m_Weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
-            m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
-        }
-
-        void ISave.DataRecorrect()
-        {
-        }
-    }
-
-    public class CArmoryData:ISave
-    {
-        public List<enum_PlayerWeapon> m_WeaponsUnlocked;
-        public List<enum_PlayerWeapon> m_WeaponBlueprints;
-        public enum_PlayerWeapon m_WeaponSelected;
-        public CArmoryData()
-        {
-            m_WeaponsUnlocked = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.P92, enum_PlayerWeapon.UMP45, enum_PlayerWeapon.Kar98, enum_PlayerWeapon.AKM, enum_PlayerWeapon.S686, enum_PlayerWeapon.Minigun, enum_PlayerWeapon.RocketLauncher, enum_PlayerWeapon.FrostWand };
-            m_WeaponBlueprints = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.HeavySword, enum_PlayerWeapon.Flamer };
-            m_WeaponSelected = enum_PlayerWeapon.P92;
-        }
-
-        public void DataRecorrect()
-        {
-        }
-    }
-
-    public class CEquipmentDepotData:ISave
-    {
-        public List<EquipmentSaveData> m_Equipments;
-        public List<int> m_Equipping;
-        public List<int> m_Locking;
-        public CEquipmentDepotData()
-        {
-            m_Equipments = new List<EquipmentSaveData>() { GameDataManager.RandomRarityEquipment( enum_Rarity.Ordinary), GameDataManager.RandomRarityEquipment( enum_Rarity.Ordinary), GameDataManager.RandomRarityEquipment( enum_Rarity.Advanced), GameDataManager.RandomRarityEquipment( enum_Rarity.Rare), GameDataManager.RandomRarityEquipment( enum_Rarity.Epic),
-            };
-            m_Equipping = new List<int>() {0,1,2};
-            m_Locking = new List<int>() { };
-        }
-
-        public List<EquipmentSaveData> GetSelectedEquipments()
-        {
-            List<EquipmentSaveData> datas = new List<EquipmentSaveData>();
-            for (int i = 0; i < m_Equipping.Count; i++)
-                datas.Add(m_Equipments[m_Equipping[i]]);
-            return datas;
-        }
-
-        public void DataRecorrect()
-        {
-        }
-    }
-
-    public class CGameOptions : ISave
-    {
-        public enum_Option_JoyStickMode m_JoyStickMode;
-        public enum_Option_FrameRate m_FrameRate;
-        public enum_Option_Effect m_Effect;
-        public enum_Option_Bloom m_Bloom;
-        public enum_Option_LanguageRegion m_Region;
-        public bool m_ShadowOff;
-        public int m_MusicVolumeTap;
-        public int m_VFXVolumeTap;
-        public int m_SensitiveTap;
-
-        public CGameOptions()
-        {
-            m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
-            m_FrameRate = enum_Option_FrameRate.High;
-            m_Effect = enum_Option_Effect.High;
-            m_Bloom = enum_Option_Bloom.High;
-            m_Region = enum_Option_LanguageRegion.CN;
-            m_ShadowOff = false;
-            m_SensitiveTap = 5;
-            m_MusicVolumeTap = 10;
-            m_VFXVolumeTap = 10;
-        }
-
-        void ISave.DataRecorrect()
-        {
-        }
-    }
-
-    public struct WeaponSaveData : IDataConvert
-    {
-        public enum_PlayerWeapon m_Weapon { get; private set; }
-        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
-        public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
-    }
-
-    public struct MercenarySaveData:IDataConvert
-    {
-        public enum_MercenaryCharacter m_MercenaryCharacter { get; private set; }
-        public WeaponSaveData m_Weapon { get; private set; }
-        public float m_Health { get;private set; }
-        public MercenarySaveData(EntityCharacterMercenary _mercenary)
-        {
-            m_Weapon = WeaponSaveData.Create(_mercenary.m_Weapon);
-            m_MercenaryCharacter = _mercenary.m_Character;
-            m_Health = _mercenary.m_Health.m_CurrentHealth;
-
-        }
-    }
-    
-    public struct PerkSaveData:IDataConvert
-    {
-        public int m_Index { get; private set; }
-        public int m_PerkStack { get; private set; }
-        public float m_RecordData { get; private set; }
-        public static PerkSaveData New(int index) => new PerkSaveData() { m_Index = index, m_PerkStack = 1, m_RecordData = -1 };
-        public static PerkSaveData Create(ExpirePerkBase perk) => new PerkSaveData() { m_Index = perk.m_Index,m_PerkStack=perk.m_Stack, m_RecordData = perk.m_RecordData };
-        public static List<PerkSaveData> Create(List<ExpirePerkBase> perks)
-        {
-            List<PerkSaveData> data = new List<PerkSaveData>();
-            perks.Traversal((ExpirePerkBase perk) => { data.Add(Create(perk)); });
-            return data;
-        }
-    }
-
-    public struct EquipmentSaveData:IDataConvert
-    {
-        public int m_Index { get; private set; }
-        public int m_Enhance { get; private set; }
-        public int m_AcquireStamp { get; private set; }
-        public enum_Rarity m_Rarity { get; private set; }
-        public List<EquipmentEntrySaveData> m_Entries { get; private set; }
-        public EquipmentSaveData(int index,int level, enum_Rarity rarity, List<EquipmentEntrySaveData> entries){ m_Index = index;m_Enhance = level; m_Rarity = rarity; m_AcquireStamp = TTime.TTimeTools.GetTimeStampNow(); m_Entries = entries; }
-    }
-
-    public struct EquipmentEntrySaveData :IDataConvert
-    {
-        public enum_EquipmentEntryType m_Type { get; private set; }
-        public float m_Value { get; private set; }
-
-        public EquipmentEntrySaveData(enum_EquipmentEntryType entryType, float value)  { m_Type = entryType; m_Value = value; }
-
-        public void Upgrade(float value)
-        {
-            m_Value += value;
-        }
     }
 
     #endregion
 
-    #region ExcelData
-    public struct SWeapon : ISExcel
-    {
-        public int m_Index { get; private set; }
-        public bool m_Hidden { get; private set; }
-        public enum_Rarity m_Rarity { get; private set; }
-        public float m_FireRate { get; private set; }
-        public int m_ClipAmount { get; private set; }
-        public float m_Spread { get; private set; }
-        public float m_BulletRefillTime { get; private set; }
-        public int m_PelletsPerShot { get; private set; }
-        public float m_Weight { get; private set; }
-        public float m_RecoilPerShot { get; private set; }
-
-        public float m_UIDamage { get; private set; }
-        public float m_UIRPM { get; private set; }
-        public float m_UIStability { get; private set; }
-        public float m_UISpeed { get; private set; }
-        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)m_Index;
-
-        public void InitAfterSet()
-        {
-        }
-    }
-
-    public struct SBuff : ISExcel
-    {
-        public int m_Index { get; private set; }
-        public int m_Refresh { get; private set; }
-        public float m_ExpireDuration { get; private set; }
-        public int m_EffectIndex { get; private set; }
-        public float m_MovementSpeedMultiply { get; private set; }
-        public float m_FireRateMultiply { get; private set; }
-        public float m_ReloadRateMultiply { get; private set; }
-        public float m_HealthDrainMultiply { get; private set; }
-        public float m_DamageMultiply { get; private set; }
-        public float m_DamageReduction { get; private set; }
-        public int m_ExtraBuffApply { get; private set; }
-        public float m_DamageTickTime { get; private set; }
-        public float m_DamagePerTick { get; private set; }
-        public enum_DamageType m_DamageType { get; private set; }
-        public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)m_Refresh;
-        public void InitAfterSet()
-        {
-            m_MovementSpeedMultiply /= 100f;
-            m_FireRateMultiply /= 100f;
-            m_ReloadRateMultiply /= 100f;
-            m_DamageMultiply /= 100f;
-            m_DamageReduction /= 100f;
-            m_HealthDrainMultiply /= 100f;
-        }
-        //Normally In Excel 0-99
-       //1000-9999
-        public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
-        {
-            SBuff buff = new SBuff();
-            buff.m_Index = 1000 + difficulty;
-            buff.m_Refresh = (int)enum_ExpireRefreshType.Refresh;
-            buff.m_DamageMultiply = damageMultiply;
-            return buff;
-        }
-    }
-
-    public struct SEnermyGenerate : ISExcel
-    {
-        public bool m_IsFinal { get; private set; }
-        public int m_MeleeCount { get; private set; }
-        public int m_E2Count { get; private set; }
-        public  int m_E3Count { get; private set; }
-        public int m_E4Count { get; private set; }
-        public int m_E5Count { get; private set; }
-        public int m_E6Count { get; private set; }
-        public int m_EliteCount { get; private set; }
-
-        public void InitAfterSet()
-        {
-        }
-
-        public static SEnermyGenerate operator +(SEnermyGenerate data1,SEnermyGenerate data2)
-        {
-            data1.m_MeleeCount += data2.m_MeleeCount;
-            data1.m_E2Count += data2.m_E2Count;
-            data1.m_E3Count += data2.m_E3Count;
-            data1.m_E4Count += data2.m_E4Count;
-            data1.m_E5Count += data2.m_E5Count;
-            data1.m_E6Count += data2.m_E6Count;
-            data1.m_EliteCount += data2.m_EliteCount;
-            return data1;
-        }
-        
-        public List<int> GetEnermyIDList(Dictionary<enum_EnermyType, int> m_EnermyIDs)
-        {
-            List<int> enermyID = new List<int>();
-            for (int i = 0; i < m_MeleeCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Melee]);
-            for (int i = 0; i < m_E2Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E2]);
-            for (int i = 0; i < m_E3Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E3]);
-            for (int i = 0; i < m_E4Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E4]);
-            for (int i = 0; i < m_E5Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E5]);
-            for (int i = 0; i < m_E6Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E6]);
-            for (int i = 0; i < m_EliteCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Elite]);
-            return enermyID;
-        }
-    }
-    #endregion
-    #endregion
-
-    #region Class
     #region GameBase
     public class HealthBase
     {
@@ -2037,7 +1699,6 @@ namespace GameSetting
             GameObjectManager.SpawnSFXWeapon<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity, _target.transform.position, startHealth, OnSpawn);
         }
     }
-    #endregion
     #endregion
     #endregion
 }

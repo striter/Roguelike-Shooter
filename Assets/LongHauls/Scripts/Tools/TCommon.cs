@@ -108,13 +108,7 @@ public static class TCommon
                 if (predicate(array[i, j])) return array[i, j];
         return default(T);
     }
-
-    public static T GetComponentNullable<T>(this Transform parent) where T : MonoBehaviour
-    {
-        if (parent == null)
-            return null;
-        return parent.GetComponent<T>();
-    }
+    
 
     public static void SortChildByNameIndex(Transform transform, bool higherUpper = true)
     {
@@ -224,7 +218,11 @@ public static class TCommon
         return copyDic;
     }
 
-    public static void Traversal<T>(this List<T> list,Action<int,T> OnEachItem)=>TraversalEnumerableIndex(0, list.Count,(int index)=> {  OnEachItem(index,list[index]); return false;});
+    public static void Traversal<T>(this List<T> list, Action<int, T> OnEachItem,bool shallowCopy=false)
+    {
+        List<T> tempList = shallowCopy ? new List<T>(list) : list;
+        TraversalEnumerableIndex(0, list.Count, (int index) => { OnEachItem(index, tempList[index]); return false; });
+    }
     public static void Traversal<T>(this List<T> list, Action<T> OnEachItem, bool shallowCopy = false)
     {
         List<T> tempList = shallowCopy ? new List<T>(list) : list;

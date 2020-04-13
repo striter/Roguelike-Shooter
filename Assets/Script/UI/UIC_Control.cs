@@ -38,7 +38,7 @@ public class UIC_Control : UIControlBase {
 
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
-        OptionsManager.event_OptionChanged += OnOptionsChanged;
+        OptionsDataManager.event_OptionChanged += OnOptionsChanged;
         m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(true);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
@@ -47,7 +47,7 @@ public class UIC_Control : UIControlBase {
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        OptionsManager.event_OptionChanged -= OnOptionsChanged;
+        OptionsDataManager.event_OptionChanged -= OnOptionsChanged;
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnMainButtonStatus);
@@ -58,7 +58,7 @@ public class UIC_Control : UIControlBase {
         return this;
     }
 
-    void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsManager.m_OptionsData.m_JoyStickMode);
+    void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsDataManager.m_OptionsData.m_JoyStickMode);
     bool CheckControlable() => !UIPageBase.m_PageOpening;
 
     void OncommonStatus(EntityCharacterPlayer player)

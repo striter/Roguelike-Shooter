@@ -110,10 +110,10 @@ public class UI_Options : UIPage {
         new ValueToggle<enum_Option_Bloom>(m_Page[enum_OptionSelection.Display].Find("Bloom/BtnToggle"), OnBloomClicked, GetBloomOption(), new List<enum_Option_Bloom> { enum_Option_Bloom.Off, enum_Option_Bloom.Normal, enum_Option_Bloom.High });
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Shadow/BtnToggle"), OnShadowClicked, GetShadowOption());
-        new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsManager.m_OptionsData.m_MusicVolumeTap);
-        new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsManager.m_OptionsData.m_VFXVolumeTap);
+        new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsDataManager.m_OptionsData.m_MusicVolumeTap);
+        new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("VFXVolume/Slider"), OnVFXVolumeChanged, OptionsDataManager.m_OptionsData.m_VFXVolumeTap);
         new BoolToggle(m_Page[enum_OptionSelection.Control].Find("JoystickMode/BtnToggle"), OnJoystickClicked, GetJoystickOption());
-        new SliderStatus(m_Page[enum_OptionSelection.Control].Find("Sensitive/Slider"), OnSensitiveChanged, OptionsManager.m_OptionsData.m_SensitiveTap);
+        new SliderStatus(m_Page[enum_OptionSelection.Control].Find("Sensitive/Slider"), OnSensitiveChanged, OptionsDataManager.m_OptionsData.m_SensitiveTap);
 
         btn_ReturnToCamp = rtf_Container.Find("BtnReturn").GetComponent<Button>();
         btn_ReturnToCamp.onClick.AddListener(OnMainmenuBtnClick);
@@ -127,7 +127,7 @@ public class UI_Options : UIPage {
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
-        OptionsManager.Save();
+        OptionsDataManager.Save();
     }
 
     void OnSelectionClick(enum_OptionSelection curselection)
@@ -137,72 +137,72 @@ public class UI_Options : UIPage {
         m_Page.Traversal((enum_OptionSelection selection, Transform item) => { item.SetActivate(selection == m_currentSelection); });
     }
 
-    bool GetFrameRateOption() =>  OptionsManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
+    bool GetFrameRateOption() =>  OptionsDataManager.m_OptionsData.m_FrameRate == enum_Option_FrameRate.Normal;
     bool OnFrequencyClicked()
     {
-        OptionsManager.m_OptionsData.m_FrameRate = GetFrameRateOption() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_FrameRate = GetFrameRateOption() ? enum_Option_FrameRate.High : enum_Option_FrameRate.Normal;
+        OptionsDataManager.OnOptionChanged();
         return GetFrameRateOption();
     }
 
-    enum_Option_Effect GetEffectOption() => OptionsManager.m_OptionsData.m_Effect;
+    enum_Option_Effect GetEffectOption() => OptionsDataManager.m_OptionsData.m_Effect;
     enum_Option_Effect OnEffectClicked()
     {
-        OptionsManager.m_OptionsData.m_Effect++;
-        if (OptionsManager.m_OptionsData.m_Effect > enum_Option_Effect.High)
-            OptionsManager.m_OptionsData.m_Effect = enum_Option_Effect.Normal;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_Effect++;
+        if (OptionsDataManager.m_OptionsData.m_Effect > enum_Option_Effect.High)
+            OptionsDataManager.m_OptionsData.m_Effect = enum_Option_Effect.Normal;
+        OptionsDataManager.OnOptionChanged();
         return GetEffectOption();
     }
 
-    enum_Option_Bloom GetBloomOption() => OptionsManager.m_OptionsData.m_Bloom;
+    enum_Option_Bloom GetBloomOption() => OptionsDataManager.m_OptionsData.m_Bloom;
     enum_Option_Bloom OnBloomClicked()
     {
-        OptionsManager.m_OptionsData.m_Bloom++;
-        if (OptionsManager.m_OptionsData.m_Bloom > enum_Option_Bloom.High)
-            OptionsManager.m_OptionsData.m_Bloom = enum_Option_Bloom.Off;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_Bloom++;
+        if (OptionsDataManager.m_OptionsData.m_Bloom > enum_Option_Bloom.High)
+            OptionsDataManager.m_OptionsData.m_Bloom = enum_Option_Bloom.Off;
+        OptionsDataManager.OnOptionChanged();
         return GetBloomOption();
     }
 
-    bool GetRegionOption() => OptionsManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;
+    bool GetRegionOption() => OptionsDataManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;
     bool OnRegionClicked()
     {
-        OptionsManager.m_OptionsData.m_Region = GetRegionOption() ? enum_Option_LanguageRegion.CN : enum_Option_LanguageRegion.EN;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_Region = GetRegionOption() ? enum_Option_LanguageRegion.CN : enum_Option_LanguageRegion.EN;
+        OptionsDataManager.OnOptionChanged();
         return GetRegionOption();
     }
 
-    bool GetShadowOption() => OptionsManager.m_OptionsData.m_ShadowOff;
+    bool GetShadowOption() => OptionsDataManager.m_OptionsData.m_ShadowOff;
     bool OnShadowClicked()
     {
-        OptionsManager.m_OptionsData.m_ShadowOff = !OptionsManager.m_OptionsData.m_ShadowOff;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_ShadowOff = !OptionsDataManager.m_OptionsData.m_ShadowOff;
+        OptionsDataManager.OnOptionChanged();
         return GetShadowOption();
     }
 
-    bool GetJoystickOption() => OptionsManager.m_OptionsData.m_JoyStickMode == enum_Option_JoyStickMode.Retarget;
+    bool GetJoystickOption() => OptionsDataManager.m_OptionsData.m_JoyStickMode == enum_Option_JoyStickMode.Retarget;
     bool OnJoystickClicked()
     {
-        OptionsManager.m_OptionsData.m_JoyStickMode = GetJoystickOption() ? enum_Option_JoyStickMode.Stational : enum_Option_JoyStickMode.Retarget;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_JoyStickMode = GetJoystickOption() ? enum_Option_JoyStickMode.Stational : enum_Option_JoyStickMode.Retarget;
+        OptionsDataManager.OnOptionChanged();
         return GetJoystickOption();
     }
 
     void OnMusicVolumeChanged(float value)
     {
-        OptionsManager.m_OptionsData.m_MusicVolumeTap = (int)value;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_MusicVolumeTap = (int)value;
+        OptionsDataManager.OnOptionChanged();
     }
     void OnVFXVolumeChanged(float value)
     {
-        OptionsManager.m_OptionsData.m_VFXVolumeTap = (int)value;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_VFXVolumeTap = (int)value;
+        OptionsDataManager.OnOptionChanged();
     }
     void OnSensitiveChanged(float value)
     {
-        OptionsManager.m_OptionsData.m_SensitiveTap = (int)value;
-        OptionsManager.OnOptionChanged();
+        OptionsDataManager.m_OptionsData.m_SensitiveTap = (int)value;
+        OptionsDataManager.OnOptionChanged();
     } 
     void OnMainmenuBtnClick()=> UIManager.Instance.ShowMessageBox<UIM_Intro>().Play("UI_Title_ExitGame","UI_Intro_ExitGame",GameManager.Instance.OnGameExit);
 

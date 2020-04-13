@@ -71,13 +71,13 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         }
 
         int selectionIndex = -1;
-        public void Play<T>(string title,KeyCode keyCode,int defaultValue,T defaultEnum ,Action<int> OnClick)
+        public void Play<T>(string title,KeyCode keyCode,T defaultEnum ,Action<T> OnClick)  
         {
             Play(title, keyCode);
             m_ValueSelection.transform.SetActivate(true);
-            selectionIndex = defaultValue;
+            selectionIndex = (int)Enum.ToObject(typeof(T),defaultEnum);
             m_ValueSelection.Init(defaultEnum, (int value)=>  selectionIndex=value );
-            m_CommonButton.onClick.AddListener(() => OnClick(selectionIndex));
+            m_CommonButton.onClick.AddListener(() => OnClick((T)Enum.ToObject(typeof(T),selectionIndex)));
         }
 
 

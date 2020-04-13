@@ -6,14 +6,16 @@ using GameSetting;
 public class UIGI_EquipmentItemSelected : UIGI_EquipmentItemBase {
 
     UIT_GridControllerMono<Text> m_EntryGrid;
+    Text m_EnhanceRequirementLeft;
 
     public override void Init()
     {
         base.Init();
         m_EntryGrid =new UIT_GridControllerMono<Text>( rtf_Container.Find("EntryGrid"));
+        m_EnhanceRequirementLeft = rtf_Container.Find("EnhanceRequirementLeft").GetComponent<Text>();
     }
 
-    public new void Play(EquipmentSaveData data)
+    public void Play(EquipmentSaveData data,int enhanceReceive)
     {
         base.Play(data);
         m_EntryGrid.ClearGrid();
@@ -22,5 +24,6 @@ public class UIGI_EquipmentItemSelected : UIGI_EquipmentItemBase {
             m_EntryGrid.AddItem(index).text=entryData.m_Type+":"+entryData.m_Value;
         });
         m_EntryGrid.AddItem(m_EntryGrid.I_Count).text = "Passive" + data.GetPassiveLocalizeKey();
+        m_EnhanceRequirementLeft.text = "Left To Enhance:" + data.GetEnhanceRequirementLeft()+(enhanceReceive>0?"+"+enhanceReceive.ToString():"");
     }
 }

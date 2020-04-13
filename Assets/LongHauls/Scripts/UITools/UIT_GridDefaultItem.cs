@@ -14,10 +14,10 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        txt_Default = rtf_Container.Find("DefaultText").GetComponentNullable<UIT_TextExtend>();
-        img_Default = rtf_Container.Find("DefaultImage").GetComponentNullable<Image>();
-        img_HighLight = rtf_Container.Find("DefaultHighLight").GetComponentNullable<Image>();
-        btn_Default = rtf_Container.Find("DefaultBtn").GetComponentNullable<Button>();
+        txt_Default = rtf_Container.Find("DefaultText").GetComponent<UIT_TextExtend>();
+        img_Default = rtf_Container.Find("DefaultImage").GetComponent<Image>();
+        img_HighLight = rtf_Container.Find("DefaultHighLight").GetComponent<Image>();
+        btn_Default = rtf_Container.Find("DefaultBtn").GetComponent<Button>();
         if (btn_Default)  btn_Default.onClick.AddListener(OnItemTrigger);
         if (img_HighLight) SetHighLight(false);
     }

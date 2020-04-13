@@ -11,6 +11,7 @@ public class CampManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Plus, "100", (string value) => { OnCreditStatus(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Minus, "-50", (string value) => { OnCreditStatus(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Plus,OnStartGameInteract);
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Random Equipment", KeyCode.None, enum_Rarity.Ordinary, (enum_Rarity rarity) => { GameDataManager.AcquireEquipment(GameDataManager.RandomRarityEquipment(rarity)); });
     }
     #endregion
     public static CampManager nInstance;

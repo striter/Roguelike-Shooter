@@ -6,16 +6,17 @@ using UnityEngine.UI;
 
 public class UI_EquipmentDepot : UIPage {
     public CEquipmentDepotData m_DepotData => GameDataManager.m_EquipmentDepotData;
-    bool m_SelectedEquipping => m_DepotData.m_Equipping.Contains(m_SelectingEquipmentIndex);
     UIT_GridControllerGridItem<UIGI_EquipmentItemEquipping> m_EquippingGrid;
     UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned> m_OwnedGrid;
-    UIGI_EquipmentItemSelected m_Selected;
+    UIGI_EquipmentItemSelected m_SelectedEquipment;
     UIT_GridControllerMono<Text> m_AttributesEntryGrid;
     Text m_Passive;
+    Transform m_Btns;
     Text m_LeftBtnText, m_RightBtnText;
 
     bool m_Upgrading;
-    int m_SelectingEquipmentIndex;
+    int m_SelectedEquipmentIndex;
+    List<int> m_SelectedDeconstructIndexes=new List<int>();
 
     protected override void Init()
     {
@@ -24,17 +25,18 @@ public class UI_EquipmentDepot : UIPage {
         m_OwnedGrid = new UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned>(rtf_Container.Find("OwnedScrollView"),10);
         m_AttributesEntryGrid = new UIT_GridControllerMono<Text>(rtf_Container.Find("Attributes/EntryGrid"));
         m_Passive = rtf_Container.Find("Attributes/Passive").GetComponent<Text>();
-        m_Selected = rtf_Container.Find("Selected").GetComponent<UIGI_EquipmentItemSelected>();
-        m_Selected.Init();
-        rtf_Container.Find("LeftBtn").GetComponent<Button>().onClick.AddListener(OnLeftButtonClick);
-        rtf_Container.Find("RightBtn").GetComponent<Button>().onClick.AddListener(OnRightButtonClick);
-        m_LeftBtnText = rtf_Container.Find("LeftBtn/Text").GetComponent<Text>();
-        m_RightBtnText = rtf_Container.Find("RightBtn/Text").GetComponent<Text>();
-        SetUpgrading(false);
-        UpdateEquipments();
-        OnEquipmentClick(0);
+        m_SelectedEquipment = rtf_Container.Find("Selected").GetComponent<UIGI_EquipmentItemSelected>();
+        m_SelectedEquipment.Init();
+        m_Btns = rtf_Container.Find("Btns");
+        m_Btns.Find("LeftBtn").GetComponent<Button>().onClick.AddListener(OnLeftButtonClick);
+        m_Btns.Find("RightBtn").GetComponent<Button>().onClick.AddListener(OnRightButtonClick);
+        m_LeftBtnText = m_Btns.Find("LeftBtn/Text").GetComponent<Text>();
+        m_RightBtnText = m_Btns.Find("RightBtn/Text").GetComponent<Text>();
+        m_Upgrading = false;
+        m_SelectedEquipmentIndex = -1;
+        UpdateWhole();
     }
-
+    #region Interact
     void OnLeftButtonClick() => SetUpgrading(!m_Upgrading);
 
     void OnRightButtonClick()
@@ -45,39 +47,80 @@ public class UI_EquipmentDepot : UIPage {
         }
         else
         {
-            GameDataManager.DoEquipmentEquip(m_SelectingEquipmentIndex,!m_SelectedEquipping);
-            UpdateEquipments();
+            GameDataManager.DoEquipmentEquip(m_SelectedEquipmentIndex);
+            UpdateWhole();
+        }
+    }
+
+    void OnEquipmentClick(int equipmentIndex)
+    {
+        if(m_Upgrading)
+        {
+            if (m_SelectedEquipmentIndex == equipmentIndex)
+                return;
+
+            if (m_SelectedDeconstructIndexes.Contains(equipmentIndex))
+                m_SelectedDeconstructIndexes.Remove(equipmentIndex);
+            else
+                m_SelectedDeconstructIndexes.Add(equipmentIndex);
+        }
+        else
+        {
+            m_SelectedEquipmentIndex = equipmentIndex;
             UpdateBtnStatus();
         }
+        UpdateSelectedEquipment();
+        UpdateOwnedEquipments();
     }
 
     void SetUpgrading(bool upgrading)
     {
         m_Upgrading = upgrading;
+        m_SelectedDeconstructIndexes.Clear();
+        UpdateOwnedEquipments();
         UpdateBtnStatus();
     }
-
-    void OnEquipmentClick(int index)
+    #endregion
+    #region Update
+    void UpdateWhole()
     {
-        m_SelectingEquipmentIndex = index;
-        m_Selected.Play(GameDataManager.m_EquipmentDepotData.m_Equipments[m_SelectingEquipmentIndex]);
+        UpdateEquippingEquipments();
+        UpdateOwnedEquipments();
+        UpdateTotalAttributes();
         UpdateBtnStatus();
+        UpdateSelectedEquipment();
     }
 
+    void UpdateSelectedEquipment()
+    {
+        m_Btns.SetActivate(m_SelectedEquipmentIndex >= 0);
+        if(m_SelectedEquipmentIndex>=0)
+            m_SelectedEquipment.Play(GameDataManager.m_EquipmentDepotData.m_Equipments[m_SelectedEquipmentIndex], GameDataManager.GetDeconstructIncome(m_SelectedDeconstructIndexes));
+    } 
 
     void UpdateBtnStatus()
     {
+        m_Btns.SetActivate(m_SelectedEquipmentIndex>=0);
+        if (m_SelectedEquipmentIndex < 0)
+            return;
         m_LeftBtnText.text = m_Upgrading ? "Cancel" : "Upgrade";
-        m_RightBtnText.text = m_Upgrading ? "Confirm" : m_SelectedEquipping ? "Dequip" : "Equip";
+        m_RightBtnText.text = m_Upgrading ? "Confirm" : GameDataManager.CheckEquipmentEquiping(m_SelectedEquipmentIndex) ? "Dequip" : "Equip";
     }
 
-    void UpdateEquipments()
+    void UpdateOwnedEquipments()
+    {
+        m_OwnedGrid.ClearGrid();
+        m_DepotData.m_Equipments.Traversal((int index, EquipmentSaveData data) => { m_OwnedGrid.AddItem(index).Play(data, OnEquipmentClick, m_DepotData.m_Equipping.Contains(index), m_DepotData.m_Locking.Contains(index), m_SelectedEquipmentIndex == index, m_SelectedDeconstructIndexes.Contains(index)); });
+    }
+
+    void UpdateEquippingEquipments()
     {
         m_EquippingGrid.ClearGrid();
-        m_DepotData.m_Equipping.Traversal((int selectIndex)=> { m_EquippingGrid.AddItem(selectIndex).Play(m_DepotData.m_Equipments[selectIndex],OnEquipmentClick); });
-        m_OwnedGrid.ClearGrid();
-        m_DepotData.m_Equipments.Traversal((int index, EquipmentSaveData data) => { m_OwnedGrid.AddItem(index).Play(data,OnEquipmentClick,  m_DepotData.m_Equipping.Contains(index), m_DepotData.m_Locking.Contains(index)); });
+        m_DepotData.m_Equipping.Traversal((int selectIndex) => { m_EquippingGrid.AddItem(selectIndex).Play(m_DepotData.m_Equipments[selectIndex], OnEquipmentClick); });
+    }
 
+    void UpdateTotalAttributes()
+    {
         Dictionary<enum_EquipmentEntryType, float> _entryData = new Dictionary<enum_EquipmentEntryType, float>();
         TCommon.TraversalEnum((enum_EquipmentEntryType type) => { _entryData.Add(type, 0); });
         EquipmentSaveData? _passiveData = null;
@@ -98,4 +141,5 @@ public class UI_EquipmentDepot : UIPage {
         if (_passiveData != null)
             m_Passive.text = "Passive:" + _passiveData.Value.GetPassiveLocalizeKey();
     }
+    #endregion
 }

@@ -21,7 +21,7 @@ public class AudioManager : AudioManagerBase
         TCommon.TraversalEnum((enum_GameVFX audio) => { m_GameClips.Add(audio, TResources.GetGameClip(audio)); });
         TBroadCaster<enum_BC_UIStatus>.Add<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
-        OptionsManager.event_OptionChanged += OnOptionChanged;
+        OptionsDataManager.event_OptionChanged += OnOptionChanged;
         OnOptionChanged();
     }
 
@@ -30,12 +30,12 @@ public class AudioManager : AudioManagerBase
         base.Recycle();
         TBroadCaster<enum_BC_UIStatus>.Remove<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
         TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_PageClose, OnPageClose);
-        OptionsManager.event_OptionChanged -= OnOptionChanged;
+        OptionsDataManager.event_OptionChanged -= OnOptionChanged;
     }
 
-    public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _target);
-    public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsManager.F_SFXVolume, _loop, _pos);
-    public SFXAudioBase Play2DClip(int sourceID, AudioClip _clip) => base.PlayClip(sourceID,_clip, OptionsManager.F_SFXVolume, false);
+    public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Transform _target) => base.PlayClip(sourceID, _clip, OptionsDataManager.F_SFXVolume, _loop, _target);
+    public SFXAudioBase Play3DClip(int sourceID, AudioClip _clip, bool _loop, Vector3 _pos) => base.PlayClip(sourceID, _clip, OptionsDataManager.F_SFXVolume, _loop, _pos);
+    public SFXAudioBase Play2DClip(int sourceID, AudioClip _clip) => base.PlayClip(sourceID,_clip, OptionsDataManager.F_SFXVolume, false);
     void OnPageOpen(float bulletTime)
     {
         //SetBGPitch(Mathf.Lerp(.6f, 1f, bulletTime));
@@ -46,7 +46,7 @@ public class AudioManager : AudioManagerBase
     }
     void OnOptionChanged()
     {
-        m_volumeMultiply = OptionsManager.F_MusicVolume;
-        SetSFXVolume(OptionsManager.F_SFXVolume);
+        m_volumeMultiply = OptionsDataManager.F_MusicVolume;
+        SetSFXVolume(OptionsDataManager.F_SFXVolume);
     }
 }
