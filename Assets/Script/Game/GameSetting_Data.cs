@@ -249,32 +249,32 @@ namespace GameSetting
                 data.AcquireRandomEntry();
             return data;
         }
+
         public static bool CheckEquipmentEquiping(int equipmentIndex) => m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex);
         public static void DoEquipmentEquip(int equipmentIndex)
         {
             if (!CheckEquipmentEquiping(equipmentIndex))
             {
-                if (m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex))
-                {
-                    Debug.LogError("Can't Equip Equiped!" + equipmentIndex);
-                    return;
-                }
                 if (m_EquipmentDepotData.m_Equipping.Count >= 3)
                     m_EquipmentDepotData.m_Equipping.RemoveAt(0);
                 m_EquipmentDepotData.m_Equipping.Add(equipmentIndex);
             }
             else
             {
-                if (!m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex))
-                {
-                    Debug.LogError("Can't Dequip UnEquiped!" + equipmentIndex);
-                    return;
-                }
                 m_EquipmentDepotData.m_Equipping.Remove(equipmentIndex);
             }
             TGameData<CEquipmentDepotData>.Save();
         }
 
+        public static bool CheckEquipmentLocking(int equipmentIndex) => m_EquipmentDepotData.m_Locking.Contains(equipmentIndex);
+        public static void DoEquipmentLock(int equipmentIndex)
+        {
+            if (!CheckEquipmentLocking(equipmentIndex))
+                m_EquipmentDepotData.m_Locking.Add(equipmentIndex);
+            else
+                m_EquipmentDepotData.m_Locking.Remove(equipmentIndex);
+            TGameData<CEquipmentDepotData>.Save();
+        }
         #region Enhance
         #region EnhanceRequipment/DeconstructIncome
         public static int GetEnhanceLevel(this EquipmentSaveData data)
@@ -321,7 +321,6 @@ namespace GameSetting
         #endregion
         #region Enhance/Deconstruct Equipment
         public static bool CanEnhanceEquipment(int targetSelection) => m_EquipmentDepotData.m_Equipments[targetSelection].GetEnhanceLevel() < GameConst.m_EquipmentEnhanceMaxLevel;
-        public static bool CanDeconstructEquipment(int targetSelection) => m_EquipmentDepotData.m_Locking.Contains(targetSelection);
         public static int DoEnhanceEquipment(int targetIndex, List<int> deconstructSelections)
         {
             int enhanceReceived = GetDeconstructIncome(deconstructSelections);

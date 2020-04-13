@@ -12,7 +12,8 @@ public class UI_EquipmentDepot : UIPage {
     UIT_GridControllerMono<Text> m_AttributesEntryGrid;
     Text m_Passive;
     Transform m_Btns;
-    Text m_LeftBtnText, m_RightBtnText;
+    Button m_LeftBtn, m_RightBtn, m_LockBtn;
+    Text m_LeftBtnText, m_RightBtnText,m_LockBtnText;
 
     bool m_Upgrading;
     int m_SelectedEquipmentIndex;
@@ -28,10 +29,15 @@ public class UI_EquipmentDepot : UIPage {
         m_SelectedEquipment = rtf_Container.Find("Selected").GetComponent<UIGI_EquipmentItemSelected>();
         m_SelectedEquipment.Init();
         m_Btns = rtf_Container.Find("Btns");
-        m_Btns.Find("LeftBtn").GetComponent<Button>().onClick.AddListener(OnLeftButtonClick);
-        m_Btns.Find("RightBtn").GetComponent<Button>().onClick.AddListener(OnRightButtonClick);
+        m_LeftBtn = m_Btns.Find("LeftBtn").GetComponent<Button>();
+        m_LeftBtn.onClick.AddListener(OnLeftButtonClick);
+        m_RightBtn = m_Btns.Find("RightBtn").GetComponent<Button>();
+        m_RightBtn.onClick.AddListener(OnRightButtonClick);
+        m_LockBtn = m_Btns.Find("LockBtn").GetComponent<Button>();
+        m_LockBtn.onClick.AddListener(OnLockButtonClick);
         m_LeftBtnText = m_Btns.Find("LeftBtn/Text").GetComponent<Text>();
         m_RightBtnText = m_Btns.Find("RightBtn/Text").GetComponent<Text>();
+        m_LockBtnText = m_Btns.Find("LockBtn/Text").GetComponent<Text>();
         m_Upgrading = false;
         m_SelectedEquipmentIndex = -1;
         UpdateWhole();
@@ -57,11 +63,17 @@ public class UI_EquipmentDepot : UIPage {
         }
     }
 
+    void OnLockButtonClick()
+    {
+        GameDataManager.DoEquipmentLock(m_SelectedEquipmentIndex);
+        UpdateWhole();
+    }
+
     void OnEquipmentClick(int equipmentIndex)
     {
         if(m_Upgrading)
         {
-            if (m_SelectedEquipmentIndex == equipmentIndex)
+            if (m_SelectedEquipmentIndex == equipmentIndex||GameDataManager.CheckEquipmentLocking(equipmentIndex))
                 return;
 
             if (m_SelectedDeconstructIndexes.Contains(equipmentIndex))
@@ -108,8 +120,11 @@ public class UI_EquipmentDepot : UIPage {
         m_Btns.SetActivate(m_SelectedEquipmentIndex>=0);
         if (m_SelectedEquipmentIndex < 0)
             return;
-        m_LeftBtnText.text = m_Upgrading ? "Cancel" : "Upgrade";
-        m_RightBtnText.text = m_Upgrading ? "Confirm" : GameDataManager.CheckEquipmentEquiping(m_SelectedEquipmentIndex) ? "Dequip" : "Equip";
+        m_LeftBtnText.text = m_Upgrading ? "Cancel" : GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex)?"Enhance":"Max Level";
+        m_RightBtnText.text = m_Upgrading ? GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex) ? "Enhance" : "Max Level" : GameDataManager.CheckEquipmentEquiping(m_SelectedEquipmentIndex) ? "Dequip" : "Equip";
+        m_LockBtnText.text = GameDataManager.CheckEquipmentLocking(m_SelectedEquipmentIndex) ? "Unlock" : "Lock";
+
+        m_RightBtn.interactable = !m_Upgrading || GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex);
     }
 
     void UpdateOwnedEquipments()
