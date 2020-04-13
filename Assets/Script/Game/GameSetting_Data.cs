@@ -290,6 +290,18 @@ namespace GameSetting
 
         #region Enhance
         #region EnhanceRequipment/DeconstructIncome
+        public static int GetEnhanceLevel(this EquipmentSaveData data)
+        {
+            int level = 0;
+            int enhance = data.m_Enhance;
+            for (int i = 0; i < GameConst.m_EquipmentEnhanceMaxLevel; i++, level++)
+            {
+                enhance -= GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity, level);
+                if (enhance < 0)
+                    break;
+            }
+            return level;
+        }
         public static int GetEnhanceRequirementLeft(this EquipmentSaveData data)
         {
             int level = 0;
@@ -302,19 +314,15 @@ namespace GameSetting
             }
             return -enhanceRequireLeft;
         }
-
-        public static int GetEnhanceLevel(this EquipmentSaveData data)
+        public static int GetEnhanceRequirementStart(this EquipmentSaveData data)
         {
-            int level = 0;
-            int enhance = data.m_Enhance;
-            for(int i=0;i<GameConst.m_EquipmentEnhanceMaxLevel;i++, level++)
-            {
-                enhance -= GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity,level);
-                if (enhance < 0)
-                    break;
-            }
-            return level;
+            int enhanceRequire = 0;
+            int currentLevel =data.GetEnhanceLevel();
+            for (int i = 0; i < currentLevel; i++)
+                enhanceRequire += GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity,i);
+            return data.m_Enhance-enhanceRequire;
         }
+
 
         public static int GetDeconstructIncome(this EquipmentSaveData data) => GameExpression.GetEquipmentDeconstruct(data.m_Rarity,data.GetEnhanceLevel());
         public static int GetDeconstructIncome(List<int> selections)
@@ -328,9 +336,12 @@ namespace GameSetting
         #region Enhance/Deconstruct Equipment
         public static bool CanEnhanceEquipment(int targetSelection) => m_EquipmentDepotData.m_Equipments[targetSelection].GetEnhanceLevel() < GameConst.m_EquipmentEnhanceMaxLevel;
         public static bool CanDeconstructEquipment(int targetSelection) => m_EquipmentDepotData.m_Locking.Contains(targetSelection);
-        public static void DoEnhanceEquipment(int targetIndex, List<int> deconstructSelections)
+        public static int DoEnhanceEquipment(int targetIndex, List<int> deconstructSelections)
         {
             int enhanceReceived = GetDeconstructIncome(deconstructSelections);
+            deconstructSelections.Sort((a, b) => b - a);
+            m_EquipmentDepotData.m_Equipping.Sort((a, b) => b -a);
+            m_EquipmentDepotData.m_Locking.Sort((a, b) => b - a);
             deconstructSelections.Traversal((int deconstructIndex) =>
             {
                 m_EquipmentDepotData.m_Equipments.RemoveAt(deconstructIndex);
@@ -347,17 +358,24 @@ namespace GameSetting
                     else if (lockIndex > deconstructIndex)
                         m_EquipmentDepotData.m_Locking[index]--;
                 }, true);
+
+                if (targetIndex > deconstructIndex)
+                    targetIndex--;
             });
-
-            //int targetStartEnhance = m_EquipmentDepotData.m_Equipments[targetIndex].m_Enhance;
-            //int targetStartLevel = m_EquipmentDepotData.m_Equipments[targetIndex].GetEnhanceLevel();
-            //for(int i=targetStartLevel;i<GameConst.m_EquipmentEnhanceMaxLevel;i++)
-            //{
-
-            //}
-            //m_EquipmentDepotData.m_Equipments[targetIndex].ReceiveEnhance(enhanceReceived);
-
+            EquipmentSaveData equipmentData = m_EquipmentDepotData.m_Equipments[targetIndex];
+            int enhanceStart = equipmentData.GetEnhanceRequirementStart() + enhanceReceived;
+            for (int level= equipmentData.GetEnhanceLevel(); level<GameConst.m_EquipmentEnhanceMaxLevel;)
+            {
+                enhanceStart -= GameExpression.GetEquipmentEnhanceRequirement(equipmentData.m_Rarity,level);
+                if (enhanceStart < 0)
+                    break;
+                level++;
+                Debug.Log(level);
+            }
+            equipmentData.ReceiveEnhance(enhanceReceived);
+            m_EquipmentDepotData.m_Equipments[targetIndex] = equipmentData;
             TGameData<CEquipmentDepotData>.Save();
+            return targetIndex;
         }
         #endregion
         #endregion
@@ -663,7 +681,16 @@ namespace GameSetting
         public int m_AcquireStamp { get; private set; }
         public enum_Rarity m_Rarity { get; private set; }
         public List<EquipmentEntrySaveData> m_Entries { get; private set; }
-        public void ReceiveEnhance(int enhance) => m_Enhance += enhance;
+        public EquipmentSaveData ReceiveEnhance(int enhance)
+        {
+            m_Enhance += enhance;
+            return this;
+        } 
+        public EquipmentSaveData ReceiveEntry(EquipmentEntrySaveData entry)
+        {
+            m_Entries.Add(entry);
+            return this;
+        }
         public EquipmentSaveData(int index, int enhance, enum_Rarity rarity, List<EquipmentEntrySaveData> entries) { m_Index = index; m_Enhance = enhance; m_Rarity = rarity; m_AcquireStamp = TTime.TTimeTools.GetTimeStampNow(); m_Entries = entries; }
     }
 

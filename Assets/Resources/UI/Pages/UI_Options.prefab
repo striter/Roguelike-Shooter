@@ -2787,7 +2787,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Bloom
+  m_Text: "\u989D\u5916\u6548\u679C"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Bloom
   m_characterSpacing: 2
@@ -3163,7 +3163,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Bloom_Normal
+  m_Text: "\u4E2D\u7B49"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Bloom_Normal
   m_characterSpacing: 2
@@ -3366,7 +3366,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Bloom_Off
+  m_Text: "\u5173\u95ED"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Bloom_Off
   m_characterSpacing: 2
@@ -3532,7 +3532,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Effect_Medium
+  m_Text: "\u9AD8"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Effect_Medium
   m_characterSpacing: 2
@@ -4338,7 +4338,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Effect
+  m_Text: "\u5C4F\u5E55\u7279\u6548"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Effect
   m_characterSpacing: 2
@@ -4487,7 +4487,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Effect_High
+  m_Text: "\u6781\u9AD8"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Effect_High
   m_characterSpacing: 2
@@ -4640,7 +4640,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Bloom_High
+  m_Text: "\u9AD8"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Bloom_High
   m_characterSpacing: 2
@@ -5117,7 +5117,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Option_Effect_Normal
+  m_Text: "\u666E\u901A"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Option_Effect_Normal
   m_characterSpacing: 2
@@ -6802,7 +6802,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 100, y: 0.000011444092}
+  m_AnchoredPosition: {x: 200, y: 0.000011444092}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224333331152108522
@@ -7849,7 +7849,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -100, y: 0}
+  m_AnchoredPosition: {x: -200, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224781391297920878

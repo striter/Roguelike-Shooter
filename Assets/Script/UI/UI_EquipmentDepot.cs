@@ -43,7 +43,12 @@ public class UI_EquipmentDepot : UIPage {
     {
         if(m_Upgrading)
         {
-
+            if (m_SelectedDeconstructIndexes.Count < 0)
+                return;
+            m_Upgrading = false;
+            m_SelectedEquipmentIndex= GameDataManager.DoEnhanceEquipment(m_SelectedEquipmentIndex, m_SelectedDeconstructIndexes);
+            m_SelectedDeconstructIndexes.Clear();
+            UpdateWhole();
         }
         else
         {
