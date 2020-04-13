@@ -148,7 +148,7 @@ namespace GameSetting
         {
             transform = _transform;
             m_Grid = new ObjectPoolListComponent<int, Transform>(transform, "GridItem");
-            m_Grid.ClearPool();
+            m_Grid.Clear();
             TCommon.TraversalEnum((enum_Rarity rarity) => { m_Levels.Add((int)rarity, new RarityLevel(m_Grid.AddItem((int)rarity))); });
         }
         public void SetRarity(enum_Rarity level)

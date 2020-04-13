@@ -51,7 +51,7 @@ public class EntityDeviceBase : EntityCharacterBase {
     protected override void OnDead()
     {
         base.OnDead();
-        m_Connections.ClearPool();
+        m_Connections.Clear();
         m_Particles.Traversal((ParticleSystem particle) => { particle.Stop(); });
     }
     void OnEntityDetect(HitCheckEntity entity, bool enter)

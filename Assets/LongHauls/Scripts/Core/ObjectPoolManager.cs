@@ -332,7 +332,19 @@ public class ObjectPoolListBase<T, Y>
         m_ActiveItemDic.Remove(identity);
     }
 
-    public void ClearPool()
+    public void Sort(Comparison<KeyValuePair<T,Y>> Compare)
+    {
+        List<KeyValuePair<T, Y>> list = m_ActiveItemDic.ToList();
+        list.Sort(Compare);
+        m_ActiveItemDic.Clear();
+        list.Traversal((KeyValuePair<T,Y> pair) =>
+        {
+            GetItemTransform(pair.Value).SetAsLastSibling();
+            m_ActiveItemDic.Add(pair.Key,pair.Value);
+        });
+    }
+
+    public void Clear()
     {
         m_ActiveItemDic.Traversal(RemoveItem, true);
     } 

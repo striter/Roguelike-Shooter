@@ -21,7 +21,7 @@ public class UIT_GridControllerMono<T>  where T : Component
         return item;
     }
     public void RemoveItem(int identity) => m_Pool.RemoveItem(identity);
-    public virtual void ClearGrid() => m_Pool.ClearPool();
+    public virtual void ClearGrid() => m_Pool.Clear();
     protected virtual void InitItem(T item) { }
     public bool Contains(int identity) => m_Pool.ContainsItem(identity);
     public T GetItem(int identity)=> Contains(identity) ? m_Pool.GetItem(identity) : null;
@@ -57,13 +57,7 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
         item.OnDeactivate();
         base.RemoveItem(identity);
     }
-    public void SortChildrenSibling()
-    {
-        List<int> keyCollections = m_Pool.m_ActiveItemDic.Keys.ToList();
-        keyCollections.Sort((a,b)=> {return a > b?1:-1; });
-        for (int i = 0; i < keyCollections.Count; i++)
-            GetItem(keyCollections[i]).transform.SetSiblingIndex(i);
-    }
+    public virtual void Sort(Comparison<KeyValuePair<int, T>> comparison) => m_Pool.Sort(comparison);
 }
 
 public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem
@@ -74,10 +68,17 @@ public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridIte
     {
         m_VisibleCount = visibleCount;
         m_ScrollRect = _transform.GetComponent<ScrollRect>();
-        m_ScrollRect.onValueChanged.AddListener(OnRectChanged);
+        m_ScrollRect.onValueChanged.AddListener((Vector2 delta) => OnRectChanged());
     }
 
-    void OnRectChanged(Vector2 delta)
+    public override void Sort(Comparison<KeyValuePair<int, T>> comparison)
+    {
+        base.Sort(comparison);
+        m_ScrollRect.verticalNormalizedPosition = 1;
+        OnRectChanged();
+    }
+
+    void OnRectChanged()
     {
         int totalCount = m_Pool.m_ActiveItemDic.Count;
         int current = (int)(Mathf.Clamp01(m_ScrollRect.verticalNormalizedPosition) * totalCount);

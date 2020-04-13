@@ -63,14 +63,14 @@ public class SFXCastAreaConnections : SFXCast {
     {
         base.OnPlay();
         m_GroundParticles.Play();
-        m_Connections.ClearPool();
+        m_Connections.Clear();
     }
 
     protected override void OnStop()
     {
         base.OnStop();
         m_GroundParticles.Stop();
-        m_Connections.ClearPool();
+        m_Connections.Clear();
     }
     protected override List<EntityBase> DoCastDealtDamage()
     {

@@ -1018,7 +1018,7 @@ class EnumSelection : TReflection.UI.CPropertyFillElement
     public void Init<T>(T defaultValue, Action<int> OnClick)
     {
         m_Text.text = defaultValue.ToString();
-        m_ChunkButton.ClearPool();
+        m_ChunkButton.Clear();
         TCommon.TraversalEnum((T temp) =>
         {
             int index = (int)((object)temp);

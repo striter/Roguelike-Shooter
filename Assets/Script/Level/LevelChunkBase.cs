@@ -18,7 +18,7 @@ public class LevelChunkBase : MonoBehaviour
     }
     protected void InitData(LevelChunkData _data,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DataObjectCheck=null)
     {
-        m_TilePool.ClearPool();
+        m_TilePool.Clear();
         m_ChunkType = _data.Type;
         m_Width = _data.Width;
         m_Height = _data.Height;

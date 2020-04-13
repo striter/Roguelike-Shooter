@@ -145,7 +145,7 @@ public class UI_EquipmentDepot : UIPage {
         m_DepotData.m_Equipments.Traversal((int equipmentIndex, EquipmentSaveData data) => {
             m_OwnedGrid.AddItem(GetSorting(equipmentIndex,data)).Play(equipmentIndex, data, OnEquipmentClick, m_DepotData.m_Equipping.Contains(equipmentIndex), m_DepotData.m_Locking.Contains(equipmentIndex), m_SelectedEquipmentIndex == equipmentIndex, m_SelectedDeconstructIndexes.Contains(equipmentIndex));
         });
-        m_OwnedGrid.SortChildrenSibling();
+        m_OwnedGrid.Sort((a,b)=>a.Key-b.Key);
     }
 
     int GetSorting(int equipmentIndex, EquipmentSaveData data)
@@ -155,9 +155,9 @@ public class UI_EquipmentDepot : UIPage {
             default:
                 return equipmentIndex;
             case enum_EquipmentDepotSorting.Level:
-                    return  data.GetEnhanceLevel() * 10000000 + (int)data.m_Rarity*10000+equipmentIndex;
+                    return  data.GetEnhanceLevel() * 100000 + (int)data.m_Rarity*1000+equipmentIndex;
             case enum_EquipmentDepotSorting.Rarity:
-                   return (int)data.m_Rarity * 10000000+ data.GetEnhanceLevel()*10000+equipmentIndex;
+                   return (int)data.m_Rarity * 100000 + data.GetEnhanceLevel()*1000+equipmentIndex;
             case enum_EquipmentDepotSorting.Time:
                     return  data.m_AcquireStamp*10000+equipmentIndex;
         }

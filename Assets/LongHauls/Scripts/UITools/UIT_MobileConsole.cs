@@ -28,7 +28,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
     public void InitConsole(Action<bool> _OnConsoleShow)
     {
         OnConsoleShow = _OnConsoleShow;
-        m_ConsoleCommands.ClearPool();
+        m_ConsoleCommands.Clear();
     }
 #region Console
     public ConsoleCommand AddConsoleBinding() => m_ConsoleCommands.AddItem(m_ConsoleCommands.Count);

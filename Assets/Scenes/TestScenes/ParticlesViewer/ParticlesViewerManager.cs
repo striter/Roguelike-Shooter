@@ -32,7 +32,7 @@ public class ParticlesViewerManager : MonoBehaviour {
         m_Repeater.Replay();
 
         ObjectPoolManager<int, SFXBase>.RecycleAll();
-        m_TrailHelperPool.ClearPool();
+        m_TrailHelperPool.Clear();
         int muzzleIndex = 0;
         int indicatorIndex = 0;
         int impactIndex = 0;
