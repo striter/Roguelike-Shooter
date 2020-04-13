@@ -249,19 +249,6 @@ namespace GameSetting
                 data.AcquireRandomEntry();
             return data;
         }
-
-        static void AcquireRandomEntry(this EquipmentSaveData data)
-        {
-            enum_EquipmentEntryType entryType = TCommon.RandomEnumValues<enum_EquipmentEntryType>();
-            float startValue = data.m_Entries.Count == 0 ? GameConst.m_EquipmentEntryStart_Main[entryType][data.m_Rarity] : GameConst.m_EquipmentEntryStart_Sub[entryType][data.m_Rarity].Random();
-            data.m_Entries.Add(new EquipmentEntrySaveData(entryType, startValue));
-        }
-
-        public static void AcquireEquipment(EquipmentSaveData data)
-        {
-            m_EquipmentDepotData.m_Equipments.Add(data);
-            TGameData<CEquipmentDepotData>.Save();
-        }
         public static bool CheckEquipmentEquiping(int equipmentIndex) => m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex);
         public static void DoEquipmentEquip(int equipmentIndex)
         {
@@ -302,7 +289,7 @@ namespace GameSetting
             }
             return level;
         }
-        public static int GetEnhanceRequirementLeft(this EquipmentSaveData data)
+        public static int GetEnhanceRequireNextLevel(this EquipmentSaveData data)
         {
             int level = 0;
             int enhanceRequireLeft = data.m_Enhance;
@@ -314,7 +301,7 @@ namespace GameSetting
             }
             return -enhanceRequireLeft;
         }
-        public static int GetEnhanceRequirementStart(this EquipmentSaveData data)
+        public static int GetEnhanceCurLevel(this EquipmentSaveData data)
         {
             int enhanceRequire = 0;
             int currentLevel =data.GetEnhanceLevel();
@@ -322,7 +309,6 @@ namespace GameSetting
                 enhanceRequire += GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity,i);
             return data.m_Enhance-enhanceRequire;
         }
-
 
         public static int GetDeconstructIncome(this EquipmentSaveData data) => GameExpression.GetEquipmentDeconstruct(data.m_Rarity,data.GetEnhanceLevel());
         public static int GetDeconstructIncome(List<int> selections)
@@ -363,19 +349,56 @@ namespace GameSetting
                     targetIndex--;
             });
             EquipmentSaveData equipmentData = m_EquipmentDepotData.m_Equipments[targetIndex];
-            int enhanceStart = equipmentData.GetEnhanceRequirementStart() + enhanceReceived;
+            int enhanceStart = equipmentData.GetEnhanceCurLevel() + enhanceReceived;
             for (int level= equipmentData.GetEnhanceLevel(); level<GameConst.m_EquipmentEnhanceMaxLevel;)
             {
                 enhanceStart -= GameExpression.GetEquipmentEnhanceRequirement(equipmentData.m_Rarity,level);
                 if (enhanceStart < 0)
                     break;
                 level++;
-                Debug.Log(level);
+                equipmentData.UpgradeMainEntry();
+
+                if (equipmentData.m_Entries.Count >= 4)
+                    equipmentData.UpgradeRandomSubEntry();
+                else if (level % 5 == 0)
+                    equipmentData.AcquireRandomEntry();
             }
             equipmentData.ReceiveEnhance(enhanceReceived);
             m_EquipmentDepotData.m_Equipments[targetIndex] = equipmentData;
             TGameData<CEquipmentDepotData>.Save();
             return targetIndex;
+        }
+        #endregion
+
+        #region Entry
+        static void AcquireRandomEntry(this EquipmentSaveData data)
+        {
+            enum_EquipmentEntryType entryType = TCommon.RandomEnumValues<enum_EquipmentEntryType>();
+            float startValue = data.m_Entries.Count < 1 ? GameConst.m_EquipmentEntryStart_Main[entryType][data.m_Rarity] : GameConst.m_EquipmentEntryStart_Sub[entryType][data.m_Rarity].Random();
+            data.m_Entries.Add(new EquipmentEntrySaveData(entryType, startValue));
+        }
+
+        static void UpgradeMainEntry(this EquipmentSaveData data)
+        {
+            if (data.m_Entries.Count < 1)
+                return;
+            EquipmentEntrySaveData mainEntry = data.m_Entries[0];
+            data.m_Entries[0] = mainEntry.Upgrade(GameConst.m_EquipmentEntryUpgrade_Main[mainEntry.m_Type][data.m_Rarity]);
+        }
+
+        static void UpgradeRandomSubEntry(this EquipmentSaveData data)
+        {
+            if (data.m_Entries.Count < 2)
+                return;
+            int randomSubEntry = UnityEngine.Random.Range(1, data.m_Entries.Count);
+            EquipmentEntrySaveData subEntry = data.m_Entries[randomSubEntry];
+            data.m_Entries[randomSubEntry] = subEntry.Upgrade(GameConst.m_EquipmentEntryUpgrade_Sub[subEntry.m_Type][data.m_Rarity]);
+        }
+
+        public static void AcquireEquipment(EquipmentSaveData data)
+        {
+            m_EquipmentDepotData.m_Equipments.Add(data);
+            TGameData<CEquipmentDepotData>.Save();
         }
         #endregion
         #endregion
@@ -701,9 +724,10 @@ namespace GameSetting
 
         public EquipmentEntrySaveData(enum_EquipmentEntryType entryType, float value) { m_Type = entryType; m_Value = value; }
 
-        public void Upgrade(float value)
+        public EquipmentEntrySaveData Upgrade(float value)
         {
             m_Value += value;
+            return this;
         }
     }
 

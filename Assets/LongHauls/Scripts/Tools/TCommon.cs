@@ -108,7 +108,7 @@ public static class TCommon
                 if (predicate(array[i, j])) return array[i, j];
         return default(T);
     }
-    
+
 
     public static void SortChildByNameIndex(Transform transform, bool higherUpper = true)
     {

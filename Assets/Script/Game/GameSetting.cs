@@ -139,7 +139,7 @@ namespace GameSetting
             { enum_EquipmentEntryType.FireRate,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(10,10)},{ enum_Rarity.Rare, new RangeFloat(15,15)},{ enum_Rarity.Epic, new RangeFloat(20,20)} } },
             { enum_EquipmentEntryType.Damage,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(10,10)},{ enum_Rarity.Rare, new RangeFloat(15,15)},{ enum_Rarity.Epic, new RangeFloat(20, 20) } } } };
         
-        public static readonly Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>> m_EquipmentEntryUpgrade_Upgrade = new Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>>() {
+        public static readonly Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>> m_EquipmentEntryUpgrade_Sub = new Dictionary<enum_EquipmentEntryType, Dictionary<enum_Rarity, float>>() {
             { enum_EquipmentEntryType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,7},{ enum_Rarity.Rare, 9},{ enum_Rarity.Epic,11} } },
             { enum_EquipmentEntryType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,7},{ enum_Rarity.Rare, 9},{ enum_Rarity.Epic,11} } },
             { enum_EquipmentEntryType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,3},{ enum_Rarity.Rare, 4},{ enum_Rarity.Epic,5} } },
