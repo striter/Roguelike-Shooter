@@ -320,10 +320,17 @@ namespace GameSetting
         }
         #endregion
         #region Enhance/Deconstruct Equipment
+        public static bool CanDeconstructEquipments(List<int> deconstructSelections, ref float credits)
+        {
+            credits = GetDeconstructIncome(deconstructSelections) * GameConst.m_EquipmentEnhanceCoinsCostMultiply;
+            return CanUseCredit(credits);
+        } 
         public static bool CanEnhanceEquipment(int targetSelection) => m_EquipmentDepotData.m_Equipments[targetSelection].GetEnhanceLevel() < GameConst.m_EquipmentEnhanceMaxLevel;
         public static int DoEnhanceEquipment(int targetIndex, List<int> deconstructSelections)
         {
             int enhanceReceived = GetDeconstructIncome(deconstructSelections);
+            OnCreditStatus(-enhanceReceived * GameConst.m_EquipmentEnhanceCoinsCostMultiply);
+
             deconstructSelections.Sort((a, b) => b - a);
             m_EquipmentDepotData.m_Equipping.Sort((a, b) => b -a);
             m_EquipmentDepotData.m_Locking.Sort((a, b) => b - a);

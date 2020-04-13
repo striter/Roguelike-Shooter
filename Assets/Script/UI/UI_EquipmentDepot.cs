@@ -96,8 +96,8 @@ public class UI_EquipmentDepot : UIPage {
         else
         {
             m_SelectedEquipmentIndex = equipmentIndex;
-            UpdateBtnStatus();
         }
+        UpdateBtnStatus();
         UpdateSelectedEquipment();
         UpdateOwnedEquipments();
     }
@@ -132,11 +132,16 @@ public class UI_EquipmentDepot : UIPage {
         m_Btns.SetActivate(m_SelectedEquipmentIndex>=0);
         if (m_SelectedEquipmentIndex < 0)
             return;
+
+        float deconstructCost = 0;
+        bool canEnhanceTarget= GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex);
+        bool canDeconstruct = GameDataManager.CanDeconstructEquipments(m_SelectedDeconstructIndexes,ref deconstructCost);
+
         m_LeftBtnText.text = m_Upgrading ? "Cancel" : GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex)?"Enhance":"Max Level";
-        m_RightBtnText.text = m_Upgrading ? GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex) ? "Enhance" : "Max Level" : GameDataManager.CheckEquipmentEquiping(m_SelectedEquipmentIndex) ? "Dequip" : "Equip";
+        m_RightBtnText.text = m_Upgrading ? canEnhanceTarget ? canDeconstruct? "Enhance\n"+ deconstructCost : "Lack of Credits" : "Max Level" : GameDataManager.CheckEquipmentEquiping(m_SelectedEquipmentIndex) ? "Dequip" : "Equip";
         m_LockBtnText.text = GameDataManager.CheckEquipmentLocking(m_SelectedEquipmentIndex) ? "Unlock" : "Lock";
 
-        m_RightBtn.interactable = !m_Upgrading || GameDataManager.CanEnhanceEquipment(m_SelectedEquipmentIndex);
+        m_RightBtn.interactable = !m_Upgrading || (canEnhanceTarget&&canDeconstruct);
     }
 
     void UpdateOwnedEquipments()
@@ -155,11 +160,11 @@ public class UI_EquipmentDepot : UIPage {
             default:
                 return equipmentIndex;
             case enum_EquipmentDepotSorting.Level:
-                    return  data.GetEnhanceLevel() * 100000 + (int)data.m_Rarity*1000+equipmentIndex;
+                return data.GetEnhanceLevel() * 100000 + (int)data.m_Rarity * 1000 + equipmentIndex;
             case enum_EquipmentDepotSorting.Rarity:
-                   return (int)data.m_Rarity * 100000 + data.GetEnhanceLevel()*1000+equipmentIndex;
+                return (int)data.m_Rarity * 100000 + data.GetEnhanceLevel() * 1000 + equipmentIndex;
             case enum_EquipmentDepotSorting.Time:
-                    return  data.m_AcquireStamp*10000+equipmentIndex;
+                return data.m_AcquireStamp * 1000 + equipmentIndex;
         }
     }
 

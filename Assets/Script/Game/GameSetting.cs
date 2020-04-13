@@ -112,6 +112,7 @@ namespace GameSetting
 
         public static readonly Dictionary<enum_Rarity, float> m_EquipmentGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public const int m_EquipmentEnhanceMaxLevel = 15;
+        public const float m_EquipmentEnhanceCoinsCostMultiply = .2f;
         #region Entry
         public static readonly Dictionary<enum_Rarity, Dictionary<int, int>> m_EquipmentGenerateEntryCount = new Dictionary<enum_Rarity, Dictionary<int, int>>()  {{ enum_Rarity.Ordinary, new Dictionary<int, int>(){ { 0,50},{ 1,50} } } ,{ enum_Rarity.Advanced, new Dictionary<int, int>(){ { 1,50},{ 2,50} } } ,{ enum_Rarity.Rare, new Dictionary<int, int>(){ { 1,35},{ 2,35},{ 3,30} } } , { enum_Rarity.Epic, new Dictionary<int, int>(){ { 2,50},{ 3,50} } } ,  };
 
