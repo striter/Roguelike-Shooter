@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_EquipmentDepot : UIPage {
+
+    enum enum_EquipmentDepotSorting {Invalid=-1, Rarity,Level,Time }
+
     public CEquipmentDepotData m_DepotData => GameDataManager.m_EquipmentDepotData;
     UIT_GridControllerGridItem<UIGI_EquipmentItemEquipping> m_EquippingGrid;
     UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned> m_OwnedGrid;
@@ -15,15 +18,17 @@ public class UI_EquipmentDepot : UIPage {
     Button m_LeftBtn, m_RightBtn, m_LockBtn;
     Text m_LeftBtnText, m_RightBtnText,m_LockBtnText;
 
+    Button m_SortRarity, m_SortTime, m_SortLevel;
+
     bool m_Upgrading;
     int m_SelectedEquipmentIndex;
     List<int> m_SelectedDeconstructIndexes=new List<int>();
-
+    enum_EquipmentDepotSorting m_OwnedSorting = enum_EquipmentDepotSorting.Invalid;
     protected override void Init()
     {
         base.Init();
         m_EquippingGrid = new UIT_GridControllerGridItem<UIGI_EquipmentItemEquipping>(rtf_Container.Find("EquippingGrid"));
-        m_OwnedGrid = new UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned>(rtf_Container.Find("OwnedScrollView"),10);
+        m_OwnedGrid = new UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned>(rtf_Container.Find("OwnedScrollView"),25);
         m_AttributesEntryGrid = new UIT_GridControllerMono<Text>(rtf_Container.Find("Attributes/EntryGrid"));
         m_Passive = rtf_Container.Find("Attributes/Passive").GetComponent<Text>();
         m_SelectedEquipment = rtf_Container.Find("Selected").GetComponent<UIGI_EquipmentItemSelected>();
@@ -38,6 +43,13 @@ public class UI_EquipmentDepot : UIPage {
         m_LeftBtnText = m_Btns.Find("LeftBtn/Text").GetComponent<Text>();
         m_RightBtnText = m_Btns.Find("RightBtn/Text").GetComponent<Text>();
         m_LockBtnText = m_Btns.Find("LockBtn/Text").GetComponent<Text>();
+        m_SortRarity = rtf_Container.Find("SortRarity").GetComponent<Button>();
+        m_SortRarity.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Rarity;UpdateOwnedEquipments(); });
+        m_SortLevel = rtf_Container.Find("SortLevel").GetComponent<Button>();
+        m_SortLevel.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Level; UpdateOwnedEquipments(); });
+        m_SortTime = rtf_Container.Find("SortTime").GetComponent<Button>();
+        m_SortTime.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Time; UpdateOwnedEquipments(); });
+
         m_Upgrading = false;
         m_SelectedEquipmentIndex = -1;
         UpdateWhole();
@@ -130,7 +142,25 @@ public class UI_EquipmentDepot : UIPage {
     void UpdateOwnedEquipments()
     {
         m_OwnedGrid.ClearGrid();
-        m_DepotData.m_Equipments.Traversal((int index, EquipmentSaveData data) => { m_OwnedGrid.AddItem(index).Play(data, OnEquipmentClick, m_DepotData.m_Equipping.Contains(index), m_DepotData.m_Locking.Contains(index), m_SelectedEquipmentIndex == index, m_SelectedDeconstructIndexes.Contains(index)); });
+        m_DepotData.m_Equipments.Traversal((int equipmentIndex, EquipmentSaveData data) => {
+            m_OwnedGrid.AddItem(GetSorting(equipmentIndex,data)).Play(equipmentIndex, data, OnEquipmentClick, m_DepotData.m_Equipping.Contains(equipmentIndex), m_DepotData.m_Locking.Contains(equipmentIndex), m_SelectedEquipmentIndex == equipmentIndex, m_SelectedDeconstructIndexes.Contains(equipmentIndex));
+        });
+        m_OwnedGrid.SortChildrenSibling();
+    }
+
+    int GetSorting(int equipmentIndex, EquipmentSaveData data)
+    {
+        switch (m_OwnedSorting)
+        {
+            default:
+                return equipmentIndex;
+            case enum_EquipmentDepotSorting.Level:
+                    return  data.GetEnhanceLevel() * 10000000 + (int)data.m_Rarity*10000+equipmentIndex;
+            case enum_EquipmentDepotSorting.Rarity:
+                   return (int)data.m_Rarity * 10000000+ data.GetEnhanceLevel()*10000+equipmentIndex;
+            case enum_EquipmentDepotSorting.Time:
+                    return  data.m_AcquireStamp*10000+equipmentIndex;
+        }
     }
 
     void UpdateEquippingEquipments()

@@ -318,7 +318,7 @@ public class ObjectPoolListBase<T, Y>
         {
             targetItem = CreateNewItem(UnityEngine.Object.Instantiate(m_PoolItem, transform).transform);
         }
-        if (m_ActiveItemDic.ContainsKey(identity)) Debug.LogWarning(identity + "Already Exists In Grid Dic");
+        if (m_ActiveItemDic.ContainsKey(identity)) Debug.LogError(identity + "Already Exists In Grid Dic");
         else m_ActiveItemDic.Add(identity, targetItem);
         GetItemTransform(targetItem).name = identity.ToString();
         GetItemTransform(targetItem).SetActivate(true);
@@ -332,7 +332,10 @@ public class ObjectPoolListBase<T, Y>
         m_ActiveItemDic.Remove(identity);
     }
 
-    public void ClearPool()=>m_ActiveItemDic.Traversal(RemoveItem,true);
+    public void ClearPool()
+    {
+        m_ActiveItemDic.Traversal(RemoveItem, true);
+    } 
 
     protected virtual Y CreateNewItem(Transform instantiateTrans)
     {

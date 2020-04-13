@@ -62,7 +62,7 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UI
         List<int> keyCollections = m_Pool.m_ActiveItemDic.Keys.ToList();
         keyCollections.Sort((a,b)=> {return a > b?1:-1; });
         for (int i = 0; i < keyCollections.Count; i++)
-            GetItem(keyCollections[i]).transform.SetAsLastSibling();
+            GetItem(keyCollections[i]).transform.SetSiblingIndex(i);
     }
 }
 
@@ -74,18 +74,20 @@ public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridIte
     {
         m_VisibleCount = visibleCount;
         m_ScrollRect = _transform.GetComponent<ScrollRect>();
+        m_ScrollRect.onValueChanged.AddListener(OnRectChanged);
     }
 
-    public void Tick()
+    void OnRectChanged(Vector2 delta)
     {
-        int total = m_Pool.m_ActiveItemDic.Count;
-        int current = (int)(m_ScrollRect.verticalNormalizedPosition * total);
+        int totalCount = m_Pool.m_ActiveItemDic.Count;
+        int current = (int)(Mathf.Clamp01(m_ScrollRect.verticalNormalizedPosition) * totalCount);
         int rangeMin = current - m_VisibleCount;
         int rangeMax = current + m_VisibleCount;
+
         foreach (int index in m_Pool.m_ActiveItemDic.Keys)
         {
-            int position = total  - index;
-            GetItem(index).SetShowScrollView(rangeMin< position && position < rangeMax);
+            GetItem(index).SetShowScrollView(rangeMin< totalCount && totalCount < rangeMax);
+            totalCount--;
         }
     }
 }
