@@ -494,7 +494,11 @@ public class GameManager : GameManagerBase
 
         enum_Rarity equipmentRarity = TCommon.RandomPercentage(GameConst.m_EquipmentGameDropRarities, enum_Rarity.Invalid);
         if (equipmentRarity != enum_Rarity.Invalid)
-            GameObjectManager.SpawnInteract<InteractPickupEquipment>(GetPickupPosition(entity), Quaternion.identity).Play(GameDataManager.RandomRarityEquipment(equipmentRarity), false);
+        {
+            EquipmentSaveData equipment = GameDataManager.RandomRarityEquipment(equipmentRarity);
+            GameDataManager.AcquireEquipment(equipment);
+            GameObjectManager.SpawnInteract<InteractPickupEquipment>(GetPickupPosition(entity), Quaternion.identity).Play(equipment, false);
+        }
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere()* 1.5f);
