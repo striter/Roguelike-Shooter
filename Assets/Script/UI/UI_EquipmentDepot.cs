@@ -44,11 +44,11 @@ public class UI_EquipmentDepot : UIPage {
         m_RightBtnText = m_Btns.Find("RightBtn/Text").GetComponent<Text>();
         m_LockBtnText = m_Btns.Find("LockBtn/Text").GetComponent<Text>();
         m_SortRarity = rtf_Container.Find("SortRarity").GetComponent<Button>();
-        m_SortRarity.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Rarity;UpdateOwnedEquipments(); });
+        m_SortRarity.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Rarity;UpdateOwnedEquipments(true); });
         m_SortLevel = rtf_Container.Find("SortLevel").GetComponent<Button>();
-        m_SortLevel.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Level; UpdateOwnedEquipments(); });
+        m_SortLevel.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Level; UpdateOwnedEquipments(true); });
         m_SortTime = rtf_Container.Find("SortTime").GetComponent<Button>();
-        m_SortTime.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Time; UpdateOwnedEquipments(); });
+        m_SortTime.onClick.AddListener(() => { m_OwnedSorting = enum_EquipmentDepotSorting.Time; UpdateOwnedEquipments(true); });
 
         m_Upgrading = false;
         m_SelectedEquipmentIndex = -1;
@@ -99,14 +99,14 @@ public class UI_EquipmentDepot : UIPage {
         }
         UpdateBtnStatus();
         UpdateSelectedEquipment();
-        UpdateOwnedEquipments();
+        UpdateOwnedEquipments(false);
     }
 
     void SetUpgrading(bool upgrading)
     {
         m_Upgrading = upgrading;
         m_SelectedDeconstructIndexes.Clear();
-        UpdateOwnedEquipments();
+        UpdateOwnedEquipments(false);
         UpdateBtnStatus();
     }
     #endregion
@@ -114,7 +114,7 @@ public class UI_EquipmentDepot : UIPage {
     void UpdateWhole()
     {
         UpdateEquippingEquipments();
-        UpdateOwnedEquipments();
+        UpdateOwnedEquipments(true);
         UpdateTotalAttributes();
         UpdateBtnStatus();
         UpdateSelectedEquipment();
@@ -144,8 +144,15 @@ public class UI_EquipmentDepot : UIPage {
         m_RightBtn.interactable = !m_Upgrading || (canEnhanceTarget&&canDeconstruct);
     }
 
-    void UpdateOwnedEquipments()
+    void UpdateOwnedEquipments(bool refreshGrid)
     {
+        if (!refreshGrid)
+        {
+            m_DepotData.m_Equipments.Traversal((int equipmentIndex, EquipmentSaveData data) => {
+                m_OwnedGrid.GetOrAddItem(GetSorting(equipmentIndex, data)).Play(m_DepotData.m_Equipping.Contains(equipmentIndex), m_DepotData.m_Locking.Contains(equipmentIndex), m_SelectedEquipmentIndex == equipmentIndex, m_SelectedDeconstructIndexes.Contains(equipmentIndex));
+            });
+            return;
+        }
         m_OwnedGrid.ClearGrid();
         m_DepotData.m_Equipments.Traversal((int equipmentIndex, EquipmentSaveData data) => {
             m_OwnedGrid.AddItem(GetSorting(equipmentIndex,data)).Play(equipmentIndex, data, OnEquipmentClick, m_DepotData.m_Equipping.Contains(equipmentIndex), m_DepotData.m_Locking.Contains(equipmentIndex), m_SelectedEquipmentIndex == equipmentIndex, m_SelectedDeconstructIndexes.Contains(equipmentIndex));
@@ -167,7 +174,7 @@ public class UI_EquipmentDepot : UIPage {
                 return data.m_AcquireStamp * 1000 + equipmentIndex;
         }
     }
-
+    
     void UpdateEquippingEquipments()
     {
         m_EquippingGrid.ClearGrid();

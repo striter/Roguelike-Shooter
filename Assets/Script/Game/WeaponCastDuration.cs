@@ -22,7 +22,7 @@ public class WeaponCastDuration : WeaponCastBase {
 
     void Update()
     {
-        SetCastAvailable(m_Attacher != null && m_Trigger.m_TriggerDown && m_HaveAmmoLeft && !m_Attacher.m_IsDead && m_Attacher.m_weaponFirePause);
+        SetCastAvailable(m_Attacher != null && m_Trigger.m_TriggerDown && m_HaveAmmoLeft && !m_Attacher.m_IsDead && !m_Attacher.m_weaponFirePause);
     }
 
     void SetCastAvailable(bool showCast)
@@ -30,6 +30,7 @@ public class WeaponCastDuration : WeaponCastBase {
         if (m_Casting == showCast)
             return;
 
+        Debug.Log(showCast);
         if (showCast)
         {
             m_Cast = ShowCast();

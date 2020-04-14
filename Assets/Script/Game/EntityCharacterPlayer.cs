@@ -83,6 +83,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnPlayerActivate(CPlayerBattleSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
+
         m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, _battleSave.m_Health >= 0 ? _battleSave.m_Health : I_MaxHealth);
         m_CharacterInfo.SetInfoData(_battleSave);
 

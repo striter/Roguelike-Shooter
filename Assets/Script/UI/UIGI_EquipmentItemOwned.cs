@@ -21,10 +21,15 @@ public class UIGI_EquipmentItemOwned : UIGI_EquipmentItemBase {
     {
         this.OnButtonClick = OnButtonClick;
         m_EquipmentIndex = equipmentIndex;
+        Play(data);
+        Play(equipping, locked, selected, deconstruct);
+    }
+
+    public void Play(bool equipping, bool locked, bool selected, bool deconstruct)
+    {
         m_Equipping.SetActivate(equipping);
         m_Locked.SetActivate(locked);
-        m_Selected.SetActivate(selected||deconstruct);
+        m_Selected.SetActivate(selected || deconstruct);
         m_Selected.text = selected ? "Selcted" : deconstruct ? "Deconstruct" : "";
-        Play(data);
     }
 }

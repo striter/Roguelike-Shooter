@@ -19,6 +19,7 @@ public class UI_Armory : UIPage {
         m_Title = rtf_Container.Find("Title").GetComponent<Text>();
         m_UnlockButton.onClick.AddListener(OnUnlockButtonClick);
         InitArmory();
+        OnWeaponClick(enum_PlayerWeapon.Invalid);
     }
 
     void InitArmory()
@@ -33,7 +34,6 @@ public class UI_Armory : UIPage {
         {
             m_UnlockedGrid.AddItem((int)weapon).Play(OnWeaponClick);
         });
-        OnWeaponClick(enum_PlayerWeapon.Invalid);
     }
 
 
