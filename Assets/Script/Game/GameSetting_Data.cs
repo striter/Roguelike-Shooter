@@ -276,39 +276,43 @@ namespace GameSetting
             TGameData<CEquipmentDepotData>.Save();
         }
         #region Enhance
-        #region EnhanceRequipment/DeconstructIncome
-        public static int GetEnhanceLevel(this EquipmentSaveData data)
+        #region Calculateion
+        public static int GetEnhanceLevel(int enhance, enum_Rarity rarity)
         {
             int level = 0;
-            int enhance = data.m_Enhance;
             for (int i = 0; i < GameConst.m_EquipmentEnhanceMaxLevel; i++, level++)
             {
-                enhance -= GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity, level);
+                enhance -= GameExpression.GetEquipmentEnhanceRequirement(rarity, level);
                 if (enhance < 0)
                     break;
             }
             return level;
         }
-        public static int GetEnhanceRequireNextLevel(this EquipmentSaveData data)
+
+        public static int GetNextLevelLeft(int enhance, enum_Rarity rarity)
         {
-            int level = 0;
-            int enhanceRequireLeft = data.m_Enhance;
-            for (int i = 0; i < GameConst.m_EquipmentEnhanceMaxLevel; i++, level++)
+            for (int i = 0, level=0; i < GameConst.m_EquipmentEnhanceMaxLevel; i++, level++)
             {
-                enhanceRequireLeft -= GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity, level);
-                if (enhanceRequireLeft < 0)
-                    break;
+                enhance -= GameExpression.GetEquipmentEnhanceRequirement(rarity, level);
+                if (enhance < 0)
+                    return -enhance;
             }
-            return -enhanceRequireLeft;
+            return 0;
         }
-        public static int GetEnhanceCurLevel(this EquipmentSaveData data)
+
+        public static int GetTotalEnhance(int level,enum_Rarity rarity)
         {
-            int enhanceRequire = 0;
-            int currentLevel =data.GetEnhanceLevel();
-            for (int i = 0; i < currentLevel; i++)
-                enhanceRequire += GameExpression.GetEquipmentEnhanceRequirement(data.m_Rarity,i);
-            return data.m_Enhance-enhanceRequire;
+            int enhance = 0;
+            for(int i=0;i<level;i++)
+                enhance += GameExpression.GetEquipmentEnhanceRequirement(rarity, i);
+            return enhance;
         }
+        #endregion
+        #region EnhanceRequipment/DeconstructIncome
+
+        public static int GetEnhanceLevel(this EquipmentSaveData data) => GetEnhanceLevel(data.m_Enhance,data.m_Rarity);
+        public static int GetEnhanceRequireNextLevel(this EquipmentSaveData data) => GetNextLevelLeft(data.m_Enhance,data.m_Rarity);
+        public static int GetEnhanceCurLevel(this EquipmentSaveData data) => data.m_Enhance - GetTotalEnhance(data.GetEnhanceLevel(),data.m_Rarity);
 
         public static int GetDeconstructIncome(this EquipmentSaveData data) => GameExpression.GetEquipmentDeconstruct(data.m_Rarity,data.GetEnhanceLevel());
         public static int GetDeconstructIncome(List<int> selections)
@@ -319,6 +323,7 @@ namespace GameSetting
             return enhanceReceived;
         }
         #endregion
+
         #region Enhance/Deconstruct Equipment
         public static bool CanDeconstructEquipments(List<int> deconstructSelections, ref float credits)
         {

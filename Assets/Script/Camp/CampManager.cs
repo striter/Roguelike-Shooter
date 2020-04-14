@@ -71,6 +71,13 @@ public class CampManager : GameManagerBase
         CampUIManager.Instance.ShowPage<UI_EquipmentDepot>(true, 1f);
     }
 
+    public void OnCharacterUpgradeInteract()
+    {
+        if (UIPageBase.m_PageOpening)
+            return;
+        CampUIManager.Instance.ShowPage<UI_CharacterUpgrade>(true, 1f);
+    }
+
     public bool OnAcquireDailyRewardInteract()=>GameDataManager.OnDailyRewardRequire();
 
     public void OnBillboardInteract(Transform cameraPos)
@@ -80,6 +87,7 @@ public class CampManager : GameManagerBase
         AttachSceneCamera(cameraPos);
         CampUIManager.Instance.ShowPage<UI_Billboard>(true, ResetPlayerCamera, .1f);
     }
+
 
     void ResetPlayerCamera()=> AttachPlayerCamera(tf_CameraAttach);
 
