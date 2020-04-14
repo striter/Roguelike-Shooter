@@ -6,7 +6,7 @@ using System;
 
 namespace GameSetting_Equipments
 {
-    public class E20000_Default:ExpireEquipmentCombination
+    public class E20000_Default:ExpireEquipmentUpgrade
     {
         public override int m_Index => GameConst.m_DefaultEquipmentCombinationIdentity;
 
@@ -14,7 +14,7 @@ namespace GameSetting_Equipments
     }
 
 
-    public class E20001:ExpireEquipmentCombination
+    public class E20001:ExpireEquipmentUpgrade
     {
         public override int m_Index => 20001;
 
@@ -38,7 +38,7 @@ namespace GameSetting_Equipments
         public E20001(List<EquipmentSaveData> datas) : base( datas) { m_Timer = new TimeCounter(Value2, true); }
     }
 
-    public class E20002:ExpireEquipmentCombination
+    public class E20002:ExpireEquipmentUpgrade
     {
         public override int m_Index => 20002;
         public override float Value1 => 20;
@@ -52,7 +52,7 @@ namespace GameSetting_Equipments
         public E20002(List<EquipmentSaveData> datas) : base(datas) {  }
     }
 
-    public class E20003:ExpireEquipmentCombination
+    public class E20003:ExpireEquipmentUpgrade
     {
         public override int m_Index => 20003;
         public override float Value1 => 8f;

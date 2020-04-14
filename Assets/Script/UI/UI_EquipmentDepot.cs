@@ -183,8 +183,8 @@ public class UI_EquipmentDepot : UIPage {
 
     void UpdateTotalAttributes()
     {
-        Dictionary<enum_EquipmentEntryType, float> _entryData = new Dictionary<enum_EquipmentEntryType, float>();
-        TCommon.TraversalEnum((enum_EquipmentEntryType type) => { _entryData.Add(type, 0); });
+        Dictionary<enum_CharacterUpgradeType, float> _entryData = new Dictionary<enum_CharacterUpgradeType, float>();
+        TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { _entryData.Add(type, 0); });
         EquipmentSaveData? _passiveData = null;
         List<EquipmentSaveData> equippingData = m_DepotData.GetSelectedEquipments();
         equippingData.Traversal((int index, EquipmentSaveData data) =>
@@ -198,7 +198,7 @@ public class UI_EquipmentDepot : UIPage {
             });
         });
         m_AttributesEntryGrid.ClearGrid();
-        TCommon.TraversalEnum((enum_EquipmentEntryType type) => { m_AttributesEntryGrid.AddItem((int)type).text = type + ":" + _entryData[type]; });
+        TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { m_AttributesEntryGrid.AddItem((int)type).text = type + ":" + _entryData[type]; });
         m_Passive.SetActivate(_passiveData != null);
         if (_passiveData != null)
             m_Passive.text = "Passive:" + _passiveData.Value.GetPassiveLocalizeKey();

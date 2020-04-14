@@ -34,6 +34,7 @@ namespace GameSetting
         public static CGameSave m_GameData => TGameData<CGameSave>.Data;
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
         public static CEquipmentDepotData m_EquipmentDepotData => TGameData<CEquipmentDepotData>.Data;
+        public static CCharacterUpgradeData m_CharacterUpgradeData => TGameData<CCharacterUpgradeData>.Data;
         public static CPlayerBattleSave m_BattleData => TGameData<CPlayerBattleSave>.Data;
 
         public static bool m_Inited { get; private set; } = false;
@@ -51,6 +52,7 @@ namespace GameSetting
 
             TGameData<CGameSave>.Init();
             TGameData<CEquipmentDepotData>.Init();
+            TGameData<CCharacterUpgradeData>.Init();
             TGameData<CArmoryData>.Init();
             TGameData<CPlayerBattleSave>.Init();
 
@@ -213,18 +215,18 @@ namespace GameSetting
         #endregion
 
         #region EquipmentData
-        static Dictionary<int, ExpireEquipmentCombination> m_AllEquipments = new Dictionary<int, ExpireEquipmentCombination>();
+        static Dictionary<int, ExpireEquipmentUpgrade> m_AllEquipments = new Dictionary<int, ExpireEquipmentUpgrade>();
         static List<int> m_AvailableEquipments = new List<int>();
         public static void InitEquipment()
         {
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentCombination equipment) => {
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentUpgrade equipment) => {
                 m_AllEquipments.Add(equipment.m_Index, equipment);
                 if (equipment.m_Index != GameConst.m_DefaultEquipmentCombinationIdentity)
                     m_AvailableEquipments.Add(equipment.m_Index);
             }), new List<EquipmentSaveData>());
         }
 
-        public static ExpireEquipmentCombination CreateEquipmentCombination(List<EquipmentSaveData> datas)
+        public static ExpireEquipmentUpgrade CreateEquipmentCombination(List<EquipmentSaveData> datas)
         {
             int equipmentIndex = datas.Find(p => datas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
 
@@ -238,7 +240,7 @@ namespace GameSetting
                 equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
             }
 
-            return TReflection.CreateInstance<ExpireEquipmentCombination>(m_AllEquipments[equipmentIndex].GetType(), datas);
+            return TReflection.CreateInstance<ExpireEquipmentUpgrade>(m_AllEquipments[equipmentIndex].GetType(), datas);
         }
 
         public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
@@ -276,7 +278,7 @@ namespace GameSetting
             TGameData<CEquipmentDepotData>.Save();
         }
         #region Enhance
-        #region Calculateion
+        #region Calculation
         public static int GetEnhanceLevel(int enhance, enum_Rarity rarity)
         {
             int level = 0;
@@ -384,7 +386,7 @@ namespace GameSetting
         #region Entry
         static void AcquireRandomEntry(this EquipmentSaveData data)
         {
-            enum_EquipmentEntryType entryType = TCommon.RandomEnumValues<enum_EquipmentEntryType>();
+            enum_CharacterUpgradeType entryType = TCommon.RandomEnumValues<enum_CharacterUpgradeType>();
             float startValue = data.m_Entries.Count < 1 ? GameConst.m_EquipmentEntryStart_Main[entryType][data.m_Rarity] : GameConst.m_EquipmentEntryStart_Sub[entryType][data.m_Rarity].Random();
             data.m_Entries.Add(new EquipmentEntrySaveData(entryType, startValue));
         }
@@ -413,6 +415,34 @@ namespace GameSetting
         }
         #endregion
         #endregion
+        #endregion
+
+        #region UpgradeData
+        public static ExpireCharacterUpgrade CreateCharacterUpgrade(CharacterUpgradeData upgradeData) => new ExpireCharacterUpgrade(upgradeData);
+
+        public static float GetUpgradeCost(CharacterUpgradeData data, enum_CharacterUpgradeType type) => GameExpression.GetCharacterUpgradePrice(type,data.m_Upgrades[type]);
+        public static bool CanUpgradeItem(CharacterUpgradeData data, enum_CharacterUpgradeType type) => data.m_Upgrades[type] < GameConst.m_MaxCharacterUpgradeTime;
+
+        public static void UpgradeCurrentCharacter(enum_CharacterUpgradeType type)
+        {
+            CharacterUpgradeData upgradeData = m_CharacterUpgradeData.Current;
+            if (!CanUpgradeItem(upgradeData, type))
+            {
+                Debug.LogError("Unable To Upgrade!");
+                return;
+            }
+
+            float credit = GetUpgradeCost(upgradeData,type);
+            if (!CanUseCredit(credit))
+            {
+                Debug.LogError("Out Of Credits!");
+                return;
+            }
+
+            OnCreditStatus(-credit);
+            m_CharacterUpgradeData.UpgradeCurrentData(type);
+            TGameData<CCharacterUpgradeData>.Save();
+        }
         #endregion
 
         #region PerkData
@@ -566,15 +596,18 @@ namespace GameSetting
         public WeaponSaveData m_Weapon2;
         public List<PerkSaveData> m_Perks;
         public List<EquipmentSaveData> m_Equipments;
-        public CPlayerBattleSave() : this(GameDataManager.m_GameData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments())
+        public CharacterUpgradeData m_Upgrade;
+        public CPlayerBattleSave() : this(GameDataManager.m_GameData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(),GameDataManager.m_CharacterUpgradeData.GetUpgradeData(GameDataManager.m_GameData.m_CharacterSelected))
         {
         }
-        public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments)
+
+        public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
         {
             m_Coins = 0;
             m_Health = -1;
             m_Character = character;
             m_Equipments = equipments;
+            m_Upgrade = upgrade;
             m_Perks = new List<PerkSaveData>();
             m_Weapon1 = WeaponSaveData.CreateNew(weapon);
             m_Weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
@@ -636,6 +669,40 @@ namespace GameSetting
                 datas.Add(m_Equipments[m_Equipping[i]]);
             return datas;
         }
+
+        public void DataRecorrect()
+        {
+        }
+    }
+
+    public class CCharacterUpgradeData:ISave
+    {
+        public Dictionary<enum_PlayerCharacter, CharacterUpgradeData> m_CharacterUpgrades;
+
+        public CCharacterUpgradeData()
+        {
+            m_CharacterUpgrades = new Dictionary<enum_PlayerCharacter, CharacterUpgradeData>();
+        }
+
+        public CharacterUpgradeData Current => GetUpgradeData(GameDataManager.m_GameData.m_CharacterSelected);
+
+        public void UpgradeCurrentData(enum_CharacterUpgradeType type)
+        {
+            CharacterUpgradeData data = m_CharacterUpgrades[GameDataManager.m_GameData.m_CharacterSelected];
+            data.m_Upgrades[type] += 1;
+            m_CharacterUpgrades[GameDataManager.m_GameData.m_CharacterSelected]=data;
+        }
+
+        public CharacterUpgradeData GetUpgradeData(enum_PlayerCharacter character)
+        {
+            if (m_CharacterUpgrades.ContainsKey(character))
+                return m_CharacterUpgrades[character];
+
+            CharacterUpgradeData newData = CharacterUpgradeData.Default();
+            m_CharacterUpgrades.Add(character, newData);
+            return newData;
+        }
+
 
         public void DataRecorrect()
         {
@@ -730,10 +797,10 @@ namespace GameSetting
 
     public struct EquipmentEntrySaveData : IDataConvert
     {
-        public enum_EquipmentEntryType m_Type { get; private set; }
+        public enum_CharacterUpgradeType m_Type { get; private set; }
         public float m_Value { get; private set; }
 
-        public EquipmentEntrySaveData(enum_EquipmentEntryType entryType, float value) { m_Type = entryType; m_Value = value; }
+        public EquipmentEntrySaveData(enum_CharacterUpgradeType entryType, float value) { m_Type = entryType; m_Value = value; }
 
         public EquipmentEntrySaveData Upgrade(float value)
         {
@@ -742,6 +809,12 @@ namespace GameSetting
         }
     }
 
+    public struct CharacterUpgradeData:IDataConvert
+    {
+        public Dictionary<enum_CharacterUpgradeType,int> m_Upgrades { get; private set; }
+        public static CharacterUpgradeData Default() => new CharacterUpgradeData() { m_Upgrades = new Dictionary<enum_CharacterUpgradeType, int>() { { enum_CharacterUpgradeType.Armor,0}, { enum_CharacterUpgradeType.CriticalRate, 0 }, { enum_CharacterUpgradeType.Health, 0 }, { enum_CharacterUpgradeType.FireRate, 0 }, { enum_CharacterUpgradeType.MovementSpeed, 0 }, { enum_CharacterUpgradeType.Damage, 0 } } };
+        public CharacterUpgradeData(Dictionary<enum_CharacterUpgradeType,int> upgrades) { m_Upgrades = upgrades; }
+    }
     #endregion
 
     #region ExcelData

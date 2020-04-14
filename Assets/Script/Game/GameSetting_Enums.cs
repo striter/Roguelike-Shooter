@@ -130,7 +130,7 @@ namespace GameSetting
 
     public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,HealthPenetrate=10, }
     
-    public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2,Equipment=3, }
+    public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2,Equipment=3,Upgrade=4, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,  }
 
@@ -144,7 +144,7 @@ namespace GameSetting
 
     public enum enum_Rarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Epic = 4 }
 
-    public enum enum_EquipmentEntryType { Invalid = -1, Health = 1, Armor = 2, MovementSpeed = 3, CriticalRate = 4, FireRate = 5, Damage = 6 }
+    public enum enum_CharacterUpgradeType { Invalid = -1, Health = 1, Armor = 2, MovementSpeed = 3, CriticalRate = 4, FireRate = 5, Damage = 6 }
 
     public enum enum_PlayerWeapon
     {

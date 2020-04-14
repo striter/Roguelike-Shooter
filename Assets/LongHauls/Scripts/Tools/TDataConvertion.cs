@@ -32,7 +32,7 @@ public static class TDataConvert
     public static T Convert<T>(string xmlData) => (T)ConvertToObject(typeof(T), xmlData, 0);
     public static object Convert(Type type, string xmlData) => ConvertToObject(type, xmlData, 0);
     public static object Default(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
-    static string ConvertToString(Type type, object value, int iteration)
+    static string ConvertToString( Type type, object value, int iteration)
     {
         if (type.IsEnum)
             return value.ToString();
@@ -43,8 +43,9 @@ public static class TDataConvert
         if (CheckIXmlParseType(type))
             return IXmlPhraseToString(type, value, iteration + 1);
 
-        if (CheckListPhrase(type))
-            return ListPhraseToString(type, value, iteration + 1);
+        Type genericDefinition = type.GetGenericTypeDefinition();
+        if (CheckGenericPhrase(genericDefinition))
+            return GenericPhraseToString(type,genericDefinition, value, iteration + 1);
 
         Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Base Type To Phrase");
         return null;
@@ -60,10 +61,11 @@ public static class TDataConvert
         if (CheckIXmlParseType(type))
             return IXmlPraseToData(type, xmlData, iteration + 1);
 
-        if (CheckListPhrase(type))
-            return ListPhraseToData(type, xmlData, iteration + 1);
+        Type genericDefinition = type.GetGenericTypeDefinition();
+        if (CheckGenericPhrase(genericDefinition))
+            return GenericPhraseToData(type,genericDefinition, xmlData, iteration + 1);
 
-         Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
+        Debug.LogError("Xml Error Invlid Type:" + type.ToString() + " For Xml Data To Phrase");
         return null;
     }
 
@@ -90,29 +92,48 @@ public static class TDataConvert
         { typeof(RangeFloat), (string xmlData) => { string[] split = xmlData.Split(m_PhraseBaseBreakPoint); return new RangeFloat(float.Parse(split[0]), float.Parse(split[1])); }},
     };
     #endregion
-    #region ListType
-    static bool CheckListPhrase(Type type) => type.GetGenericTypeDefinition() == typeof(List<>);
-    static string ListPhraseToString(Type type, object data, int iteration)
+    #region GenericType
+    static Type m_GenericDicType = typeof(Dictionary<,>);
+    static Type m_GenericListType = typeof(List<>);
+    static bool CheckGenericPhrase(Type genericDefinition)=> genericDefinition ==m_GenericDicType  || genericDefinition == m_GenericListType;
+    static string GenericPhraseToString( Type type,Type genericDefinition, object data, int iteration)
     {
         if (iteration >= m_PhraseLiterateBreakPoints.Length)
         {
             Debug.LogError("Iteration Max Reached!");
             return "";
         }
-        StringBuilder sb_xmlData = new StringBuilder();
-        Type listType = type.GetGenericArguments()[0];
         char dataBreak = m_PhraseLiterateBreakPoints[iteration];
-        foreach (object obj in data as IEnumerable)
+        StringBuilder _convertData = new StringBuilder();
+        if (genericDefinition== m_GenericListType)
         {
-            sb_xmlData.Append(ConvertToString(listType, obj, iteration + 1));
-            sb_xmlData.Append(dataBreak);
+            Type listType = type.GetGenericArguments()[0];
+            foreach (object obj in data as IEnumerable)
+            {
+                _convertData.Append(ConvertToString(listType, obj, iteration + 1));
+                _convertData.Append(dataBreak);
+            }
+            if (_convertData.Length != 0)
+                _convertData.Remove(_convertData.Length - 1, 1);
         }
-        if (sb_xmlData.Length != 0)
-            sb_xmlData.Remove(sb_xmlData.Length - 1, 1);
-        return sb_xmlData.ToString();
+        else if(genericDefinition==m_GenericDicType)
+        {
+            Type keyType = type.GetGenericArguments()[0];
+            Type valueType = type.GetGenericArguments()[1];
+            foreach (DictionaryEntry obj in (IDictionary)data)
+            {
+                _convertData.Append(ConvertToString(keyType, obj.Key,iteration+1));
+                _convertData.Append(dataBreak);
+                _convertData.Append(ConvertToString(valueType, obj.Value,iteration+1));
+                _convertData.Append(dataBreak);
+            }
+            if (_convertData.Length != 0)
+                _convertData.Remove(_convertData.Length - 1, 1);
+        }
+        return _convertData.ToString();
     }
 
-    static object ListPhraseToData(Type type, string xmlData, int iteration)
+    static object GenericPhraseToData(Type type,Type genericDefinition, string xmlData, int iteration)
     {
         if (iteration >= m_PhraseLiterateBreakPoints.Length)
         {
@@ -120,13 +141,32 @@ public static class TDataConvert
             return null;
         }
         char dataBreak = m_PhraseLiterateBreakPoints[iteration];
-        Type listType = type.GetGenericArguments()[0];
-        IList iList_Target = (IList)Activator.CreateInstance(type);
-        string[] list_Split = xmlData.Split(dataBreak);
-        if (list_Split.Length != 1 || list_Split[0] != "")
-            for (int i = 0; i < list_Split.Length; i++)
-                iList_Target.Add(ConvertToObject(listType, list_Split[i], iteration + 1));
-        return iList_Target;
+        if(genericDefinition==m_GenericListType)
+        {
+            Type listType = type.GetGenericArguments()[0];
+            IList iList_Target = (IList)Activator.CreateInstance(type);
+            string[] list_Split = xmlData.Split(dataBreak);
+            if (list_Split.Length != 1 || list_Split[0] != "")
+                for (int i = 0; i < list_Split.Length; i++)
+                    iList_Target.Add(ConvertToObject(listType, list_Split[i], iteration + 1));
+            return iList_Target;
+        }
+        else if(genericDefinition==m_GenericDicType)
+        {
+            Type keyType = type.GetGenericArguments()[0];
+            Type valueType = type.GetGenericArguments()[1];
+            IDictionary iDic_Target = (IDictionary)Activator.CreateInstance(type);
+            string[] as_split = xmlData.Split(dataBreak);
+            if (as_split.Length != 1 || as_split[0] != "")
+                for (int i = 0; i < as_split.Length; i+=2)
+                {
+                    iDic_Target.Add(ConvertToObject(keyType, as_split[i], iteration + 1)
+                        , ConvertToObject(valueType, as_split[i+1], iteration + 1));
+                }
+            return iDic_Target;
+        }
+        Debug.LogError("Invalid GenericDefinition here!");
+        return null;
     }
     #endregion
     #region IXmlConvertType
