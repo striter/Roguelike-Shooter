@@ -30,7 +30,6 @@ public class WeaponCastDuration : WeaponCastBase {
         if (m_Casting == showCast)
             return;
 
-        Debug.Log(showCast);
         if (showCast)
         {
             m_Cast = ShowCast();
