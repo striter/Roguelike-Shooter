@@ -16,7 +16,7 @@ public class InteractWeaponVendorMachineRare : InteractGameBase
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        GameObjectManager.SpawnInteract<InteractWeaponPickup>( transform.position+ TCommon.RandomXZCircle(), Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponVendorMachineRareRate)].RandomItem()));
+        GameObjectManager.SpawnInteract<InteractPickupWeapon>( transform.position, Quaternion.identity).Play(WeaponSaveData.CreateNew(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponVendorMachineRareRate)].RandomItem())).PlayDropAnim(transform.position+ TCommon.RandomXZCircle() * 4f);
         return true;
     }
 }

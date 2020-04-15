@@ -4,17 +4,18 @@ using UnityEngine;
 using GameSetting;
 using System;
 
-public class InteractWeaponPickup : InteractGameBase {
+public class InteractPickupWeapon : InteractPickup {
     Transform tf_ModelContainer;
     public WeaponBase m_Weapon { get; private set; }
-    public override enum_Interaction m_InteractType => enum_Interaction.WeaponPickup;
+    public override enum_Interaction m_InteractType => enum_Interaction.PickupWeapon;
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor) => base.OnTryInteractCheck(_interactor)&& m_Weapon != null;
+    protected override bool B_SelfRecycleOnInteract => false;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolItemInit(identity, OnRecycle);
         tf_ModelContainer = transform.Find("Container/Model");
     }
-    public InteractWeaponPickup Play(WeaponSaveData data )
+    public InteractPickupWeapon Play(WeaponSaveData data )
     {
         base.Play();
         m_Weapon = GameObjectManager.SpawnWeapon(data,tf_ModelContainer);

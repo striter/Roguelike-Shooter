@@ -6,10 +6,12 @@ using UnityEngine;
 public class InteractPickupEquipment : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupEquipment;
     EquipmentSaveData m_Data;
-    public void Play(EquipmentSaveData data, bool moveTowardsPlayer)
+    public override bool B_InteractOnTrigger => true;
+    public InteractPickupEquipment Play(EquipmentSaveData data)
     {
-        base.Play(moveTowardsPlayer);
+        base.Play();
         m_Data = data;
+        return this;
     }
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)

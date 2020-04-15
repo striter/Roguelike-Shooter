@@ -109,7 +109,7 @@ namespace GameSetting
         Invalid = -1,
         GameBegin,
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
-        TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, WeaponPickup, PerkSelect,
+        TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, PickupWeapon, PerkSelect,
         PerkLottery,PerkShrine,BloodShrine,HealShrine,
         PickupArmoryBlueprint,PickupEquipment,
         Portal,

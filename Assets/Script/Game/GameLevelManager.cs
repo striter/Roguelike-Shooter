@@ -31,7 +31,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         base.OnDestroy();
         NavigationManager.ClearNavMeshDatas();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleStart, OnBattleStart);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
     }
     
     public void GenerateStage(enum_GameStyle style)

@@ -22,7 +22,7 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
         if (AC_OnPlay)
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
-
+    public virtual void OnBattleFinish() { }
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor) => m_TradePrice <= 0 || _interactor.m_CharacterInfo.CanCostCoins(m_TradePrice);
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {

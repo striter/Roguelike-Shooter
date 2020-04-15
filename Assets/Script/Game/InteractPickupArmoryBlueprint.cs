@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPickupArmoryBlueprint : InteractPickup {
+public class InteractPickupArmoryBlueprint : InteractPickup
+{
     public override enum_Interaction m_InteractType => enum_Interaction.PickupArmoryBlueprint;
     public enum_PlayerWeapon m_Weapon { get; private set; }
-    public void Play(enum_PlayerWeapon weapon,bool moveTowardsPlayer)
+    public override bool B_InteractOnTrigger => true;
+
+    public InteractPickupArmoryBlueprint Play(enum_PlayerWeapon weapon)
     {
-        base.Play(moveTowardsPlayer);
+        base.Play();
         m_Weapon = weapon;
+        return this;
     }
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkPickup : InteractGameBase {
+public class InteractPerkPickup : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkPickup;
     public int m_PerkID { get; private set; }
     protected override bool B_SelfRecycleOnInteract => true;

@@ -204,7 +204,7 @@ namespace GameSetting
                         case enum_Rarity.Rare: return new RangeInt(10, 0);
                         case enum_Rarity.Epic: return new RangeInt(10, 0);
                     }
-                case enum_Interaction.WeaponPickup:
+                case enum_Interaction.PickupWeapon:
                     switch (weaponRarity)
                     {
                         default:Debug.LogError("Invalid Weapon Rarity");return new RangeInt(0, -1);
