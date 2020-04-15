@@ -46,7 +46,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
             if (!m_Rolling)
             {
                 m_WeaponCurrent.AddAmmo(m_WeaponCurrent.I_ClipAmount/2);
-                m_CharacterInfo.AddBuff(m_SpawnerEntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*1f+.1f*m_CharacterInfo.m_RankManager.m_Rank));
+                m_CharacterInfo.AddBuff(m_SpawnerEntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*1f+.1f*m_CharacterInfo.m_RankManager.m_Rank,1.5f));
                 m_Animator.EndRoll();
                 EnableHitbox(true);
             }

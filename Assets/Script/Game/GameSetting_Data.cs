@@ -559,7 +559,7 @@ namespace GameSetting
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
             m_LastDailyRewardStamp = -1;
-            m_CharacterSelected = enum_PlayerCharacter.Assassin;
+            m_CharacterSelected = enum_PlayerCharacter.Beth;
         }
 
         public void UnlockDifficulty()
@@ -871,18 +871,20 @@ namespace GameSetting
             m_DamageReduction /= 100f;
         }
         //Normally In Excel 0-999
-        public static SBuff CreateGameBethBuff(float fireRate)
+        public static SBuff CreateGameBethBuff(float fireRate,float duration)
         {
             SBuff buff= new SBuff();
             buff.m_Index = (int)enum_PlayerCharacter.Beth;
+            buff.m_Refresh = (int)enum_ExpireRefreshType.AddUp;
             buff.m_FireRateMultiply = fireRate;
+            buff.m_ExpireDuration = duration;
             return buff;
         }
         public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
         {
             SBuff buff = new SBuff();
             buff.m_Index = 2000 + difficulty;
-            buff.m_Refresh = (int)enum_ExpireRefreshType.Refresh;
+            buff.m_Refresh = (int)enum_ExpireRefreshType.AddUp;
             buff.m_DamageMultiply = damageMultiply;
             return buff;
         }

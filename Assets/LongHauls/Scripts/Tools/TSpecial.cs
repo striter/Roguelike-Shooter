@@ -949,41 +949,43 @@ public class ExpRankBase
 {
     public int m_TotalExp { get; private set; }
     public int m_Rank { get; private set; }
-    public int m_ExpCurrentLevel { get; private set; }
-    public int m_ExpNextLevelRequire { get; private set; }
+    public int m_ExpCurRank { get; private set; }
+    public int m_ExpToNextRank { get; private set; }
     Func<int, int> GetExpToNextLevel;
     public ExpRankBase(Func<int, int> GetExpToNextLevel)
     {
         this.GetExpToNextLevel = GetExpToNextLevel;
         m_TotalExp = 0;
         m_Rank = 0;
-        m_ExpCurrentLevel = 0;
-        m_ExpNextLevelRequire = 0;
+        m_ExpCurRank = 0;
+        m_ExpToNextRank = 0;
     }
     public void OnExpSet(int totalExp)
     {
         m_TotalExp = 0;
         m_Rank = 0;
-        m_ExpCurrentLevel = 0;
-        m_ExpNextLevelRequire = 0;
+        m_ExpCurRank = 0;
+        m_ExpToNextRank = 0;
         OnExpGain(totalExp);
     }
 
-    public void OnExpGain(int exp)
+    public int OnExpGain(int exp)
     {
+        int startRank = m_Rank;
         m_TotalExp += exp;
-        m_ExpCurrentLevel += exp;
+        m_ExpCurRank += exp;
         for (; ; )
         {
             int expNext = GetExpToNextLevel(m_Rank);
-            if (m_ExpCurrentLevel < expNext)
+            if (m_ExpCurRank < expNext)
             {
-                m_ExpNextLevelRequire = expNext - m_ExpCurrentLevel;
+                m_ExpToNextRank = expNext - m_ExpCurRank;
                 break;
             }
-            m_ExpCurrentLevel -= expNext;
+            m_ExpCurRank -= expNext;
             m_Rank++;
         }
+        return m_Rank - startRank;
     }
 }
 

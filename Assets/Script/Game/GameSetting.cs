@@ -79,8 +79,7 @@ namespace GameSetting
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const float F_PlayerDamageAdjustmentRange = 0f;     //Test 不方便数据测试 临时关闭
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
-
-        public const int I_PlayerReviveBuffIndex = 40004;
+        public const int I_PlayerEnermyKillExpGain = 20;
 
         public const float F_EliteBuffTimerDurationWhenFullHealth = 15f; //触发tick值
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
@@ -105,12 +104,12 @@ namespace GameSetting
             public const int I_AIIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
-        public const int m_DefaultEquipmentCombinationIdentity = 20000;
         #region Cultivate
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
         
         #region Equipment
+        public const int m_DefaultEquipmentCombinationIdentity = 20000;
         public static readonly Dictionary<enum_Rarity, float> m_EquipmentGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public const int m_EquipmentEnhanceMaxLevel = 15;
         public const float m_EquipmentEnhanceCoinsCostMultiply = .2f;
@@ -846,10 +845,6 @@ namespace GameSetting
         public virtual void OnRecycle() => Reset();
         public virtual void OnRevive() => Reset();
 
-        public virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
-        {
-        }
-
         protected virtual void Reset()
         {
             m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Preset) RemoveExpire(expire); }, true);
@@ -858,7 +853,7 @@ namespace GameSetting
         }
 
         public virtual void Tick(float deltaTime) {
-            m_Expires.Traversal((EntityExpireBase expire) => { expire.OnTick(deltaTime); });
+            m_Expires.Traversal((EntityExpireBase expire) => { expire.OnTick(deltaTime); },true);
 
             if (b_expireUpdated)
                 return;
@@ -883,6 +878,9 @@ namespace GameSetting
             EntityExpirePreset buff = new EntityExpirePreset(sourceID, buffInfo, OnReceiveDamage, RemoveExpire);
             switch (buff.m_RefreshType)
             {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    break;
                 case enum_ExpireRefreshType.AddUp:
                     AddExpire(buff);
                     break;
@@ -971,7 +969,6 @@ namespace GameSetting
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         public float F_PenetrateAdditive { get; private set; } = 0;
         public float F_AimRangeAdditive { get; private set; } = 0;
-        public float F_AllyHealthMultiplierAdditive { get; private set; } = 0f;
         public float F_CoinsCostMultiply { get; private set; } = 0f;
         public int I_ClipAdditive { get; private set; } = 0;
         public float F_ClipMultiply { get; private set; } = 1f;
@@ -990,20 +987,10 @@ namespace GameSetting
             m_RankManager = new ExpRankBase(GameExpression.GetPlayerRankUpExp);
         }
 
-        public override void OnActivate()
-        {
-            base.OnActivate();
-            m_prePos = m_Entity.transform.position;
-        }
-
-        protected Vector3 m_prePos;
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
-
             UpdateEntityInfo();
-            OnMove(TCommon.GetXZDistance(m_prePos, m_Entity.transform.position));
-            m_prePos = m_Entity.transform.position;
         }
 
         #region Interact
@@ -1093,7 +1080,6 @@ namespace GameSetting
             F_SpreadMultiply = 1f;
             F_ProjectileSpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
-            F_AllyHealthMultiplierAdditive = 1f;
             F_MaxHealthAdditive = 0f;
             F_MaxArmorAdditive = 0;
             F_CoinsCostMultiply = 1f;
@@ -1104,6 +1090,7 @@ namespace GameSetting
             switch(expire.m_ExpireType)
             {
                 default:  Debug.LogError("Invalid Convertions Here!");  break;
+                case enum_ExpireType.Preset:break;
                 case enum_ExpireType.Upgrade:
                 case enum_ExpireType.Equipment:
                     {
@@ -1128,7 +1115,6 @@ namespace GameSetting
                         F_AimRangeAdditive += perk.F_AimRangeAdditive;
                         F_MaxHealthAdditive += perk.m_MaxHealthAdditive;
                         F_MaxArmorAdditive += perk.m_MaxArmorAdditive;
-                        F_AllyHealthMultiplierAdditive += perk.F_AllyHealthMultiplierAdditive;
                         F_CoinsCostMultiply -= perk.F_Discount;
                     }
                     break;
@@ -1137,13 +1123,12 @@ namespace GameSetting
         protected override void AfterInfoSet()
         {
             base.AfterInfoSet();
-            if (F_AllyHealthMultiplierAdditive < .1f) F_AllyHealthMultiplierAdditive = .1f;
             if (F_AimMovementStrictMultiply < 0) F_AimMovementStrictMultiply = 0;
             if (F_SpreadMultiply < 0) F_SpreadMultiply = 0;
             if (F_CoinsCostMultiply < 0) F_CoinsCostMultiply = 0;
         }
         #endregion
-        #region Expire Interacts
+        #region Interacts
         public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
@@ -1152,34 +1137,19 @@ namespace GameSetting
             return info;
         }
 
-        public void OnMove(float distance) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnMove(distance); });
         public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAbilityTrigger(); });
         public void OnLevelFinish() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnLevelFinish(); });
 
-        public void OnEntityActivate(EntityBase targetEntity)
+        public void OnKillOpposite()
         {
-            if (targetEntity.m_ControllType != enum_EntityType.AIWeaponHelper || targetEntity.m_Flag != m_Entity.m_Flag || targetEntity.m_EntityID == m_Entity.m_EntityID)
-                return;
-
-            EntityCharacterBase ally = (targetEntity as EntityCharacterBase);
-            if (F_AllyHealthMultiplierAdditive > 0)
-                ally.m_Health.SetHealthMultiplier(F_AllyHealthMultiplierAdditive);
-        }
+            if (m_RankManager.OnExpGain(GameConst.I_PlayerEnermyKillExpGain)!=0)
+                Debug.Log("Rank Up!");
+        } 
 
         public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
-        public override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
-        {
-            base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
-            
-            if (damageEntity.m_EntityID == m_Player.m_EntityID)
-            {
-                if (amountApply > 0)
-                    m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAfterReceiveDamage(damageInfo, amountApply); });
-                else
-                    m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
-            }
-        }
+        public void OnAfterReceiveDamage(DamageInfo damageInfo,EntityCharacterBase damageEntity,float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAfterReceiveDamage(damageInfo, amountApply); });
+        public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
         #endregion
 
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
@@ -1316,7 +1286,6 @@ namespace GameSetting
         public virtual void OnAttack(DamageInfo info) { }
         public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
-        public virtual void OnMove(float distsance) { }
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }
         public virtual void OnLevelFinish() { }

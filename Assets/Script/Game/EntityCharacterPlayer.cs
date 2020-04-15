@@ -67,16 +67,16 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnPoolItemEnable();
         SetBinding(true);
-        TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
         SetBinding(false);
-        TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
@@ -413,11 +413,23 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         else if (damageEntity.m_EntityID == m_EntityID)
             m_CharacterInfo.OnWillReceiveDamage(damageInfo, damageEntity);
     }
-    protected void OnEntityActivate(EntityBase targetEntity)
-    {
-        m_CharacterInfo.OnEntityActivate(targetEntity);
-    }
 
+    protected void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        if(damageInfo.m_SourceID==m_EntityID)
+        {
+            if(damageEntity.m_IsDead&&GameManager.Instance.EntityOpposite(this,damageEntity))
+                m_CharacterInfo.OnKillOpposite();
+        }
+
+        if (damageEntity.m_EntityID == m_EntityID)
+        {
+            if (amountApply > 0)
+                m_CharacterInfo.OnAfterReceiveDamage(damageInfo,damageEntity,amountApply);
+            else
+                m_CharacterInfo.OnReceiveHealing(damageInfo, damageEntity, amountApply);
+        }
+    }
     #endregion
     #region UI Indicator
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)

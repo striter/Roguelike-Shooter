@@ -48,7 +48,6 @@ public class EntityCharacterBase : EntityBase
     {
         base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterInfo.OnActivate();
     }
 
@@ -56,7 +55,6 @@ public class EntityCharacterBase : EntityBase
     {
         base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
-        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         m_CharacterSkinEffect.OnDisable();
     }
     public bool m_TargetAvailable =>  !m_IsDead;
@@ -126,10 +124,6 @@ public class EntityCharacterBase : EntityBase
         return true;
     }
 
-    protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
-    {
-        m_CharacterInfo.OnCharacterHealthChange(damageInfo,damageEntity,amountApply);
-    }
     protected override void OnDead()
     {
         base.OnDead();

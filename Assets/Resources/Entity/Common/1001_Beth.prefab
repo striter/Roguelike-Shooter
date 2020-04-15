@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: 143119992385054218}
   - component: {fileID: 195356000126195976}
   m_Layer: 10
-  m_Name: 10001_Beth
+  m_Name: 1001_Beth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1044,11 +1044,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 200
-  E_SpawnType: -1
   I_DefaultArmor: 100
   F_MovementSpeed: 8
   F_AttackSpread: 0
-  I_AbilityTimes: -1
   F_AbilityCoolDown: 1
   F_RollSpeedMultiple: 2
   F_RollDuration: 0.5
