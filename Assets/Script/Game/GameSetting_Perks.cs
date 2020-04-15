@@ -351,7 +351,13 @@ namespace GameSetting_Action
         public override int m_Index => 10024;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 3f;
-        public override float m_HealthDrainMultiply => Value1 /100f* m_Stack;
+        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
+        {
+            base.OnDealtDamage(receiver, info, applyAmount);
+            if (applyAmount <= 0)
+                return;
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-applyAmount*Value1/100f*m_Stack,enum_DamageType.Health));
+        }
         public P10024(PerkSaveData saveData) : base(saveData) { }
     }
 

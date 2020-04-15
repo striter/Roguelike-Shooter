@@ -1170,7 +1170,6 @@ namespace GameSetting
         public virtual float m_MovementSpeedMultiply => 0;
         public virtual float m_FireRateMultiply => 0;
         public virtual float m_ReloadRateMultiply => 0;
-        public virtual float m_HealthDrainMultiply => 0;
         public virtual float m_DamageMultiply => 0;
         public virtual float m_DamageReduction => 0;
         public virtual float m_CriticalRateAdditive => 0;
