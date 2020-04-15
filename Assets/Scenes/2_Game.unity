@@ -466,7 +466,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c088e7b318d292458e08155aef1723d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  M_TESTSEED: 
   B_PhysicsDebugGizmos: 1
 --- !u!1 &1147982034
 GameObject:
@@ -541,7 +540,7 @@ MonoBehaviour:
   F_CameraMoveSmooth: 0.08
   B_InvertCamera: 0
   F_RotateSensitive: 2
-  TPSOffset: {x: 0, y: 25, z: -6}
+  TPSOffset: {x: 0, y: 30, z: -7.2}
   I_PitchMin: 75
   I_PitchMax: 75
   I_ShakeParam: 6
