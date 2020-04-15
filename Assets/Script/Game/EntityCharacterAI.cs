@@ -93,7 +93,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnDeadTick(deltaTime);
         m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
-        if (m_Impact.magnitude > .2f) transform.Translate(m_Impact, Space.World);
+        if (m_Impact.magnitude > .2f) transform.position = NavigationManager.NavMeshPosition(transform.position + m_Impact);
         if (m_Animator!=null)  m_Animator.SetPause(false);
     }
 

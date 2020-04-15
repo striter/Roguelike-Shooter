@@ -280,6 +280,7 @@ namespace GameSetting
                 case enum_LevelType.NormalBattle:
                 case enum_LevelType.StageFinalBattle:
                     return enum_ChunkPortalType.Battle;
+                case enum_LevelType.WeaponVendorNormal:
                 case enum_LevelType.Trader:
                 case enum_LevelType.Bonefire:
                 case enum_LevelType.PerkFill:
