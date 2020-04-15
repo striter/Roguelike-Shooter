@@ -6,15 +6,15 @@ using System;
 
 namespace GameSetting_Equipments
 {
-    public class E20000_Default:ExpireEquipmentUpgrade
+    public class E20000_Default:ExpireUpgrade
     {
         public override int m_Index => GameConst.m_DefaultEquipmentCombinationIdentity;
 
-        public E20000_Default(List<EquipmentSaveData> datas) : base(datas) {  }
+        public E20000_Default(List<EquipmentSaveData> equipmentUpgrade,CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade,characterUpgrade) {  }
     }
 
 
-    public class E20001:ExpireEquipmentUpgrade
+    public class E20001:ExpireUpgrade
     {
         public override int m_Index => 20001;
 
@@ -35,10 +35,10 @@ namespace GameSetting_Equipments
             m_Timer.Tick(deltaTime);
         }
 
-        public E20001(List<EquipmentSaveData> datas) : base( datas) { m_Timer = new TimerBase(Value2, true); }
+        public E20001(List<EquipmentSaveData> equipmentUpgrade, CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade, characterUpgrade) { m_Timer = new TimerBase(Value2, true); }
     }
 
-    public class E20002:ExpireEquipmentUpgrade
+    public class E20002:ExpireUpgrade
     {
         public override int m_Index => 20002;
         public override float Value1 => 20;
@@ -49,10 +49,10 @@ namespace GameSetting_Equipments
                 return;
             m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth*Value1/100f,enum_DamageType.HealthPenetrate));
         }
-        public E20002(List<EquipmentSaveData> datas) : base(datas) {  }
+        public E20002(List<EquipmentSaveData> equipmentUpgrade, CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade, characterUpgrade) { }
     }
 
-    public class E20003:ExpireEquipmentUpgrade
+    public class E20003:ExpireUpgrade
     {
         public override int m_Index => 20003;
         public override float Value1 => 8f;
@@ -67,6 +67,6 @@ namespace GameSetting_Equipments
             m_TargetID = receiver.m_EntityID;
         }
 
-        public E20003(List<EquipmentSaveData> datas) : base(datas) { }
+        public E20003(List<EquipmentSaveData> equipmentUpgrade, CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade, characterUpgrade) { }
     }
 }

@@ -130,7 +130,7 @@ namespace GameSetting
 
     public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,HealthPenetrate=10, }
     
-    public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2,Equipment=3,Upgrade=4, }
+    public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2,Upgrades=3, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,  }
 
@@ -217,7 +217,7 @@ namespace GameSetting
             }
         }
 
-        public static bool IsInteractExpire(this enum_ExpireType type) => type == enum_ExpireType.Equipment || type == enum_ExpireType.Perk;
+        public static bool IsInteractExpire(this enum_ExpireType type) => type == enum_ExpireType.Upgrades || type == enum_ExpireType.Perk;
 
         public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
 

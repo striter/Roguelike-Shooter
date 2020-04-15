@@ -65,5 +65,4 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     protected override float CalculateMovementSpeedMultiple() => m_Rolling ? 1f : base.CalculateMovementSpeedMultiple();
     protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_Rolling ? m_RollDirection : base.CalculateMoveDirection(moveAxisInput);
     protected override Quaternion GetCharacterRotation() => m_Rolling ? Quaternion.LookRotation(m_RollDirection, Vector3.up) : base.GetCharacterRotation();
-
 }

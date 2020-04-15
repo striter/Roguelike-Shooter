@@ -976,8 +976,7 @@ namespace GameSetting
 
         public List<ExpireInteractBase> m_ExpireInteracts { get; private set; } = new List<ExpireInteractBase>();
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
-        public ExpireEquipmentUpgrade m_Equipment { get; private set; }
-        public ExpireCharacterUpgrade m_Upgrade { get; private set; }
+        public ExpireUpgrade m_Upgrade { get; private set; }
         public float m_Coins { get; private set; } = 0;
         public ExpRankBase m_RankManager { get; private set; }
 
@@ -999,8 +998,7 @@ namespace GameSetting
             m_Coins = _battleSave.m_Coins;
             m_RankManager.OnExpSet(_battleSave.m_TotalExp);
 
-            AddExpire(GameDataManager.CreateEquipmentCombination(_battleSave.m_Equipments));
-            AddExpire(GameDataManager.CreateCharacterUpgrade(_battleSave.m_Upgrade));
+            AddExpire(GameDataManager.CreateUpgradeCombination(_battleSave.m_Equipments, _battleSave.m_Upgrade));
             _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
@@ -1030,18 +1028,11 @@ namespace GameSetting
                         targetExpire.OnActivate(m_Player, RemoveExpire);
                     }
                     break;
-                case enum_ExpireType.Equipment:
-                    {
-                        if (m_Equipment != null)
-                            Debug.LogError("Can't Add Extra Equipment Upgrade!");
-                        m_Equipment = expire as ExpireEquipmentUpgrade;
-                    }
-                    break;
-                case enum_ExpireType.Upgrade:
+                case enum_ExpireType.Upgrades:
                     {
                         if (m_Upgrade != null)
-                            Debug.LogError("Can't Add Extra Upgrade!");
-                        m_Upgrade = expire as ExpireCharacterUpgrade;
+                            Debug.LogError("Can't Add Extra Equipment Upgrade!");
+                        m_Upgrade = expire as ExpireUpgrade;
                     }
                     break;
             }
@@ -1061,9 +1052,8 @@ namespace GameSetting
                         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
                     }
                     break;
-                case enum_ExpireType.Upgrade:
-                case enum_ExpireType.Equipment:
-                    Debug.LogError("Can't Remove Preset Expires!");
+                case enum_ExpireType.Upgrades:
+                    Debug.LogError("Can't Remove Preset Upgrade!");
                     break;
             }
         }
@@ -1091,10 +1081,9 @@ namespace GameSetting
             {
                 default:  Debug.LogError("Invalid Convertions Here!");  break;
                 case enum_ExpireType.Preset:break;
-                case enum_ExpireType.Upgrade:
-                case enum_ExpireType.Equipment:
+                case enum_ExpireType.Upgrades:
                     {
-                        ExpirePlayerBase equipment = expire as ExpirePlayerBase;
+                        ExpireUpgrade equipment = expire as ExpireUpgrade;
                         F_DamageAdditive += equipment.m_DamageAdditive;
                         F_MaxHealthAdditive += equipment.m_MaxHealthAdditive;
                         F_MaxArmorAdditive += equipment.m_MaxArmorAdditive;
@@ -1265,17 +1254,14 @@ namespace GameSetting
     }
     
 
-    public class ExpirePlayerBase:EntityExpireBase
-    {
-        public virtual float m_DamageAdditive => 0;
-        public virtual float m_MaxHealthAdditive => 0;
-        public virtual float m_MaxArmorAdditive => 0;
-    }
-
-    public class ExpireInteractBase: ExpirePlayerBase
+    public class ExpireInteractBase: EntityExpireBase
     {
         public EntityCharacterPlayer m_Attacher { get; private set; }
         public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
+
+        public virtual float m_DamageAdditive => 0;
+        public virtual float m_MaxHealthAdditive => 0;
+        public virtual float m_MaxArmorAdditive => 0;
 
         public virtual float Value1 => 0;
         public virtual float Value2 => 0;
@@ -1291,32 +1277,11 @@ namespace GameSetting
         public virtual void OnLevelFinish() { }
     }
 
-    public class ExpireCharacterUpgrade:ExpireInteractBase
+    public class ExpireUpgrade: ExpireInteractBase
     {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Upgrade;
-        public CharacterUpgradeData m_Data { get; private set; }
-        public Dictionary<enum_CharacterUpgradeType, int> m_UpgradeDatas { get; private set; } = new Dictionary<enum_CharacterUpgradeType, int>();
-        public override float m_CriticalRateAdditive => m_UpgradeDatas[enum_CharacterUpgradeType.CriticalRate] / 100f;
-        public override float m_MovementSpeedMultiply => m_UpgradeDatas[enum_CharacterUpgradeType.MovementSpeed] / 100f;
-        public override float m_FireRateMultiply => m_UpgradeDatas[enum_CharacterUpgradeType.FireRate] / 100f;
-        public override float m_MaxArmorAdditive => m_UpgradeDatas[enum_CharacterUpgradeType.Armor];
-        public override float m_MaxHealthAdditive => m_UpgradeDatas[enum_CharacterUpgradeType.Health];
-        public override float m_DamageAdditive => m_UpgradeDatas[enum_CharacterUpgradeType.Damage];
-
-        public ExpireCharacterUpgrade(CharacterUpgradeData data)
-        {
-            m_Data = data;
-            TCommon.TraversalEnum((enum_CharacterUpgradeType upgrade) => { m_UpgradeDatas.Add(upgrade, 0); });
-            m_Data.m_Upgrades.Traversal((enum_CharacterUpgradeType upgrade,int amount) => {
-                m_UpgradeDatas[upgrade] = GameConst.m_UpgradeValueEachTime[upgrade] * amount;
-            });
-        }
-    }
-
-    public class ExpireEquipmentUpgrade: ExpireInteractBase
-    {
-        public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Equipment;
-        public List< EquipmentSaveData> m_Data { get; private set; }
+        public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Upgrades;
+        public List<EquipmentSaveData> m_EquipmentData { get; private set; }
+        public CharacterUpgradeData m_CharacterData { get; private set; }
         public Dictionary<enum_CharacterUpgradeType, float> m_UpgradeDatas { get; private set; } = new Dictionary<enum_CharacterUpgradeType, float>();
 
         public override float m_CriticalRateAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.CriticalRate]/100f;
@@ -1325,18 +1290,23 @@ namespace GameSetting
         public override float m_MaxArmorAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Armor];
         public override float m_MaxHealthAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Health];
         public override float m_DamageAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Damage];
-        
-        public ExpireEquipmentUpgrade(List< EquipmentSaveData> datas)
+        public ExpireUpgrade(List<EquipmentSaveData> equipmentData, CharacterUpgradeData characterUpgrade)
         {
-            m_Data = datas;
+            m_CharacterData = characterUpgrade;
+            m_EquipmentData = equipmentData;
+
             TCommon.TraversalEnum((enum_CharacterUpgradeType upgrade) => { m_UpgradeDatas.Add(upgrade, 0); });
-            m_Data.Traversal((EquipmentSaveData data)=>{
+            m_CharacterData.m_Upgrades.Traversal((enum_CharacterUpgradeType upgrade, int amount) => {
+                m_UpgradeDatas[upgrade] = GameConst.m_UpgradeValueEachTime[upgrade] * amount;
+            });
+            m_EquipmentData.Traversal((EquipmentSaveData data) => {
                 data.m_Entries.Traversal((EquipmentEntrySaveData entry) =>
                 {
                     m_UpgradeDatas[entry.m_Type] += entry.m_Value;
                 });
             });
         }
+
     }
 
     public class ExpirePerkBase: ExpireInteractBase

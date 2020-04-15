@@ -213,23 +213,23 @@ namespace GameSetting
             return bluePrint;
         }
         #endregion
-
-        #region EquipmentData
-        static Dictionary<int, ExpireEquipmentUpgrade> m_AllEquipments = new Dictionary<int, ExpireEquipmentUpgrade>();
+        #region Upgrade Combination
+        static Dictionary<int, ExpireUpgrade> m_AllEquipments = new Dictionary<int, ExpireUpgrade>();
         static List<int> m_AvailableEquipments = new List<int>();
         public static void InitEquipment()
         {
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpireEquipmentUpgrade equipment) => {
+            List<EquipmentSaveData> tempData1 = new List<EquipmentSaveData>();
+            CharacterUpgradeData tempData2 = CharacterUpgradeData.Default();
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpireUpgrade equipment) => {
                 m_AllEquipments.Add(equipment.m_Index, equipment);
                 if (equipment.m_Index != GameConst.m_DefaultEquipmentCombinationIdentity)
                     m_AvailableEquipments.Add(equipment.m_Index);
-            }), new List<EquipmentSaveData>());
+            }), tempData1,tempData2);
         }
 
-        public static ExpireEquipmentUpgrade CreateEquipmentCombination(List<EquipmentSaveData> datas)
+        public static ExpireUpgrade CreateUpgradeCombination(List<EquipmentSaveData> equipmentDatas,CharacterUpgradeData upgradeData)
         {
-            int equipmentIndex = datas.Find(p => datas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
-
+            int equipmentIndex = equipmentDatas.Find(p => equipmentDatas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
             if (equipmentIndex <= 0)
             {
                 equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
@@ -240,9 +240,11 @@ namespace GameSetting
                 equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
             }
 
-            return TReflection.CreateInstance<ExpireEquipmentUpgrade>(m_AllEquipments[equipmentIndex].GetType(), datas);
+            return TReflection.CreateInstance<ExpireUpgrade>(m_AllEquipments[equipmentIndex].GetType(), equipmentDatas, upgradeData);
         }
+        #endregion
 
+        #region Upgrade Equipment Data
         public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
         {
             EquipmentSaveData data = new EquipmentSaveData(m_AvailableEquipments.RandomItem(), 0, rarity, new List<EquipmentEntrySaveData>());
@@ -418,9 +420,7 @@ namespace GameSetting
         #endregion
         #endregion
 
-        #region UpgradeData
-        public static ExpireCharacterUpgrade CreateCharacterUpgrade(CharacterUpgradeData upgradeData) => new ExpireCharacterUpgrade(upgradeData);
-
+        #region Upgrade Character Data
         public static float GetUpgradeCost(CharacterUpgradeData data, enum_CharacterUpgradeType type) => GameExpression.GetCharacterUpgradePrice(type,data.m_Upgrades[type]);
         public static bool CanUpgradeItem(CharacterUpgradeData data, enum_CharacterUpgradeType type) => data.m_Upgrades[type] < GameConst.m_MaxCharacterUpgradeTime;
 
