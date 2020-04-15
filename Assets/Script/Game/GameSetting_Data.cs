@@ -857,7 +857,6 @@ namespace GameSetting
         public float m_ReloadRateMultiply { get; private set; }
         public float m_DamageMultiply { get; private set; }
         public float m_DamageReduction { get; private set; }
-        public int m_ExtraBuffApply { get; private set; }
         public float m_DamageTickTime { get; private set; }
         public float m_DamagePerTick { get; private set; }
         public enum_DamageType m_DamageType { get; private set; }

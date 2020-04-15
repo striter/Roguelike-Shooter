@@ -418,6 +418,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         if(damageInfo.m_SourceID==m_EntityID)
         {
+            m_CharacterInfo.OnDealtDamage(damageInfo, damageEntity, amountApply);
             if(damageEntity.m_IsDead&&GameManager.Instance.EntityOpposite(this,damageEntity))
                 m_CharacterInfo.OnKillOpposite();
         }

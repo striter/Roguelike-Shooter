@@ -85,7 +85,7 @@ namespace GameSetting
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
         public static readonly RangeInt RI_GameFinalBattleEnermySpawnCheck = new RangeInt(10, 5); //BOSS关小怪刷新检测时间
         public const float F_FinalBattleEnermySpawnEliteHealthScaleOffset = .1f; //BOSS血量减少百分比会判断刷新小怪
-        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(210, 12010, 32010), new EliteBuffCombine(211, 12020, 32020), new EliteBuffCombine(212, 12030, 32030), new EliteBuffCombine(213, 12040, 32040), new EliteBuffCombine(214, 12050, 32050), new EliteBuffCombine(215, 12060, 32060) };
+        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(211, 12010, 32010), new EliteBuffCombine(213, 12030, 32030), new EliteBuffCombine(214, 12040, 32040), new EliteBuffCombine(215, 12050, 32050), new EliteBuffCombine(216, 12060, 32060) };
         #endregion
         public static class AI
         {
@@ -1136,8 +1136,9 @@ namespace GameSetting
         } 
 
         public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
+        public void OnDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity,float applyAmount) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnDealtDamage(damageEntity,damageInfo,applyAmount); });
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
-        public void OnAfterReceiveDamage(DamageInfo damageInfo,EntityCharacterBase damageEntity,float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAfterReceiveDamage(damageInfo, amountApply); });
+        public void OnAfterReceiveDamage(DamageInfo damageInfo,EntityCharacterBase damageEntity,float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveDamage(damageInfo, amountApply); });
         public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
         #endregion
 
@@ -1188,7 +1189,6 @@ namespace GameSetting
         {
             if (forceExpire) OnExpired(this);
         }
-        public virtual void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) { }
     }
     
     public class EntityExpirePreset : EntityExpireBase
@@ -1242,14 +1242,6 @@ namespace GameSetting
                 OnDOTDamage(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType));
             }
         }
-
-        public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
-        {
-            base.OnDealtDamage(receiver, info, applyAmount);
-            if (m_buffInfo.m_ExtraBuffApply <= 0)
-                return;
-            receiver.m_CharacterInfo.AddBuff(info.m_SourceID, GameDataManager.GetPresetBuff(m_buffInfo.m_ExtraBuffApply));
-        }
     }
     
 
@@ -1267,9 +1259,10 @@ namespace GameSetting
         public virtual float Value3 => 0;
 
         public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
-        public virtual void OnAfterReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
         public virtual void OnAttack(DamageInfo info) { }
         public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
+        public virtual void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) { }
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }

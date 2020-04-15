@@ -285,9 +285,9 @@ namespace GameSetting_Action
             haveArmor = m_Attacher.m_Health.m_CurrentArmor > 0;
         }
 
-        public override void OnAfterReceiveDamage(DamageInfo info, float amount)
+        public override void OnReceiveDamage(DamageInfo info, float amount)
         {
-            base.OnAfterReceiveDamage(info, amount);
+            base.OnReceiveDamage(info, amount);
             if (haveArmor && m_Attacher.m_Health.m_CurrentArmor <= 0)
                 m_Timer.Replay();
         }
