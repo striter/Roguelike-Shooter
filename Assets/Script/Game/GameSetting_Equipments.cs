@@ -20,7 +20,7 @@ namespace GameSetting_Equipments
 
         public override float Value1 => 10f;
         public override float Value2 => 5f;
-        public override float m_CriticalRateAdditive => m_Timer.m_Timing ? Value1/100f : 0f;
+        public override float m_CriticalRateAdditive => base.m_CriticalRateAdditive+(m_Timer.m_Timing ? Value1 / 100f : 0f);
         TimerBase m_Timer;
 
         public override void OnAbilityTrigger()
