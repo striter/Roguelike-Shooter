@@ -656,12 +656,12 @@ namespace GameSetting
             damageAdditive += damageAdditive;
         }
 
-        public DamageInfo(int sourceID, float damage,float _damageMultiply,float _critcalHitMultiply, enum_DamageType type,int extraBuffID)
+        public DamageInfo(int sourceID, float damage,float _damageMultiply,float _criticalHitRate, float _critcalHitMultiply, enum_DamageType type,int extraBuffID)
         {
             m_SourceID = sourceID;
             m_DamageBase = damage;
             m_DamageMultiply = _damageMultiply;
-            m_DamageCriticalMultipy = _critcalHitMultiply;
+            m_DamageCriticalMultipy =   _criticalHitRate> TCommon.RandomLength(1f) ? _critcalHitMultiply:0;
             m_DamageType = type;
             if(extraBuffID>0)
                 AddExtraBuff(extraBuffID);
@@ -822,10 +822,8 @@ namespace GameSetting
         public float m_ExtraFireRateMultiply => m_FireRateMultiply - 1;
         public float m_ExtraCriticalHitMultiply => m_CriticalHitMultiply - 1;
         public float m_ExtraMovemendSpeedMultiply => m_MovementSpeedMultiply-1f;
-
-        public bool CheckCriticalHit() => TCommon.RandomLength(1f) < m_CriticalHitRate;
-        public float GetCritalDamageMultiply() =>   m_CriticalHitMultiply;
-        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, m_DamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
+        
+        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, m_DamageMultiply, m_CriticalHitRate, m_CriticalHitMultiply , type, buff);
 
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireInfoChange;
@@ -1121,20 +1119,14 @@ namespace GameSetting
         public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, m_DamageMultiply+ randomDamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
+            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, m_DamageMultiply+ randomDamageMultiply, m_CriticalHitRate, m_CriticalHitMultiply , type, buff);
             m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAttack(info); });
             return info;
         }
 
         public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAbilityTrigger(); });
         public void OnLevelFinish() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnLevelFinish(); });
-
-        public void OnKillOpposite()
-        {
-            if (m_RankManager.OnExpGain(GameConst.I_PlayerEnermyKillExpGain)!=0)
-                Debug.Log("Rank Up!");
-        } 
-
+        
         public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
         public void OnDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity,float applyAmount) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnDealtDamage(damageEntity,damageInfo,applyAmount); });
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
@@ -1155,6 +1147,13 @@ namespace GameSetting
         public void OnCoinsGain(float coinAmount)
         {
             m_Coins += coinAmount;
+        }
+        #endregion
+        #region RankInfo
+        public void OnExpReceived(int exp)
+        {
+            if (m_RankManager.OnExpGain(exp) != 0)
+                Debug.Log("Rank Up!"+ m_RankManager.m_Rank);
         }
         #endregion
     }

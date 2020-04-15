@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 114238380454150522}
   - component: {fileID: 114795903207555464}
   m_Layer: 10
-  m_Name: 3001_Militia
+  m_Name: 3001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

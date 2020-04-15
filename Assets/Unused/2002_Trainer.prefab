@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 136414376037284648}
   - component: {fileID: 114489868157834318}
   m_Layer: 10
-  m_Name: 20002_Trainer
+  m_Name: 2002_Trainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -23,7 +23,7 @@ public class EntityBase : CObjectPoolMono<int>
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
-    protected virtual void EntityActivate(enum_EntityFlag flag,float startHealth =0)
+    protected virtual void OnEntityActivate(enum_EntityFlag flag,float startHealth =0)
     {
         if (m_Activating)
         {

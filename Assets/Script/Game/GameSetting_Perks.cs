@@ -427,7 +427,7 @@ namespace GameSetting_Action
             if (TCommon.RandomPercentage() > Value1 * m_Stack)
                 return;
 
-            m_SFXWeapon.OnPlay(null,m_Attacher.tf_Head.position+ m_Attacher.tf_Head.forward*50f);
+            m_SFXWeapon.OnPlay(null,m_Attacher.GetAimingPosition());
         }
         public P10030(PerkSaveData saveData) : base(saveData) { }
     }

@@ -20,9 +20,9 @@ public class EntityCharacterForestExtra : EntityCharacterBase {
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Weapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this, () => m_CharacterInfo.GetDamageBuffInfo(F_Damage) );
     }
-    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.EntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag, startHealth);
         f_spreadCheck = F_SpreadDuration;
         i_spreadCountCheck = 0;
     }

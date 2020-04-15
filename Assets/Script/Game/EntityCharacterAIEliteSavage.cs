@@ -7,9 +7,9 @@ public class EntityCharacterAIEliteSavage : EntityCharacterAIElite {
     public float F_AttackMoveMultiply = 2f;
     public override float m_baseMovementSpeed => base.m_baseMovementSpeed*m_AttackMoveMultiply;
     float m_AttackMoveMultiply = 1f;
-    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.EntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag, startHealth);
         m_AttackMoveMultiply = 1f;
     }
 

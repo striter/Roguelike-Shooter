@@ -21,7 +21,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public Transform tf_UIStatus { get; private set; }
     public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
     public override MeshRenderer m_WeaponSkin => m_WeaponCurrent.m_WeaponSkin;
-    protected Transform tf_AimAssistTarget=null;
     public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.GetMovementSpeed * time;
     public new PlayerExpireManager m_CharacterInfo { get; private set; }
     public bool m_Aiming { get; private set; } = false;
@@ -80,7 +79,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
-    public void OnPlayerActivate(CPlayerBattleSave _battleSave)
+    public  void OnPlayerActivate(CPlayerBattleSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
 
@@ -338,6 +337,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
     }
 
+    public Vector3 GetAimingPosition() => m_AimingTarget ? m_AimingTarget.transform.position : (tf_Head.transform.position + tf_Head.forward * 50f);
     #endregion
     #region CharacterAbility
     public virtual float m_AbilityCooldownScale => 0f;
@@ -419,8 +419,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if(damageInfo.m_SourceID==m_EntityID)
         {
             m_CharacterInfo.OnDealtDamage(damageInfo, damageEntity, amountApply);
-            if(damageEntity.m_IsDead&&GameManager.Instance.EntityOpposite(this,damageEntity))
-                m_CharacterInfo.OnKillOpposite();
+            if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
+                m_CharacterInfo.OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
         }
 
         if (damageEntity.m_EntityID == m_EntityID)

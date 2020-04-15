@@ -136,7 +136,7 @@ namespace GameSetting
 
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
-    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Assassin=1002, }
+    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Assassin=1002,Railer=1003, }
     
     public enum enum_InteractCharacter { Invalid = -1, Trader = 2001, Trainer = 2002, }
 

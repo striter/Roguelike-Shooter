@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 111244957330354360}
   - component: {fileID: 114075257281848284}
   m_Layer: 0
-  m_Name: Interact_WeaponPickup
+  m_Name: Interact_PickupWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

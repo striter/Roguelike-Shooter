@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: 143119992385054218}
   - component: {fileID: 195356000126195976}
   m_Layer: 10
-  m_Name: 1002_Assassin
+  m_Name: 1002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

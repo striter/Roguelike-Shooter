@@ -28,9 +28,9 @@ public class EntityDeviceBase : EntityCharacterBase {
         base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.EntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag, startHealth);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
     void OnCharacterDead(EntityCharacterBase character)

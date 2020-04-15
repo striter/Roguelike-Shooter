@@ -58,20 +58,20 @@ public class EntityCharacterBase : EntityBase
         m_CharacterSkinEffect.OnDisable();
     }
     public bool m_TargetAvailable =>  !m_IsDead;
-    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.EntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag, startHealth);
         m_CharacterSkinEffect.OnReset();
     }
 
     protected void OnMainCharacterActivate(enum_EntityFlag _flag)
     {
-        EntityActivate(_flag,I_MaxHealth);
+        OnEntityActivate(_flag,I_MaxHealth);
         m_SpawnerEntityID = -1;
     }
     public virtual void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID , float startHealth )
     {
-        EntityActivate(_flag, startHealth);
+        OnEntityActivate(_flag, startHealth);
         m_SpawnerEntityID = _spawnerID;
     }
 

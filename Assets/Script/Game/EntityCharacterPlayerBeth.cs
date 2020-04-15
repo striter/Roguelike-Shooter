@@ -9,6 +9,10 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     public float F_AbilityCoolDown = 0f;
     public float F_RollSpeedMultiple;
     public float F_RollDuration;
+    public int P_RollFinishClipRestore;
+    public int P_RollFinishFireRateExtraMultiply;
+    public int P_RollFinishFireRateRankMultiply;
+    public float F_RollFinishFireRateDuration;
     #endregion
     public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Beth;
     protected TimerBase m_RollTimer,m_RollCooldown;
@@ -26,7 +30,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     public override void OnAbilityDown(bool down)
     {
         base.OnAbilityDown(down);
-        if (!down || m_IsDead || !m_AbilityAvailable)
+        if (m_IsDead || !down || !m_AbilityAvailable)
             return;
         m_RollDirection = m_MoveAxisInput == Vector2.zero?transform.forward: base.CalculateMoveDirection(m_MoveAxisInput);
         m_Animator.BeginRoll(F_RollDuration);
@@ -44,8 +48,8 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
             m_RollTimer.Tick(deltaTime);
             if (!m_Rolling)
             {
-                m_WeaponCurrent.AddAmmo(m_WeaponCurrent.I_ClipAmount/2);
-                m_CharacterInfo.AddBuff(m_SpawnerEntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*1f+.1f*m_CharacterInfo.m_RankManager.m_Rank,1.5f));
+                m_WeaponCurrent.AddAmmo((int)(m_WeaponCurrent.I_ClipAmount*P_RollFinishClipRestore/100f));
+                m_CharacterInfo.AddBuff(m_SpawnerEntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*P_RollFinishFireRateExtraMultiply/100f+m_CharacterInfo.m_RankManager.m_Rank*P_RollFinishFireRateRankMultiply/100f,F_RollFinishFireRateDuration));
                 m_Animator.EndRoll();
                 EnableHitbox(true);
             }

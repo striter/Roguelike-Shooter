@@ -409,7 +409,7 @@ GameObject:
   - component: {fileID: 136820069579523044}
   - component: {fileID: 114144184400782600}
   m_Layer: 10
-  m_Name: 20001_Trader
+  m_Name: 2001_Trader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

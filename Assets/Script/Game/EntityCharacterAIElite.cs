@@ -7,9 +7,9 @@ public class EntityCharacterAIElite : EntityCharacterAI {
     TimerBase m_BuffCounter = new TimerBase(GameConst.F_EliteBuffTimerDurationWhenFullHealth), m_IndicateCounter=new TimerBase(2f);
     EliteBuffCombine m_Buff;
     bool m_Indicating;
-    protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.EntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag, startHealth);
         m_Buff = GameConst.L_GameEliteBuff.RandomItem();
         m_BuffCounter.Replay();
         m_Indicating = false;

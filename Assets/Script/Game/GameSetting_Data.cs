@@ -34,7 +34,7 @@ namespace GameSetting
         public static CGameSave m_GameData => TGameData<CGameSave>.Data;
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
         public static CEquipmentDepotData m_EquipmentDepotData => TGameData<CEquipmentDepotData>.Data;
-        public static CCharacterUpgradeData m_CharacterUpgradeData => TGameData<CCharacterUpgradeData>.Data;
+        public static CCharacterUpgradeData m_CharacterData => TGameData<CCharacterUpgradeData>.Data;
         public static CPlayerBattleSave m_BattleData => TGameData<CPlayerBattleSave>.Data;
 
         public static bool m_Inited { get; private set; } = false;
@@ -426,7 +426,7 @@ namespace GameSetting
 
         public static void UpgradeCurrentCharacter(enum_CharacterUpgradeType type)
         {
-            CharacterUpgradeData upgradeData = m_CharacterUpgradeData.Current;
+            CharacterUpgradeData upgradeData = m_CharacterData.CurrentUpgrade;
             if (!CanUpgradeItem(upgradeData, type))
             {
                 Debug.LogError("Unable To Upgrade!");
@@ -441,7 +441,7 @@ namespace GameSetting
             }
 
             OnCreditStatus(-credit);
-            m_CharacterUpgradeData.UpgradeCurrentData(type);
+            m_CharacterData.UpgradeCurrentData(type);
             TGameData<CCharacterUpgradeData>.Save();
         }
         #endregion
@@ -551,7 +551,6 @@ namespace GameSetting
         public float f_Credits;
         public int m_GameDifficulty;
         public int m_DifficultyUnlocked;
-        public enum_PlayerCharacter m_CharacterSelected;
         public int m_LastDailyRewardStamp;
         public CGameSave()
         {
@@ -559,7 +558,6 @@ namespace GameSetting
             m_GameDifficulty = 1;
             m_DifficultyUnlocked = 1;
             m_LastDailyRewardStamp = -1;
-            m_CharacterSelected = enum_PlayerCharacter.Beth;
         }
 
         public void UnlockDifficulty()
@@ -599,7 +597,7 @@ namespace GameSetting
         public List<PerkSaveData> m_Perks;
         public List<EquipmentSaveData> m_Equipments;
         public CharacterUpgradeData m_Upgrade;
-        public CPlayerBattleSave() : this(GameDataManager.m_GameData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(),GameDataManager.m_CharacterUpgradeData.GetUpgradeData(GameDataManager.m_GameData.m_CharacterSelected))
+        public CPlayerBattleSave() : this(GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(),GameDataManager.m_CharacterData.CurrentUpgrade)
         {
         }
 
@@ -681,20 +679,22 @@ namespace GameSetting
 
     public class CCharacterUpgradeData:ISave
     {
+        public enum_PlayerCharacter m_CharacterSelected;
         public Dictionary<enum_PlayerCharacter, CharacterUpgradeData> m_CharacterUpgrades;
 
         public CCharacterUpgradeData()
         {
             m_CharacterUpgrades = new Dictionary<enum_PlayerCharacter, CharacterUpgradeData>();
+            m_CharacterSelected = enum_PlayerCharacter.Railer;
         }
 
-        public CharacterUpgradeData Current => GetUpgradeData(GameDataManager.m_GameData.m_CharacterSelected);
+        public CharacterUpgradeData CurrentUpgrade => GetUpgradeData(m_CharacterSelected);
 
         public void UpgradeCurrentData(enum_CharacterUpgradeType type)
         {
-            CharacterUpgradeData data = m_CharacterUpgrades[GameDataManager.m_GameData.m_CharacterSelected];
+            CharacterUpgradeData data = m_CharacterUpgrades[m_CharacterSelected];
             data.m_Upgrades[type] += 1;
-            m_CharacterUpgrades[GameDataManager.m_GameData.m_CharacterSelected]=data;
+            m_CharacterUpgrades[m_CharacterSelected]=data;
         }
 
         public CharacterUpgradeData GetUpgradeData(enum_PlayerCharacter character)

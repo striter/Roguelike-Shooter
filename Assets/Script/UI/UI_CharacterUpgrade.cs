@@ -39,7 +39,7 @@ public class UI_CharacterUpgrade : UIPage {
 
     void UpdateInfo()
     {
-        CharacterUpgradeData data = GameDataManager.m_CharacterUpgradeData.Current;
+        CharacterUpgradeData data = GameDataManager.m_CharacterData.CurrentUpgrade;
         data.m_Upgrades.Traversal((enum_CharacterUpgradeType type, int amount) => { m_UpgradeGrid.GetItem((int)type).Play(type, amount); });
 
         int upgradeTime = data.m_Upgrades[m_SelectUpgrade];
