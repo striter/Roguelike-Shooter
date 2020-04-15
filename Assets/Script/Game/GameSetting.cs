@@ -86,7 +86,7 @@ namespace GameSetting
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
         public static readonly RangeInt RI_GameFinalBattleEnermySpawnCheck = new RangeInt(10, 5); //BOSS关小怪刷新检测时间
         public const float F_FinalBattleEnermySpawnEliteHealthScaleOffset = .1f; //BOSS血量减少百分比会判断刷新小怪
-        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(2010, 12010, 32010), new EliteBuffCombine(2020, 12020, 32020), new EliteBuffCombine(2030, 12030, 32030), new EliteBuffCombine(2040, 12040, 32040), new EliteBuffCombine(2050, 12050, 32050), new EliteBuffCombine(2060, 12060, 32060) };
+        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(210, 12010, 32010), new EliteBuffCombine(211, 12020, 32020), new EliteBuffCombine(212, 12030, 32030), new EliteBuffCombine(213, 12040, 32040), new EliteBuffCombine(214, 12050, 32050), new EliteBuffCombine(215, 12060, 32060) };
         #endregion
         public static class AI
         {
@@ -163,8 +163,8 @@ namespace GameSetting
             float interpolateParam = Mathf.InverseLerp(0, halfWidth, Mathf.Abs(widthParam));
             interpolateParam = Mathf.Clamp(interpolateParam,0,.5f)*(.5f+ Mathf.Lerp(.8f,.4f,interpolateParam)*.5f);
             return Mathf.Sign(widthParam) * interpolateParam * halfWidth;
-        } 
-
+        }
+        public static int GetPlayerRankUpExp(int curRank) => 50 + curRank * 50;
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
         public static int GetPlayerExtraWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
         public static int GetPlayerPerkSFXWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
@@ -305,7 +305,6 @@ namespace GameSetting
                 case enum_CharacterUpgradeType.CriticalRate: return 500+ curTime * 200;
                 case enum_CharacterUpgradeType.FireRate: return 500+curTime * 200;
             }
-
         }
         #endregion
     }
@@ -716,7 +715,7 @@ namespace GameSetting
     {
         protected Func<bool> OnTriggerCheck;
         Action OnTriggerSuccessful;
-        TimeCounter m_TriggerTimer = new TimeCounter();
+        TimerBase m_TriggerTimer = new TimerBase();
         public WeaponTriggerAuto(float _fireRate, Func<bool> _OnTriggerCheck,Action _OnTriggerSuccessful)
         {
             OnTriggerCheck = _OnTriggerCheck;
@@ -744,7 +743,7 @@ namespace GameSetting
     {
          Func<bool> OnStoreBeginCheck;
         Action<bool> OnStoreFinish;
-        TimeCounter m_StoreTimer = new TimeCounter();
+        TimerBase m_StoreTimer = new TimerBase();
         public bool m_Storing { get; private set; } = false;
         public WeaponTriggerStoring(float _storeDuration, Func<bool> _OnStoreBeginCheck, Action<bool> _OnStoreFinish)
         {
@@ -803,28 +802,31 @@ namespace GameSetting
     }
     #endregion
 
-    #region Entity Info Manager
-    public class CharacterInfoManager
+    #region Entity Expire Manager
+    public class CharacterExpireManager
     {
         protected EntityCharacterBase m_Entity { get; private set; }
         public List<EntityExpireBase> m_Expires { get; private set; } = new List<EntityExpireBase>();
         protected Dictionary<int, SFXEffect> m_BuffEffects { get; private set; } = new Dictionary<int, SFXEffect>();
-        public float F_DamageReceiveMultiply { get; private set; } = 1f;
-        public float F_HealReceiveMultiply { get; private set; } = 1f;
-        public float F_MovementSpeedMultiply { get; private set; } = 1f;
-        public float F_FireRateMultiply { get; private set; } = 1f;
-        protected float F_ReloadRateMultiply { get; private set; } = 1f;
-        protected float F_HealthDrainMultiply { get; private set; } = 0f;
-        protected float F_DamageMultiply { get; private set; } = 0f;
-        public float F_CriticalHitRate { get; private set; } = 0f;
-        public float F_CriticalHitMultiply { get; private set; } = 1f;
-        public float F_FireRateTick(float deltaTime) => deltaTime * F_FireRateMultiply;
-        public float F_ReloadRateTick(float deltaTime) => deltaTime * F_ReloadRateMultiply;
-        public float F_MovementSpeed => m_Entity.m_baseMovementSpeed * F_MovementSpeedMultiply;
-        
-        public bool CheckCriticalHit() => TCommon.RandomLength(1f) < F_CriticalHitRate;
-        public float GetCritalDamageMultiply() =>   F_CriticalHitMultiply;
-        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, F_DamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
+        public float m_DamageReceiveMultiply { get; private set; } = 1f;
+        public float m_HealReceiveMultiply { get; private set; } = 1f;
+        public float m_MovementSpeedMultiply { get; private set; } = 1f;
+        public float m_FireRateMultiply { get; private set; } = 1f;
+        public float m_ReloadRateMultiply { get; private set; } = 1f;
+        public float m_CriticalHitMultiply { get; private set; } = 1f;
+        public float m_DamageMultiply { get; private set; } = 0f;
+        public float m_CriticalHitRate { get; private set; } = 0f;
+        public float DoFireRateTick(float deltaTime) => deltaTime * m_FireRateMultiply;
+        public float DoReloadRateTick(float deltaTime) => deltaTime * m_ReloadRateMultiply;
+        public float GetMovementSpeed => m_Entity.m_baseMovementSpeed * m_MovementSpeedMultiply;
+
+        public float m_ExtraFireRateMultiply => m_FireRateMultiply - 1;
+        public float m_ExtraCriticalHitMultiply => m_CriticalHitMultiply - 1;
+        public float m_ExtraMovemendSpeedMultiply => m_MovementSpeedMultiply-1f;
+
+        public bool CheckCriticalHit() => TCommon.RandomLength(1f) < m_CriticalHitRate;
+        public float GetCritalDamageMultiply() =>   m_CriticalHitMultiply;
+        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, m_DamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
 
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireInfoChange;
@@ -832,7 +834,7 @@ namespace GameSetting
         bool b_expireUpdated = false;
         public void UpdateEntityInfo() => b_expireUpdated = false;
 
-        public CharacterInfoManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
+        public CharacterExpireManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
         {
             m_Entity = _attacher;
             OnReceiveDamage = _OnReceiveDamage;
@@ -846,16 +848,8 @@ namespace GameSetting
 
         public virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
         {
-            if (amountApply <= 0)
-                return;
-
-            if ( damageInfo.m_SourceID == m_Entity.m_EntityID)
-            {
-                if (F_HealthDrainMultiply > 0)
-                    m_Entity.m_HitCheck.TryHit(new DamageInfo(m_Entity.m_EntityID ,- amountApply * F_HealthDrainMultiply, enum_DamageType.Health));
-                m_Expires.Traversal((EntityExpireBase expire) => { expire.OnDealtDamage(damageEntity,damageInfo,amountApply); });
-            }
         }
+
         protected virtual void Reset()
         {
             m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Preset) RemoveExpire(expire); }, true);
@@ -912,36 +906,33 @@ namespace GameSetting
         }
         protected virtual void OnResetInfo()
         {
-            F_DamageReceiveMultiply = 1f;
-            F_HealReceiveMultiply = 1f;
-            F_MovementSpeedMultiply = 1f;
-            F_FireRateMultiply = 1f;
-            F_ReloadRateMultiply = 1f;
-            F_DamageMultiply = 0f;
-            F_CriticalHitRate = 0f;
-            F_CriticalHitMultiply = 1f;
-            F_HealthDrainMultiply = 0f;
+            m_DamageReceiveMultiply = 1f;
+            m_HealReceiveMultiply = 1f;
+            m_MovementSpeedMultiply = 1f;
+            m_FireRateMultiply = 1f;
+            m_ReloadRateMultiply = 1f;
+            m_DamageMultiply = 0f;
+            m_CriticalHitRate = 0f;
+            m_CriticalHitMultiply = 1f;
         }
         protected virtual void OnSetExpireInfo(EntityExpireBase expire)
         {
-            F_DamageMultiply += expire.m_DamageMultiply;
-            F_DamageReceiveMultiply -= expire.m_DamageReduction;
-            F_HealReceiveMultiply += expire.m_HealAdditive;
-            F_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
-            F_FireRateMultiply += expire.m_FireRateMultiply;
-            F_ReloadRateMultiply += expire.m_ReloadRateMultiply;
-            F_CriticalHitRate += expire.m_CriticalRateAdditive;
-            F_CriticalHitMultiply += expire.m_CriticalHitMultiplyAdditive;
-            F_HealthDrainMultiply += expire.m_HealthDrainMultiply;
+            m_DamageMultiply += expire.m_DamageMultiply;
+            m_DamageReceiveMultiply -= expire.m_DamageReduction;
+            m_HealReceiveMultiply += expire.m_HealAdditive;
+            m_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
+            m_FireRateMultiply += expire.m_FireRateMultiply;
+            m_ReloadRateMultiply += expire.m_ReloadRateMultiply;
+            m_CriticalHitRate += expire.m_CriticalRateAdditive;
+            m_CriticalHitMultiply += expire.m_CriticalHitMultiplyAdditive;
         }
         protected virtual void AfterInfoSet()
         {
-            if (F_DamageReceiveMultiply < 0) F_DamageReceiveMultiply = 0;
-            if (F_MovementSpeedMultiply < 0) F_MovementSpeedMultiply = 0;
-            if (F_HealthDrainMultiply < 0) F_HealthDrainMultiply = 0;
-            if (F_HealReceiveMultiply < 0) F_HealReceiveMultiply = 0;
-            if (F_CriticalHitMultiply < 0) F_CriticalHitMultiply = 0;
-            if (F_CriticalHitRate < 0) F_CriticalHitRate = 0;
+            if (m_DamageReceiveMultiply < 0) m_DamageReceiveMultiply = 0;
+            if (m_MovementSpeedMultiply < 0) m_MovementSpeedMultiply = 0;
+            if (m_HealReceiveMultiply < 0) m_HealReceiveMultiply = 0;
+            if (m_CriticalHitMultiply < 0) m_CriticalHitMultiply = 0;
+            if (m_CriticalHitRate < 0) m_CriticalHitRate = 0;
         }
         #endregion
 
@@ -968,33 +959,35 @@ namespace GameSetting
         }
     }
 
-    public class PlayerInfoManager : CharacterInfoManager
+    public class PlayerExpireManager : CharacterExpireManager
     {
         EntityCharacterPlayer m_Player;
-        public int I_ClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
+        public float F_MaxHealthAdditive { get; private set; } = 0;
+        public float F_MaxArmorAdditive { get; private set; } = 0;
+        public float F_DamageAdditive { get; private set; } = 0f;
+
         public float F_SpreadMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
         public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
         public float F_PenetrateAdditive { get; private set; } = 0;
         public float F_AimRangeAdditive { get; private set; } = 0;
-        public float F_MaxHealthAdditive { get; private set; } = 0;
-        public float F_MaxArmorAdditive { get; private set; } = 0;
         public float F_AllyHealthMultiplierAdditive { get; private set; } = 0f;
         public float F_CoinsCostMultiply { get; private set; } = 0f;
-        protected int I_ClipAdditive { get; private set; } = 0;
-        protected float F_ClipMultiply { get; private set; } = 1f;
-        protected float F_DamageAdditive = 0f;
+        public int I_ClipAdditive { get; private set; } = 0;
+        public float F_ClipMultiply { get; private set; } = 1f;
+        public int CheckClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
 
-        protected Vector3 m_prePos;
         public List<ExpireInteractBase> m_ExpireInteracts { get; private set; } = new List<ExpireInteractBase>();
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
         public ExpireEquipmentUpgrade m_Equipment { get; private set; }
         public ExpireCharacterUpgrade m_Upgrade { get; private set; }
         public float m_Coins { get; private set; } = 0;
+        public ExpRankBase m_RankManager { get; private set; }
 
-        public PlayerInfoManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerExpireManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
         {
             m_Player = _attacher;
+            m_RankManager = new ExpRankBase(GameExpression.GetPlayerRankUpExp);
         }
 
         public override void OnActivate()
@@ -1003,6 +996,7 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
+        protected Vector3 m_prePos;
         public override void Tick(float deltaTime)
         {
             base.Tick(deltaTime);
@@ -1012,17 +1006,17 @@ namespace GameSetting
             m_prePos = m_Entity.transform.position;
         }
 
+        #region Interact
         public void SetInfoData(CPlayerBattleSave _battleSave)
         {
             m_Coins = _battleSave.m_Coins;
+            m_RankManager.OnExpSet(_battleSave.m_TotalExp);
+
             AddExpire(GameDataManager.CreateEquipmentCombination(_battleSave.m_Equipments));
             AddExpire(GameDataManager.CreateCharacterUpgrade(_battleSave.m_Upgrade));
             _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
-
-        #region Expire Perks/Equipments
-        #region Interact
         public bool CheckRevive() => m_ExpirePerks.Any(p => p.Value.OnCheckRevive());
         public void OnActionPerkAcquire(int perkID)
         {
@@ -1053,7 +1047,6 @@ namespace GameSetting
                     {
                         if (m_Equipment != null)
                             Debug.LogError("Can't Add Extra Equipment Upgrade!");
-
                         m_Equipment = expire as ExpireEquipmentUpgrade;
                     }
                     break;
@@ -1154,7 +1147,7 @@ namespace GameSetting
         public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, F_DamageMultiply+ randomDamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
+            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, m_DamageMultiply+ randomDamageMultiply, CheckCriticalHit() ? GetCritalDamageMultiply() : 0f, type, buff);
             m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAttack(info); });
             return info;
         }
@@ -1187,7 +1180,6 @@ namespace GameSetting
                     m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
             }
         }
-        #endregion
         #endregion
 
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
@@ -1252,7 +1244,6 @@ namespace GameSetting
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
-        public override float m_HealthDrainMultiply => m_buffInfo.m_HealthDrainMultiply;
         public float m_ExpireDuration { get; private set; } = 0;
         public float f_expireCheck { get; private set; }
         public float f_expireLeftScale => f_expireCheck / m_ExpireDuration;

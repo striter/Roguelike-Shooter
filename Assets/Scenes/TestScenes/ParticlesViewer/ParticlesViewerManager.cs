@@ -7,7 +7,7 @@ public class ParticlesViewerManager : MonoBehaviour {
 
     Transform tf_Muzzle, tf_Indicator, tf_Impact,tf_Trail;
     ObjectPoolListComponent<int,Transform> m_TrailHelperPool;
-    TimeCounter m_Repeater=new TimeCounter(2f);
+    TimerBase m_Repeater=new TimerBase(2f);
     private void Awake()
     {
         GameObjectManager.Init();

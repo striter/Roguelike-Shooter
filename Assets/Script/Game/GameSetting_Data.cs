@@ -246,8 +246,9 @@ namespace GameSetting
         public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
         {
             EquipmentSaveData data = new EquipmentSaveData(m_AvailableEquipments.RandomItem(), 0, rarity, new List<EquipmentEntrySaveData>());
-            int entryCount = TCommon.RandomPercentage(GameConst.m_EquipmentGenerateEntryCount[rarity]);
-            for (int i = 0; i < entryCount; i++)
+            data.AcquireRandomEntry();
+            int subEntryCount = TCommon.RandomPercentage(GameConst.m_EquipmentGenerateEntryCount[rarity]);
+            for (int i = 0; i < subEntryCount; i++)
                 data.AcquireRandomEntry();
             return data;
         }
@@ -591,6 +592,7 @@ namespace GameSetting
         public int m_LevelPassed;
         public float m_Health;
         public float m_Coins;
+        public int m_TotalExp;
         public enum_PlayerCharacter m_Character;
         public WeaponSaveData m_Weapon1;
         public WeaponSaveData m_Weapon2;
@@ -604,6 +606,7 @@ namespace GameSetting
         public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
         {
             m_Coins = 0;
+            m_TotalExp = 0;
             m_Health = -1;
             m_Character = character;
             m_Equipments = equipments;
@@ -621,6 +624,7 @@ namespace GameSetting
             m_Stage = _level.m_StageIndex;
             m_LevelPassed = _level.m_LevelPassed;
             m_Coins = _player.m_CharacterInfo.m_Coins;
+            m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;
             m_Weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
             m_Weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
@@ -851,7 +855,6 @@ namespace GameSetting
         public float m_MovementSpeedMultiply { get; private set; }
         public float m_FireRateMultiply { get; private set; }
         public float m_ReloadRateMultiply { get; private set; }
-        public float m_HealthDrainMultiply { get; private set; }
         public float m_DamageMultiply { get; private set; }
         public float m_DamageReduction { get; private set; }
         public int m_ExtraBuffApply { get; private set; }
@@ -866,14 +869,19 @@ namespace GameSetting
             m_ReloadRateMultiply /= 100f;
             m_DamageMultiply /= 100f;
             m_DamageReduction /= 100f;
-            m_HealthDrainMultiply /= 100f;
         }
-        //Normally In Excel 0-99
-        //1000-9999
+        //Normally In Excel 0-999
+        public static SBuff CreateGameBethBuff(float fireRate)
+        {
+            SBuff buff= new SBuff();
+            buff.m_Index = (int)enum_PlayerCharacter.Beth;
+            buff.m_FireRateMultiply = fireRate;
+            return buff;
+        }
         public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
         {
             SBuff buff = new SBuff();
-            buff.m_Index = 1000 + difficulty;
+            buff.m_Index = 2000 + difficulty;
             buff.m_Refresh = (int)enum_ExpireRefreshType.Refresh;
             buff.m_DamageMultiply = damageMultiply;
             return buff;

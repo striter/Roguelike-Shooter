@@ -14,21 +14,21 @@ public class EntityCharacterBase : EntityBase
     public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
     public virtual Transform tf_Weapon=>null;
-    public CharacterInfoManager m_CharacterInfo { get; private set; }
+    public CharacterExpireManager m_CharacterInfo { get; private set; }
     public virtual MeshRenderer m_WeaponSkin { get; private set; }
     public EntityCharacterSkinEffectManager m_CharacterSkinEffect { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
-    protected virtual CharacterInfoManager GetEntityInfo() => new CharacterInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
+    protected virtual CharacterExpireManager GetEntityInfo() => new CharacterExpireManager(this, m_HitCheck.TryHit, OnExpireChange);
     
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
-    protected override float DamageReceiveMultiply => m_CharacterInfo.F_DamageReceiveMultiply;
-    protected override float HealReceiveMultiply => m_CharacterInfo.F_HealReceiveMultiply;
+    protected override float DamageReceiveMultiply => m_CharacterInfo.m_DamageReceiveMultiply;
+    protected override float HealReceiveMultiply => m_CharacterInfo.m_HealReceiveMultiply;
 
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthChanged);
-    TimeCounter m_DeadCounter = new TimeCounter(GameConst.F_EntityDeadFadeTime,true);
+    TimerBase m_DeadCounter = new TimerBase(GameConst.F_EntityDeadFadeTime,true);
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
 

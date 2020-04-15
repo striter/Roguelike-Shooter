@@ -17,7 +17,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
     public float F_AssassinDamageStackResetDuration = 20;
     #endregion
     public int m_AssassinDamageStack { get; private set; }
-    TimeCounter m_AssassinAttackTimer, m_AssassinCooldownTimer,m_AssassinStackResetTimer;
+    TimerBase m_AssassinAttackTimer, m_AssassinCooldownTimer,m_AssassinStackResetTimer;
     EntityCharacterBase m_AssassinTarget;
     public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Assassin;
     public override float m_AbilityCooldownScale => m_AssassinCooldownTimer.m_TimeLeftScale;
@@ -28,9 +28,9 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
-        m_AssassinAttackTimer = new TimeCounter(F_AssassinAttackDuration, true);
-        m_AssassinCooldownTimer = new TimeCounter(F_AssasinTriggerCooldown, true);
-        m_AssassinStackResetTimer = new TimeCounter(F_AssassinDamageStackResetDuration,true);
+        m_AssassinAttackTimer = new TimerBase(F_AssassinAttackDuration, true);
+        m_AssassinCooldownTimer = new TimerBase(F_AssasinTriggerCooldown, true);
+        m_AssassinStackResetTimer = new TimerBase(F_AssassinDamageStackResetDuration,true);
         m_AssassinDamageStack = 0;
     }
     public override void OnAbilityDown(bool down)

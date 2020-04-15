@@ -16,6 +16,6 @@ public class UIGI_EquipmentItemBase : UIT_GridItem {
     protected void Play(EquipmentSaveData equipmentData)
     {
         m_Name.text = equipmentData.GetNameLocalizeKey();
-        m_Enhance.text = "+" + equipmentData.GetEnhanceLevel();
+        m_Enhance.text =equipmentData.m_Rarity+ "+" + equipmentData.GetEnhanceLevel();
     }
 }

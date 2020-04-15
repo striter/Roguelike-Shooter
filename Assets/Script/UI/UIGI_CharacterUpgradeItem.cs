@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class UIGI_CharacterUpgradeItem : UIT_GridItem,IGridHighlight {
     Text m_Title, m_Amount, m_Selected;
     Action<int> OnItemClick;
-    enum_CharacterUpgradeType m_Upgrade;
     public override void Init()
     {
         base.Init();
@@ -19,7 +18,6 @@ public class UIGI_CharacterUpgradeItem : UIT_GridItem,IGridHighlight {
     }
     public void Play(enum_CharacterUpgradeType upgrade, int amount)
     {
-        m_Upgrade = upgrade;
         m_Title.text = upgrade.ToString();
         m_Amount.text = amount.ToString();
     }

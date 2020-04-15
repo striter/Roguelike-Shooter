@@ -23,7 +23,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     protected virtual WeaponTrigger GetTrigger() => new WeaponTriggerAuto(m_WeaponInfo.m_FireRate, OnTriggerCheck,OnAutoTriggerSuccessful);
     Action<float> OnFireRecoil;
     
-    TimeCounter m_BulletRefillTimer=new TimeCounter(),m_RefillPauseTimer=new TimeCounter(GameConst.F_PlayerWeaponFireReloadPause);
+    TimerBase m_BulletRefillTimer=new TimerBase(),m_RefillPauseTimer=new TimerBase(GameConst.F_PlayerWeaponFireReloadPause);
     public float F_AmmoStatus => I_AmmoLeft / (float)I_ClipAmount;
     public bool m_HaveAmmoLeft => m_WeaponInfo.m_ClipAmount == -1 || I_AmmoLeft > 0;
     public bool B_AmmoFull => m_WeaponInfo.m_ClipAmount == -1||I_ClipAmount == I_AmmoLeft;
@@ -91,7 +91,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_Trigger.Tick(firePausing,fireTick);
         ReloadTick(reloadTick);
 
-        int clipAmount = m_Attacher.m_CharacterInfo.I_ClipAmount(m_WeaponInfo.m_ClipAmount);
+        int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(m_WeaponInfo.m_ClipAmount);
         if (I_ClipAmount != clipAmount)
         {
             I_ClipAmount = clipAmount;
@@ -100,6 +100,8 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         }
 
     }
+
+    public void AddAmmo(int amount) => I_AmmoLeft = Mathf.Clamp(I_AmmoLeft + amount, 0, I_ClipAmount);
     void ReloadTick(float deltaTime)
     {
         m_RefillPauseTimer.Tick(deltaTime);
@@ -117,6 +119,5 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_BulletRefillTimer.Replay();
     }
     
-    public void ForceReloadOnce()=>I_AmmoLeft += 1;
     #endregion
 }

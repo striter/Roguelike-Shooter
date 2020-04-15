@@ -22,8 +22,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
     public override MeshRenderer m_WeaponSkin => m_WeaponCurrent.m_WeaponSkin;
     protected Transform tf_AimAssistTarget=null;
-    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.F_MovementSpeed * time;
-    public new PlayerInfoManager m_CharacterInfo { get; private set; }
+    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.GetMovementSpeed * time;
+    public new PlayerExpireManager m_CharacterInfo { get; private set; }
     public bool m_Aiming { get; private set; } = false;
     protected override enum_GameVFX m_DamageClip => enum_GameVFX.PlayerDamage;
     public new EntityPlayerHealth m_Health { get; private set; }
@@ -42,9 +42,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected float f_reviveCheck = 0f;
 
-    protected override CharacterInfoManager GetEntityInfo()
+    protected override CharacterExpireManager GetEntityInfo()
     {
-        m_CharacterInfo = new PlayerInfoManager(this, m_HitCheck.TryHit, OnExpireChange);
+        m_CharacterInfo = new PlayerExpireManager(this, m_HitCheck.TryHit, OnExpireChange);
         return m_CharacterInfo;
     }
 
@@ -216,8 +216,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         m_weaponFirePause = !CheckWeaponFiring();
         m_Assist.SetEnable(!m_weaponFirePause  && m_AimingTarget != null);
-        float reloadDelta = m_CharacterInfo.F_ReloadRateTick(deltaTime);
-        float fireDelta = m_CharacterInfo.F_FireRateTick(deltaTime);
+        float reloadDelta = m_CharacterInfo.DoReloadRateTick(deltaTime);
+        float fireDelta = m_CharacterInfo.DoFireRateTick(deltaTime);
         if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause,  fireDelta, reloadDelta);
         if (m_Weapon2) m_Weapon2.Tick(m_weaponFirePause, fireDelta, reloadDelta);
     }
@@ -295,7 +295,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
     protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
     protected EntityCharacterBase m_AimingTarget { get; private set; } = null;
-    TimeCounter m_TargetCheckTimer = new TimeCounter(.3f, false);
+    TimerBase m_TargetCheckTimer = new TimerBase(.3f, false);
     void OnMovementDelta(Vector2 moveDelta)
     {
         m_MoveAxisInput = moveDelta;
@@ -304,7 +304,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public void OnFireAddRecoil(float recoil)
     {
         TPSCameraController.Instance.AddRecoil(recoil);
-        m_Animator.Attack(m_WeaponCurrent.m_WeaponInfo.m_FireRate/m_CharacterInfo.F_FireRateMultiply);
+        m_Animator.Attack(m_WeaponCurrent.m_WeaponInfo.m_FireRate/m_CharacterInfo.m_FireRateMultiply);
     }
 
     void OnMoveTick(float deltaTime)
@@ -321,11 +321,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward,Vector3.up);
 
         Vector3 moveDirection = CalculateMoveDirection(m_MoveAxisInput);
-        float finalMovementSpeed = m_CharacterInfo.F_MovementSpeed;
+        float finalMovementSpeed = m_CharacterInfo.GetMovementSpeed;
         m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
 
-        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.F_MovementSpeedMultiply,m_Aiming);
+        m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.m_MovementSpeedMultiply,m_Aiming);
     }
 
     void TargetTick(float deltaTime)

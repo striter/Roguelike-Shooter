@@ -9,7 +9,7 @@ public class InteractBonfire : InteractGameBase {
     TSpecialClasses.ParticleControlBase m_FireParticles;
     Transform tf_Light;
     DamageInfo m_HealInfo;
-    TimeCounter m_DistinguishCheck=new TimeCounter(5f);
+    TimerBase m_DistinguishCheck=new TimerBase(5f);
     EntityCharacterPlayer m_Interactor;
     public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {

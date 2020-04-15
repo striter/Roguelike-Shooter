@@ -76,8 +76,8 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnExpireChange();
         if (m_Animator != null)
-            m_Animator.SetMovementFireSpeed(m_CharacterInfo.F_MovementSpeedMultiply, m_CharacterInfo.F_FireRateMultiply);
-        m_Agent.speed = m_CharacterInfo.F_MovementSpeed;
+            m_Animator.SetMovementFireSpeed(m_CharacterInfo.m_MovementSpeedMultiply, m_CharacterInfo.m_FireRateMultiply);
+        m_Agent.speed = m_CharacterInfo.GetMovementSpeed;
     }
 
     Vector3 m_Impact;
@@ -136,7 +136,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     protected NavMeshAgent m_Agent;
     protected WeaponHelperBase m_Weapon;
-    TimeCounter m_TargetingTimer = new TimeCounter(), m_MoveTimer = new TimeCounter(), m_MoveOrderTimer = new TimeCounter(),m_BattleDurationTimer=new TimeCounter(),m_BattleFireTimer=new TimeCounter();
+    TimerBase m_TargetingTimer = new TimerBase(), m_MoveTimer = new TimerBase(), m_MoveOrderTimer = new TimerBase(),m_BattleDurationTimer=new TimerBase(),m_BattleFireTimer=new TimerBase();
     Vector3 m_SourcePosition;
 
 
@@ -302,7 +302,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_b_CanStartAttack = !m_m_targetOutAttackRange && m_m_targetRotationWithin && !attackBlocked;
         m_b_CanKeepAttack = !attackBlocked;
 
-        m_BattleDurationTimer.Tick(m_CharacterInfo.F_ReloadRateTick(deltaTime));
+        m_BattleDurationTimer.Tick(m_CharacterInfo.DoReloadRateTick(deltaTime));
         if (m_BattleDurationTimer.m_Timing || !m_b_CanStartAttack)
             return;
 
@@ -341,7 +341,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (i_playCount <= 0)
             return;
 
-        m_BattleFireTimer.Tick(m_CharacterInfo.F_FireRateTick(deltaTime));
+        m_BattleFireTimer.Tick(m_CharacterInfo.DoFireRateTick(deltaTime));
         if (m_BattleFireTimer.m_Timing)
             return;
         m_BattleFireTimer.SetTimerDuration(F_AttackRate);
@@ -376,7 +376,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_m_targetOutChaseRange = m_m_targetDistance > F_AIChaseRange;
         m_m_targetOutAttackRange = m_m_targetDistance > F_AIAttackRange;
 
-        float movementDelta = deltaTime * m_CharacterInfo.F_MovementSpeedMultiply;
+        float movementDelta = deltaTime * m_CharacterInfo.m_MovementSpeedMultiply;
         m_MoveTimer.Tick(movementDelta);
         m_MoveOrderTimer.Tick(movementDelta);
         if (m_MoveTimer.m_Timing)
@@ -398,7 +398,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         SetDestination(GetSamplePosition(m_m_targetOutChaseRange));
         m_MoveOrderTimer.SetTimerDuration(GameConst.AI.F_AIMaxRepositionDuration);
     }
-    bool ForceHoldPosition() => m_CharacterInfo.F_MovementSpeed == 0 || (m_b_attacking && !B_AttackMove);
+    bool ForceHoldPosition() => m_CharacterInfo.GetMovementSpeed == 0 || (m_b_attacking && !B_AttackMove);
 
     void StopMoving() { m_AgentEnabled = false; }
     void SetDestination(Vector3 destination) { m_AgentEnabled = true; m_Agent.SetDestination(destination); }

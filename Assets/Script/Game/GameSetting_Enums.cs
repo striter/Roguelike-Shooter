@@ -136,11 +136,11 @@ namespace GameSetting
 
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
-    public enum enum_PlayerCharacter { Invalid = -1, Beth = 10001,Assassin=10002, }
+    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Assassin=1002, }
     
-    public enum enum_InteractCharacter { Invalid = -1, Trader = 20001, Trainer = 20002, }
+    public enum enum_InteractCharacter { Invalid = -1, Trader = 2001, Trainer = 2002, }
 
-    public enum enum_MercenaryCharacter { Invalid = -1, Militia = 30001, Veteran = 30002 }
+    public enum enum_MercenaryCharacter { Invalid = -1, Militia = 3001, Veteran = 3002 }
 
     public enum enum_Rarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Epic = 4 }
 

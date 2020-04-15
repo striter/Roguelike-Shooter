@@ -13,7 +13,7 @@ public class UI_PlayerPerks : UIPage {
         m_Grid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem>(rtf_Container.Find("EquipmentGrid"), OnItemSelect);
         m_Selecting = new UIC_EquipmentNameFormatIntro(rtf_Container.Find("Selecting"));
     }
-    PlayerInfoManager m_Info;
+    PlayerExpireManager m_Info;
     public void Show()
     {
         m_Info = GameManager.Instance.m_LocalPlayer.m_CharacterInfo;

@@ -21,7 +21,7 @@ namespace GameSetting_Equipments
         public override float Value1 => 10f;
         public override float Value2 => 5f;
         public override float m_CriticalRateAdditive => m_Timer.m_Timing ? Value1/100f : 0f;
-        TimeCounter m_Timer;
+        TimerBase m_Timer;
 
         public override void OnAbilityTrigger()
         {
@@ -35,7 +35,7 @@ namespace GameSetting_Equipments
             m_Timer.Tick(deltaTime);
         }
 
-        public E20001(List<EquipmentSaveData> datas) : base( datas) { m_Timer = new TimeCounter(Value2, true); }
+        public E20001(List<EquipmentSaveData> datas) : base( datas) { m_Timer = new TimerBase(Value2, true); }
     }
 
     public class E20002:ExpireEquipmentUpgrade

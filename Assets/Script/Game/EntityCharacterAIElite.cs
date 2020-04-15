@@ -4,7 +4,7 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityCharacterAIElite : EntityCharacterAI {
-    TimeCounter m_BuffCounter = new TimeCounter(GameConst.F_EliteBuffTimerDurationWhenFullHealth), m_IndicateCounter=new TimeCounter(2f);
+    TimerBase m_BuffCounter = new TimerBase(GameConst.F_EliteBuffTimerDurationWhenFullHealth), m_IndicateCounter=new TimerBase(2f);
     EliteBuffCombine m_Buff;
     bool m_Indicating;
     protected override void EntityActivate(enum_EntityFlag flag, float startHealth = 0)

@@ -158,7 +158,7 @@ namespace GameSetting_Action
         public override float Value1 => 2f;
         public override float Value2 => 10f;
         public override float m_DamageReduction => m_TimerActivate.m_Timing ? 1f : 0f;
-        TimeCounter m_TimerCoolDown, m_TimerActivate;
+        TimerBase m_TimerCoolDown, m_TimerActivate;
         public override void OnAbilityTrigger()
         {
             base.OnAbilityTrigger();
@@ -175,7 +175,7 @@ namespace GameSetting_Action
             m_TimerActivate.Tick(deltaTime);
         }
 
-        public P10012(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value1); m_TimerCoolDown = new TimeCounter(Value2); }
+        public P10012(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimerBase(Value1); m_TimerCoolDown = new TimerBase(Value2); }
     }
 
     public class P10013 : ExpirePerkBase
@@ -190,7 +190,7 @@ namespace GameSetting_Action
             if (!info.m_CritcalHitted)
                 return;
 
-            m_Attacher.m_WeaponCurrent.ForceReloadOnce();
+            m_Attacher.m_WeaponCurrent.AddAmmo(1);
         }
         public P10013(PerkSaveData saveData) : base(saveData) { }
     }
@@ -203,7 +203,7 @@ namespace GameSetting_Action
         public override int m_MaxStack => 1;
         public override float Value1 => 10f;
         public override float Value2 => 3f;
-        TimeCounter m_TimerCoolDown, m_TimerActivate;
+        TimerBase m_TimerCoolDown, m_TimerActivate;
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
@@ -217,7 +217,7 @@ namespace GameSetting_Action
             m_TimerActivate.Replay();
         }
 
-        public P10014(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimeCounter(Value2); m_TimerCoolDown = new TimeCounter(Value1); }
+        public P10014(PerkSaveData saveData) : base(saveData) { m_TimerActivate = new TimerBase(Value2); m_TimerCoolDown = new TimerBase(Value1); }
     }
 
     public class P10015:ExpirePerkBase
@@ -278,7 +278,7 @@ namespace GameSetting_Action
         public override int m_EffectIndex => m_Timer.m_Timing ? 40004 : 0;
         public override float m_DamageReduction => m_Timer.m_Timing ? 1f : 0;
         bool haveArmor;
-        TimeCounter m_Timer;
+        TimerBase m_Timer;
         public override void OnBeforeReceiveDamage(DamageInfo info)
         {
             base.OnBeforeReceiveDamage(info);
@@ -297,7 +297,7 @@ namespace GameSetting_Action
             base.OnTick(deltaTime);
             m_Timer.Tick(deltaTime);
         }
-        public P10018(PerkSaveData saveData) : base(saveData) { m_Timer = new TimeCounter(Value1); }
+        public P10018(PerkSaveData saveData) : base(saveData) { m_Timer = new TimerBase(Value1); }
     }
 
     public class P10019:ExpirePerkBase

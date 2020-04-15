@@ -908,13 +908,13 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
     }
     #endregion
 }
-public class TimeCounter
+public class TimerBase
 {
     public float m_TimerDuration { get; private set; } = 0;
     public bool m_Timing { get; private set; } = false;
     public float m_TimeCheck { get; private set; } = -1;
     public float m_TimeLeftScale { get; private set; } = 0;
-    public TimeCounter(float duration = 0,bool startOff=false) {
+    public TimerBase(float duration = 0,bool startOff=false) {
         SetTimerDuration(duration);
         if (startOff)
             Stop();
@@ -945,6 +945,47 @@ public class TimeCounter
     }
 }
 
+public class ExpRankBase
+{
+    public int m_TotalExp { get; private set; }
+    public int m_Rank { get; private set; }
+    public int m_ExpCurrentLevel { get; private set; }
+    public int m_ExpNextLevelRequire { get; private set; }
+    Func<int, int> GetExpToNextLevel;
+    public ExpRankBase(Func<int, int> GetExpToNextLevel)
+    {
+        this.GetExpToNextLevel = GetExpToNextLevel;
+        m_TotalExp = 0;
+        m_Rank = 0;
+        m_ExpCurrentLevel = 0;
+        m_ExpNextLevelRequire = 0;
+    }
+    public void OnExpSet(int totalExp)
+    {
+        m_TotalExp = 0;
+        m_Rank = 0;
+        m_ExpCurrentLevel = 0;
+        m_ExpNextLevelRequire = 0;
+        OnExpGain(totalExp);
+    }
+
+    public void OnExpGain(int exp)
+    {
+        m_TotalExp += exp;
+        m_ExpCurrentLevel += exp;
+        for (; ; )
+        {
+            int expNext = GetExpToNextLevel(m_Rank);
+            if (m_ExpCurrentLevel < expNext)
+            {
+                m_ExpNextLevelRequire = expNext - m_ExpCurrentLevel;
+                break;
+            }
+            m_ExpCurrentLevel -= expNext;
+            m_Rank++;
+        }
+    }
+}
 
 #region UI Classes
 public class AtlasLoader
