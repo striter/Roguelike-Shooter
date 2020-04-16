@@ -12,7 +12,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual PlayerCharacterAnimator m_Animator { get; private set; }
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
-    protected SFXAimAssist m_Assist = null;
+    protected SFXAimAssist m_AimAssist = null;
     public bool m_weaponEquipingFirst { get; private set; } = false;
     public WeaponBase m_WeaponCurrent => m_weaponEquipingFirst ? m_Weapon1 : m_Weapon2;
     public WeaponBase m_Weapon1 { get; private set; }
@@ -28,7 +28,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public new EntityPlayerHealth m_Health { get; private set; }
     protected override HealthBase GetHealthManager()
     {
-        m_Health=new EntityPlayerHealth(this, OnHealthChanged);
+        m_Health=new EntityPlayerHealth(this, OnUIHealthChanged);
         return m_Health;
     }
     
@@ -119,7 +119,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Animator.OnDead();
         if (m_WeaponCurrent) m_WeaponCurrent.OnPlay(false);
         m_MoveAxisInput = Vector2.zero;
-        m_Assist.SetEnable(false);
+        m_AimAssist.SetEnable(false);
         base.OnDead();
     }
 
@@ -127,7 +127,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         base.OnRevive();
         if (m_WeaponCurrent) m_WeaponCurrent.OnPlay(true);
-        m_Assist.SetEnable(true);
+        m_AimAssist.SetEnable(true);
         m_Animator.OnRevive();
 
         AudioManager.Instance.Play2DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_ReviveClip));
@@ -136,9 +136,28 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override void DoRecycle()
     {
         base.DoRecycle();
+        if (m_AimAssist)
+        {
+            m_AimAssist.Recycle();
+            m_AimAssist = null;
+        }
+
+        if (m_Weapon1)
+        {
+            RecycleWeapon(m_Weapon1);
+            m_Weapon1 = null;
+        }
+
+        if (m_Weapon2)
+        {
+            RecycleWeapon(m_Weapon2);
+            m_Weapon2 = null;
+        }
+
+        m_Interact = null;
+        OnUIInteractStatus();
+
         UIManager.Instance.RemoveBindings();
-        if (m_Assist)
-            m_Assist.Recycle();
     }
 
     void OnMainDown(bool down)
@@ -173,7 +192,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
         m_Health.OnMaxChange(m_CharacterInfo.F_MaxHealthAdditive,m_CharacterInfo.F_MaxArmorAdditive);
-        OnCommonStatus();
+        OnUICommonStatus();
     }
 
     protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
@@ -217,7 +236,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         tf_WeaponAim.rotation = GetCharacterRotation();
 
         m_weaponFirePause = !CheckWeaponFiring();
-        m_Assist.SetEnable(!m_weaponFirePause  && m_AimingTarget != null);
+        m_AimAssist.SetEnable(!m_weaponFirePause  && m_AimingTarget != null);
         float reloadDelta = m_CharacterInfo.DoReloadRateTick(deltaTime);
         float fireDelta = m_CharacterInfo.DoFireRateTick(deltaTime);
         if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause,  fireDelta, reloadDelta);
@@ -252,21 +271,41 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         return exchangeWeapon;
     }
 
-    public WeaponBase RecycleWeapon()
+    void RecycleWeapon(WeaponBase recycleWeapon)
+    {
+        recycleWeapon.OnDetach();
+        recycleWeapon.DoItemRecycle();
+    }
+
+    void OnSwapWeapon(bool isFirst)
+    {
+        if (m_WeaponCurrent)
+            m_WeaponCurrent.OnPlay(false);
+        m_weaponEquipingFirst = isFirst;
+        m_WeaponCurrent.OnPlay(true);
+        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
+        if (m_AimAssist) m_AimAssist.Recycle();
+        m_AimAssist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
+        m_AimAssist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_ProjectileMask, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
+        OnUIWeaponStatus();
+    }
+
+    public enum_Rarity GameWeaponRecycle()
     {
         WeaponBase recycleWeapon = m_WeaponCurrent;
         if(m_weaponEquipingFirst)
             m_Weapon1 = m_Weapon2;
         m_Weapon2 = null;
         OnSwapWeapon(true);
-        return recycleWeapon;
+        RecycleWeapon(recycleWeapon);
+        return recycleWeapon.m_WeaponInfo.m_Rarity;
     }
 
-    public void ReforgeWeapon(WeaponBase _reforgeWeapon)
+
+    public void GameWeaponReforge(WeaponBase _reforgeWeapon)
     {
         _reforgeWeapon.OnAttach(this, _reforgeWeapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
-        WeaponBase exchangeWeapon = m_WeaponCurrent;
-        m_WeaponCurrent.OnDetach();
+        RecycleWeapon(m_WeaponCurrent);
         if (m_weaponEquipingFirst)
         {
             m_Weapon1 = _reforgeWeapon;
@@ -277,21 +316,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_Weapon2 = _reforgeWeapon;
             OnSwapWeapon(false);
         }
-        exchangeWeapon.DoItemRecycle();
     }
     
-    void OnSwapWeapon(bool isFirst)
-    {
-        if (m_WeaponCurrent)
-            m_WeaponCurrent.OnPlay(false);
-        m_weaponEquipingFirst = isFirst;
-        m_WeaponCurrent.OnPlay(true);
-        m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
-        if (m_Assist) m_Assist.Recycle();
-        m_Assist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
-        m_Assist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_ProjectileMask, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
-        OnWeaponStatus();
-    }
     #endregion
     #region CharacterControll
     protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
@@ -361,12 +387,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (isEnter)
         {
             m_Interact = interactTarget;
-            OnInteractStatus();
+            OnUIInteractStatus();
         }
         else if (m_Interact == interactTarget)
         {
             m_Interact = null;
-            OnInteractStatus();
+            OnUIInteractStatus();
         }
     }
     protected bool OnInteract()
@@ -380,9 +406,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (!m_Interact.m_InteractEnable)
             m_Interact = null;
 
-        OnInteractStatus();
+        OnUIInteractStatus();
         return true;
     }
+
     public void OnInteractPickup(InteractPickupAmount pickup,int amount)
     {
         switch (pickup.m_InteractType)
@@ -404,8 +431,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerInteractPickup, pickup.transform.position, pickup.m_InteractType, amount);
     }
     #endregion
-    #region Action
-    
+    #region Expire Interact
     protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
     {
         if (damageInfo.m_AmountApply <= 0)
@@ -446,22 +472,22 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         return false;
     }
 
-    protected void OnCommonStatus()
+    protected void OnUICommonStatus()
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonUpdate, this);
     }
-    protected void OnInteractStatus()
+    protected void OnUIInteractStatus()
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger( enum_BC_UIStatus.UI_PlayerInteractUpdate,this);
     }
-    protected void OnWeaponStatus()
+    protected void OnUIWeaponStatus()
     {
         m_CharacterInfo.RefreshEffects();
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerWeaponUpdate, this);
     }
-    protected override void OnHealthChanged(enum_HealthChangeMessage type)
+    protected override void OnUIHealthChanged(enum_HealthChangeMessage type)
     {
-        base.OnHealthChanged(type);
+        base.OnUIHealthChanged(type);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerHealthUpdate, m_Health);
     }
     #endregion

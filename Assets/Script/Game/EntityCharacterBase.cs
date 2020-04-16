@@ -27,7 +27,7 @@ public class EntityCharacterBase : EntityBase
     protected override float HealReceiveMultiply => m_CharacterInfo.m_HealReceiveMultiply;
 
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
-    protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnHealthChanged);
+    protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnUIHealthChanged);
     TimerBase m_DeadCounter = new TimerBase(GameConst.F_EntityDeadFadeTime,true);
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
@@ -138,9 +138,9 @@ public class EntityCharacterBase : EntityBase
         m_CharacterInfo.OnRecycle();
     }
 
-    protected override void OnHealthChanged(enum_HealthChangeMessage type)
+    protected override void OnUIHealthChanged(enum_HealthChangeMessage type)
     {
-        base.OnHealthChanged(type);
+        base.OnUIHealthChanged(type);
         m_CharacterSkinEffect.OnHit(type);
         switch (type)
         {

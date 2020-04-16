@@ -122,7 +122,7 @@ public class GameManager : GameManagerBase
         GC.Collect();
         yield return null;
 
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(GameDataManager.m_BattleData, Vector3.zero, Quaternion.identity);
+        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, Vector3.zero, Quaternion.identity).OnPlayerActivate(GameDataManager.m_BattleData);
         AttachPlayerCamera(tf_CameraAttach);
         OnLevelStart();
 

@@ -7,6 +7,6 @@ public class GamePlayTest : GameManagerBase {
     protected override void Start()
     {
         base.Start();
-        AttachPlayerCamera(GameObjectManager.SpawnEntityPlayer( new CPlayerBattleSave( enum_PlayerCharacter.Assassin,enum_PlayerWeapon.DE,new List<EquipmentSaveData>(),CharacterUpgradeData.Default()), Vector3.zero, Quaternion.identity).transform);
+        AttachPlayerCamera(GameObjectManager.SpawnPlayerCharacter(  enum_PlayerCharacter.Assassin, Vector3.zero, Quaternion.identity).OnPlayerActivate(new CPlayerBattleSave(enum_PlayerCharacter.Assassin, enum_PlayerWeapon.DE, new List<EquipmentSaveData>(), CharacterUpgradeData.Default())).transform);
     }
 }

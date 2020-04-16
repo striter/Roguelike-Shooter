@@ -44,7 +44,19 @@ public class UI_CharacterSelect : UIPage {
 
     void OnCharacterSelect(int index)=> UpdateCharacter((enum_PlayerCharacter)index);
 
-    void OnConfirmBtnClick() => GameDataManager.SwitchCharacter(m_SelectingCharacter);
+    void OnConfirmBtnClick()
+    {
+        GameDataManager.SwitchCharacter(m_SelectingCharacter);
+        CampManager.Instance.OnSwitchCharacter(m_SelectModel.m_Character);
+        m_SelectModel.OnCharacterSwitch();
+        OnCancelBtnClick();
+    }
+
+    protected override void OnCancelBtnClick()
+    {
+        base.OnCancelBtnClick();
+        m_SelectModel.RecycleUnusedCharacter();
+    }
 
     void UpdateCharacter(enum_PlayerCharacter character)
     {
@@ -90,11 +102,5 @@ public class UI_CharacterSelect : UIPage {
             }
             attribute.text += "(+" + upgrade.m_UpgradeDatas[type] + ")";
         });
-    }
-
-    protected override void OnCancelBtnClick()
-    {
-        base.OnCancelBtnClick();
-        m_SelectModel.RecycleCharacter();
     }
 }

@@ -34,11 +34,19 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
-        m_LocalPlayer = GameObjectManager.SpawnEntityPlayer(new CPlayerBattleSave(),tf_PlayerStart.position, tf_PlayerStart.rotation);
-        tf_CameraAttach.position = m_LocalPlayer.transform.position;
+        OnSwitchCharacter(GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_CharacterData.m_CharacterSelected,tf_PlayerStart.position,tf_PlayerStart.rotation));
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
+    }
+
+    public void OnSwitchCharacter(EntityCharacterPlayer character)
+    {
+        if (m_LocalPlayer)
+            m_LocalPlayer.DoRecycle();
+
+        m_LocalPlayer = character.OnPlayerActivate(new CPlayerBattleSave());
+        tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
 
     private void Update()
