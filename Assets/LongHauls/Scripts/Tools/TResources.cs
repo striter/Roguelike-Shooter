@@ -11,7 +11,7 @@ public class TResources
     #region Extras
     public class ConstPath
     {
-        public const string S_PlayerEntity = "Entity/0_Player";
+        public const string S_PlayerEntity = "Entity/PlayerCharacter/";
 
         public const string S_ChunkRender = "Chunk/Render/";
         public const string S_ChunkTile = "Chunk/Tile/";
@@ -87,18 +87,8 @@ public class TResources
         return sfxsDic;
     }
 
-    public static EntityCharacterPlayer GetPlayer(Transform parent) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity,parent);
-    public static Dictionary<int, EntityBase> GetCommonEntities()
-    {
-        Dictionary<int, EntityBase> entitisDic = new Dictionary<int, EntityBase>();
-        EntityBase[] entities = LoadAll<EntityBase>(ConstPath.S_Entity + "Common");
-        entities.Traversal((EntityBase entity) => {
-            int index = int.Parse(entity.name.Split('_')[0]);
-            entitisDic.Add(index, GameObject.Instantiate<EntityBase>(entity));
-            PreloadMaterials(entity.gameObject);
-        });
-        return entitisDic;
-    }
+    public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity+(int)character);
+
     public static Dictionary<int, EntityCharacterAI> GetEnermyEntities(enum_GameStyle entityStyle)
     {
         Dictionary<int, EntityCharacterAI> entitisDic = new Dictionary<int, EntityCharacterAI>();

@@ -13,10 +13,10 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     protected UIC_PlayerStatus m_PlayerStatus { get; private set; }
     public UIC_Indicates m_Indicate { get; private set; }
     public CameraEffectManager m_Effect { get; private set; }
-    CB_GenerateOverlayUIGrabBlurTexture m_Blur;
     public AtlasLoader m_CommonSprites { get; private set; }
     public AtlasLoader m_ExpireSprites { get; private set; }
     public AtlasLoader m_WeaponSprites { get; private set; }
+    protected CB_GenerateOverlayUIGrabBlurTexture m_BlurBG { get; private set; }
     public static void Activate(bool inGame)
     {
         GameObject uiObj = TResources.InstantiateUIManager();
@@ -42,8 +42,8 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
-        m_Blur = m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>();
-        m_Blur.SetEffect(2, 2f, 2);
+        m_BlurBG= m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>().SetEffect(2, 2f, 2);
+        m_BlurBG.SetEnable(false);
     }
 
     protected virtual void InitControls(bool inGame)
@@ -63,13 +63,12 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
 
 
     public new T ShowMessageBox<T>() where T : UIMessageBoxBase => base.ShowMessageBox<T>();
-    public T ShowPage<T>(bool animate,float bulletTime=1f) where T : UIPage
+    public T ShowPage<T>(bool animate,bool blurBG, float bulletTime=1f) where T : UIPage
     {
         T page = base.ShowPage<T>(animate);
         if (page == null)
             return null;
-        m_OverlayBG.SetActivate(true);
-        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_OverlayBG.color = TCommon.ColorAlpha(m_OverlayBG.color,value); },0,1, UIPageBase.F_AnimDuration, null,false));
+        SetBlurBackground(true);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
         if (bulletTime != 1f)
             GameManagerBase.SetBulletTime(true, bulletTime);
@@ -82,12 +81,28 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         if (UIPageBase.I_PageCount > 0)
             return;
 
-        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            m_OverlayBG.color = TCommon.ColorAlpha(m_OverlayBG.color, value);
-            if(value==0)  m_OverlayBG.SetActivate(false);
-        }, 1, 0, UIPageBase.F_AnimDuration, null, false));
+        SetBlurBackground(false);
         GameManagerBase.SetBulletTime(false);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
+    }
+
+    void SetBlurBackground(bool enable)
+    {
+        if (enable)
+        {
+            m_OverlayBG.SetActivate(true);
+            m_BlurBG.SetEnable(true);
+            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_OverlayBG.color = TCommon.ColorAlpha(m_OverlayBG.color, value); }, 0, 1, UIPageBase.F_AnimDuration, null, false));
+        }
+        else
+        {
+            this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
+                m_OverlayBG.color = TCommon.ColorAlpha(m_OverlayBG.color, value);
+            }, 1, 0, UIPageBase.F_AnimDuration, () => {
+                m_BlurBG.SetEnable(false);
+                m_OverlayBG.SetActivate(false);
+            }, false));
+        }
     }
 
     public void DoBindings(EntityCharacterPlayer player, Action<Vector2> _OnLeftDelta, Action<Vector2> _OnRightDelta, Action<bool> _OnMainDown,Action<bool> _OnSubDown, Action<bool> _OnCharacterAbility)

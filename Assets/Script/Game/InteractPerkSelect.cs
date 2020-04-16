@@ -27,7 +27,7 @@ public class InteractPerkSelect : InteractGameBase
     {
         base.OnInteractedContinousCheck(_interactor);
         m_Particles.Stop();
-        GameUIManager.Instance.ShowPage<UI_PerkSelect>(true, .5f).Show(m_PerkIDs,_interactor.m_CharacterInfo.OnActionPerkAcquire);
+        GameUIManager.Instance.ShowPage<UI_PerkSelect>(true,true, .5f).Show(m_PerkIDs,_interactor.m_CharacterInfo.OnActionPerkAcquire);
         return false;
     }
 }

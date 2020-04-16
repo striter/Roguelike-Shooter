@@ -44,17 +44,30 @@ public class CommandBufferBase : CameraEffectBase
 {
     protected CommandBuffer m_Buffer;
     protected virtual CameraEvent m_BufferEvent => 0;
+    public bool m_CommandBufferEnabled { get; private set; }
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
         m_Buffer = new CommandBuffer();
         m_Buffer.name = this.GetType().ToString();
-        m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
+        m_CommandBufferEnabled = false;
+        SetEnable(true);
+    }
+    public void SetEnable(bool enable)
+    {
+        if (m_CommandBufferEnabled == enable)
+            return;
+        m_CommandBufferEnabled = enable;
+        if (m_CommandBufferEnabled)
+            m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
+        else
+            m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent, m_Buffer);
     }
     public override void OnDestroy()
     {
+        SetEnable(false);
         m_Buffer.Clear();
-        m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent, m_Buffer);
+        m_Buffer = null;
     }
 }
 
@@ -85,7 +98,7 @@ public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
         m_GaussianBlur = new PE_Blurs();
         m_GaussianBlur.InitEffect(_manager);
     }
-    public void SetEffect(int iterations = 3, float blurSpread = 1.5f, int _downSample = 2)
+    public CB_GenerateOverlayUIGrabBlurTexture SetEffect(int iterations = 3, float blurSpread = 1.5f, int _downSample = 2)
     {
         m_GaussianBlur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
         m_Buffer.GetTemporaryRT(ID_TempTexture1, -_downSample, -_downSample, 0, FilterMode.Bilinear);
@@ -97,6 +110,7 @@ public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
             m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 2);
         }
         m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
+        return this;
     }
     public override void OnDestroy()
     {

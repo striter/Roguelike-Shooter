@@ -113,12 +113,12 @@ public class UIC_Control : UIControlBase {
             OnSettingClick();
             return;
         }
-        UIManager.Instance.ShowPage<UI_Options>(true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
+        UIManager.Instance.ShowPage<UI_Options>(true,true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
     }
 
     void OnEquipmentBtnClick()
     {
-        UIManager.Instance.ShowPage<UI_PlayerPerks>(true, 0f).Show();
+        UIManager.Instance.ShowPage<UI_PlayerPerks>(true,true, 0f).Show();
     }
 
     Action OnSettingClick;
@@ -216,7 +216,7 @@ public class UIC_Control : UIControlBase {
         void OnWeaponDetailPressed(bool pressed)
         {
             if (pressed)
-                UIManager.Instance.ShowPage<UI_WeaponStatus>(true, 0f).Play(m_weapon.m_WeaponInfo,null);
+                UIManager.Instance.ShowPage<UI_WeaponStatus>(true,true, 0f).Play(m_weapon.m_WeaponInfo,null);
         }
     }
 

@@ -79,7 +79,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
-    public  void OnPlayerActivate(CPlayerBattleSave _battleSave)
+    public  EntityCharacterPlayer OnPlayerActivate(CPlayerBattleSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
 
@@ -93,6 +93,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (_battleSave.m_Weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon2));
         OnSwapWeapon(true);
+        return this;
     }
 
     public void Teleport(Vector3 position,Quaternion rotation)

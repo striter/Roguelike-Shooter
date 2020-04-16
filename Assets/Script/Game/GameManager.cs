@@ -304,7 +304,7 @@ public class GameManager : GameManagerBase
         if (m_revived)
             return;
         m_revived = true;
-        GameUIManager.Instance.ShowPage<UI_Revive>(true, 0f).Play(_OnRevivePlayer);
+        GameUIManager.Instance.ShowPage<UI_Revive>(true,true, 0f).Play(_OnRevivePlayer);
     }
     #endregion
     #region Entity Management

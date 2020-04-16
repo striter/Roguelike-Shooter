@@ -18,12 +18,12 @@ public class CampUIManager : UIManager {
         m_Coins=ShowControls<UIC_CurrencyStatus>(false);
     }
 
-    public T ShowPage<T>(bool animate, Action OnPageExit,float bulletTime = 1f) where T : UIPage
+    public T ShowPage<T>(bool animate,bool blurBG, Action OnPageExit,float bulletTime = 1f) where T : UIPage
     {
         m_OverlayControl = m_Coins;
         SetControlViewMode(m_OverlayControl, true);
         OnCampPageExit = OnPageExit;
-        return ShowPage<T>(animate, bulletTime);
+        return ShowPage<T>(animate,blurBG, bulletTime);
     }
 
     protected override void OnPageExit()

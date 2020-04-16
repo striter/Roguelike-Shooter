@@ -229,9 +229,14 @@ public static class GameObjectManager
     #region Register
     public static void PresetRegistCommonObject()
     {
-        TResources.GetAllEffectSFX().Traversal((int index, SFXBase
-            target) => { ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
-        TResources.GetCommonEntities().Traversal((int index, EntityBase entity) => { ObjectPoolManager<int, EntityBase>.Register(index, entity, 1); });
+        TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => { ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
+    }
+    static void RegisterPlayerCharacter(enum_PlayerCharacter character)
+    {
+        int characterIndex = (int)character;
+        if (ObjectPoolManager<int, EntityBase>.Registed(characterIndex))
+            return;
+        ObjectPoolManager<int, EntityBase>.Register(characterIndex,TResources.GetPlayerCharacter(character),1);
     }
     public static Dictionary<enum_EnermyType, int> RegistStyledInGamePrefabs(enum_GameStyle currentStyle, enum_Stage stageLevel)
     {
@@ -266,23 +271,29 @@ public static class GameObjectManager
     #region Spawn/Recycle
     #region Entity
     //Start Health 0:Use Preset I_MaxHealth
-    static T SpawnEntity<T>(int _poolIndex, Vector3 pos, Quaternion rot, Action<T> OnActivate) where T : EntityBase
+    static T SpawnEntity<T>(int _poolIndex, Vector3 pos, Quaternion rot) where T : EntityBase
     {
         T entity = ObjectPoolManager<int, EntityBase>.Spawn(_poolIndex, TF_Entity, NavigationManager.NavMeshPosition(pos), rot) as T;
         if (entity == null)
             Debug.LogError("Entity ID:" + _poolIndex + ",Type:" + typeof(T).ToString() + " Not Found");
         entity.gameObject.name = entity.m_EntityID.ToString() + "_" + _poolIndex.ToString();
-        OnActivate(entity);
         return entity;
     }
 
-    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_Stage _stage) => SpawnEntity(poolIndex, toPosition, toRot, (EntityCharacterAI ai) => ai.OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty)));
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_Stage _stage) => SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, toRot).OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty));
 
-    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up), (EntityCharacterBase character) => character.OnSubCharacterActivate(_flag, spawnerID, startHealth==0?character.I_MaxHealth:startHealth));
+    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up)).OnSubAIActivate(_flag, spawnerID, startHealth);
 
-    public static EntityCharacterPlayer SpawnEntityPlayer( CPlayerBattleSave battleSave, Vector3 position, Quaternion rotation) => SpawnEntity((int)battleSave.m_Character, position, rotation, (EntityCharacterPlayer player) => player.OnPlayerActivate(battleSave));
+    public static EntityCharacterPlayer SpawnEntityPlayer(CPlayerBattleSave battleSave, Vector3 position, Quaternion rotation) => SpawnPlayerCharacter(battleSave.m_Character, position, rotation).OnPlayerActivate(battleSave);
 
-    public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Quaternion rot) => SpawnEntity((int)npc, toPosition, rot, (EntityNPC npcCharacter) => npcCharacter.OnActivate());
+    public static EntityCharacterPlayer SpawnPlayerCharacter(enum_PlayerCharacter character, Vector3 position, Quaternion rotation)
+    {
+        RegisterPlayerCharacter(character);
+        return SpawnEntity<EntityCharacterPlayer>((int)character, position, rotation); 
+    }
+
+
+    public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Quaternion rot) => SpawnEntity<EntityNPC>((int)npc, toPosition, rot).OnActivate();
 
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion

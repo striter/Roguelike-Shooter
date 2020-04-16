@@ -30,6 +30,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
             return;
 
         m_CameraEffects.Remove(effect);
+        effect.OnDestroy();
         ResetPostEffectParams();
     }
     public void RemoveAllPostEffect()

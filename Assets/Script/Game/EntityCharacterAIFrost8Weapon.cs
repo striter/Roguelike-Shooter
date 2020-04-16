@@ -14,9 +14,9 @@ public class EntityCharacterAIFrost8Weapon : EntityCharacterAI
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Blink = new ModelBlink(tf_Model.Find("BlinkModel"), .25f, .25f, Color.red);
     }
-    public override void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
-        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth);
+        base.OnEntityActivate(flag, startHealth);
         m_Blink.OnReset();
         b_selfDetonating = false;
         timeElapsed = 0;

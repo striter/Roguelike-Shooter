@@ -40,7 +40,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageBuffInfo(F_BaseDamage,I_BuffApplyOnHit, enum_DamageType.Basic);
 
-    public void OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
+    public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
     {
         base.OnMainCharacterActivate(_flag);
         if (m_Animator != null)
@@ -50,11 +50,13 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_CharacterInfo.AddBuff(-1, difficultyBuff);
         m_Health.SetHealthMultiplier(maxHealthMultiplier);
         AIActivate();
+        return this;
     }
-    public override void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    public EntityCharacterAI OnSubAIActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
     {
-        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth);
+        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth==0?I_MaxHealth:startHealth);
         AIActivate();
+        return this;
     }
 
     protected override void OnRevive()

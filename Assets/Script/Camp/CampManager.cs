@@ -61,21 +61,21 @@ public class CampManager : GameManagerBase
             return;
 
         AttachSceneCamera(cameraPos);
-        CampUIManager.Instance.ShowPage<UI_Armory>(true, ResetPlayerCamera, .1f);
+        CampUIManager.Instance.ShowPage<UI_Armory>(true,true, ResetPlayerCamera, .1f);
     }
 
     public void OnEquipmentDepotInteract()
     {
         if (UIPageBase.m_PageOpening)
             return;
-        CampUIManager.Instance.ShowPage<UI_EquipmentDepot>(true, 1f);
+        CampUIManager.Instance.ShowPage<UI_EquipmentDepot>(true,true, 1f);
     }
 
     public void OnCharacterUpgradeInteract()
     {
         if (UIPageBase.m_PageOpening)
             return;
-        CampUIManager.Instance.ShowPage<UI_CharacterUpgrade>(true, 1f);
+        CampUIManager.Instance.ShowPage<UI_CharacterUpgrade>(true,true, 1f);
     }
 
     public bool OnAcquireDailyRewardInteract()=>GameDataManager.OnDailyRewardRequire();
@@ -85,9 +85,16 @@ public class CampManager : GameManagerBase
         if (UIPage.m_PageOpening)
             return;
         AttachSceneCamera(cameraPos);
-        CampUIManager.Instance.ShowPage<UI_Billboard>(true, ResetPlayerCamera, .1f);
+        CampUIManager.Instance.ShowPage<UI_Billboard>(true,true, ResetPlayerCamera, .1f);
     }
 
+    public void OnCharacterSelectInteract(InteractCampCharacterSelect characterSelect)
+    {
+        if(UIPage.m_PageOpening)
+            return;
+        AttachSceneCamera(characterSelect.m_CameraPos);
+        CampUIManager.Instance.ShowPage<UI_CharacterSelect>(true,false,ResetPlayerCamera,1f);
+    }
 
     void ResetPlayerCamera()=> AttachPlayerCamera(tf_CameraAttach);
 
