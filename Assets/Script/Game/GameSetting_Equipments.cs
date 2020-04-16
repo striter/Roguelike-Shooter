@@ -45,9 +45,9 @@ namespace GameSetting_Equipments
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
-            if (! !receiver.m_IsDead)
+            if (!receiver.m_IsDead)
                 return;
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth*Value1/100f,enum_DamageType.HealthPenetrate));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, -m_Attacher.m_Health.m_MaxHealth * Value1 / 100f, enum_DamageType.HealthPenetrate));
         }
         public E20002(List<EquipmentSaveData> equipmentUpgrade, CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade, characterUpgrade) { }
     }

@@ -1015,7 +1015,12 @@ namespace GameSetting
         {
             base.AddExpire(expire);
             if (expire.m_ExpireType.IsInteractExpire())
-                m_ExpireInteracts.Add(expire as ExpireInteractBase);
+            {
+                ExpireInteractBase interactExpire = expire as ExpireInteractBase;
+                interactExpire.OnActivate(m_Player, RemoveExpire);
+                m_ExpireInteracts.Add(interactExpire);
+            }
+
             switch (expire.m_ExpireType)
             {
                 case enum_ExpireType.Perk:
@@ -1023,7 +1028,6 @@ namespace GameSetting
                         ExpirePerkBase targetExpire = expire as ExpirePerkBase;
                         m_ExpirePerks.Add(targetExpire.m_Index, targetExpire);
                         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
-                        targetExpire.OnActivate(m_Player, RemoveExpire);
                     }
                     break;
                 case enum_ExpireType.Upgrades:
