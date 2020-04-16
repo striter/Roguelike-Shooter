@@ -18,20 +18,22 @@ public class CampUIManager : UIManager {
         m_Coins=ShowControls<UIC_CurrencyStatus>(false);
     }
 
-    public T ShowPage<T>(bool animate,bool blurBG, Action OnPageExit,float bulletTime = 1f) where T : UIPage
+    public T ShowCoinsPage<T>(bool animate,bool blurBG, Action OnPageExit,float bulletTime = 1f) where T : UIPage
     {
         m_OverlayControl = m_Coins;
         SetControlViewMode(m_OverlayControl, true);
+        m_Controls.Traversal((UIControlBase control) => { if (control != m_OverlayControl) control.SetActivate(false); });
         OnCampPageExit = OnPageExit;
         return ShowPage<T>(animate,blurBG, bulletTime);
     }
 
-    protected override void OnPageExit()
+    protected override void OnPageExit(UIPageBase page)
     {
-        base.OnPageExit();
-        if (!m_OverlayControl || UIPageBase.I_PageCount != 0)
+        base.OnPageExit(page);
+        if (!m_OverlayControl || m_PageOpening)
             return;
         SetControlViewMode(m_OverlayControl, false);
+        m_Controls.Traversal((UIControlBase control) => { if (control != m_OverlayControl) control.SetActivate(true); });
         m_OverlayControl = null;
         OnCampPageExit?.Invoke();
         OnCampPageExit = null;
@@ -41,7 +43,7 @@ public class CampUIManager : UIManager {
     {
         base.OnAdjustPageSibling();
         if (m_OverlayControl)
-            SetControlViewMode(m_OverlayControl, UIMessageBoxBase.m_MessageBox == null && UIPageBase.I_PageCount == 1);
+            SetControlViewMode(m_OverlayControl, UIMessageBoxBase.m_MessageBox == null && I_PageCount == 1);
     }
 
     protected override void OnDestroy()

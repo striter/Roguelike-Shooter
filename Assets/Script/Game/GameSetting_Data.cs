@@ -213,6 +213,22 @@ namespace GameSetting
             return bluePrint;
         }
         #endregion
+
+        #region CharacterData
+        public static bool CanChangeCharacter(enum_PlayerCharacter character) => m_CharacterData.m_CharacterSelected != character;
+        public static void SwitchCharacter(enum_PlayerCharacter character)
+        {
+            if (!CanChangeCharacter(character))
+            {
+                Debug.LogError("Can't Change Character!");
+                return;
+            }
+
+            m_CharacterData.ChangeSelectedCharacter(character);
+            TGameData<CCharacterUpgradeData>.Save();
+        }
+        #endregion
+
         #region Upgrade Combination
         static Dictionary<int, ExpireUpgrade> m_AllEquipments = new Dictionary<int, ExpireUpgrade>();
         static List<int> m_AvailableEquipments = new List<int>();
@@ -687,6 +703,8 @@ namespace GameSetting
             m_CharacterUpgrades = new Dictionary<enum_PlayerCharacter, CharacterUpgradeData>();
             m_CharacterSelected = enum_PlayerCharacter.Railer;
         }
+
+        public void ChangeSelectedCharacter(enum_PlayerCharacter character) => m_CharacterSelected = character;
 
         public CharacterUpgradeData CurrentUpgrade => GetUpgradeData(m_CharacterSelected);
 

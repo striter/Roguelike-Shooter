@@ -62,10 +62,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.updateRotation = false;
         m_Controller = GetComponent<CharacterController>();
     }
+    
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        SetBinding(true);
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
@@ -73,7 +73,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        SetBinding(false);
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
@@ -82,6 +81,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public  EntityCharacterPlayer OnPlayerActivate(CPlayerBattleSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
+        UIManager.Instance.DoBindings(this, OnMovementDelta, null, OnMainDown, OnSubDown, OnAbilityDown);
 
         m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, _battleSave.m_Health >= 0 ? _battleSave.m_Health : I_MaxHealth);
         m_CharacterInfo.SetInfoData(_battleSave);
@@ -95,6 +95,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnSwapWeapon(true);
         return this;
     }
+
 
     public void Teleport(Vector3 position,Quaternion rotation)
     {
@@ -135,6 +136,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override void DoRecycle()
     {
         base.DoRecycle();
+        UIManager.Instance.RemoveBindings();
         if (m_Assist)
             m_Assist.Recycle();
     }
@@ -494,14 +496,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (m_WeaponCurrent)
             m_WeaponCurrent.OnAnimEvent(animEvent);
     }
-
-    void SetBinding(bool on)
-    {
-        if (on)
-            UIManager.Instance.DoBindings(this, OnMovementDelta, null,  OnMainDown,OnSubDown, OnAbilityDown);
-        else
-            UIManager.Instance.RemoveBindings();
-    }
+    
 
 #if UNITY_EDITOR
     CapsuleCollider hitBox;

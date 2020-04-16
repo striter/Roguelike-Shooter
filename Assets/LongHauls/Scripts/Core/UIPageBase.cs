@@ -5,24 +5,17 @@ using UnityEngine.UI;
 
 public class UIPageBase : UIComponentBase,ICoroutineHelperClass
 {
-    public static List<UIPageBase> m_Pages = new List<UIPageBase>();
-    public static int I_PageCount => m_Pages.Count;
-    public static bool m_PageOpening => I_PageCount>0;
-    public static bool Opening<T>() where T : UIPageBase => m_Pages.Count > 0 && m_Pages.Find(p => p.GetType() ==typeof(T));
-    public static Action OnPageExit;
+    public static Action<UIPageBase> OnPageExit;
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
     bool m_Animating;
     public const float F_AnimDuration = .25f;
     public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
     {
-        if (Opening<T>())
-            return null;
         T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
        
         page.Init();
         page.Play(useAnim);
-        m_Pages.Add(page);
         return page;
     }
     protected Button btn_ContainerCancel,btn_WholeCancel;
@@ -87,8 +80,7 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
 
     protected virtual void OnDestroy()
     {
-        m_Pages.Remove(this);
         this.StopAllSingleCoroutines();
-        OnPageExit?.Invoke();
+        OnPageExit?.Invoke(this);
     }
 }

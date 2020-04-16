@@ -185,23 +185,13 @@ public class UI_EquipmentDepot : UIPage {
     {
         Dictionary<enum_CharacterUpgradeType, float> _entryData = new Dictionary<enum_CharacterUpgradeType, float>();
         TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { _entryData.Add(type, 0); });
-        EquipmentSaveData? _passiveData = null;
-        List<EquipmentSaveData> equippingData = m_DepotData.GetSelectedEquipments();
-        equippingData.Traversal((int index, EquipmentSaveData data) =>
-        {
-            if ((equippingData.FindAll(p => p.m_Index == data.m_Index).Count == 2))
-                _passiveData = data;
 
-            data.m_Entries.Traversal((EquipmentEntrySaveData entryData) =>
-            {
-                _entryData[entryData.m_Type] += entryData.m_Value;
-            });
-        });
+        ExpireUpgrade upgrade = GameDataManager.CreateUpgradeCombination(m_DepotData.GetSelectedEquipments(),CharacterUpgradeData.Default());
         m_AttributesEntryGrid.ClearGrid();
-        TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { m_AttributesEntryGrid.AddItem((int)type).text = type + ":" + _entryData[type]; });
-        m_Passive.SetActivate(_passiveData != null);
-        if (_passiveData != null)
-            m_Passive.text = "Passive:" + _passiveData.Value.GetPassiveLocalizeKey();
+        TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { m_AttributesEntryGrid.AddItem((int)type).text = type + ":" + upgrade.m_UpgradeDatas[type]; });
+        m_Passive.SetActivate(upgrade.m_HavePassive);
+        if (upgrade.m_HavePassive)
+            m_Passive.text = "Passive:" + upgrade.GetPassiveLocalizeKey();
     }
     #endregion
 }

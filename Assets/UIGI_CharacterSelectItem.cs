@@ -11,8 +11,8 @@ public class UIGI_CharacterSelectItem : UIT_GridItem,IGridHighlight {
     public override void Init()
     {
         base.Init();
-        m_Name = GetComponent<Text>();
-        m_Highlight = transform.Find("Highlight");
+        m_Name = rtf_Container.Find("Name").GetComponent<Text>();
+        m_Highlight = rtf_Container.Find("Highlight");
     }
 
     public override void OnActivate(int _index)

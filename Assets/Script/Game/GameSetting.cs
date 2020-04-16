@@ -313,8 +313,12 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this EntityExpirePreset buff) => "Buff_Name_" + buff.m_Index;
         public static string GetNameLocalizeKey(this ExpirePerkBase action) => "Perk_Name_" + action.m_Index;
         public static string GetIntroLocalizeKey(this ExpirePerkBase action) => "Perk_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Name_" + character;
+        public static string GetIntroLocalizeKey(this enum_PlayerCharacter character) => "Character_Intro_" + character;
+        public static string GetAbilityLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_" + character;
         public static string GetNameLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Name_" + equipment.m_Index;
-        public static string GetPassiveLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Passive_" + equipment.m_Index;
+        public static string GetPassiveLocalizeKey(this EquipmentSaveData upgrade) => "Equipment_Passive_" + upgrade.m_Index;
+        public static string GetPassiveLocalizeKey(this ExpireUpgrade upgrade) => "Equipment_Passive_" + upgrade.m_Index;
         public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
         public static string GetLocalizeKey(this enum_Stage stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
@@ -1275,6 +1279,7 @@ namespace GameSetting
     public class ExpireUpgrade: ExpireInteractBase
     {
         public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Upgrades;
+        public bool m_HavePassive => m_Index != GameConst.m_DefaultEquipmentCombinationIdentity;
         public List<EquipmentSaveData> m_EquipmentData { get; private set; }
         public CharacterUpgradeData m_CharacterData { get; private set; }
         public Dictionary<enum_CharacterUpgradeType, float> m_UpgradeDatas { get; private set; } = new Dictionary<enum_CharacterUpgradeType, float>();
@@ -1301,7 +1306,6 @@ namespace GameSetting
                 });
             });
         }
-
     }
 
     public class ExpirePerkBase: ExpireInteractBase

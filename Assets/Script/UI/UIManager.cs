@@ -68,17 +68,17 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         T page = base.ShowPage<T>(animate);
         if (page == null)
             return null;
-        SetBlurBackground(true);
+        SetBlurBackground(blurBG);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
         if (bulletTime != 1f)
             GameManagerBase.SetBulletTime(true, bulletTime);
         return page;
     }
 
-    protected override void OnPageExit()
+    protected override void OnPageExit(UIPageBase page)
     {
-        base.OnPageExit();
-        if (UIPageBase.I_PageCount > 0)
+        base.OnPageExit(page);
+        if (m_PageOpening)
             return;
 
         SetBlurBackground(false);

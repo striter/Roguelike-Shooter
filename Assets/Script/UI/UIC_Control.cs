@@ -59,7 +59,7 @@ public class UIC_Control : UIControlBase {
     }
 
     void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsDataManager.m_OptionsData.m_JoyStickMode);
-    bool CheckControlable() => !UIPageBase.m_PageOpening;
+    bool CheckControlable() => !UIManager.Instance.m_PageOpening;
 
     void OncommonStatus(EntityCharacterPlayer player)
     {

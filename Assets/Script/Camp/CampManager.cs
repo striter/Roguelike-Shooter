@@ -57,23 +57,23 @@ public class CampManager : GameManagerBase
 
     public void OnArmoryInteract(Transform cameraPos)
     {
-        if (UIPageBase.m_PageOpening)
+        if (UIManager.Instance.m_PageOpening)
             return;
 
         AttachSceneCamera(cameraPos);
-        CampUIManager.Instance.ShowPage<UI_Armory>(true,true, ResetPlayerCamera, .1f);
+        CampUIManager.Instance.ShowCoinsPage<UI_Armory>(true,true, ResetPlayerCamera, .1f);
     }
 
     public void OnEquipmentDepotInteract()
     {
-        if (UIPageBase.m_PageOpening)
+        if (UIManager.Instance.m_PageOpening)
             return;
         CampUIManager.Instance.ShowPage<UI_EquipmentDepot>(true,true, 1f);
     }
 
     public void OnCharacterUpgradeInteract()
     {
-        if (UIPageBase.m_PageOpening)
+        if (UIManager.Instance.m_PageOpening)
             return;
         CampUIManager.Instance.ShowPage<UI_CharacterUpgrade>(true,true, 1f);
     }
@@ -82,18 +82,18 @@ public class CampManager : GameManagerBase
 
     public void OnBillboardInteract(Transform cameraPos)
     {
-        if (UIPage.m_PageOpening)
+        if (UIManager.Instance.m_PageOpening)
             return;
         AttachSceneCamera(cameraPos);
-        CampUIManager.Instance.ShowPage<UI_Billboard>(true,true, ResetPlayerCamera, .1f);
+        CampUIManager.Instance.ShowCoinsPage<UI_Billboard>(true,true, ResetPlayerCamera, .1f);
     }
 
     public void OnCharacterSelectInteract(InteractCampCharacterSelect characterSelect)
     {
-        if(UIPage.m_PageOpening)
+        if(UIManager.Instance.m_PageOpening)
             return;
         AttachSceneCamera(characterSelect.m_CameraPos);
-        CampUIManager.Instance.ShowPage<UI_CharacterSelect>(true,false,ResetPlayerCamera,1f);
+        CampUIManager.Instance.ShowCoinsPage<UI_CharacterSelect>(true,false,ResetPlayerCamera,1f).Play(characterSelect);
     }
 
     void ResetPlayerCamera()=> AttachPlayerCamera(tf_CameraAttach);

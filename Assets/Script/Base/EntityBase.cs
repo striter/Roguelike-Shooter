@@ -67,7 +67,7 @@ public class EntityBase : CObjectPoolMono<int>
     {
         if (!m_Activating)
         {
-            Debug.LogWarning("Recycled entity can't be recycle again!");
+            Debug.LogError("Recycled entity can't be recycle again!");
             return;
         }
         m_Activating = false;
