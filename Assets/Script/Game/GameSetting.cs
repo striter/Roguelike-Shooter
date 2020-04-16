@@ -812,18 +812,18 @@ namespace GameSetting
         public float m_MovementSpeedMultiply { get; private set; } = 1f;
         public float m_FireRateMultiply { get; private set; } = 1f;
         public float m_ReloadRateMultiply { get; private set; } = 1f;
-        public float m_CriticalHitMultiply { get; private set; } = 1f;
         public float m_DamageMultiply { get; private set; } = 0f;
-        public float m_CriticalHitRate { get; private set; } = 0f;
+        public float m_CriticalDamageMultiply { get; private set; } = 1f;
+        public float m_CriticalRate { get; private set; } = 0f;
         public float DoFireRateTick(float deltaTime) => deltaTime * m_FireRateMultiply;
         public float DoReloadRateTick(float deltaTime) => deltaTime * m_ReloadRateMultiply;
         public float GetMovementSpeed => m_Entity.m_baseMovementSpeed * m_MovementSpeedMultiply;
 
         public float m_ExtraFireRateMultiply => m_FireRateMultiply - 1;
-        public float m_ExtraCriticalHitMultiply => m_CriticalHitMultiply - 1;
+        public float m_ExtraCriticalHitMultiply => m_CriticalDamageMultiply - 1;
         public float m_ExtraMovemendSpeedMultiply => m_MovementSpeedMultiply-1f;
         
-        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, m_DamageMultiply, m_CriticalHitRate, m_CriticalHitMultiply , type, buff);
+        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, m_DamageMultiply, m_CriticalRate, m_CriticalDamageMultiply , type, buff);
 
         Func<DamageInfo, bool> OnReceiveDamage;
         Action OnExpireInfoChange;
@@ -908,8 +908,8 @@ namespace GameSetting
             m_FireRateMultiply = 1f;
             m_ReloadRateMultiply = 1f;
             m_DamageMultiply = 0f;
-            m_CriticalHitRate = 0f;
-            m_CriticalHitMultiply = 1f;
+            m_CriticalRate = 0f;
+            m_CriticalDamageMultiply = 1f;
         }
         protected virtual void OnSetExpireInfo(EntityExpireBase expire)
         {
@@ -919,16 +919,16 @@ namespace GameSetting
             m_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
             m_FireRateMultiply += expire.m_FireRateMultiply;
             m_ReloadRateMultiply += expire.m_ReloadRateMultiply;
-            m_CriticalHitRate += expire.m_CriticalRateAdditive;
-            m_CriticalHitMultiply += expire.m_CriticalHitMultiplyAdditive;
+            m_CriticalRate += expire.m_CriticalRateAdditive;
+            m_CriticalDamageMultiply += expire.m_CriticalHitMultiplyAdditive;
         }
         protected virtual void AfterInfoSet()
         {
             if (m_DamageReceiveMultiply < 0) m_DamageReceiveMultiply = 0;
             if (m_MovementSpeedMultiply < 0) m_MovementSpeedMultiply = 0;
             if (m_HealReceiveMultiply < 0) m_HealReceiveMultiply = 0;
-            if (m_CriticalHitMultiply < 0) m_CriticalHitMultiply = 0;
-            if (m_CriticalHitRate < 0) m_CriticalHitRate = 0;
+            if (m_CriticalDamageMultiply < 0) m_CriticalDamageMultiply = 0;
+            if (m_CriticalRate < 0) m_CriticalRate = 0;
         }
         #endregion
 
@@ -1119,7 +1119,7 @@ namespace GameSetting
         public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
         {
             float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, m_DamageMultiply+ randomDamageMultiply, m_CriticalHitRate, m_CriticalHitMultiply , type, buff);
+            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, m_DamageMultiply+ randomDamageMultiply, m_CriticalRate, m_CriticalDamageMultiply , type, buff);
             m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAttack(info); });
             return info;
         }
