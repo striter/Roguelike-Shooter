@@ -131,7 +131,7 @@ public class LevelChunkEditor : LevelChunkBase
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
         m_SelectionTiles.Clear();
-        m_SelectingTile.InitTile(new TileAxis(-6, -1), ChunkTileData.Default(), m_Random);
+        m_SelectingTile.InitTile(new TileAxis(-2,0), ChunkTileData.Default(), m_Random);
         ChangeEditSelection(null);
 
         System.Random random = new System.Random(Time.time.GetHashCode());
