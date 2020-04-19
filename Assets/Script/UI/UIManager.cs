@@ -16,7 +16,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     public AtlasLoader m_CommonSprites { get; private set; }
     public AtlasLoader m_ExpireSprites { get; private set; }
     public AtlasLoader m_WeaponSprites { get; private set; }
-    protected CB_GenerateOverlayUIGrabBlurTexture m_BlurBG { get; private set; }
+    protected CB_GenerateTransparentOverlayTexture m_BlurBG { get; private set; }
     public static void Activate(bool inGame)
     {
         GameObject uiObj = TResources.InstantiateUIManager();
@@ -42,8 +42,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
-        m_BlurBG= m_Effect.GetOrAddCameraEffect<CB_GenerateOverlayUIGrabBlurTexture>().SetEffect(2, 2f, 2);
-        m_BlurBG.SetEnable(false);
+        m_BlurBG = m_Effect.GetOrAddCameraEffect<CB_GenerateTransparentOverlayTexture>().SetOpaqueBlurTextureEnabled(false);
     }
 
     protected virtual void InitControls(bool inGame)
@@ -91,7 +90,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         if (enable)
         {
             m_OverlayBG.SetActivate(true);
-            m_BlurBG.SetEnable(true);
+            m_BlurBG.SetOpaqueBlurTextureEnabled(true,2f,2,3);
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => { m_OverlayBG.color = TCommon.ColorAlpha(m_OverlayBG.color, value); }, 0, 1, UIPageBase.F_AnimDuration, null, false));
         }
         else
@@ -99,7 +98,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
             this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
                 m_OverlayBG.color = TCommon.ColorAlpha(m_OverlayBG.color, value);
             }, 1, 0, UIPageBase.F_AnimDuration, () => {
-                m_BlurBG.SetEnable(false);
+                m_BlurBG.SetOpaqueBlurTextureEnabled(false);
                 m_OverlayBG.SetActivate(false);
             }, false));
         }

@@ -16,7 +16,6 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         {
             effectBase.InitEffect(this);
             m_CameraEffects.Add(effectBase);
-            ResetPostEffectParams();
             return effectBase;
         }
         return null;
@@ -30,21 +29,39 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
             return;
 
         m_CameraEffects.Remove(effect);
-        effect.OnDestroy();
-        ResetPostEffectParams();
     }
     public void RemoveAllPostEffect()
     {
         m_CameraEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
         m_CameraEffects.Clear();
-        ResetPostEffectParams();
     }
 
-    public void SetCameraEffects( DepthTextureMode textureMode)
+    public void SetMainTextureCamera(bool enabled)
     {
-        m_Camera.depthTextureMode = textureMode;
-        ResetPostEffectParams();
+        //m_Camera.depthTextureMode = enabled ? DepthTextureMode.Depth : DepthTextureMode.None;
+        m_MainTextureCamera = enabled;
+        if (m_MainTextureCamera)
+            GetOrAddCameraEffect<CE_MainCameraTexture>().SetTextureEnable(true, true);
+        else
+            RemoveCameraEffect<CE_MainCameraTexture>();
     }
+    public void ResetCameraEffectParams()
+    {
+        Shader.SetGlobalInt(m_GlobalCameraDepthTextureMode, m_MainTextureCamera ? 1 : 0);
+        m_DoGraphicBlitz = false;
+        m_DepthToWorldMatrix = false;
+        m_CameraEffects.Sort((a, b) => a.m_Sorting - b.m_Sorting);
+        m_CameraEffects.Traversal((CameraEffectBase effectBase) =>
+        {
+            effectBase.OnCheckEffectTextureEnable(m_MainTextureCamera);
+            if (!effectBase.m_Enabled)
+                return;
+
+            m_DoGraphicBlitz |= effectBase.m_DoGraphicBlitz;
+            m_DepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+        });
+    }
+
 
     public void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
     {
@@ -55,24 +72,28 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         areaScan.SetEffect(startPoint, scanColor, scanTex,scale, lerp, width);
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);
-        },0,1,duration,()=> {
-            RemoveCameraEffect<PE_AreaScanDepth>();
-        }));
+        },0,1,duration,()=> { RemoveCameraEffect<PE_AreaScanDepth>(); }));
     }
     
     #endregion
     List<CameraEffectBase> m_CameraEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }
+    public bool m_MainTextureCamera { get; private set; }
     public bool m_DepthToWorldMatrix { get; private set; } = false;
     public bool m_DoGraphicBlitz { get; private set; } = false;
-    RenderTexture tempTexture1, tempTexture2;
+    RenderTexture m_BlitzTempTexture1, m_BlitzTempTexture2;
+
     protected void Awake()
     {
         m_Camera = GetComponent<Camera>();
         m_Camera.depthTextureMode = DepthTextureMode.None;
         m_DepthToWorldMatrix = false;
+        m_MainTextureCamera = false;
+        m_DoGraphicBlitz = false;
+        m_BlitzTempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
+        m_BlitzTempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
     }
-    
+
     protected void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (m_DepthToWorldMatrix)
@@ -87,52 +108,34 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
             return;
         }
 
-        tempTexture1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-        Graphics.Blit(source, tempTexture1);
+        Graphics.Blit(source, m_BlitzTempTexture1);
         for (int i = 0; i < m_CameraEffects.Count; i++)
         {
             if (! m_CameraEffects[i].m_Enabled)
                 continue;
 
-            tempTexture2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-            m_CameraEffects[i].OnRenderImage(tempTexture1,tempTexture2);
-            Graphics.Blit(tempTexture2, tempTexture1);
-            RenderTexture.ReleaseTemporary(tempTexture2);
+            m_CameraEffects[i].OnRenderImage(m_BlitzTempTexture1,m_BlitzTempTexture2);
+            Graphics.Blit(m_BlitzTempTexture2, m_BlitzTempTexture1);
         }
-        Graphics.Blit(tempTexture1,destination);
-        RenderTexture.ReleaseTemporary(tempTexture1);
+        Graphics.Blit(m_BlitzTempTexture1,destination);
     }
     private void OnDestroy()
     {
+        RenderTexture.ReleaseTemporary(m_BlitzTempTexture2);
+        RenderTexture.ReleaseTemporary(m_BlitzTempTexture1);
         RemoveAllPostEffect();
     }
 
-    static readonly int m_GlobalCameraDepthTextureMode = Shader.PropertyToID("_CameraDepthTextureMode");
-    void ResetPostEffectParams()
-    {
-        Shader.SetGlobalInt(m_GlobalCameraDepthTextureMode, (int)m_Camera.depthTextureMode);
-        m_DoGraphicBlitz = false;
-        m_DepthToWorldMatrix = false;
-        m_CameraEffects.Traversal((CameraEffectBase effectBase) =>
-        {
-            effectBase.OnCheckEffectTextureEnable(m_Camera.depthTextureMode);
-            if (!effectBase.m_Enabled)
-                return;
-
-            m_DoGraphicBlitz |=effectBase.m_DoGraphicBlitz;
-            m_DepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
-        });
-    }
-
     #region Calculations
-
     public float Get01Depth(Vector3 target) => m_Camera.WorldToViewportPoint(target).z / (m_Camera.farClipPlane - m_Camera.nearClipPlane);
     public float Get01DepthLength(float length) => length / (m_Camera.farClipPlane - m_Camera.nearClipPlane);
+    static readonly int m_GlobalCameraDepthTextureMode = Shader.PropertyToID("_CameraDepthTextureMode");
     static readonly int ID_VPMatrixInverse = Shader.PropertyToID("_VPMatrixInverse");
     static readonly int ID_FrustumCornersRayBL = Shader.PropertyToID("_FrustumCornersRayBL");
     static readonly int ID_FrustumCornersRayBR = Shader.PropertyToID("_FrustumCornersRayBR");
     static readonly int ID_FrustumCornersRayTL = Shader.PropertyToID("_FrustumCornersRayTL");
     static readonly int ID_FrustumCornersRayTR = Shader.PropertyToID("_FrustumCornersRayTR");
+
     protected void CalculateViewProjectionMatrixInverse()=>Shader.SetGlobalMatrix(ID_VPMatrixInverse, (m_Camera.projectionMatrix * m_Camera.worldToCameraMatrix).inverse);
     protected void CalculateFrustumCornorsRay()
     {

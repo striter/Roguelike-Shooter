@@ -94,7 +94,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
         m_DepthSSAO = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect(renderData.c_shadowColor, 2f,15,0.00035f,null,16);
         m_Bloom = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
-        CameraController.Instance.m_Effect.GetOrAddCameraEffect<CB_GenerateOpaqueTexture>();
+        CameraController.Instance.m_Effect.SetMainTextureCamera(true);
         switch (_levelStyle)
         {
             case  enum_GameStyle.Undead:
@@ -110,13 +110,13 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     void OnEffectOptionChanged()
     {
         m_DirectionalLight.shadows = OptionsDataManager.m_OptionsData.m_ShadowOff ? LightShadows.None : LightShadows.Hard;
-        if (OptionsDataManager.m_OptionsData.m_Bloom == enum_Option_Bloom.Normal)
+        if (OptionsDataManager.m_OptionsData.m_Effect == enum_Option_Effect.Normal)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 4, 5, 2);
-        else if (OptionsDataManager.m_OptionsData.m_Bloom == enum_Option_Bloom.High)
+        else if (OptionsDataManager.m_OptionsData.m_Effect == enum_Option_Effect.High)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
-        m_DepthSSAO.SetAOEnable(OptionsDataManager.m_OptionsData.m_Effect>= enum_Option_Effect.High);
-        m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.Normal, OptionsDataManager.m_OptionsData.m_Bloom >= enum_Option_Bloom.High);
-        CameraController.Instance.m_Effect.SetCameraEffects(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Medium? DepthTextureMode.Depth: DepthTextureMode.None );
+        m_DepthSSAO.SetAOEnable(OptionsDataManager.m_OptionsData.m_Effect>=  enum_Option_Effect.High);
+        m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Normal, OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.High);
+        CameraController.Instance.m_Effect.ResetCameraEffectParams();
     }
 
     protected void SetPostEffect_Dead()

@@ -106,8 +106,7 @@ public class UI_Options : UIPage {
         OnSelectionClick(enum_OptionSelection.Display);
         
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("FrameRate/BtnToggle"), OnFrequencyClicked, GetFrameRateOption());
-        new ValueToggle<enum_Option_Effect>(m_Page[enum_OptionSelection.Display].Find("Effect/BtnToggle"), OnEffectClicked, GetEffectOption(),new List<enum_Option_Effect> {  enum_Option_Effect.Normal, enum_Option_Effect.Medium, enum_Option_Effect.High});
-        new ValueToggle<enum_Option_Bloom>(m_Page[enum_OptionSelection.Display].Find("Bloom/BtnToggle"), OnBloomClicked, GetBloomOption(), new List<enum_Option_Bloom> { enum_Option_Bloom.Off, enum_Option_Bloom.Normal, enum_Option_Bloom.High });
+        new ValueToggle<enum_Option_Effect>(m_Page[enum_OptionSelection.Display].Find("Effect/BtnToggle"), OnEffectClicked, GetEffectOption(), new List<enum_Option_Effect> { enum_Option_Effect.Off, enum_Option_Effect.Normal, enum_Option_Effect.High });
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Region/BtnToggle"), OnRegionClicked, GetRegionOption());
         new BoolToggle(m_Page[enum_OptionSelection.Display].Find("Shadow/BtnToggle"), OnShadowClicked, GetShadowOption());
         new SliderStatus(m_Page[enum_OptionSelection.Sound].Find("MusicVolume/Slider"), OnMusicVolumeChanged, OptionsDataManager.m_OptionsData.m_MusicVolumeTap);
@@ -150,19 +149,9 @@ public class UI_Options : UIPage {
     {
         OptionsDataManager.m_OptionsData.m_Effect++;
         if (OptionsDataManager.m_OptionsData.m_Effect > enum_Option_Effect.High)
-            OptionsDataManager.m_OptionsData.m_Effect = enum_Option_Effect.Normal;
+            OptionsDataManager.m_OptionsData.m_Effect = enum_Option_Effect.Off;
         OptionsDataManager.OnOptionChanged();
         return GetEffectOption();
-    }
-
-    enum_Option_Bloom GetBloomOption() => OptionsDataManager.m_OptionsData.m_Bloom;
-    enum_Option_Bloom OnBloomClicked()
-    {
-        OptionsDataManager.m_OptionsData.m_Bloom++;
-        if (OptionsDataManager.m_OptionsData.m_Bloom > enum_Option_Bloom.High)
-            OptionsDataManager.m_OptionsData.m_Bloom = enum_Option_Bloom.Off;
-        OptionsDataManager.OnOptionChanged();
-        return GetBloomOption();
     }
 
     bool GetRegionOption() => OptionsDataManager.m_OptionsData.m_Region == enum_Option_LanguageRegion.EN;

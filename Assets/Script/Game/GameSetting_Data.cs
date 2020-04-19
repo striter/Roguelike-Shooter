@@ -736,7 +736,6 @@ namespace GameSetting
         public enum_Option_JoyStickMode m_JoyStickMode;
         public enum_Option_FrameRate m_FrameRate;
         public enum_Option_Effect m_Effect;
-        public enum_Option_Bloom m_Bloom;
         public enum_Option_LanguageRegion m_Region;
         public bool m_ShadowOff;
         public int m_MusicVolumeTap;
@@ -748,7 +747,6 @@ namespace GameSetting
             m_JoyStickMode = enum_Option_JoyStickMode.Retarget;
             m_FrameRate = enum_Option_FrameRate.High;
             m_Effect = enum_Option_Effect.High;
-            m_Bloom = enum_Option_Bloom.High;
             m_Region = enum_Option_LanguageRegion.CN;
             m_ShadowOff = false;
             m_SensitiveTap = 5;

@@ -18,6 +18,19 @@ public struct RangeFloat
         length = _length;
     }
 }
+[Serializable]
+public struct RangeInt
+{
+
+    public int start;
+    public int length;
+    public int end => start + length;
+    public RangeInt(int _start, int _length)
+    {
+        start = _start;
+        length = _length;
+    }
+}
 
 #region DataPhrase
 public interface IDataConvert

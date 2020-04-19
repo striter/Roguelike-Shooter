@@ -4,9 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+public enum enum_CameraEffectSorting
+{
+    Invalid=-1,
+    Main=1,
+    CommandBuffer=2,
+    PostEffect=3,
+}
 public class CameraEffectBase
 {
-    public virtual DepthTextureMode m_DepthTextureRequire => DepthTextureMode.None;
+    public virtual enum_CameraEffectSorting m_Sorting => enum_CameraEffectSorting.Invalid;
+    public virtual bool m_DepthRequire => true;
     public virtual bool m_DepthToWorldMatrix => false;
     public virtual bool m_DoGraphicBlitz => false;
     protected CameraEffectManager m_Manager { get; private set; }
@@ -29,98 +37,154 @@ public class CameraEffectBase
     {
         Graphics.Blit(source, destination);
     }
-    protected virtual bool CheckEnabled(DepthTextureMode depthTextureMode) => depthTextureMode >= m_DepthTextureRequire;
-    public void OnCheckEffectTextureEnable(DepthTextureMode depthTextureMode) {
-        m_Enabled = CheckEnabled(depthTextureMode); 
+    protected virtual bool CheckEnabled(bool depthEnabled) => true;
+    public void OnCheckEffectTextureEnable(bool depthEnabled) {
+        m_Enabled = CheckEnabled(depthEnabled); 
     }
     public virtual void OnDestroy()
     {
     }
 }
 
+public class CE_MainCameraTexture:CameraEffectBase
+{
+    public override enum_CameraEffectSorting m_Sorting => enum_CameraEffectSorting.Main;
+    public bool m_DepthTextureEnabled { get; private set; } = false;
+    public bool m_OpaqueTextureEnabled { get; private set; } = false;
+    readonly int ID_GlobalDepthTexture = Shader.PropertyToID("_CameraDepthTexture");
+    readonly int ID_GlobalOpaqueTexture = Shader.PropertyToID("_CameraOpaqueTexture");
+    CommandBuffer m_DepthTextureBuffer, m_OpaqueTextureBuffer;
+    RenderTexture m_ColorBuffer, m_DepthBuffer, m_DepthTexture, m_OpaqueTexture ;
+    public override bool m_DoGraphicBlitz => true;
+    public override void InitEffect(CameraEffectManager _manager)
+    {
+        base.InitEffect(_manager);
+        m_ColorBuffer = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 0, RenderTextureFormat.RGB111110Float);
+        m_ColorBuffer.name = "Main Color Buffer";
+        m_DepthBuffer = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 24, RenderTextureFormat.Depth);
+        m_DepthBuffer.name = "Main Depth Buffer";
+        m_Manager.m_Camera.SetTargetBuffers(m_ColorBuffer.colorBuffer, m_DepthBuffer.depthBuffer);
+
+        m_DepthTextureBuffer = new CommandBuffer() { name="Depth Texture Copy"};
+        m_OpaqueTextureBuffer = new CommandBuffer() { name="Opaque Texture Copy"};
+        m_Manager.m_Camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, m_DepthTextureBuffer);
+        m_Manager.m_Camera.AddCommandBuffer(CameraEvent.BeforeForwardAlpha, m_OpaqueTextureBuffer);
+    }
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        Graphics.Blit(m_ColorBuffer, destination);
+    }
+    public CE_MainCameraTexture SetTextureEnable(bool depthTexture,bool opaqueTexture)
+    {
+        m_DepthTextureEnabled = depthTexture;
+        m_DepthTextureBuffer.Clear();
+        RenderTexture.ReleaseTemporary(m_DepthTexture);
+        if (m_DepthTextureEnabled)
+        {
+            m_DepthTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 0, RenderTextureFormat.RFloat);
+            m_DepthTexture.name = "Opaque Depth Texture";
+
+            m_DepthTextureBuffer.Blit(m_DepthBuffer.depthBuffer, m_DepthTexture.colorBuffer);
+            m_DepthTextureBuffer.SetGlobalTexture(ID_GlobalDepthTexture, m_DepthTexture);
+        }
+
+        m_OpaqueTextureEnabled = opaqueTexture;
+        m_OpaqueTextureBuffer.Clear();
+        RenderTexture.ReleaseTemporary(m_OpaqueTexture);
+        if (m_OpaqueTextureEnabled)
+        {
+            m_OpaqueTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth, m_Manager.m_Camera.pixelHeight, 0, RenderTextureFormat.ARGB32);
+            m_OpaqueTexture.name = "Opaque Texture";
+
+            m_OpaqueTextureBuffer.Blit(m_ColorBuffer, m_OpaqueTexture);
+            m_OpaqueTextureBuffer.SetGlobalTexture(ID_GlobalOpaqueTexture, m_OpaqueTexture);
+        }
+        return this;
+    }
+    
+
+    public override void OnDestroy()
+    {
+        RenderTexture.ReleaseTemporary(m_DepthTexture);
+        RenderTexture.ReleaseTemporary(m_OpaqueTexture);
+        RenderTexture.ReleaseTemporary(m_ColorBuffer);
+        RenderTexture.ReleaseTemporary(m_DepthBuffer);
+        m_Manager.m_Camera.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, m_DepthTextureBuffer);
+        m_Manager.m_Camera.RemoveCommandBuffer(CameraEvent.BeforeForwardAlpha, m_OpaqueTextureBuffer);
+        m_Manager.m_Camera.targetTexture = null;
+        base.OnDestroy();
+    }
+}
 
 #region CommandBuffer
 public class CommandBufferBase : CameraEffectBase
 {
+    public override enum_CameraEffectSorting m_Sorting => enum_CameraEffectSorting.CommandBuffer;
     protected CommandBuffer m_Buffer;
     protected virtual CameraEvent m_BufferEvent => 0;
-    public bool m_CommandBufferEnabled { get; private set; }
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
         m_Buffer = new CommandBuffer();
         m_Buffer.name = this.GetType().ToString();
-        m_CommandBufferEnabled = false;
-        SetEnable(true);
-    }
-    public void SetEnable(bool enable)
-    {
-        if (m_CommandBufferEnabled == enable)
-            return;
-        m_CommandBufferEnabled = enable;
-        if (m_CommandBufferEnabled)
-            m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
-        else
-            m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent, m_Buffer);
+        m_Manager.m_Camera.AddCommandBuffer(m_BufferEvent, m_Buffer);
     }
     public override void OnDestroy()
     {
-        SetEnable(false);
         m_Buffer.Clear();
-        m_Buffer = null;
+        m_Manager.m_Camera.RemoveCommandBuffer(m_BufferEvent, m_Buffer);
     }
 }
 
-public class CB_GenerateOpaqueTexture : CommandBufferBase
+public class CB_GenerateTransparentOverlayTexture:CommandBufferBase
 {
-    readonly int ID_GlobalOpaqueTexture = Shader.PropertyToID("_CameraOpaqueTexture");
-    protected override CameraEvent m_BufferEvent => CameraEvent.BeforeForwardAlpha;
-    readonly int ID_TempTexture = Shader.PropertyToID("_OpaqueTempRT");
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-        m_Buffer.GetTemporaryRT(ID_TempTexture, -2, -2, 0, FilterMode.Bilinear);
-        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture);
-        m_Buffer.SetGlobalTexture(ID_GlobalOpaqueTexture, ID_TempTexture);
-    }
-}
-
-public class CB_GenerateOverlayUIGrabBlurTexture : CommandBufferBase
-{
-    public PE_Blurs m_GaussianBlur { get; private set; }
     protected override CameraEvent m_BufferEvent => CameraEvent.BeforeImageEffects;
-    readonly int ID_GlobalBlurTexure = Shader.PropertyToID("_CameraUIOverlayBlurTexture");
-    readonly int ID_TempTexture1 = Shader.PropertyToID("_UIBlurTempRT1");
-    readonly int ID_TempTexture2 = Shader.PropertyToID("_UIBlurTempRT2");
+    public bool m_TransparentBlurTextureEnabled { get; private set; } = false;
+    readonly int ID_GlobalTransparentBlurTexure = Shader.PropertyToID("_CameraUIOverlayBlurTexture");
+    RenderTexture m_TransparentBlurTexture1, m_TransparentBlurTexture2;
+    public PE_Blurs m_Blur { get; private set; }
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
-        m_GaussianBlur = new PE_Blurs();
-        m_GaussianBlur.InitEffect(_manager);
+        m_Blur = new PE_Blurs();
+        m_Blur.InitEffect(_manager);
     }
-    public CB_GenerateOverlayUIGrabBlurTexture SetEffect(int iterations = 3, float blurSpread = 1.5f, int _downSample = 2)
+    public CB_GenerateTransparentOverlayTexture SetOpaqueBlurTextureEnabled(bool enable, float blurSpread = 1.5f, int downSample = 2, int iteration = 3)
     {
-        m_GaussianBlur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
-        m_Buffer.GetTemporaryRT(ID_TempTexture1, -_downSample, -_downSample, 0, FilterMode.Bilinear);
-        m_Buffer.GetTemporaryRT(ID_TempTexture2, -_downSample, -_downSample, 0, FilterMode.Bilinear);
-        m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, ID_TempTexture1);
-        for (int i = 0; i < iterations; i++)
+        m_TransparentBlurTextureEnabled = enable;
+        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture1);
+        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture2);
+        m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
+        m_Buffer.Clear();
+        if (m_TransparentBlurTextureEnabled)
         {
-            m_Buffer.Blit(ID_TempTexture1, ID_TempTexture2, m_GaussianBlur.m_Material, 1);
-            m_Buffer.Blit(ID_TempTexture2, ID_TempTexture1, m_GaussianBlur.m_Material, 2);
+            m_TransparentBlurTexture1 = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth / downSample, m_Manager.m_Camera.pixelHeight / downSample, 0, RenderTextureFormat.ARGB32);
+            m_TransparentBlurTexture1.filterMode = FilterMode.Bilinear;
+            m_TransparentBlurTexture1.name = "Transparent Blur Copy 1";
+
+            m_TransparentBlurTexture2 = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth / downSample, m_Manager.m_Camera.pixelHeight / downSample, 0, RenderTextureFormat.ARGB32);
+            m_TransparentBlurTexture2.filterMode = FilterMode.Bilinear;
+            m_TransparentBlurTexture2.name = "Transparent Blur Copy 1";
+
+            m_Buffer.Blit(BuiltinRenderTextureType.CurrentActive, m_TransparentBlurTexture1);
+            for (int i = 0; i < iteration; i++)
+            {
+                m_Buffer.Blit(m_TransparentBlurTexture1, m_TransparentBlurTexture2, m_Blur.m_Material, 1);
+                m_Buffer.Blit(m_TransparentBlurTexture2, m_TransparentBlurTexture1, m_Blur.m_Material, 2);
+            }
+            m_Buffer.SetGlobalTexture(ID_GlobalTransparentBlurTexure, m_TransparentBlurTexture1);
         }
-        m_Buffer.SetGlobalTexture(ID_GlobalBlurTexure, ID_TempTexture1);
         return this;
     }
+
     public override void OnDestroy()
     {
-        m_Buffer.ReleaseTemporaryRT(ID_TempTexture1);
-        m_Buffer.ReleaseTemporaryRT(ID_TempTexture2);
+        m_Blur.OnDestroy();
+        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture1);
+        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture2);
         base.OnDestroy();
-        m_GaussianBlur.OnDestroy();
     }
 }
-
 public class CB_DepthOfFieldSpecificStatic : CommandBufferBase
 {
     public PE_Blurs m_GaussianBlur { get; private set; }
@@ -160,6 +224,7 @@ public class CB_DepthOfFieldSpecificStatic : CommandBufferBase
 #region PostEffect
 public class PostEffectBase: CameraEffectBase
 {
+    public override enum_CameraEffectSorting m_Sorting => enum_CameraEffectSorting.PostEffect;
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
     public override bool m_DoGraphicBlitz => true;
@@ -199,11 +264,10 @@ public class PostEffectBase: CameraEffectBase
 }
 public class PE_ViewNormal : PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.DepthNormals;
 }
 public class PE_ViewDepth : PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.Depth;
+    public override bool m_DepthRequire => true;
 }
 public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
     
@@ -374,7 +438,7 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
 }
 public class PE_MotionBlurDepth:PE_MotionBlur
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.Depth;
+    public override bool m_DepthRequire => true;
     private Matrix4x4 mt_CurVP;
     public override void InitEffect(CameraEffectManager _manager)
     {
@@ -392,7 +456,7 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 }
 public class PE_FogDepth : PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.Depth;
+    public override bool m_DepthRequire => true;
     public override bool m_DepthToWorldMatrix => true;
     public T SetEffect<T>(Color _fogColor,  float _fogDensity = .5f, float _fogYStart = -1f, float _fogYEnd = 5f) where T:PE_FogDepth
     {
@@ -416,7 +480,7 @@ public class PE_FogDepthNoise : PE_FogDepth
 }
 public class PE_FocalDepth : PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.Depth;
+    public override bool m_DepthRequire => true;
     public PE_Blurs m_Blur { get; private set; }
     RenderTexture m_TempTexture;
     public override void InitEffect(CameraEffectManager _manager)
@@ -453,7 +517,7 @@ public class PE_FocalDepth : PostEffectBase
 }
 public class PE_DepthOutline:PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.DepthNormals;
+    public override bool m_DepthRequire => true;
     public void SetEffect(Color _edgeColor, float _sampleDistance = 1f, float _depthBias=.001f)
     {
         m_Material.SetColor("_EdgeColor", _edgeColor);
@@ -469,7 +533,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     public PE_Blurs m_Blur { get; private set; }
     public bool m_BloomEnabled { get; private set; }
     public bool m_OccludeEnabled { get; private set; }
-    protected override bool CheckEnabled(DepthTextureMode depthTextureMode)=> base.CheckEnabled(depthTextureMode)&&m_BloomEnabled;
+    protected override bool CheckEnabled(bool depthEnabled)=> base.CheckEnabled(depthEnabled)&&m_BloomEnabled;
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
@@ -528,7 +592,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
 }
 public class PE_AreaScanDepth : PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.Depth;
+    public override bool m_DepthRequire => true;
     public override bool m_DepthToWorldMatrix => true;
     static readonly int ID_ScanElapse =Shader.PropertyToID("_ScanElapse");
     public void SetElapse(float elapse)
@@ -547,7 +611,7 @@ public class PE_AreaScanDepth : PostEffectBase
 }
 public class PE_DepthSSAO : PostEffectBase
 {
-    public override DepthTextureMode m_DepthTextureRequire => DepthTextureMode.Depth;
+    public override bool m_DepthRequire => true;
     static readonly Vector4[] m_DepthSampleArray= new Vector4[16] {
             new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),
             new Vector3( 0.0689f,-0.1598f,-0.8547f),  new Vector3( 0.0560f, 0.0069f,-0.1843f),new Vector3(-0.0146f, 0.1402f, 0.0762f),  new Vector3( 0.0100f,-0.1924f,-0.0344f),
@@ -555,7 +619,7 @@ public class PE_DepthSSAO : PostEffectBase
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
     public bool m_AOEnable { get; private set; } = false;
     public void SetAOEnable(bool enable)=> m_AOEnable = enable;
-    protected override bool CheckEnabled(DepthTextureMode depthTextureMode) => m_AOEnable && base.CheckEnabled(depthTextureMode);
+    protected override bool CheckEnabled(bool depthEnabled)=>base.CheckEnabled(depthEnabled)&&m_AOEnable;
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
