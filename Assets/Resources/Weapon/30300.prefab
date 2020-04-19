@@ -258,7 +258,7 @@ MonoBehaviour:
   F_Radius: 0.4
   F_Height: 0
   RI_CountExtension:
-    start: 0
+    start: 1
     length: 0
   F_OffsetExtension: 0
   F_SplitRange: 360

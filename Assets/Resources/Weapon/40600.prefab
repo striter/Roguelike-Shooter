@@ -242,19 +242,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 25
   F_Speed: 12
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 8300000, guid: 36163465b6ea89c41a190f6f1d6e8b82, type: 3}
+  I_TrailIndex: 0
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
-  I_BuffApplyOnHit: 0
   F_Radius: 0.4
   F_Height: 1.5
   RI_CountExtension:
-    start: 0
+    start: 1
     length: 0
   F_OffsetExtension: 0
 --- !u!114 &114862284564231580

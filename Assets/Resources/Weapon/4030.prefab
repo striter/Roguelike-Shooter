@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 1
-  F_Damage: 50
   F_Speed: 15
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 0}
@@ -61,10 +60,9 @@ MonoBehaviour:
   I_ImpactIndex: 29009
   I_IndicatorIndex: 0
   I_HitMarkIndex: 0
-  I_BuffApplyOnHit: 14030
   F_Radius: 0.05
   F_Height: 1
   RI_CountExtension:
-    start: 0
+    start: 1
     length: 0
   F_OffsetExtension: 0

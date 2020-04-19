@@ -134,5 +134,8 @@ MonoBehaviour:
   I_HitMarkIndex: 0
   F_Radius: 0.12
   F_Height: 1
+  RI_CountExtension:
+    start: 1
+    length: 0
   F_OffsetExtension: 0
   B_DealHitDamage: 0
