@@ -60,8 +60,8 @@ public class LevelTileEditorData : LevelTileEditor {
                 terrainType = enum_TileTerrainType.Plane;
                 break;
             case enum_EditorTerrainType.Highland:    //Broken Logic Cause Only Provided 3 Available Model!
-                TileTools.m_EdgeDirections.Traversal((enum_TileDirection direction) => { if (!_edgeTerrains.ContainsKey(direction)) _edgeTerrains.Add(direction, enum_EditorTerrainType.Highland); });
-                TileTools.m_AngleDirections.Traversal((enum_TileDirection direction) => { if (!_angleTerrains.ContainsKey(direction)) _angleTerrains.Add(direction, enum_EditorTerrainType.Highland); });
+                //TileTools.m_EdgeDirections.Traversal((enum_TileDirection direction) => { if (!_edgeTerrains.ContainsKey(direction)) _edgeTerrains.Add(direction, enum_EditorTerrainType.Highland); });
+                //TileTools.m_AngleDirections.Traversal((enum_TileDirection direction) => { if (!_angleTerrains.ContainsKey(direction)) _angleTerrains.Add(direction, enum_EditorTerrainType.Highland); });
                 terrainType = enum_TileTerrainType.Highland;
                 List<enum_TileDirection> edgeSlope = _edgeTerrains.Keys.ToList().FindAll(p => _edgeTerrains[p] == enum_EditorTerrainType.Highland);
 
@@ -97,8 +97,8 @@ public class LevelTileEditorData : LevelTileEditor {
                 }
                 break;
             case enum_EditorTerrainType.River:
-                TileTools.m_EdgeDirections.Traversal((enum_TileDirection direction) => { if (!_edgeTerrains.ContainsKey(direction)) _edgeTerrains.Add(direction, enum_EditorTerrainType.River); });
-                TileTools.m_AngleDirections.Traversal((enum_TileDirection direction) => { if (!_angleTerrains.ContainsKey(direction)) _angleTerrains.Add(direction, enum_EditorTerrainType.River); });
+                //TileTools.m_EdgeDirections.Traversal((enum_TileDirection direction) => { if (!_edgeTerrains.ContainsKey(direction)) _edgeTerrains.Add(direction, enum_EditorTerrainType.River); });
+                //TileTools.m_AngleDirections.Traversal((enum_TileDirection direction) => { if (!_angleTerrains.ContainsKey(direction)) _angleTerrains.Add(direction, enum_EditorTerrainType.River); });
                 terrainType = enum_TileTerrainType.River_0P;
                 int waterEdgeCount = _edgeTerrains.Values.Count(p => p == enum_EditorTerrainType.River);
                 if (waterEdgeCount == 0)
