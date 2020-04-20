@@ -5,14 +5,11 @@ using System.Collections.Generic;
 
 public class LevelChunkData : ScriptableObject {
     [SerializeField]
-    protected enum_ChunkType m_Type;
-    [SerializeField]
     protected int m_Width, m_Height;
     [SerializeField]
     protected ChunkTileData[] m_TileData;
     [SerializeField]
     protected ChunkConnectionData[] m_ConnectionIndex;
-    public enum_ChunkType Type => m_Type;
     public int Width => m_Width;
     public int Height => m_Height;
     public TileAxis m_Size => new TileAxis(Width, Height);
@@ -23,10 +20,9 @@ public class LevelChunkData : ScriptableObject {
         return data;
     } 
 
-    public static LevelChunkData NewData(int width,int height, enum_ChunkType type)
+    public static LevelChunkData NewData(int width,int height)
     {
         LevelChunkData data = CreateInstance<LevelChunkData>();
-        data.m_Type = type;
         data.m_Width = width;
         data.m_Height = height;
         data.m_TileData = new ChunkTileData[data.m_Width * data.m_Height];
@@ -35,9 +31,9 @@ public class LevelChunkData : ScriptableObject {
                 data.m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), data.Width)] = ChunkTileData.Default();
         return data;
     }
-    public static LevelChunkData NewData( enum_ChunkType type, int count,enum_TileDirection direction, LevelTileEditor[,] transferData)
+    public static LevelChunkData NewData( int count,enum_TileDirection direction, LevelTileEditor[,] transferData)
     {
-        LevelChunkData data = NewData(transferData.GetLength(0), transferData.GetLength(1) ,type);
+        LevelChunkData data = NewData(transferData.GetLength(0), transferData.GetLength(1));
         int xResize=0;
         int yResize=0;
         int xOffset=0;
@@ -100,7 +96,6 @@ public class LevelChunkData : ScriptableObject {
     {
         m_Width = chunk.m_Width;
         m_Height = chunk.m_Height;
-        m_Type = chunk.m_ChunkType;
          m_TileData = new ChunkTileData[m_Width*m_Height];
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
@@ -152,17 +147,17 @@ public class LevelChunkData : ScriptableObject {
                         default:
                             tileColor = Color.grey;
                             break;
-                        case enum_TileObjectType.EEntrance1x1:
+                        case enum_TileObjectType.EConnection:
+                        case enum_TileObjectType.EEntrance:
                             tileColor = Color.green;
                             break;
-                        case enum_TileObjectType.EPortalMain2x1:
-                        case enum_TileObjectType.EPortalExtra2x1:
+                        case enum_TileObjectType.EPortal:
                             tileColor = Color.blue;
                             break;
-                        case enum_TileObjectType.EEventArea3x3:
+                        case enum_TileObjectType.EEventArea:
                             tileColor = Color.white;
                             break;
-                        case enum_TileObjectType.EEnermySpawn1x1:
+                        case enum_TileObjectType.EEnermySpawn:
                             tileColor = Color.red;
                             break;
                         case enum_TileObjectType.Block:

@@ -13,7 +13,7 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
         CameraController.Instance.m_Effect.ResetCameraEffectParams();
     }
     #region FileEdit
-    public void New(int sizeX,int sizeY,enum_ChunkType type)=>LevelChunkEditor.Instance.Init(LevelChunkData.NewData(sizeX, sizeY,type));
+    public void New(int sizeX,int sizeY)=>LevelChunkEditor.Instance.Init(LevelChunkData.NewData(sizeX, sizeY));
     
     public LevelChunkData Read(string dataName)
     {

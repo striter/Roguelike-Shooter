@@ -8,14 +8,6 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
-        #region Level
-        public const int I_TotalLevelCountPerStage = 20;
-        public const int I_EventLevelCountPerStage = 8;
-
-        public const int I_RewardLevelRate = 40;
-        public static readonly List<enum_LevelType> m_NormalLevelsPool = new List<enum_LevelType>() { enum_LevelType.EliteBattle, enum_LevelType.WeaponReforge, enum_LevelType.Bonefire, enum_LevelType.WeaponRecycle, enum_LevelType.WeaponVendorNormal, enum_LevelType.PerkFill, enum_LevelType.PerkRare, enum_LevelType.BloodShrine, enum_LevelType.HealShrine, enum_LevelType.PerkShrine, enum_LevelType.PerkSelectNormal, enum_LevelType.PerkLottery };
-        public static readonly List<enum_LevelType> m_RewardLevelsPool = new List<enum_LevelType>() { enum_LevelType.PerkSelectRare, enum_LevelType.WeaponVendorRare, enum_LevelType.SafeCrack };
-        #endregion
         #region Interacts
         public const float F_PickupMaxSpeed = 100f;
         public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
@@ -322,8 +314,8 @@ namespace GameSetting
         public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
         public static string GetLocalizeKey(this enum_Stage stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
-        public static string GetLocalizeNameKey(this enum_LevelType type) => "UI_Level_" + type + "_Name";
-        public static string GetLocalizeIntroKey(this enum_LevelType type) => "UI_Level_" + type + "_Intro";
+        public static string GetLocalizeNameKey(this enum_StagePortalType type) => "UI_Level_" + type + "_Name";
+        public static string GetLocalizeIntroKey(this enum_StagePortalType type) => "UI_Level_" + type + "_Intro";
         public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
         public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact+"_Title";
         public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
@@ -356,16 +348,6 @@ namespace GameSetting
 
     #region For Developers Use
     #region Structs
-    public struct GameLevelPortalData
-    {
-        public enum_LevelType m_PortalMain { get; private set; }
-        public enum_LevelType m_PortalExtra { get; private set; }
-        public GameLevelPortalData(enum_LevelType _mainType, enum_LevelType _subType)
-        {
-            m_PortalMain = _mainType;
-            m_PortalExtra = _subType;
-        }
-    }
 
     public struct PickupGenerateData
     {
@@ -1133,8 +1115,6 @@ namespace GameSetting
         }
 
         public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAbilityTrigger(); });
-        public void OnLevelFinish() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnLevelFinish(); });
-        
         public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
         public void OnDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity,float applyAmount) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnDealtDamage(damageEntity,damageInfo,applyAmount); });
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
@@ -1273,7 +1253,6 @@ namespace GameSetting
         public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }
-        public virtual void OnLevelFinish() { }
     }
 
     public class ExpireUpgrade: ExpireInteractBase

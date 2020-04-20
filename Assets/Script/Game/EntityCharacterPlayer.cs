@@ -66,14 +66,12 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnLevelFinished, m_CharacterInfo.OnLevelFinish);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }

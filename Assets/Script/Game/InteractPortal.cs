@@ -8,8 +8,8 @@ using System.Collections.Generic;
 public class InteractPortal : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.Portal;
-    enum_LevelType m_PortalEvent = enum_LevelType.Invalid;
-    Action<enum_LevelType> OnPortalInteract;
+    enum_StagePortalType m_PortalEvent = enum_StagePortalType.Invalid;
+    Action<enum_StagePortalType> OnPortalInteract;
     public override string GetUITitleKey() => m_PortalEvent.GetLocalizeNameKey();
     public override string GetUIIntroKey() => m_PortalEvent.GetLocalizeIntroKey();
     public override bool B_InteractOnTrigger => false;
@@ -23,7 +23,7 @@ public class InteractPortal : InteractGameBase
         });
     }
 
-    public void Play(enum_LevelType eventType, Action<enum_LevelType> _OnPortalInteract)
+    public void Play(enum_StagePortalType eventType, Action<enum_StagePortalType> _OnPortalInteract)
     {
         base.Play();
         m_PortalEvent = eventType;

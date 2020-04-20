@@ -51,7 +51,7 @@ public class LevelChunkEditor : LevelChunkBase
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
-        m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType);
+        m_ItemRestriction = LevelConst.m_ChunkRestriction.DeepCopy();
         m_EditType = enum_LevelEditorEditType.Terrain;
         InitData(_data, m_Random);
         m_GameViewMode = false;
@@ -66,7 +66,7 @@ public class LevelChunkEditor : LevelChunkBase
         m_TilesData[axis.X, axis.Y].InitTile(axis, data, random);
     }
 
-    public void Resize(int size, enum_TileDirection direction)=>  Init(LevelChunkData.NewData(m_ChunkType, size,direction, m_TilesData));
+    public void Resize(int size, enum_TileDirection direction)=>  Init(LevelChunkData.NewData(size,direction, m_TilesData));
     
     private void Update()
     {
@@ -223,7 +223,7 @@ public class LevelChunkEditor : LevelChunkBase
         if (!type.IsEditorTileObject())
             return false;
 
-        m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType);
+        m_ItemRestriction = LevelConst.m_ChunkRestriction.DeepCopy();
         m_TilesData.Traversal((LevelTileEditorData data) => {
             if (m_ItemRestriction.ContainsKey(data.m_Data.m_ObjectType))
                 m_ItemRestriction[data.m_Data.m_ObjectType] -= 1;

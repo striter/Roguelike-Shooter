@@ -61,17 +61,7 @@ public class TResources
     #region GamePrefab
     public static GameRenderData[] GetRenderData(enum_GameStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
     public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
-    public static Dictionary<enum_ChunkType, List<LevelChunkData>> GetChunkDatas()
-    {
-        Dictionary<enum_ChunkType,List< LevelChunkData>> sortedDatas = new Dictionary<enum_ChunkType, List<LevelChunkData>>();
-        LoadAll<LevelChunkData>(ConstPath.S_ChunkData).Traversal((LevelChunkData data) =>
-        {
-            if (!sortedDatas.ContainsKey(data.Type))
-                sortedDatas.Add(data.Type,new List<LevelChunkData>());
-            sortedDatas[data.Type].Add(data);
-        });
-        return sortedDatas;
-    }
+    public static LevelChunkData[] GetChunkDatas() => LoadAll<LevelChunkData>(ConstPath.S_ChunkData);
     public static TileItemBase[] GetChunkTiles(enum_GameStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile+_levelStyle);
     public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
 

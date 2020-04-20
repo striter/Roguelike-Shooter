@@ -15,13 +15,9 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     Text m_Edit_AddSize_Text;
     InputField m_Edit_AddSize_Count;
     EnumSelection m_Edit_AddSize_Direction;
-    EnumSelection m_File_Type;
     Transform m_Data;
-    EnumSelection m_Data_Type;
     UIT_GridControllerGridItem<LevelEditorUIDataView> m_EditorView;
 
-    enum_ChunkType m_FileChunkType= enum_ChunkType.Battle;
-    enum_ChunkType m_ViewChunkType = enum_ChunkType.Invalid;
     int m_DelectConfirmIndex = -1;
     enum_TileDirection m_Direction = enum_TileDirection.Top;
     List<string> m_DataViewing = new List<string>();
@@ -34,19 +30,12 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
         m_File_Save.onClick.AddListener(OnSaveClick);
         m_Edit_AddSize.onClick.AddListener(OnResizeButtonClick);
         m_Edit_AddSize_Direction.Init(enum_TileDirection.Top,(int index)=> { m_Direction = (enum_TileDirection)index; });
-        m_File_Type.Init(m_FileChunkType,OnFileTypeSelect);
-        m_Data_Type.Init( enum_ChunkType.Battle, OnDataViewTypeSelect);
         m_EditorView = new UIT_GridControllerGridItem<LevelEditorUIDataView>(m_Data.Find("DataView/DataGrid"));
     }
 
-    void OnFileTypeSelect(int typeID)
-    {
-        m_FileChunkType = (enum_ChunkType)typeID;
-    }
 
-    void OnDataViewTypeSelect(int typeID)
+    void Start()
     {
-        m_ViewChunkType = (enum_ChunkType)typeID;
         RebuildViewGrid();
     }
 
@@ -70,7 +59,7 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
     void OnNewClick()
     {
         m_Edit_AddSize_Text.text = m_File_New_X.text+"|"+ m_File_New_Y.text;
-        LevelEditorManager.Instance.New(int.Parse( m_File_New_X.text),int.Parse(m_File_New_Y.text), m_FileChunkType);
+        LevelEditorManager.Instance.New(int.Parse( m_File_New_X.text),int.Parse(m_File_New_Y.text));
     }
 
     void OnReadClick() => ReadData(LevelEditorManager.Instance.Read(m_File_Read_Name.text));
@@ -98,17 +87,10 @@ public class LevelEditorUI : SingletonMono<LevelEditorUI>,TReflection.UI.IUIProp
         m_DelectConfirmIndex = -1;
         m_DataViewing.Clear();
         m_EditorView.ClearGrid();
-        if (m_ViewChunkType == enum_ChunkType.Invalid)
-            return;
         int index = 0;
-        TResources.GetChunkDatas().Traversal((enum_ChunkType type, List<LevelChunkData> datas) => {
-            if (type != m_ViewChunkType)
-                return;
-            datas.Traversal((LevelChunkData data) =>
-            {
-                m_EditorView.AddItem(index++).SetData(OnDataEditClick, OnDataDeleteClick, data);
-                m_DataViewing.Add(data.name);
-            });
+        TResources.GetChunkDatas().Traversal((LevelChunkData data) => {
+            m_EditorView.AddItem(index++).SetData(OnDataEditClick, OnDataDeleteClick, data);
+            m_DataViewing.Add(data.name);
         });
     }
 

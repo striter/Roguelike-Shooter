@@ -16,7 +16,6 @@ public class GameUIManager : UIManager {
     protected override void InitControls(bool inGame)
     {
         base.InitControls(inGame);
-        ShowControls<UIC_GameStatus>();
         ShowControls<UIC_GameNumericVisualize>();
         ShowControls<UIC_CoinsStatus>();
     }

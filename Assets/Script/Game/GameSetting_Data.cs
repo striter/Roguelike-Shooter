@@ -603,7 +603,6 @@ namespace GameSetting
     {
         public string m_GameSeed;
         public enum_Stage m_Stage;
-        public int m_LevelPassed;
         public float m_Health;
         public float m_Coins;
         public int m_TotalExp;
@@ -636,7 +635,6 @@ namespace GameSetting
         {
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_StageIndex;
-            m_LevelPassed = _level.m_LevelPassed;
             m_Coins = _player.m_CharacterInfo.m_Coins;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;

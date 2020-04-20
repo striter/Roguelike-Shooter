@@ -46,18 +46,6 @@ namespace GameSetting
     {
         public static string GetInteractMainIcon(this InteractBase interact) =>  "control_main_interact";
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
-        public static string GetLevelIconSprite(this enum_LevelType type)
-        {
-            switch(type)
-            {
-                default:
-                    return "GameLevel_Icon_Unknown";
-                case enum_LevelType.StageStart:
-                case enum_LevelType.NormalBattle:
-                case enum_LevelType.StageFinalBattle:
-                    return "GameLevel_Icon_" + type; 
-            }
-        }
 
         public static string GetNumericVisualizeIcon(this enum_Interaction type)
         {

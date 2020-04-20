@@ -15,7 +15,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     public Vector3 m_LevelCenter { get; private set; }
     public float m_LevelHeight { get; private set; }
     public float m_LevelWidth { get; private set; }
-    Dictionary<enum_ChunkType, List<LevelChunkData>> m_ChunkDatas;
+     LevelChunkData[] m_ChunkDatas;
     protected override void Awake()
     {
         base.Awake();
@@ -40,9 +40,9 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
     }
     
-    public void OnStartLevel(enum_ChunkType levelType,System.Random _random , Action<enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
+    public void OnStartLevel(System.Random _random , Action<enum_TileObjectType, ChunkGameObjectData> OnLevelObjectGenerate)
     {
-        m_GameChunk.InitGameChunk( m_ChunkDatas[levelType].RandomItem(_random),_random,NavigationManager.UpdateChunkData);
+        m_GameChunk.InitGameChunk( m_ChunkDatas.RandomItem(_random),_random,NavigationManager.UpdateChunkData);
         Vector3 size = m_GameChunk.m_Size.ToPosition();
         m_LevelCenter = size / 2;
         m_LevelWidth = size.x;

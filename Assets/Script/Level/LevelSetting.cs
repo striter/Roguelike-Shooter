@@ -10,14 +10,9 @@ namespace LevelSetting
         public const int I_TileSize = 2;
 
         public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
-    }
 
-    public enum enum_ChunkType {
-        Invalid = -1,
-        Start,
-        Event,
-        Battle,
-        Final,
+        public static readonly Dictionary<enum_TileObjectType, int> m_ChunkRestriction = new Dictionary<enum_TileObjectType, int>() { {enum_TileObjectType.EConnection,2 },{enum_TileObjectType.EEntrance,-1 },{enum_TileObjectType.EEventArea,-1 },{enum_TileObjectType.EPortal,-1 }, { enum_TileObjectType.EEnermySpawn, -1 } };
+
     }
 
     public enum enum_ChunkPortalType
@@ -96,11 +91,11 @@ namespace LevelSetting
         PlantsCombine,
 
         EditorStart =50,       //Available During Editor
-        EEntrance1x1=51,
-        EPortalMain2x1=53,
-        EPortalExtra2x1=54,
-        EEventArea3x3 = 55,
-        EEnermySpawn1x1=56,
+        EEntrance=51,
+        EConnection=52,
+        EPortal=53,
+        EEventArea = 54,
+        EEnermySpawn=55,
         EditorEnd,
     }
 
@@ -141,17 +136,6 @@ namespace LevelSetting
             return type;
         }
 
-        public static bool IsBattleLevel(this enum_ChunkType type)
-        {
-            switch(type)
-            {
-                default:
-                    return false;
-                case enum_ChunkType.Battle:
-                case enum_ChunkType.Final:
-                    return true;
-            }
-        }
         public static Bounds GetWorldBounds(TileAxis origin, TileAxis size)
         {
             Vector3 boundsCenter = origin.ToPosition();
@@ -240,10 +224,6 @@ namespace LevelSetting
                 case enum_TileObjectType.Static2x2B:
                     size = TileAxis.One * 2;
                     break;
-                case enum_TileObjectType.EPortalMain2x1:
-                case enum_TileObjectType.EPortalExtra2x1:
-                    size = new TileAxis(2, 1);
-                    break;
                 case enum_TileObjectType.Static2x1B:
                 case enum_TileObjectType.Static2x1A:
                     size = new TileAxis(2, 1);
@@ -252,7 +232,6 @@ namespace LevelSetting
                 case enum_TileObjectType.Static3x2B:
                     size = new TileAxis(3, 2);
                     break;
-                case enum_TileObjectType.EEventArea3x3:
                 case enum_TileObjectType.Static3x3A:
                 case enum_TileObjectType.Static3x3B:
                     size = TileAxis.One * 3;
@@ -261,38 +240,6 @@ namespace LevelSetting
             return TileTools.GetDirectionedSize(size, direction);
         }
         
-        public static Dictionary<enum_TileObjectType,int> GetChunkRestriction(enum_ChunkType type)
-        {
-            Dictionary<enum_TileObjectType, int> restrictionDic = new Dictionary<enum_TileObjectType, int>();
-            switch(type)
-            {
-                case enum_ChunkType.Start:
-                    restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
-                    break;
-                case enum_ChunkType.Event:
-                    restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EEventArea3x3, 1);
-                    break;
-                case enum_ChunkType.Battle:
-                    restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
-                    restrictionDic.Add( enum_TileObjectType.EEnermySpawn1x1,-1);
-                    break;
-                case enum_ChunkType.Final:
-                    restrictionDic.Add(enum_TileObjectType.EEntrance1x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalMain2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EPortalExtra2x1, 1);
-                    restrictionDic.Add(enum_TileObjectType.EEnermySpawn1x1, -1);
-                    break;
-            }
-            return restrictionDic;
-        }
     }
     
     public struct ChunkGameObjectData

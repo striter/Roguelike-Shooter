@@ -401,18 +401,6 @@ namespace GameSetting_Action
         public P10028(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10029:ExpirePerkBase
-    {
-        public override int m_Index => 10029;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
-        public override float Value1 => 5f;
-        public override void OnLevelFinish()
-        {
-            base.OnLevelFinish();
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID ,- Value1*m_Stack, enum_DamageType.Health));
-        }
-        public P10029(PerkSaveData saveData) : base(saveData) { }
-    }
     
     public class P10030:PerkSFXweapon
     {

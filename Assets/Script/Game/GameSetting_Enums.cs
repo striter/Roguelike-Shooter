@@ -19,11 +19,8 @@ namespace GameSetting
         OnBattleStart,
         OnBattleFinish,
 
-        OnLevelStart,
-        OnLevelFinished,
+        OnStageStart,
         OnStageFinished,
-
-        OnEndlessData,
 
         OnGameLoad,
         OnGameBegin,
@@ -45,8 +42,6 @@ namespace GameSetting
 
         UI_OnWillAIAttack,
 
-        UI_ChunkTeleportUnlock,
-
         UI_GameCurrencyStatus,
 
         UI_PageOpen,
@@ -62,34 +57,10 @@ namespace GameSetting
         Ranger = 3,
     }
 
-    public enum enum_LevelType
+    public enum enum_StagePortalType
     {
         Invalid = -1,
-
         StageStart=0,
-
-        NormalBattle = 1,
-        EliteBattle = 2,
-        StageFinalBattle=3,
-        EndlessBattle=4,
-
-        Trader,
-        Bonefire,
-        WeaponReforge,
-        WeaponVendorNormal,
-        WeaponRecycle,
-        PerkRare,
-        PerkFill,
-        PerkSelectNormal,
-        PerkLottery,
-        PerkShrine,
-        BloodShrine,
-        HealShrine,
-
-        WeaponVendorRare,
-        SafeCrack,
-        PerkSelectRare,
-
         StageEnd,
         GameWin,
     }
@@ -219,84 +190,16 @@ namespace GameSetting
 
         public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
 
-        public static bool IsBattleLevel(this enum_LevelType levelType)
-        {
-            switch(levelType)
-            {
-                default:
-                    return false;
-                case enum_LevelType.EliteBattle:
-                case enum_LevelType.NormalBattle:
-                case enum_LevelType.EndlessBattle:
-                case enum_LevelType.StageFinalBattle:
-                    return true;
-            }
-        }
-
-        public static enum_ChunkType GetChunkType(this enum_LevelType eventType)
-        {
-            switch(eventType)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!"+eventType);
-                    return enum_ChunkType.Invalid;
-                case enum_LevelType.StageStart:
-                    return enum_ChunkType.Start;
-                case enum_LevelType.StageFinalBattle:
-                case enum_LevelType.EndlessBattle:
-                    return enum_ChunkType.Final;
-                case enum_LevelType.NormalBattle:
-                case enum_LevelType.EliteBattle:
-                    return enum_ChunkType.Battle;
-                case enum_LevelType.Trader:
-                case enum_LevelType.Bonefire:
-                case enum_LevelType.PerkFill:
-                case enum_LevelType.PerkRare:
-                case enum_LevelType.PerkSelectRare:
-                case enum_LevelType.WeaponReforge:
-                case enum_LevelType.WeaponRecycle:
-                case enum_LevelType.WeaponVendorRare:
-                case enum_LevelType.WeaponVendorNormal:
-                case enum_LevelType.SafeCrack:
-                case enum_LevelType.PerkSelectNormal:
-                case enum_LevelType.PerkLottery:
-                case enum_LevelType.PerkShrine:
-                case enum_LevelType.HealShrine:
-                case enum_LevelType.BloodShrine:
-                    return enum_ChunkType.Event;
-            }
-        }
-
-        public static enum_ChunkPortalType GetPortalType(this enum_LevelType eventType)
+        public static enum_ChunkPortalType GetPortalType(this enum_StagePortalType eventType)
         {
             switch (eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+ eventType);
                     return enum_ChunkPortalType.Invalid;
-                case enum_LevelType.EliteBattle:
-                case enum_LevelType.NormalBattle:
-                case enum_LevelType.StageFinalBattle:
-                    return enum_ChunkPortalType.Battle;
-                case enum_LevelType.WeaponVendorNormal:
-                case enum_LevelType.Trader:
-                case enum_LevelType.Bonefire:
-                case enum_LevelType.PerkFill:
-                case enum_LevelType.PerkRare:
-                case enum_LevelType.WeaponReforge:
-                case enum_LevelType.WeaponRecycle:
-                case enum_LevelType.PerkSelectNormal:
-                case enum_LevelType.PerkLottery:
-                case enum_LevelType.PerkShrine:
-                case enum_LevelType.HealShrine:
-                case enum_LevelType.BloodShrine:
+                case enum_StagePortalType.StageEnd:
                     return enum_ChunkPortalType.Event;
-                case enum_LevelType.StageEnd:
-                case enum_LevelType.GameWin:
-                case enum_LevelType.PerkSelectRare:
-                case enum_LevelType.WeaponVendorRare:
-                case enum_LevelType.SafeCrack:
-                case enum_LevelType.EndlessBattle:
+                case enum_StagePortalType.GameWin:
                     return enum_ChunkPortalType.Reward;
             }
         
