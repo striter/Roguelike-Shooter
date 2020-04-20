@@ -9,6 +9,7 @@ public class LevelEditorManager : SingletonMono<LevelEditorManager>
     private void Start()
     {
         CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>().m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur,3,10,2);
+        CameraController.Instance.m_Effect.SetMainTextureCamera(true);
         CameraController.Instance.m_Effect.ResetCameraEffectParams();
     }
     #region FileEdit

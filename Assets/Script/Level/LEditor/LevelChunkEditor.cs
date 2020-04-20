@@ -21,10 +21,12 @@ public class LevelChunkEditor : LevelChunkBase
     Dictionary<enum_TileObjectType, int> m_ItemRestriction;
     System.Random m_Random = new System.Random();
     public Light m_DirectionalLight { get; private set; }
+    Transform tf_Selections;
     private void Awake()
     {
         Instance = this;
         tf_CameraPos = transform.Find("CameraPos");
+        tf_Selections = tf_CameraPos.Find("Selections");
         m_SelectionTiles = new ObjectPoolListComponent<int, LevelTileEditorSelection>(tf_CameraPos.Find("Selections/SelectionPool"), "SelectionItem");
         m_SelectingTile = tf_CameraPos.Find("Selections/SelectingTile").GetComponent<LevelTileEditorSelection>();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
@@ -98,7 +100,9 @@ public class LevelChunkEditor : LevelChunkBase
         else
         {
             tf_CameraPos.Translate((Vector3.forward * Input.GetAxis("Vertical") + Vector3.right* Input.GetAxis("Horizontal")).normalized * Time.deltaTime * 40f);
-            CameraController.Instance.m_Camera.orthographicSize -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime*50f;
+            CameraController.Instance.m_Camera.orthographicSize -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime*500f;
+            tf_Selections.transform.position = CameraController.Instance.m_Camera.ViewportToWorldPoint(new Vector3(0,0,5));
+            tf_Selections.transform.localScale = Vector3.one * CameraController.Instance.m_Camera.orthographicSize / 20f;
         }
     }
 
@@ -107,10 +111,14 @@ public class LevelChunkEditor : LevelChunkBase
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
+            if(m_GameViewMode)
+            {
+                m_GameViewMode = false;
+                OnCameraEditModeChanged();
+            }
+
             if (!m_GameViewMode)
                 m_EditType = m_EditType.Next();
-            m_GameViewMode = false;
-            OnCameraEditModeChanged();
             OnEditModeChanged();
         }
 
@@ -127,8 +135,12 @@ public class LevelChunkEditor : LevelChunkBase
                 if (m_ViewStyle > enum_GameStyle.Undead)
                     m_ViewStyle = enum_GameStyle.Forest;
             }
-            m_GameViewMode = true;
-            OnCameraEditModeChanged();
+
+            if(!m_GameViewMode)
+            {
+                m_GameViewMode = true;
+                OnCameraEditModeChanged();
+            }
             OnEditModeChanged();
         }
 
@@ -186,7 +198,7 @@ public class LevelChunkEditor : LevelChunkBase
                     if (index > 20)
                     {
                         index = 0;
-                        yOffset -= 3;
+                        yOffset += 3;
                     }
                 });
                 break;
