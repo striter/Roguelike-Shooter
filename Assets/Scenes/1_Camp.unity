@@ -4507,7 +4507,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 45
+  field of view: 35
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -5783,13 +5783,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5ad01c3df51c540aae148c4af809a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_CameraRotateSmooth: 0.08
+  F_CameraRotateSmooth: 0.4
   F_CameraMoveSmooth: 0.08
   B_InvertCamera: 0
   F_RotateSensitive: 2
-  TPSOffset: {x: 0, y: 25, z: -6}
-  I_PitchMin: 75
-  I_PitchMax: 75
+  TPSOffset: {x: 0, y: 30, z: -15}
+  I_PitchMin: 60
+  I_PitchMax: 60
   I_ShakeParam: 6
   F_ReverseCheck: 0.1
 --- !u!4 &1467653211
