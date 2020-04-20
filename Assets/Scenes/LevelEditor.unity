@@ -2054,8 +2054,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 919178675}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -12, y: 30, z: -16}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -14, y: 0, z: -5}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 558102842}
   - {fileID: 1229636756}
@@ -2667,18 +2667,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1082792988}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de5ad01c3df51c540aae148c4af809a8, type: 3}
+  m_Script: {fileID: 11500000, guid: afd0a740e98892143a649077f696c9ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_CameraRotateSmooth: 0.1
-  F_CameraMoveSmooth: 0.1
+  F_CameraRotateSmooth: 0.3
+  F_CameraMoveSmooth: 0.3
   B_InvertCamera: 0
   F_RotateSensitive: 1
-  TPSOffset: {x: 0, y: 50, z: -20}
-  I_PitchMin: 0
-  I_PitchMax: 85
-  I_ShakeParam: 0
-  F_ReverseCheck: 0
+  E_RecoilMode: 1
+  I_PitchMin: -90
+  I_PitchMax: 90
+  B_SelfSetoffRecoil: 1
+  f_angleSmoothParam: 0.1
+  f_recoilPitchEdge: 20
+  f_recoilYawEdge: 5
 --- !u!1 &1087606003
 GameObject:
   m_ObjectHideFlags: 0
@@ -3575,7 +3577,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1229636755}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -160}
+  m_LocalPosition: {x: -2.49, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1136358872}
@@ -5068,7 +5070,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1821319590}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d3edb4d7545332d43a7feb0ddbee14df, type: 3}
+  m_Script: {fileID: 11500000, guid: d173ce8834c22874a8b8493aec013672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1940754873

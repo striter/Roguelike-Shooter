@@ -32,7 +32,8 @@ public class LevelChunkEditor : LevelChunkBase
     }
     private void Start()
     {
-        TPSCameraController.Instance.Attach(tf_CameraPos, true, true);
+        FPSCameraController.Instance.Attach(tf_CameraPos, true);
+        FPSCameraController.Instance.SetCameraPosition(tf_CameraPos.transform.localPosition);
         LevelObjectManager.Register(TResources.GetChunkEditorTiles());
     }
     public LevelChunkEditor CheckDatas()
@@ -48,13 +49,12 @@ public class LevelChunkEditor : LevelChunkBase
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
-        TPSCameraController.Instance.SetCameraPosition(tf_CameraPos.transform.localPosition);
-        TPSCameraController.Instance.SetCameraRotation(60, 0);
         m_ItemRestriction = LevelExpressions.GetChunkRestriction(m_ChunkType);
         m_EditType = enum_LevelEditorEditType.Terrain;
-        m_GameViewMode = false;
         InitData(_data, m_Random);
-        CheckEditMode();
+        m_GameViewMode = false;
+        OnCameraEditModeChanged();
+        OnEditModeChanged();
     }
 
     protected override bool WillGenerateTile(ChunkTileData data) => true;
@@ -68,17 +68,38 @@ public class LevelChunkEditor : LevelChunkBase
     
     private void Update()
     {
-        MoveCameraCheck();
+        CameraMoveCheck();
         ChunkEditCheck();
     }
-
-    void MoveCameraCheck()
+    void OnCameraEditModeChanged()
     {
-        if (!Input.GetKey(KeyCode.LeftShift))
-            return;
+        CameraController.Instance.m_Camera.orthographic = !m_GameViewMode;
+        if (m_GameViewMode)
+        {
+            CameraController.Instance.SetCameraPosition(Vector3.zero);
+            CameraController.Instance.SetCameraRotation(60, 0);
+        }
+        else
+        {
+            CameraController.Instance.m_Camera.orthographicSize = 10;
+            tf_CameraPos.transform.position = Vector3.up * 10;
+            CameraController.Instance.SetCameraRotation(90, 0);
+        }
 
-        tf_CameraPos.Translate((CameraController.CameraXZForward * Input.GetAxis("Vertical") + CameraController.CameraXZRightward * Input.GetAxis("Horizontal")).normalized * Time.deltaTime * 40f + Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 500f * Vector3.up);
-        CameraController.Instance.RotateCamera(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 50f);
+    }
+
+    void CameraMoveCheck()
+    {
+        if (m_GameViewMode)
+        {
+            tf_CameraPos.Translate((CameraController.Instance.m_Camera.transform.forward * Input.GetAxis("Vertical") + CameraController.Instance.m_Camera.transform.right * Input.GetAxis("Horizontal")).normalized * Time.deltaTime * 40f);
+            CameraController.Instance.RotateCamera(new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 50f);
+        }
+        else
+        {
+            tf_CameraPos.Translate((Vector3.forward * Input.GetAxis("Vertical") + Vector3.right* Input.GetAxis("Horizontal")).normalized * Time.deltaTime * 40f);
+            CameraController.Instance.m_Camera.orthographicSize -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime*50f;
+        }
     }
 
     RaycastHit raycastHit;
@@ -89,7 +110,8 @@ public class LevelChunkEditor : LevelChunkBase
             if (!m_GameViewMode)
                 m_EditType = m_EditType.Next();
             m_GameViewMode = false;
-            CheckEditMode();
+            OnCameraEditModeChanged();
+            OnEditModeChanged();
         }
 
         if (Input.GetKeyDown(KeyCode.BackQuote))
@@ -106,13 +128,14 @@ public class LevelChunkEditor : LevelChunkBase
                     m_ViewStyle = enum_GameStyle.Forest;
             }
             m_GameViewMode = true;
-            CheckEditMode();
+            OnCameraEditModeChanged();
+            OnEditModeChanged();
         }
 
         MouseRayChunkEdit();
     }
     #region EditMode
-    void CheckEditMode()
+    void OnEditModeChanged()
     {
         LevelEditorUI.Instance.SetActivate(!m_GameViewMode);
         enum_GameStyle targetStyle = m_GameViewMode ? m_ViewStyle : enum_GameStyle.Invalid;
