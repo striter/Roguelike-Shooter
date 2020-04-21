@@ -196,7 +196,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_PrePlayerMapAxis = -TileAxis.One;
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
-        List<enum_ChunkEventType> mainChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Start, enum_ChunkEventType.Normal, enum_ChunkEventType.Normal, enum_ChunkEventType.Final };
+        List<enum_ChunkEventType> mainChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Normal, enum_ChunkEventType.Normal, enum_ChunkEventType.Final };
         List<enum_ChunkEventType> subChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Normal };
 
         LevelChunkData[] chunkDatas = TResources.GetChunkDatas();
@@ -310,7 +310,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
         //GenerateNavigationData
         Bounds mapBounds = new Bounds();
-        mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f + Vector3.up * LevelConst.I_TileSize;
+        mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f ;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
         NavigationManager.InitNavMeshData(transform, mapBounds);
 
