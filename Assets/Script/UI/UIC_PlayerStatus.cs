@@ -9,7 +9,6 @@ public class UIC_PlayerStatus : UIControlBase
     RawImage img_Dying;
     
     EntityCharacterPlayer m_Player;
-    UIT_GridControllerGridItem<UIGI_ActionExpireInfo> m_ActionExpireGrid;
     
     Transform tf_StatusData;
     RectTransform tf_WeaponData;
@@ -50,7 +49,6 @@ public class UIC_PlayerStatus : UIControlBase
         m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
         m_HealthAmount = tf_HealthData.Find("Amount").GetComponent<UIT_TextExtend>();
 
-        m_ActionExpireGrid = new UIT_GridControllerGridItem<UIGI_ActionExpireInfo>(transform.Find("ActionExpireGrid"));
         m_HealthLerp = new ValueLerpSeconds(0f, 4f, 2f, (float value) => {
             img_HealthFill.fillAmount = value;
             rtf_HealthFillHandle.ReAnchorReposX(value);
