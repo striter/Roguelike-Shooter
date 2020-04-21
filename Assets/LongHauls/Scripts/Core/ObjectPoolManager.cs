@@ -244,24 +244,18 @@ public class ObjectPoolListClass<T,Y>: ObjectPoolListBase<T,Y> where Y:CSimplePo
 }
 #endregion
 #region Pool Monobehaviour
-public class CSimplePoolObjectMono<T> :MonoBehaviour
+public interface ISimplePoolObjectMono<T> 
 {
-    public virtual void OnPoolInit()
-    {
-    }
+     void OnPoolInit();
 
-    public virtual void OnPoolAdd(T identity)
-    {
-    }
+     void OnPoolAdd(T identity);
 
-    public virtual void OnPoolRemove()
-    {
-    }
+     void OnPoolRemove();
 }
 
-public class ObjectPoolListMono<T, Y> : ObjectPoolListBase<T, Y> where Y : CSimplePoolObjectMono<T>
+public class ObjectPoolListMonobehaviour<T, Y> : ObjectPoolListBase<T, Y> where Y :MonoBehaviour, ISimplePoolObjectMono<T>
 {
-    public ObjectPoolListMono(Transform poolTrans, string itemName) : base(poolTrans, itemName)
+    public ObjectPoolListMonobehaviour(Transform poolTrans, string itemName) : base(poolTrans, itemName)
     {
     }
     protected override Y CreateNewItem(Transform instantiateTrans)

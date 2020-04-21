@@ -44,7 +44,7 @@ public class GameManager : GameManagerBase
     public GameProgressManager m_GameLevel { get; private set; }
     public EntityCharacterPlayer m_LocalPlayer { get; private set; } = null;
     Transform tf_CameraAttach;
-    ChunkGameObjectData m_PlayerStart,m_PortalMain;
+    ChunkGameObjectData m_PlayerStart;
 
     public override bool B_InGame => true;
     public bool m_GameLoading { get; private set; } = false;
@@ -107,7 +107,7 @@ public class GameManager : GameManagerBase
         m_GameLevel.StageInit();
 
         InitGameEffects(m_GameLevel.m_GameStyle, TResources.GetRenderData(m_GameLevel.m_GameStyle).RandomItem(m_GameLevel.m_Random));
-        GameLevelManager.Instance.GenerateStage(m_GameLevel.m_GameStyle);
+        yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle,m_GameLevel.m_Random);
 
         EntityDicReset();
         GameObjectManager.Clear();
@@ -119,8 +119,6 @@ public class GameManager : GameManagerBase
         GC.Collect();
         yield return null;
 
-        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, Vector3.zero, Quaternion.identity).OnPlayerActivate(GameDataManager.m_BattleData);
-        AttachPlayerCamera(tf_CameraAttach);
         OnStageStart();
 
         m_GameLoading = false;
@@ -131,32 +129,29 @@ public class GameManager : GameManagerBase
 
     void OnStageStart()
     {
-        GameObjectManager.RecycleAllInteract();
         m_EnermySpawnPoints.Clear();
-        GameLevelManager.Instance.OnStartLevel( m_GameLevel.m_Random, OnGenerateLevelGameRelatives);
-        m_LocalPlayer.Teleport(m_PlayerStart.pos, m_PlayerStart.rot);
+        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, m_PlayerStart.pos, m_PlayerStart.rot).OnPlayerActivate(GameDataManager.m_BattleData);
+        AttachPlayerCamera(tf_CameraAttach);
         CameraController.Instance.SetCameraPosition(CalculateCameraPosition());
-
-        OnBattleStart();
+        CameraController.Instance.SetCameraRotation(-1,m_PlayerStart.rot.eulerAngles.y);
+        
         OnGenerateLevelPortals();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
         OnPortalExit(1f, tf_CameraAttach);
     }
 
-    void OnGenerateLevelGameRelatives(enum_TileObjectType tileType, ChunkGameObjectData objectData)
+    void OnGenerateLevelGameRelatives(enum_ChunkEventType eventType,enum_TileObjectType tileType, ChunkGameObjectData objectData)
     {
         switch (tileType)
         {
-            case enum_TileObjectType.EEntrance:
-                m_PlayerStart=objectData;
-                break;
-            case enum_TileObjectType.EPortal:
-                m_PortalMain= objectData;
+            case enum_TileObjectType.EMainEvent3x3:
+                if (eventType == enum_ChunkEventType.Start)
+                    m_PlayerStart = objectData;
                 break;
             case enum_TileObjectType.EEnermySpawn:
                 m_EnermySpawnPoints.Add(objectData.pos);
                 break;
-            case enum_TileObjectType.EEventArea:
+            case enum_TileObjectType.ERandomEvent3x3:
                 GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkRarePrice, GameObjectManager.SpawnInteract<InteractPerkPickup>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerk(enum_Rarity.Rare, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random)));
                 #region Interacts Abandoned
                 //switch (m_GameLevel.m_LevelType)
@@ -225,7 +220,7 @@ public class GameManager : GameManagerBase
     void OnGenerateLevelPortals()
     {
         enum_StagePortalType portal = m_GameLevel.GetNextStageGenerate();
-        GameObjectManager.SpawnInteract<InteractPortal>( m_PortalMain.pos, m_PortalMain.rot).Play(portal, OnChunkPortalEnter);
+        GameObjectManager.SpawnInteract<InteractPortal>(Vector3.zero,Quaternion.identity).Play(portal, OnChunkPortalEnter);
     }
 
     void OnChunkPortalEnter(enum_StagePortalType levelType)
@@ -497,49 +492,15 @@ public class GameManager : GameManagerBase
     #region Battle Relatives 
     List<Vector3> m_EnermySpawnPoints = new List<Vector3>();
     public Dictionary<enum_EnermyType, int> m_EnermySpawnIDs;
-    public bool m_Battling { get; private set; } = false;
-
-    void OnBattleStart()
-    {
-        if (m_Battling)
-        {
-            Debug.LogError("Can't Trigger Another Battle!");
-            return;
-        }
-        m_Battling = true;
-        GenerateBattleEnermies(m_GameLevel.OnBattleStart());
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleStart);
-    }
 
     void OnBattleEntityKilled(EntityCharacterBase character)
     {
-        if (!m_Battling)
-            return;
-
         if (character.m_Flag != enum_EntityFlag.Enermy)
             return;
 
         SpawnBattleEnermyDeadDrops(character);
-
-        if (GetCharacters(enum_EntityFlag.Enermy, true).Any(p => !p.m_IsDead))
-            return;
-        SEnermyGenerate generate;
-        if(!m_GameLevel.OnBattleWaveFinished(out generate))
-        {
-            GenerateBattleEnermies(generate);
-            return;
-        }
-        OnBattleFinish();
     }
-
-    void OnBattleFinish()
-    {
-        m_Battling = false;
-        GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => { interact.OnBattleFinish(); });
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnBattleFinish);
-        OnGenerateLevelPortals();
-    }
-
+    
     void GenerateBattleEnermies(SEnermyGenerate enermyGenerate)
     {
         int spawnPointCount = 0;
@@ -592,18 +553,7 @@ public class GameProgressManager
         m_Random = new System.Random((m_GameSeed + m_StageIndex.ToString()).GetHashCode());
     }
     #region BattleData
-    public SEnermyGenerate OnBattleStart()
-    {
-        return GetBattleWaveData();
-    }
-
-    public bool OnBattleWaveFinished(out SEnermyGenerate nextWaveData)
-    {
-        nextWaveData = GetBattleWaveData();
-        return true;
-    }
-
-    protected SEnermyGenerate GetBattleWaveData()=> m_EnermyGenerate[false].RandomItem();
+    public SEnermyGenerate GetBattleWaveData()=> m_EnermyGenerate[false].RandomItem();
     public void NextStage() => m_StageIndex++;
     public void GameFinished(bool win) => m_GameWin = win;
     public enum_StagePortalType GetNextStageGenerate() => m_FinalStage ? enum_StagePortalType.GameWin : enum_StagePortalType.StageEnd;

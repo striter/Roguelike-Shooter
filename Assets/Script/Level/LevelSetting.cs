@@ -7,12 +7,52 @@ namespace LevelSetting
 {
     public static class LevelConst
     {
+        #region UI
+        public const int I_UIMinimapSize = 8;
+        public const int I_UIMapScale = 8;
+        public const float F_UIMapIconBaseScale = 25;       //final scale= BaseScale/MapScale
+        public const float F_UIMapDragSpeedMultiply = 2f;
+        public const int I_UIMapPullbackCheckRange = 30;
+        public const int I_UIMapPullbackSpeedMultiply = 8;
+
+        public const int I_UIPlayerViewRevealRange = 10;
+        public const int I_UIPlayerViewFadeRange = 12;
+        public static readonly int I_UIPlayerViewRevealSqrRange = I_UIPlayerViewRevealRange * I_UIPlayerViewRevealRange;
+        public static readonly int I_UIPlayerViewFadeSqrRange = I_UIPlayerViewFadeRange * I_UIPlayerViewFadeRange;
+
+        public static readonly Color C_MapFogRevealFogColor = TCommon.GetHexColor("191919FF");
+        public static readonly Color C_MapFogRevealFadeColor = TCommon.GetHexColor("191919D0");
+        public static readonly Color C_MapFogRevealClearColor = TCommon.GetHexColor("19191900");
+        public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
+        #endregion
         public const int I_TileSize = 2;
+        public const int I_QuadranteTileSize = 15;
 
         public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
 
-        public static readonly Dictionary<enum_TileObjectType, int> m_ChunkRestriction = new Dictionary<enum_TileObjectType, int>() { {enum_TileObjectType.EConnection,2 },{enum_TileObjectType.EEntrance,-1 },{enum_TileObjectType.EEventArea,-1 },{enum_TileObjectType.EPortal,-1 }, { enum_TileObjectType.EEnermySpawn, -1 } };
+        public static readonly Dictionary<enum_TileObjectType, int> m_ChunkRestriction = new Dictionary<enum_TileObjectType, int>() { {enum_TileObjectType.EConnection,4 },{enum_TileObjectType.EMainEvent3x3,3 },{enum_TileObjectType.ERandomEvent3x3,-1 },{ enum_TileObjectType.EEnermySpawn, -1 } };
 
+    }
+
+    public enum enum_ChunkRevealType
+    {
+        Invalid=-1,
+        Empty,
+        Revealed,
+        PrepareStart,
+        PreFog,
+        PreRevealed,
+        PreFaded,
+        PrepareEnd,
+    }
+
+
+    public enum enum_ChunkEventType
+    {
+        Invalid=-1,
+        Start,
+        Normal,
+        Final,
     }
 
     public enum enum_ChunkPortalType
@@ -91,10 +131,10 @@ namespace LevelSetting
         PlantsCombine,
 
         EditorStart =50,       //Available During Editor
-        EEntrance=51,
+        EMainEvent3x3=51,
         EConnection=52,
-        EPortal=53,
-        EEventArea = 54,
+        //EPortal=53,
+        ERandomEvent3x3 = 54,
         EEnermySpawn=55,
         EditorEnd,
     }
@@ -234,6 +274,8 @@ namespace LevelSetting
                     break;
                 case enum_TileObjectType.Static3x3A:
                 case enum_TileObjectType.Static3x3B:
+                case enum_TileObjectType.EMainEvent3x3:
+                case enum_TileObjectType.ERandomEvent3x3:
                     size = TileAxis.One * 3;
                     break;
             }
@@ -252,6 +294,53 @@ namespace LevelSetting
             rot = _rot;
         }
     }
-    
-    
+    public struct ChunkPreGenerateData
+    {
+        public int m_ConnectionIndex { get; private set; }
+        public enum_ChunkEventType m_EventType { get; private set; }
+        public ChunkPreGenerateData(int connectionIndex, enum_ChunkEventType _eventType = enum_ChunkEventType.Invalid)
+        {
+            m_ConnectionIndex = connectionIndex;
+            m_EventType = _eventType;
+        }
+    }
+
+    public class ChunkGenerateData
+    {
+        public int m_ChunkIndex { get; private set; }
+        public TileAxis m_Origin { get; private set; }
+        public TileBounds m_MapBounds { get; private set; }
+        public TileBounds m_GenerateCheckBounds { get; private set; }
+        public LevelChunkData m_Data { get; private set; }
+        public enum_ChunkEventType m_EventType { get; private set; }
+        public Dictionary<int, bool> m_ConnectPoint { get; private set; }
+        public ChunkGenerateData(int chunkIndex, TileAxis _offset, LevelChunkData _data, enum_ChunkEventType eventType)
+        {
+            m_ChunkIndex = chunkIndex;
+            m_Origin = _offset;
+            m_Data = _data;
+            m_EventType = eventType;
+            m_MapBounds = new TileBounds(m_Origin, m_Data.m_Size);
+            m_GenerateCheckBounds = new TileBounds(m_Origin + TileAxis.One, m_Data.m_Size - TileAxis.One * 2);
+            m_ConnectPoint = new Dictionary<int, bool>();
+            for (int i = 0; i < _data.Connections.Length; i++)
+                m_ConnectPoint.Add(i, false);
+        }
+
+        public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
+        public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
+    }
+
+    public class LevelQuadrant
+    {
+        public TileBounds m_QuadrantMapBounds { get; private set; }
+        public List<int> m_QuadrantRelativeChunkIndex { get; private set; } = new List<int>();
+        public LevelQuadrant(TileBounds quadrantBound)
+        {
+            m_QuadrantMapBounds = quadrantBound;
+        }
+        public void AddRelativeChunkIndex(int index) => m_QuadrantRelativeChunkIndex.Add(index);
+    }
+
+
 }

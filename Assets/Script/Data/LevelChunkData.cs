@@ -9,10 +9,11 @@ public class LevelChunkData : ScriptableObject {
     [SerializeField]
     protected ChunkTileData[] m_TileData;
     [SerializeField]
-    protected ChunkConnectionData[] m_ConnectionIndex;
+    protected ChunkConnectionData[] m_Connections;
     public int Width => m_Width;
     public int Height => m_Height;
     public TileAxis m_Size => new TileAxis(Width, Height);
+    public ChunkConnectionData[] Connections => m_Connections;
     public ChunkTileData[] GetData()
     {
         ChunkTileData[] data = new ChunkTileData[m_TileData.Length];
@@ -96,13 +97,22 @@ public class LevelChunkData : ScriptableObject {
     {
         m_Width = chunk.m_Width;
         m_Height = chunk.m_Height;
-         m_TileData = new ChunkTileData[m_Width*m_Height];
+        m_TileData = new ChunkTileData[m_Width*m_Height];
+        List<ChunkConnectionData> m_Connections = new List<ChunkConnectionData>();
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
                 int index = TileTools.Get1DAxisIndex(new TileAxis( i, j), m_Width);
                 m_TileData[index] = chunk.m_TilesData[i, j].m_Data;
+                if (chunk.m_TilesData[i, j].m_Data.m_ObjectType == enum_TileObjectType.EConnection)
+                {
+                    ChunkConnectionData connectionData = new ChunkConnectionData(new TileAxis(i, j), chunk.m_TilesData[i, j].m_Data.m_Direction, m_Width, m_Height);
+                    m_Connections.Add(connectionData);
+                    m_TileData[index] = chunk.m_TilesData[i, j].m_Data.ChangeDirection(connectionData.m_Direction);
+                    continue;
+                }
             }
+        this.m_Connections = m_Connections.ToArray();
     }
 
     public Texture2D CalculateEditorChunkTexture()
@@ -148,13 +158,12 @@ public class LevelChunkData : ScriptableObject {
                             tileColor = Color.grey;
                             break;
                         case enum_TileObjectType.EConnection:
-                        case enum_TileObjectType.EEntrance:
+                            tileColor = Color.magenta;
+                            break;
+                        case enum_TileObjectType.EMainEvent3x3:
                             tileColor = Color.green;
                             break;
-                        case enum_TileObjectType.EPortal:
-                            tileColor = Color.blue;
-                            break;
-                        case enum_TileObjectType.EEventArea:
+                        case enum_TileObjectType.ERandomEvent3x3:
                             tileColor = Color.white;
                             break;
                         case enum_TileObjectType.EEnermySpawn:
@@ -202,7 +211,7 @@ public struct ChunkTileData
         return this;
     }
 
-    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Highland, m_ObjectType =  enum_TileObjectType.Invalid,m_EdgeObjectType= enum_TileEdgeObjectType.Invalid,m_Direction= enum_TileDirection.Top };
+    public static ChunkTileData Default() => new ChunkTileData() { m_TerrainType =  enum_TileTerrainType.Plane, m_ObjectType =  enum_TileObjectType.Invalid,m_EdgeObjectType= enum_TileEdgeObjectType.Invalid,m_Direction= enum_TileDirection.Top };
     public static ChunkTileData Create(enum_TileTerrainType groundType ,  enum_TileObjectType objectType,enum_TileEdgeObjectType edgeObjectType, enum_TileDirection direction) => new ChunkTileData() { m_TerrainType = groundType, m_ObjectType = objectType,m_EdgeObjectType=edgeObjectType, m_Direction = direction };
 
     public static bool operator ==(ChunkTileData a, ChunkTileData b) => a.m_Direction==b.m_Direction&&a.m_TerrainType==b.m_TerrainType&&a.m_ObjectType==b.m_ObjectType;
