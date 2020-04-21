@@ -294,16 +294,7 @@ namespace LevelSetting
             rot = _rot;
         }
     }
-    public struct ChunkPreGenerateData
-    {
-        public int m_ConnectionIndex { get; private set; }
-        public enum_ChunkEventType m_EventType { get; private set; }
-        public ChunkPreGenerateData(int connectionIndex, enum_ChunkEventType _eventType = enum_ChunkEventType.Invalid)
-        {
-            m_ConnectionIndex = connectionIndex;
-            m_EventType = _eventType;
-        }
-    }
+
 
     public class ChunkGenerateData
     {
@@ -329,6 +320,15 @@ namespace LevelSetting
 
         public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
         public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
+        public int m_PreChunkIndex { get; private set; }
+        public int m_ChunkConnectPoint { get; private set; }
+        public int m_PreChunkConnectPoint { get; private set; }
+        public void SetPreConnectData(int connnectChunkIndex, int previousPointIndex, int currentPointIndex)
+        {
+            m_PreChunkIndex = connnectChunkIndex;
+            m_PreChunkConnectPoint = previousPointIndex;
+            m_ChunkConnectPoint = currentPointIndex;
+        }
     }
 
     public class LevelQuadrant
