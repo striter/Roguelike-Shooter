@@ -15,7 +15,6 @@ public enum enum_Scene
 }
 public class LoadingManager : SingletonMono<LoadingManager>
 {
-    public SpriteAtlas m_LoadingSprites;
     public static bool m_GameBegin { get; private set; } = false;
     public static enum_Scene m_CurrentScene { get; private set; } = enum_Scene.Invalid;
     public static void BeginLoad(enum_Scene scene, Func<bool> onLoadFinish=null)
@@ -53,7 +52,7 @@ public class LoadingManager : SingletonMono<LoadingManager>
     {
         base.Awake();
         m_Logo = new GameLogo( transform.Find("GameLogo"));
-        m_Loading = new GameLoading(transform.Find("Loading"),m_LoadingSprites);
+        m_Loading = new GameLoading(transform.Find("Loading"));
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -81,7 +80,6 @@ public class LoadingManager : SingletonMono<LoadingManager>
     private void Update()
     {
         m_Logo.Tick(Time.unscaledDeltaTime);
-        m_Loading.Tick(Time.unscaledDeltaTime);
     }
 
     public void ShowLoading(enum_Stage level= enum_Stage.Invalid) => m_Loading.Begin(level);
@@ -122,18 +120,16 @@ public class LoadingManager : SingletonMono<LoadingManager>
 
     class GameLoading
     {
-        AtlasAnim m_LoadingSprites;
         public Transform transform { get; private set; }
         Image m_Loading;
         Transform tf_GameStage;
         Dictionary<enum_Stage, RectTransform> m_Stages=new Dictionary<enum_Stage, RectTransform>();
         RectTransform tf_Player;
         UIT_TextExtend m_Title;
-        public GameLoading(Transform _transform,SpriteAtlas atlas)
+        public GameLoading(Transform _transform)
         {
             transform = _transform;
             transform.SetActivate(false);
-            m_LoadingSprites = new AtlasAnim(atlas);
             m_Loading = transform.Find("Loading").GetComponent<Image>();
             m_Title = transform.Find("Title").GetComponent<UIT_TextExtend>();
             tf_GameStage = transform.Find("GameStage");
@@ -151,29 +147,11 @@ public class LoadingManager : SingletonMono<LoadingManager>
             tf_GameStage.SetActivate(inGame);
             if (inGame) tf_Player.anchoredPosition = new Vector2(m_Stages[m_Stage].anchoredPosition.x, tf_Player.anchoredPosition.y);
 
-            playing = true;
             transform.SetActivate(true);
-            m_Loading.sprite = m_LoadingSprites.Reset();
         }
         public void Finish()
         {
-            playing = false;
             transform.SetActivate(false);
-        }
-
-        float tickCheck = 0f;
-        public void Tick(float deltaTime)
-        {
-            if (!playing)
-                return;
-
-            if(tickCheck>0)
-            {
-                tickCheck -= Time.deltaTime;
-                return;
-            }
-            tickCheck = .05f;
-            m_Loading.sprite = m_LoadingSprites.Tick();
         }
     }
 }

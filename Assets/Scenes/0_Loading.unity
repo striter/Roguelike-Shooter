@@ -740,8 +740,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 650fcfae6f501544a92f734af31d75cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LoadingSprites: {fileID: 4343727234628468602, guid: 4d25a76a53838d44584070638d9b5113,
-    type: 2}
 --- !u!1 &856775710
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,7 +754,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &856775711
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1010,6 +1008,7 @@ GameObject:
   - component: {fileID: 1160852961}
   - component: {fileID: 1160852963}
   - component: {fileID: 1160852962}
+  - component: {fileID: 1160852964}
   m_Layer: 5
   m_Name: Loading
   m_TagString: Untagged
@@ -1029,10 +1028,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1627464876}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 97.80029}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -381.69922, y: 121.399994}
+  m_AnchoredPosition: {x: -381.69922, y: 114}
   m_SizeDelta: {x: 79, y: 79}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1160852962
@@ -1054,7 +1053,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 21d9e0352689bfe4f895e476b4109444, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e1604c0f100f04d479ee61de639e1ae6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1068,6 +1067,21 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1160852960}
+--- !u!111 &1160852964
+Animation:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1160852960}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 08a9a4d52205da14b81fca144421d3eb, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 08a9a4d52205da14b81fca144421d3eb, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!224 &1173429153 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224261352702405940, guid: 975a068c37baee24e9ae0fab9c6ff160,
@@ -1246,6 +1260,56 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934925593751412, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934925593751412, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934925593751412, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934925593751412, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934925593751412, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224934925593751412, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224114546419925932, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224114546419925932, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224114546419925932, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224114546419925932, guid: 975a068c37baee24e9ae0fab9c6ff160,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 975a068c37baee24e9ae0fab9c6ff160, type: 2}
