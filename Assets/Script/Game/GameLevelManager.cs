@@ -196,6 +196,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_PrePlayerMapAxis = -TileAxis.One;
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
+        List<LevelChunkData> dataGenerateAvoid = new List<LevelChunkData>();
         List<enum_ChunkEventType> mainChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Normal, enum_ChunkEventType.Normal, enum_ChunkEventType.Final };
         List<enum_ChunkEventType> subChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Normal };
 
@@ -210,13 +211,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                     throw new Exception("Generate Overtime!");
 
                 gameChunkGenerate.Clear();
-                List<LevelChunkData> dataGenerated = new List<LevelChunkData>(); 
+                dataGenerateAvoid.Clear();
                 Action<ChunkGenerateData, List<ChunkGenerateData>> ConnectGameData = (ChunkGenerateData startData, List<ChunkGenerateData> connectDatas) =>
                 {
                     ChunkGenerateData preData = startData;
                     connectDatas.Traversal((ChunkGenerateData data) =>
                     {
-                        dataGenerated.Add(data.m_Data);
+                        dataGenerateAvoid.Add(data.m_Data);
                         preData.OnConnectionSet(data.m_PreChunkConnectPoint);
                         data.OnConnectionSet(data.m_ChunkConnectPoint);
                         preData = data;
@@ -229,7 +230,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
                 //Gemerate Main Chunks
                 List<ChunkGenerateData> mainConnectionChunks = null;
-                if (!TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, chunkDatas, dataGenerated, mainChunkType, random, out mainConnectionChunks))
+                if (!TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, chunkDatas, dataGenerateAvoid, mainChunkType, random, out mainConnectionChunks))
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
                 //Generate Sub Chunks
@@ -242,7 +243,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                         if (!mainChunk.HaveEmptyConnection())
                             return false;
                         subStartChunk = mainChunk;
-                        return TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, chunkDatas, dataGenerated, subChunkType, random, out subConnectionChunks);
+                        return TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, chunkDatas, dataGenerateAvoid, subChunkType, random, out subConnectionChunks);
                     }, random);
 
                     if (subConnectionChunks == null || subConnectionChunks.Count == 0)
