@@ -55,8 +55,8 @@ namespace GameSetting_Action
     public class P10005 : ExpirePerkBase
     {
         public override int m_Index => 10005;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
-        public override float Value1 => 30f;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
+        public override float Value1 => 100f;
         public override float m_CriticalHitMultiplyAdditive => Value1 / 100f * m_Stack;
         public P10005(PerkSaveData saveData) : base(saveData) { }
     }
