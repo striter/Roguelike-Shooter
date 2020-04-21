@@ -47,14 +47,12 @@ public class EntityCharacterBase : EntityBase
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         m_CharacterInfo.OnActivate();
     }
 
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnBattleFinish, OnBattleFinish);
         m_CharacterSkinEffect.OnDisable();
     }
     public bool m_TargetAvailable =>  !m_IsDead;
@@ -151,11 +149,4 @@ public class EntityCharacterBase : EntityBase
         }
     }
     
-    protected virtual void OnBattleFinish()
-    {
-        if (b_isSubEntity)
-            OnDead();
-    }
-
-
 }

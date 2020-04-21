@@ -9,6 +9,9 @@ using UnityEngine;
 
 public class LevelChunkGame : LevelChunkBase
 {
+    public int m_chunkIndex { get; private set; }
+    public enum_ChunkEventType m_ChunkEventType { get; private set; } = enum_ChunkEventType.Invalid;
+    public TileBounds m_ChunkMapBounds { get; private set; }
     public TileAxis m_Size { get; private set; }
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
     public List<TileObjectBlockLift> m_RoadBlockTiles { get; private set; } = new List<TileObjectBlockLift>();
@@ -30,13 +33,15 @@ public class LevelChunkGame : LevelChunkBase
         LevelObjectManager.DestroyBatchedItem();
     }
 
-    public void InitGameChunk(LevelChunkData _data, System.Random _random,Action OnChunkObjectDestroy)
+    public void InitGameChunk(TileAxis mapOrigin, ChunkGenerateData _data, System.Random _random, Action OnChunkObjectDestroy)
     {
         Clear();
-        m_Size = _data.m_Size;
-        gameObject.name = _data.name;
-        this.OnChunkObjectDestroy = OnChunkObjectDestroy;
-        InitData(_data, _random, (TileAxis axis, ChunkTileData tileData) => {
+        m_chunkIndex = _data.m_ChunkIndex;
+        m_ChunkEventType = _data.m_EventType;
+        gameObject.name = string.Format("{0}({1})", m_chunkIndex, _data.m_Data.name);
+        this.OnChunkObjectDestroy = OnChunkObjectDestroy;;
+        m_ChunkMapBounds = new TileBounds(_data.m_GenerateCheckBounds.m_Origin-mapOrigin, _data.m_GenerateCheckBounds.m_Size);
+        InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (tileData.m_ObjectType.IsEditorTileObject())
             {
                 if (!m_ChunkObjects.ContainsKey(tileData.m_ObjectType))

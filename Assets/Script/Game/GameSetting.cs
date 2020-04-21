@@ -619,7 +619,6 @@ namespace GameSetting
                 OnHealthChanged(enum_HealthChangeMessage.Default);
         }
 
-        public void OnBattleFinishResetArmor() => base.OnSetStatus(m_CurrentHealth, m_MaxArmor);
     }
 
     public class DamageInfo

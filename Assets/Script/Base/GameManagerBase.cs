@@ -357,7 +357,6 @@ public static class GameObjectManager
     #region Interact
     public static T SpawnInteract<T>( Vector3 pos, Quaternion rot) where T : InteractGameBase=> ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[typeof(T)], TF_Interacts, pos, rot) as T;
     public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType, target);
-    public static void RecycleAllInteract() => ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
     public static void TraversalAllInteracts(Action<InteractGameBase> action) => ObjectPoolManager<enum_Interaction, InteractGameBase>.TraversalAllActive(action);
     #endregion
     #endregion

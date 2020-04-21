@@ -105,12 +105,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.enabled = true;
     }
     
-    protected override void OnBattleFinish()
-    {
-        base.OnBattleFinish();
-        m_Health.OnBattleFinishResetArmor();
-    }
-
     protected override void OnDead()
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;

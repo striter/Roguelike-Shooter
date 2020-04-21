@@ -18,7 +18,6 @@ public class LevelChunkEditor : LevelChunkBase
     LevelTileEditorSelection m_SelectingTile;
     enum_TileDirection m_SelectingDirection = enum_TileDirection.Top;
     List<LevelTileEditorData> temp_RelativeTiles = new List<LevelTileEditorData>();
-    Dictionary<enum_TileObjectType, int> m_ItemRestriction;
     System.Random m_Random = new System.Random();
     public Light m_DirectionalLight { get; private set; }
     Transform tf_Selections;
@@ -51,7 +50,6 @@ public class LevelChunkEditor : LevelChunkBase
     {
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
         tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
-        m_ItemRestriction = LevelConst.m_ChunkRestriction.DeepCopy();
         m_EditType = enum_LevelEditorEditType.Terrain;
         InitData(_data, m_Random);
         m_GameViewMode = false;
@@ -216,14 +214,14 @@ public class LevelChunkEditor : LevelChunkBase
         });
     }
 
-    bool ObjectRegisted(enum_TileObjectType type) => !type.IsEditorTileObject() || m_ItemRestriction.ContainsKey(type);
+    bool ObjectRegisted(enum_TileObjectType type) => !type.IsEditorTileObject() || LevelConst.m_ChunkRestriction.ContainsKey(type);
 
     bool ObjectRestrictRunsOut(enum_TileObjectType type)
     {
         if (!type.IsEditorTileObject())
             return false;
 
-        m_ItemRestriction = LevelConst.m_ChunkRestriction.DeepCopy();
+        Dictionary<enum_TileObjectType, int> m_ItemRestriction = LevelConst.m_ChunkRestriction.DeepCopy();
         m_TilesData.Traversal((LevelTileEditorData data) => {
             if (m_ItemRestriction.ContainsKey(data.m_Data.m_ObjectType))
                 m_ItemRestriction[data.m_Data.m_ObjectType] -= 1;
