@@ -320,6 +320,7 @@ namespace LevelSetting
 
         public bool HaveEmptyConnection() => m_ConnectPoint.Values.Any(p => !p);
         public void OnConnectionSet(int connectionIndex) => m_ConnectPoint[connectionIndex] = true;
+
         public int m_PreChunkIndex { get; private set; }
         public int m_ChunkConnectPoint { get; private set; }
         public int m_PreChunkConnectPoint { get; private set; }

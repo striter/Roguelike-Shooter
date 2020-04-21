@@ -84,16 +84,8 @@ public class GameManager : GameManagerBase
             return;
 
         float deltaTime = Time.deltaTime;
-        tf_CameraAttach.position = CalculateCameraPosition();
-    }
-
-    Vector3 CalculateCameraPosition()
-    {
-        Vector3 position = GameLevelManager.Instance.m_LevelCenter;
-        Vector3 offset =   m_LocalPlayer.transform.position- position;
-        position += Vector3.right * GameExpression.GetCameraSmoothInterpolate(offset.x,GameLevelManager.Instance.m_LevelWidth); 
-        position += Vector3.forward * GameExpression.GetCameraSmoothInterpolate(offset.z, GameLevelManager.Instance.m_LevelHeight);
-        return position;
+        tf_CameraAttach.position = m_LocalPlayer.transform.position;
+        GameLevelManager.Instance.TickGameLevel(m_LocalPlayer.transform.position);
     }
 
     //Call When Level Changed
@@ -107,7 +99,7 @@ public class GameManager : GameManagerBase
         m_GameLevel.StageInit();
 
         InitGameEffects(m_GameLevel.m_GameStyle, TResources.GetRenderData(m_GameLevel.m_GameStyle).RandomItem(m_GameLevel.m_Random));
-        yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle,m_GameLevel.m_Random);
+        yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle,m_GameLevel.m_Random, OnGenerateLevelGameRelatives);
 
         EntityDicReset();
         GameObjectManager.Clear();
@@ -132,7 +124,7 @@ public class GameManager : GameManagerBase
         m_EnermySpawnPoints.Clear();
         m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, m_PlayerStart.pos, m_PlayerStart.rot).OnPlayerActivate(GameDataManager.m_BattleData);
         AttachPlayerCamera(tf_CameraAttach);
-        CameraController.Instance.SetCameraPosition(CalculateCameraPosition());
+        CameraController.Instance.SetCameraPosition(m_PlayerStart.pos);
         CameraController.Instance.SetCameraRotation(-1,m_PlayerStart.rot.eulerAngles.y);
         
         OnGenerateLevelPortals();
@@ -152,7 +144,6 @@ public class GameManager : GameManagerBase
                 m_EnermySpawnPoints.Add(objectData.pos);
                 break;
             case enum_TileObjectType.ERandomEvent3x3:
-                GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.pos, objectData.rot).Play(GameConst.I_EventPerkRarePrice, GameObjectManager.SpawnInteract<InteractPerkPickup>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerk(enum_Rarity.Rare, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks,m_GameLevel.m_Random)));
                 #region Interacts Abandoned
                 //switch (m_GameLevel.m_LevelType)
                 //{

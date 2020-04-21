@@ -191,7 +191,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         NavigationManager.ClearNavMeshDatas();
     }
     
-    public IEnumerator Generate(enum_GameStyle style, System.Random random)
+    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action<enum_ChunkEventType , enum_TileObjectType , ChunkGameObjectData > OnGenerateObjects)
     {
         m_PrePlayerMapAxis = -TileAxis.One;
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
@@ -298,13 +298,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         gameChunkGenerate.Traversal((ChunkGenerateData data) =>
         {
             LevelChunkGame curChunk = m_ChunkPool.AddItem(data.m_ChunkIndex);
-            curChunk.InitGameChunk(m_MapOrigin, data, random, NavigationManager.UpdateChunkData);
+            curChunk.InitGameChunk(m_MapOrigin, data, random, NavigationManager.UpdateChunkData,OnGenerateObjects);
 
             m_GameQuadrant.Traversal((LevelQuadrant quadrant) =>
             {
                 if (!quadrant.m_QuadrantMapBounds.Intersects(curChunk.m_ChunkMapBounds))
                     return;
-                quadrant.AddRelativeChunkIndex(curChunk.m_chunkIndex);
+                quadrant.AddRelativeChunkIndex(curChunk.m_ChunkIndex);
             });
         });
 

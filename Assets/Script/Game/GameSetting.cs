@@ -148,13 +148,6 @@ namespace GameSetting
 
     public static class GameExpression
     {
-        public static float GetCameraSmoothInterpolate(float widthParam, float widthSize)
-        {
-            float halfWidth = widthSize / 2;
-            float interpolateParam = Mathf.InverseLerp(0, halfWidth, Mathf.Abs(widthParam));
-            interpolateParam = Mathf.Clamp(interpolateParam,0,.5f)*(.5f+ Mathf.Lerp(.8f,.4f,interpolateParam)*.5f);
-            return Mathf.Sign(widthParam) * interpolateParam * halfWidth;
-        }
         public static int GetPlayerRankUpExp(int curRank) => 50 + curRank * 50;
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
         public static int GetPlayerExtraWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
