@@ -21,8 +21,7 @@ namespace GameSetting
         OnStageStart,
         OnStageFinished,
 
-        OnGameLoad,
-        OnGameBegin,
+        OnGameLoadBegin,
         OnGameFinish,
         OnGameExit,
 
@@ -56,12 +55,28 @@ namespace GameSetting
         Ranger = 3,
     }
 
-    public enum enum_StagePortalType
+    public enum enum_GamePortalType
     {
         Invalid = -1,
-        StageStart=0,
         StageEnd,
         GameWin,
+    }
+
+    public enum enum_GameEventType
+    {
+        Invalid=-1,
+        CoinsSack=1,
+        HealthpackTrade=2,
+        WeaponTrade=3,
+        WeaponReforge=4,
+        WeaponVendor=5,
+        WeaponRecycle=6,
+        PerkLottery=7,
+        PerkSelect=8,
+        PerkShrine=9,
+        BloodShrine=10,
+        HealShrine=11,
+        SafeBox=12,
     }
 
     public enum enum_EntityType { Invalid = -1, None = 1, Player = 2, AIWeaponHelper = 3, AIWeaponModel = 4, Device = 5, }
@@ -78,7 +93,7 @@ namespace GameSetting
     {
         Invalid = -1,
         GameBegin,
-        Bonfire, WeaponReforge,WeaponRecycle,SafeCrack, PerkFill, WeaponVendorMachineNormal, WeaponVendorMachineRare,
+        Bonfire, WeaponReforge,WeaponRecycle,SafeCrack,CoinSack, WeaponVendorMachine,
         TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, PickupWeapon, PerkSelect,
         PerkLottery,PerkShrine,BloodShrine,HealShrine,
         PickupArmoryBlueprint,PickupEquipment,
@@ -189,16 +204,16 @@ namespace GameSetting
 
         public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
 
-        public static enum_ChunkPortalType GetPortalType(this enum_StagePortalType eventType)
+        public static enum_ChunkPortalType GetPortalType(this enum_GamePortalType eventType)
         {
             switch (eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+ eventType);
                     return enum_ChunkPortalType.Invalid;
-                case enum_StagePortalType.StageEnd:
+                case enum_GamePortalType.StageEnd:
                     return enum_ChunkPortalType.Event;
-                case enum_StagePortalType.GameWin:
+                case enum_GamePortalType.GameWin:
                     return enum_ChunkPortalType.Reward;
             }
         

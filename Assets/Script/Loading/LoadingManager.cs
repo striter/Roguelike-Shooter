@@ -121,7 +121,6 @@ public class LoadingManager : SingletonMono<LoadingManager>
     class GameLoading
     {
         public Transform transform { get; private set; }
-        Image m_Loading;
         Transform tf_GameStage;
         Dictionary<enum_Stage, RectTransform> m_Stages=new Dictionary<enum_Stage, RectTransform>();
         RectTransform tf_Player;
@@ -130,7 +129,6 @@ public class LoadingManager : SingletonMono<LoadingManager>
         {
             transform = _transform;
             transform.SetActivate(false);
-            m_Loading = transform.Find("Loading").GetComponent<Image>();
             m_Title = transform.Find("Title").GetComponent<UIT_TextExtend>();
             tf_GameStage = transform.Find("GameStage");
             TCommon.TraversalEnum((enum_Stage level) =>
@@ -146,7 +144,6 @@ public class LoadingManager : SingletonMono<LoadingManager>
             m_Title.localizeKey = inGame ? "UI_Loading_Game" : "UI_Loading_Camp";
             tf_GameStage.SetActivate(inGame);
             if (inGame) tf_Player.anchoredPosition = new Vector2(m_Stages[m_Stage].anchoredPosition.x, tf_Player.anchoredPosition.y);
-
             transform.SetActivate(true);
         }
         public void Finish()

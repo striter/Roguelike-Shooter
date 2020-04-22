@@ -92,7 +92,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         renderData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
         //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthOutline>().SetEffect(Color.black,1.2f,0.0001f);
-        m_DepthSSAO = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect(renderData.c_shadowColor, 2f,15,0.00035f,null,16);
+        m_DepthSSAO = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>().SetEffect(renderData.c_shadowColor, 2f,20,0.00035f,null,16);
         m_Bloom = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_BloomSpecific>();
         CameraController.Instance.m_Effect.SetMainTextureCamera(true);
         switch (_levelStyle)
@@ -355,7 +355,13 @@ public static class GameObjectManager
     }
     #endregion
     #region Interact
-    public static T SpawnInteract<T>( Vector3 pos, Quaternion rot) where T : InteractGameBase=> ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[typeof(T)], TF_Interacts, pos, rot) as T;
+    public static T SpawnInteract<T>(Vector3 pos, Quaternion rot) where T : InteractGameBase
+    {
+        Type targetType = typeof(T);
+        if (!m_GameInteractTypes.ContainsKey(targetType))
+            Debug.LogError("None Type Registed!" + targetType);
+        return ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[targetType], TF_Interacts, pos, rot) as T;
+    } 
     public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType, target);
     public static void TraversalAllInteracts(Action<InteractGameBase> action) => ObjectPoolManager<enum_Interaction, InteractGameBase>.TraversalAllActive(action);
     #endregion

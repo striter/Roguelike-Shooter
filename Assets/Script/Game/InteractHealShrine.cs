@@ -7,11 +7,12 @@ public class InteractHealShrine : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.HealShrine;
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=> !_interactor.m_Health.m_HealthFull&& base.OnTryInteractCheck(_interactor);
     int m_TryCount;
-    public new void Play()
+    public new InteractHealShrine Play()
     {
         base.Play();
         m_TryCount = 0;
         m_TradePrice = GameExpression.GetHealShrinePrice(m_TryCount);
+        return this;
     }
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)

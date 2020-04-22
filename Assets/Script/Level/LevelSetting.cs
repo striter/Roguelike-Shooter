@@ -20,13 +20,13 @@ namespace LevelSetting
         public static readonly int I_UIPlayerViewRevealSqrRange = I_UIPlayerViewRevealRange * I_UIPlayerViewRevealRange;
         public static readonly int I_UIPlayerViewFadeSqrRange = I_UIPlayerViewFadeRange * I_UIPlayerViewFadeRange;
 
-        public static readonly Color C_MapFogRevealFogColor = TCommon.GetHexColor("191919FF");
-        public static readonly Color C_MapFogRevealFadeColor = TCommon.GetHexColor("191919D0");
-        public static readonly Color C_MapFogRevealClearColor = TCommon.GetHexColor("19191900");
+        public static readonly Color C_MapFogHeavyColor = TCommon.GetHexColor("191919FF");
+        public static readonly Color C_MapFogFadeColor = TCommon.GetHexColor("191919D0");
+        public static readonly Color C_MapFogClearColor = TCommon.GetHexColor("19191900");
         public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
         #endregion
         public const int I_TileSize = 2;
-        public const int I_QuadranteTileSize = 15;
+        public const int I_QuadranteTileSize = 10;
 
         public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
 
@@ -34,16 +34,12 @@ namespace LevelSetting
 
     }
 
-    public enum enum_ChunkRevealType
+    public enum enum_MapFogType
     {
         Invalid=-1,
-        Empty,
-        Revealed,
-        PrepareStart,
-        PreFog,
-        PreRevealed,
-        PreFaded,
-        PrepareEnd,
+        Heavy,
+        Faded,
+        Cleared,
     }
 
 
@@ -348,14 +344,14 @@ namespace LevelSetting
 
     public struct ChunkGameObjectData
     {
-        public TileAxis m_QuadrantAxis { get; private set; }
+        public int m_QuadrantIndex { get; private set; }
         public enum_TileObjectType m_ObjectType { get;private set; }
         public enum_ObjectEventType m_EventType { get; private set; }
         public Vector3 m_Pos { get; private set; }
         public Quaternion m_Rot { get; private set; }
-        public ChunkGameObjectData(TileAxis _quadrantAxis, enum_TileObjectType _objectType,  enum_ObjectEventType _eventType, Vector3 _pos, Quaternion _rot)
+        public ChunkGameObjectData(int _quadrantIndex, enum_TileObjectType _objectType,  enum_ObjectEventType _eventType, Vector3 _pos, Quaternion _rot)
         {
-            m_QuadrantAxis = _quadrantAxis;
+            m_QuadrantIndex = _quadrantIndex;
             m_ObjectType = _objectType;
             m_EventType = _eventType;
             m_Pos = _pos;

@@ -19,8 +19,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     public Texture2D m_MapTexture { get; private set; }
     public Texture2D m_FogTexture { get; private set; }
 
-    enum_ChunkRevealType[,] m_FogRevealation;
-    public bool CheckTileRevealed(int i, int j) => m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed;
     TileAxis  m_MapSize;
 
     #region Get
@@ -100,6 +98,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 #endif
     #endregion
     #region Minimap
+    enum_MapFogType[,] m_FogRevealation;
+    public bool CheckTileRevealed(int i, int j) => m_FogRevealation[i, j] == enum_MapFogType.Cleared;
     public void CheckMinimapUpdate(TileAxis playerMapPos)
     {
         if (m_MinimapUpdating)
@@ -107,15 +107,17 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         StartCoroutine(UpdateMinimap(playerMapPos));
     }
 
+    Dictionary<TileAxis, enum_MapFogType> m_FogRevealMarkup = new Dictionary<TileAxis, enum_MapFogType>();
     IEnumerator UpdateMinimap(TileAxis updatePos)
     {
         m_MinimapUpdating = true;
+        m_FogRevealMarkup.Clear();
         yield return Task.Run(() =>
         {
             for (int i = 0; i < m_MapSize.X; i++)
                 for (int j = 0; j < m_MapSize.Y; j++)
                 {
-                    if (m_FogRevealation[i, j] > enum_ChunkRevealType.PrepareEnd)
+                    if (m_FogRevealation[i, j] == enum_MapFogType.Cleared)
                         continue;
 
                     TileAxis offsetAxis = updatePos - new TileAxis(i, j);
@@ -124,42 +126,39 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
                     float sqrMagnitude = offsetAxis.SqrMagnitude;
                     if (sqrMagnitude <= LevelConst.I_UIPlayerViewRevealSqrRange)
-                        m_FogRevealation[i, j] = enum_ChunkRevealType.PreRevealed;
+                        m_FogRevealMarkup.Add(new TileAxis(i, j), enum_MapFogType.Cleared); 
                     else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeSqrRange)
-                        m_FogRevealation[i, j] = enum_ChunkRevealType.PreFaded;
+                        m_FogRevealMarkup.Add(new TileAxis(i,j), enum_MapFogType.Faded);
                 }
         }).TaskCoroutine();
         m_MinimapUpdating = false;
 
-        OnFogmapPreparationFinish();
+        UpdateMapFog(m_FogRevealMarkup);
+        m_FogRevealMarkup.Clear();
         yield break;
+    }
+
+    void UpdateMapFog(Dictionary<TileAxis, enum_MapFogType> _fogReveal)
+    {
+        _fogReveal.Traversal((TileAxis axis, enum_MapFogType type) =>
+        {
+            if (m_FogRevealation[axis.X, axis.Y] == type)
+                return;
+
+            m_FogRevealation[axis.X, axis.Y] = type;
+            m_FogTexture.SetPixel(axis.X, axis.Y,type== enum_MapFogType.Faded ? LevelConst.C_MapFogFadeColor : LevelConst.C_MapFogClearColor);
+        });
+        m_FogTexture.Apply();
     }
 
     public void ClearAllFog()
     {
+        Dictionary<TileAxis, enum_MapFogType> _fogReveal = new Dictionary<TileAxis, enum_MapFogType>();
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
-            {
-                if (m_FogRevealation[i, j] > enum_ChunkRevealType.PrepareEnd)
-                    continue;
-                m_FogRevealation[i, j] = enum_ChunkRevealType.PreRevealed;
-            }
-        OnFogmapPreparationFinish();
-    }
-
-    void OnFogmapPreparationFinish()
-    {
-        for (int i = 0; i < m_MapSize.X; i++)
-            for (int j = 0; j < m_MapSize.Y; j++)
-            {
-                if (m_FogRevealation[i, j] > enum_ChunkRevealType.PrepareEnd || m_FogRevealation[i, j] == enum_ChunkRevealType.PreFog)
-                    continue;
-
-                m_FogTexture.SetPixel(i, j, m_FogRevealation[i, j] == enum_ChunkRevealType.PreFaded ? LevelConst.C_MapFogRevealFadeColor : LevelConst.C_MapFogRevealClearColor);
-                if (m_FogRevealation[i, j] == enum_ChunkRevealType.PreRevealed)
-                    m_FogRevealation[i, j] = enum_ChunkRevealType.Revealed;
-            }
-        m_FogTexture.Apply();
+                _fogReveal.Add(new TileAxis(i, j), enum_MapFogType.Cleared);
+        UpdateMapFog(_fogReveal);
+        _fogReveal.Clear();
     }
     #endregion
 
@@ -193,7 +192,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         NavigationManager.ClearNavMeshDatas();
     }
     
-    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action< ChunkGameObjectData > OnGenerateObjects)
+    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action<List<ChunkGameObjectData>> OnGenerateEditorObjects)
     {
         m_PrePlayerMapAxis = -TileAxis.One;
         m_PrePlayerQuadrantAxis = -TileAxis.One;
@@ -293,7 +292,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             }
         });
 
-        //Quadrant
+        //Quadrant Generate
+        List<ChunkGameObjectData> editorObjectDatas = new List<ChunkGameObjectData>();
         m_QuadrantRange = m_MapSize / LevelConst.I_QuadranteTileSize;
         m_QuadrantSize = new TileAxis(m_MapSize.X / m_QuadrantRange.X, m_MapSize.Y / m_QuadrantRange.Y);
         List<ChunkQuadrantData> _quadrantDatas = new List<ChunkQuadrantData>();
@@ -302,6 +302,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             for (int j = 0; j < m_QuadrantRange.Y; j++)
             {
                 TileAxis quadrantAxis = new TileAxis(i, j);
+                int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
                 TileAxis quadrantMapOrigin = quadrantAxis * m_QuadrantSize;
                 TileAxis quadrantMapSize = m_QuadrantSize;
                 if (i == m_QuadrantRange.X - 1)
@@ -324,7 +325,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                             if(quadrantTileData.m_ObjectType.IsEditorTileObject())
                             {
                                 Vector3 worldPosition =  mapDataAxis.ToPosition() + quadrantTileData.m_ObjectType.GetSizeAxis(quadrantTileData.m_Direction).ToPosition() / 2f;
-                                OnGenerateObjects(new ChunkGameObjectData(quadrantAxis,quadrantTileData.m_ObjectType,mapTileData.Value.m_eventType, worldPosition,quadrantTileData.m_Direction.ToRotation()));
+                                editorObjectDatas.Add(new ChunkGameObjectData(quadrantIndex, quadrantTileData.m_ObjectType,mapTileData.Value.m_eventType, worldPosition,quadrantTileData.m_Direction.ToRotation()));
                                 quadrantTileData = quadrantTileData.ChangeObjectType(enum_TileObjectType.Invalid);
                             }
                             validData = true;
@@ -335,10 +336,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
                 if (!validData)
                     continue;
-                int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
                 _quadrantDatas.Add(new ChunkQuadrantData(quadrantIndex,quadrantAxis, new TileBounds(quadrantMapOrigin, quadrantMapSize), quadrantDatas));
             }
 
+        OnGenerateEditorObjects(editorObjectDatas);
 
         Dictionary<int, NavigationQuadrants> _quadrantNavigations = new Dictionary<int, NavigationQuadrants>();
 
@@ -362,13 +363,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         #region Generate Map Texture
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
-        m_FogRevealation = new enum_ChunkRevealType[m_MapSize.X, m_MapSize.Y];
+        m_FogRevealation = new enum_MapFogType[m_MapSize.X, m_MapSize.Y];
         for (int i = 0; i < m_MapSize.X; i++)
             for (int j = 0; j < m_MapSize.Y; j++)
             {
+                m_FogRevealation[i, j] = enum_MapFogType.Heavy;
                 m_MapTexture.SetPixel(i, j, Color.clear);
-                m_FogTexture.SetPixel(i, j, LevelConst.C_MapFogRevealFogColor);
-                m_FogRevealation[i, j] = enum_ChunkRevealType.Empty;
+                m_FogTexture.SetPixel(i, j, LevelConst.C_MapFogHeavyColor);
             }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
@@ -384,7 +385,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
 
                 List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X, m_MapSize.Y, tileAxis, 5);
-                axisRange.Traversal((TileAxis axis) => { m_FogRevealation[axis.X, axis.Y] = enum_ChunkRevealType.PreFog; });
+                axisRange.Traversal((TileAxis axis) => { m_FogRevealation[axis.X, axis.Y] = enum_MapFogType.Heavy; });
             }
         });
         m_MapTexture.Apply();

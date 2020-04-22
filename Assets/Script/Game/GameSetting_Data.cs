@@ -625,8 +625,8 @@ namespace GameSetting
             m_Equipments = equipments;
             m_Upgrade = upgrade;
             m_Perks = new List<PerkSaveData>();
-            m_Weapon1 = WeaponSaveData.CreateNew(weapon);
-            m_Weapon2 = WeaponSaveData.CreateNew(enum_PlayerWeapon.Invalid);
+            m_Weapon1 = WeaponSaveData.New(weapon);
+            m_Weapon2 = WeaponSaveData.New(enum_PlayerWeapon.Invalid);
             m_Stage = enum_Stage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
         }
@@ -638,8 +638,8 @@ namespace GameSetting
             m_Coins = _player.m_CharacterInfo.m_Coins;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;
-            m_Weapon1 = WeaponSaveData.Create(_player.m_Weapon1);
-            m_Weapon2 = WeaponSaveData.Create(_player.m_Weapon2);
+            m_Weapon1 = WeaponSaveData.Save(_player.m_Weapon1);
+            m_Weapon2 = WeaponSaveData.Save(_player.m_Weapon2);
             m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
         }
 
@@ -760,8 +760,8 @@ namespace GameSetting
     public struct WeaponSaveData : IDataConvert
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
-        public static WeaponSaveData Create(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
-        public static WeaponSaveData CreateNew(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
+        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
+        public static WeaponSaveData New(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
     }
 
     public struct MercenarySaveData : IDataConvert
@@ -771,7 +771,7 @@ namespace GameSetting
         public float m_Health { get; private set; }
         public MercenarySaveData(EntityCharacterMercenary _mercenary)
         {
-            m_Weapon = WeaponSaveData.Create(_mercenary.m_Weapon);
+            m_Weapon = WeaponSaveData.Save(_mercenary.m_Weapon);
             m_MercenaryCharacter = _mercenary.m_Character;
             m_Health = _mercenary.m_Health.m_CurrentHealth;
 
