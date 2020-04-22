@@ -28,10 +28,12 @@ public class TileObjectBase : TileItemBase,IObjectpool<enum_TileObjectType>,ICor
         m_hitChecks.Traversal((HitCheckStatic hitCheck) => { hitCheck.Attach(OnObjectHit); });
         this.OnRecycle = OnRecycle;
     }
+    
     private void OnDestroy()
     {
         this.StopSingleCoroutine(0);
     }
+
     public override void DoRecycle()=> OnRecycle(m_ObjectType, this);
 
     public override void OnGenerateItem(ChunkTileData _data, System.Random random)

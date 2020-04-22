@@ -28,9 +28,6 @@ public class LevelChunkGame : LevelChunkBase
     {
         m_NearbyChunks.Clear();
         m_RoadBlockTiles.Clear();
-        m_TilePool.m_ActiveItemDic.Traversal((LevelTileBase tile) => { tile.Clear(); });
-        m_TilePool.Clear();
-
         m_QuadrantIndex = _data.m_QuadrantIndex;
         m_QuadrantAxis = _data.m_QuadrantAxis;
         gameObject.name = m_QuadrantIndex+"|"+ m_QuadrantAxis.ToString();
