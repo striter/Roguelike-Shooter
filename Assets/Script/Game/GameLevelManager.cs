@@ -87,9 +87,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
             {
                 bool playerAtQuadrant = m_PrePlayerQuadrantAxis == chunk.m_QuadrantAxis;
-                Gizmos.color = playerAtQuadrant ? Color.red : Color.white;
+                bool activateQuadrant = m_ActiveQuadrants.Contains(chunk.m_QuadrantIndex);
+                Gizmos.color = playerAtQuadrant ? Color.red :(activateQuadrant ? Color.yellow:Color.white);
                 Vector3 quadrantSource = chunk.m_ChunkMapBounds.m_Origin.ToPosition();
-                Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 1f : .5f);
+                Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 2f : (activateQuadrant ? 1f : .5f));
                 Gizmos.DrawWireCube(quadrantSource + size / 2, size);
             });
             Vector3 mapSize = m_MapSize.ToPosition();
@@ -239,21 +240,23 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
                 //Generate Sub Chunks
-                ChunkGenerateData subStartChunk = null;
-                List<ChunkGenerateData> subConnectionChunks = null;
+                bool generateSuccessful=false;
                 mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
                 {
                     if (!mainChunk.HaveEmptyConnection())
                         return false;
-                    subStartChunk = mainChunk;
-                    return TryGenerateChunkDatas(1000, subStartChunk, gameChunkGenerate, chunkDatas, dataGenerateAvoid, subChunkType, random, out subConnectionChunks);
+                    List<ChunkGenerateData> subConnectionChunks = null;
+                    if (TryGenerateChunkDatas(1000, mainChunk, gameChunkGenerate, chunkDatas, dataGenerateAvoid, subChunkType, random, out subConnectionChunks))
+                    {
+                        ConnectGameData(mainChunk, subConnectionChunks);
+                        generateSuccessful = true;
+                        return true;
+                    }
+                    return false;
                 }, random);
 
-                if (subConnectionChunks == null || subConnectionChunks.Count == 0)
-                    continue;
-
-                ConnectGameData(subStartChunk, subConnectionChunks);
-                break;
+                if (generateSuccessful)
+                    break;
             }
         }).TaskCoroutine();
 
