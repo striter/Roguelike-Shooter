@@ -193,7 +193,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         NavigationManager.ClearNavMeshDatas();
     }
     
-    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action< ChunkGameObjectData > OnGenerateObjects)
+    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action<List<ChunkGameObjectData>> OnGenerateEditorObjects)
     {
         m_PrePlayerMapAxis = -TileAxis.One;
         m_PrePlayerQuadrantAxis = -TileAxis.One;
@@ -293,7 +293,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             }
         });
 
-        //Quadrant
+        //Quadrant Generate
+        List<ChunkGameObjectData> editorObjectDatas = new List<ChunkGameObjectData>();
         m_QuadrantRange = m_MapSize / LevelConst.I_QuadranteTileSize;
         m_QuadrantSize = new TileAxis(m_MapSize.X / m_QuadrantRange.X, m_MapSize.Y / m_QuadrantRange.Y);
         List<ChunkQuadrantData> _quadrantDatas = new List<ChunkQuadrantData>();
@@ -302,6 +303,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             for (int j = 0; j < m_QuadrantRange.Y; j++)
             {
                 TileAxis quadrantAxis = new TileAxis(i, j);
+                int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
                 TileAxis quadrantMapOrigin = quadrantAxis * m_QuadrantSize;
                 TileAxis quadrantMapSize = m_QuadrantSize;
                 if (i == m_QuadrantRange.X - 1)
@@ -324,7 +326,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                             if(quadrantTileData.m_ObjectType.IsEditorTileObject())
                             {
                                 Vector3 worldPosition =  mapDataAxis.ToPosition() + quadrantTileData.m_ObjectType.GetSizeAxis(quadrantTileData.m_Direction).ToPosition() / 2f;
-                                OnGenerateObjects(new ChunkGameObjectData(quadrantAxis,quadrantTileData.m_ObjectType,mapTileData.Value.m_eventType, worldPosition,quadrantTileData.m_Direction.ToRotation()));
+                                editorObjectDatas.Add(new ChunkGameObjectData(quadrantIndex, quadrantTileData.m_ObjectType,mapTileData.Value.m_eventType, worldPosition,quadrantTileData.m_Direction.ToRotation()));
                                 quadrantTileData = quadrantTileData.ChangeObjectType(enum_TileObjectType.Invalid);
                             }
                             validData = true;
@@ -335,10 +337,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
                 if (!validData)
                     continue;
-                int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
                 _quadrantDatas.Add(new ChunkQuadrantData(quadrantIndex,quadrantAxis, new TileBounds(quadrantMapOrigin, quadrantMapSize), quadrantDatas));
             }
 
+        OnGenerateEditorObjects(editorObjectDatas);
 
         Dictionary<int, NavigationQuadrants> _quadrantNavigations = new Dictionary<int, NavigationQuadrants>();
 

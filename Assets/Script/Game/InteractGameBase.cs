@@ -7,6 +7,7 @@ using UnityEngine;
 public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
 
     protected virtual bool B_SelfRecycleOnInteract => false;
+    public int m_InteractQuadrant { get; private set; }
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int m_TradePrice { get; protected set; } = -1;
     public int I_MuzzleOnInteract;
@@ -14,15 +15,19 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
     {
     }
 
-
     protected override void Play()
     {
-        m_TradePrice = -1;
         base.Play();
+        m_InteractQuadrant = -1;
+        m_TradePrice = -1;
         if (AC_OnPlay)
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
-    public virtual void OnBattleFinish() { }
+
+    public void SetInteractQuadrant(int quadrantIndex)=>m_InteractQuadrant = quadrantIndex;
+    public virtual void OnQuadrantActivateCheck( bool activate) => transform.SetActivate(activate);
+
+
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor) => m_TradePrice <= 0 || _interactor.m_CharacterInfo.CanCostCoins(m_TradePrice);
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {

@@ -8,11 +8,12 @@ public class InteractBloodShrine : InteractGameBase {
     public int I_MuzzleSuccess;
     int m_TryCount;
     float m_damageHealthScale;
-    public new void Play()
+    public new InteractBloodShrine Play()
     {
         base.Play();
         m_TryCount = 0;
         m_damageHealthScale = GameExpression.GetBloodShrineHealthCostMultiple(m_TryCount);
+        return this;
     }
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=>_interactor.m_Health.F_HealthMaxScale >m_damageHealthScale&&base.OnTryInteractCheck(_interactor);
 

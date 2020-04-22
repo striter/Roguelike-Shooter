@@ -348,14 +348,14 @@ namespace LevelSetting
 
     public struct ChunkGameObjectData
     {
-        public TileAxis m_QuadrantAxis { get; private set; }
+        public int m_QuadrantIndex { get; private set; }
         public enum_TileObjectType m_ObjectType { get;private set; }
         public enum_ObjectEventType m_EventType { get; private set; }
         public Vector3 m_Pos { get; private set; }
         public Quaternion m_Rot { get; private set; }
-        public ChunkGameObjectData(TileAxis _quadrantAxis, enum_TileObjectType _objectType,  enum_ObjectEventType _eventType, Vector3 _pos, Quaternion _rot)
+        public ChunkGameObjectData(int _quadrantIndex, enum_TileObjectType _objectType,  enum_ObjectEventType _eventType, Vector3 _pos, Quaternion _rot)
         {
-            m_QuadrantAxis = _quadrantAxis;
+            m_QuadrantIndex = _quadrantIndex;
             m_ObjectType = _objectType;
             m_EventType = _eventType;
             m_Pos = _pos;

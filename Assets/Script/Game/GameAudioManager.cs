@@ -15,15 +15,15 @@ public class GameAudioManager : AudioManager
     public override void Init()
     {
         base.Init();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameLoad, OnStageBeginLoad);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameBegin, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameLoadBegin, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
     }
     public override void Recycle()
     {
         base.Recycle();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameLoad, OnStageBeginLoad);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameBegin, OnStageStart);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameLoadBegin, OnStageBeginLoad);
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Remove<bool>(enum_BC_GameStatus.OnGameFinish, OnGameFinish);
     }
 

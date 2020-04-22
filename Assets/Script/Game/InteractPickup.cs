@@ -7,27 +7,24 @@ public class InteractPickup : InteractGameBase {
 
     protected override bool B_SelfRecycleOnInteract => true;
     float m_MoveSpeed;
-    EntityCharacterPlayer m_MoveTowards;
+    Transform m_MoveTowards;
     TimerBase m_DropTimer=new TimerBase(.5f,true);
     Vector3  m_DropPosition;
 
-    public void PlayDropAnim(Vector3 dropPosition)
+    public InteractPickup PlayDropAnim(Vector3 dropPosition)
     {
         m_DropTimer.Replay();
         m_DropPosition = dropPosition;
+        return this;
     }
 
-    private void OnDisable()
+    public InteractPickup PlayMoveAnim(Transform towards)
     {
-        m_MoveTowards = null;
-        m_DropTimer.Stop();
-    }
-    public override void OnBattleFinish()
-    {
-        base.OnBattleFinish();
         m_MoveSpeed = 0;
-        m_MoveTowards = GameManager.Instance.m_LocalPlayer;
+        m_MoveTowards = towards;
+        return this;
     }
+
     private void Update()
     {
         if (!m_InteractEnable)
@@ -55,5 +52,11 @@ public class InteractPickup : InteractGameBase {
         }
         transform.position = m_MoveTowards.transform.position+TCommon.RandomXZCircle()*.5f;
         m_MoveTowards = null;
+    }
+
+    private void OnDisable()
+    {
+        m_MoveTowards = null;
+        m_DropTimer.Stop();
     }
 }
