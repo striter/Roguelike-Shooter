@@ -148,9 +148,9 @@ public class LevelChunkData : ScriptableObject {
                 TileAxis axis = new TileAxis(i, j);
                 ChunkTileData tileData = m_TileData[TileTools.Get1DAxisIndex(axis, m_Width)];
                 TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
-                List<TileAxis> axies = TileTools.GetAxisRange( m_Width, m_Height, axis, axis+ size-TileAxis.One);
-                Color tileColor = Color.clear;
-                switch (tileData.m_ObjectType)
+                    List<TileAxis> axies = TileTools.GetAxisRange(m_Width, m_Height, axis, axis + size - TileAxis.One);
+                    Color tileColor = Color.clear;
+                    switch (tileData.m_ObjectType)
                     {
                         case enum_TileObjectType.Invalid:
                             break;

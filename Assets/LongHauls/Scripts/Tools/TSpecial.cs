@@ -55,7 +55,6 @@ namespace TTiles
         public override int GetHashCode()=> base.GetHashCode();
         public override string ToString()=> X + "," + Y;
         public int SqrMagnitude => X * X + Y * Y;
-        public int SqrLength => Mathf.Abs(X) + Mathf.Abs(Y);
         public static readonly TileAxis Zero = new TileAxis(0, 0);
         public static readonly TileAxis One = new TileAxis(1, 1);
         public static readonly TileAxis NegativeOne = new TileAxis(-1,-1);

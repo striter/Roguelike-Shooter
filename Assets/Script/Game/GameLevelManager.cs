@@ -47,6 +47,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     #region Quadrant
     protected TileAxis m_QuadrantRange, m_QuadrantSize;
     List<int> m_ActiveQuadrants=new List<int>();
+    List<TileAxis> m_WillActiveList = new List<TileAxis>();
     TileAxis m_PrePlayerMapAxis;
     TileAxis m_PrePlayerQuadrantAxis;
     bool m_MinimapUpdating = false;
@@ -64,10 +65,9 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     void CheckActiveQuadrants(TileAxis playerQuadrant)
     {
         m_ActiveQuadrants.Clear();
-        List<TileAxis> willActiveQuadrants = TileTools.GetAxisRange(m_QuadrantRange.X, m_QuadrantRange.Y, playerQuadrant - TileAxis.One, playerQuadrant + TileAxis.One);
         m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
         {
-            bool validChunk = willActiveQuadrants.Contains(chunk.m_QuadrantAxis);
+            bool validChunk = (playerQuadrant - chunk.m_QuadrantAxis).SqrMagnitude <= 2;
             chunk.SetActivate(validChunk);
             if (!validChunk)
                 return;
@@ -120,11 +120,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                     if (m_FogRevealation[i, j] == enum_MapFogType.Cleared)
                         continue;
 
-                    TileAxis offsetAxis = updatePos - new TileAxis(i, j);
-                    if (offsetAxis.SqrLength > LevelConst.I_UIPlayerViewFadeSqrRange)
+                    float sqrMagnitude = (updatePos - new TileAxis(i, j)).SqrMagnitude;
+                    if (sqrMagnitude > LevelConst.I_UIPlayerViewFadeSqrRange)
                         continue;
 
-                    float sqrMagnitude = offsetAxis.SqrMagnitude;
                     if (sqrMagnitude <= LevelConst.I_UIPlayerViewRevealSqrRange)
                         m_FogRevealMarkup.Add(new TileAxis(i, j), enum_MapFogType.Cleared); 
                     else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeSqrRange)
