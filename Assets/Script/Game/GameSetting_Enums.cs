@@ -11,6 +11,8 @@ namespace GameSetting
         OnEntityActivate,
         OnEntityRecycle,
 
+        OnQuadrantCheck,
+
         OnCharacterHealthWillChange,
         OnCharacterHealthChange,
         OnCharacterDead,

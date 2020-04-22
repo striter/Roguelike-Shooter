@@ -21,6 +21,8 @@ public class LevelChunkEditor : LevelChunkBase
     System.Random m_Random = new System.Random();
     public Light m_DirectionalLight { get; private set; }
     Transform tf_Selections;
+    public int m_Width { get; private set; }
+    public int m_Height { get; private set; }
     private void Awake()
     {
         Instance = this;
@@ -48,16 +50,17 @@ public class LevelChunkEditor : LevelChunkBase
 
     public void Init(LevelChunkData _data)
     {
+        m_Width = _data.Width;
+        m_Height = _data.Height;
         m_TilesData = new LevelTileEditorData[_data.Width, _data.Height];
-        tf_CameraPos.transform.localPosition = new Vector3(m_Width / 2f * LevelConst.I_TileSize, 0, 0);
+        tf_CameraPos.transform.localPosition = new Vector3(_data.Width/ 2f * LevelConst.I_TileSize, 0, 0);
         m_EditType = enum_LevelEditorEditType.Terrain;
-        InitData(_data, m_Random);
+        InitData(_data.Width,_data.Height,_data.GetData(), m_Random);
         m_GameViewMode = false;
         OnCameraEditModeChanged();
         OnEditModeChanged();
     }
 
-    protected override bool WillGenerateTile(ChunkTileData data) => true;
     protected override void OnTileInit(LevelTileBase tile, TileAxis axis, ChunkTileData data, System.Random random)
     {
         m_TilesData[axis.X, axis.Y] = (tile as LevelTileEditorData);
@@ -164,7 +167,7 @@ public class LevelChunkEditor : LevelChunkBase
         randomData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
 
         m_SelectionTiles.Clear();
-        m_SelectingTile.InitTile(new TileAxis(-2,0), ChunkTileData.Default(), m_Random);
+        m_SelectingTile.InitTile(new TileAxis(-2,0), ChunkTileData.EditorDefault(), m_Random);
         ChangeEditSelection(null);
 
         System.Random random = new System.Random(Time.time.GetHashCode());
@@ -343,7 +346,7 @@ public class LevelChunkEditor : LevelChunkBase
 
     void ChangeEditSelection(LevelTileEditor editorTile)
     {
-        ChunkTileData editData = ChunkTileData.Default();
+        ChunkTileData editData = ChunkTileData.EditorDefault();
         if (editorTile == null)
             return;
 

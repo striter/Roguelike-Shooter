@@ -122,26 +122,26 @@ public class GameManager : GameManagerBase
     void OnStageStart()
     {
         m_EnermySpawnPoints.Clear();
-        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, m_PlayerStart.pos, m_PlayerStart.rot).OnPlayerActivate(GameDataManager.m_BattleData);
+        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, m_PlayerStart.m_Pos, m_PlayerStart.m_Rot).OnPlayerActivate(GameDataManager.m_BattleData);
         AttachPlayerCamera(tf_CameraAttach);
-        CameraController.Instance.SetCameraPosition(m_PlayerStart.pos);
-        CameraController.Instance.SetCameraRotation(-1,m_PlayerStart.rot.eulerAngles.y);
+        CameraController.Instance.SetCameraPosition(m_PlayerStart.m_Pos);
+        CameraController.Instance.SetCameraRotation(-1,m_PlayerStart.m_Rot.eulerAngles.y);
         
         OnGenerateLevelPortals();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
         OnPortalExit(1f, tf_CameraAttach);
     }
 
-    void OnGenerateLevelGameRelatives(enum_ChunkEventType eventType,enum_TileObjectType tileType, ChunkGameObjectData objectData)
+    void OnGenerateLevelGameRelatives( ChunkGameObjectData objectData)
     {
-        switch (tileType)
+        switch (objectData.m_ObjectType)
         {
             case enum_TileObjectType.EMainEvent3x3:
-                if (eventType == enum_ChunkEventType.Start)
+                if (objectData.m_EventType == enum_ObjectEventType.Start)
                     m_PlayerStart = objectData;
                 break;
             case enum_TileObjectType.EEnermySpawn:
-                m_EnermySpawnPoints.Add(objectData.pos);
+                m_EnermySpawnPoints.Add(objectData.m_Pos);
                 break;
             case enum_TileObjectType.ERandomEvent3x3:
                 #region Interacts Abandoned

@@ -7,43 +7,29 @@ using System;
 
 public class LevelChunkBase : MonoBehaviour
 {
-    public int m_Width { get; private set; }
-    public int m_Height { get; private set; }
     protected ObjectPoolListComponent<int, LevelTileBase> m_TilePool { get; private set; }
 
     public virtual void Init()
     {
         m_TilePool = new ObjectPoolListComponent<int, LevelTileBase>(transform.Find("TilePool"), "TileItem");
     }
-    protected void InitData(LevelChunkData _data,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DataObjectCheck=null)
+    protected void InitData(int width,int height,ChunkTileData[] tileData ,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DataObjectCheck=null)
     {
         m_TilePool.Clear();
-        m_Width = _data.Width;
-        m_Height = _data.Height;
-
-        ChunkTileData[] tileData= _data.GetData();
-        for (int i = 0; i < m_Width; i++)
-            for (int j = 0; j < m_Height; j++)
+        for (int i = 0; i < width; i++)
+            for (int j = 0; j < height; j++)
             {
                 TileAxis axis = new TileAxis(i, j);
-                int index = TileTools.Get1DAxisIndex(axis, m_Width);
+                int index = TileTools.Get1DAxisIndex(axis, width);
                 ChunkTileData data = tileData[index];
                 if (DataObjectCheck!=null)
                     data = DataObjectCheck(axis, data);
-                if (!WillGenerateTile(data))
+                if (!data.HasValue)
                     continue;
                 OnTileInit(m_TilePool.AddItem(index), axis, data,_random);
             }
     }
 
-    protected virtual bool WillGenerateTile( ChunkTileData tileData)
-    {
-        if (tileData.m_TerrainType != enum_TileTerrainType.Invalid)
-            return true;
-        if (tileData.m_ObjectType != enum_TileObjectType.Invalid)
-            return true;
-        return false;
-    }
     protected virtual void OnTileInit(LevelTileBase tile,TileAxis axis,ChunkTileData data,System.Random random)
     {
         tile.InitTile(axis, data,random);

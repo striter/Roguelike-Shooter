@@ -47,7 +47,7 @@ namespace LevelSetting
     }
 
 
-    public enum enum_ChunkEventType
+    public enum enum_ObjectEventType
     {
         Invalid=-1,
         Start,
@@ -284,18 +284,6 @@ namespace LevelSetting
         
     }
     
-    public struct ChunkGameObjectData
-    {
-        public Vector3 pos { get; private set; }
-        public Quaternion rot { get; private set; }
-        public ChunkGameObjectData(Vector3 _pos,Quaternion _rot)
-        {
-            pos = _pos;
-            rot = _rot;
-        }
-    }
-
-
     public class ChunkGenerateData
     {
         public int m_ChunkIndex { get; private set; }
@@ -303,9 +291,9 @@ namespace LevelSetting
         public TileBounds m_MapBounds { get; private set; }
         public TileBounds m_GenerateCheckBounds { get; private set; }
         public LevelChunkData m_Data { get; private set; }
-        public enum_ChunkEventType m_EventType { get; private set; }
+        public enum_ObjectEventType m_EventType { get; private set; }
         public Dictionary<int, bool> m_ConnectPoint { get; private set; }
-        public ChunkGenerateData(int chunkIndex, TileAxis _offset, LevelChunkData _data, enum_ChunkEventType eventType)
+        public ChunkGenerateData(int chunkIndex, TileAxis _offset, LevelChunkData _data, enum_ObjectEventType eventType)
         {
             m_ChunkIndex = chunkIndex;
             m_Origin = _offset;
@@ -332,16 +320,47 @@ namespace LevelSetting
         }
     }
 
-    public class LevelQuadrant
+    public struct TileGenerateData
     {
-        public TileBounds m_QuadrantMapBounds { get; private set; }
-        public List<int> m_QuadrantRelativeChunkIndex { get; private set; } = new List<int>();
-        public LevelQuadrant(TileBounds quadrantBound)
+        public enum_ObjectEventType m_eventType { get; private set; }
+        public ChunkTileData m_Data { get; private set; }
+        public TileGenerateData(enum_ObjectEventType _eventType,ChunkTileData _data)
         {
-            m_QuadrantMapBounds = quadrantBound;
+            m_eventType = _eventType;
+            m_Data = _data;
         }
-        public void AddRelativeChunkIndex(int index) => m_QuadrantRelativeChunkIndex.Add(index);
     }
 
+    public struct ChunkQuadrantData
+    {
+        public int m_QuadrantIndex { get; private set; }
+        public TileAxis m_QuadrantAxis { get; private set; }
+        public TileBounds m_QuadrantBounds { get; private set; }
+        public ChunkTileData[] m_QuadrantDatas { get; private set; }
+        public ChunkQuadrantData(int _quadrantIndex,TileAxis _quadrantAxis,TileBounds _bounds,ChunkTileData[] _quadarantData)
+        {
+            m_QuadrantIndex = _quadrantIndex;
+            m_QuadrantAxis = _quadrantAxis;
+            m_QuadrantBounds = _bounds;
+            m_QuadrantDatas = _quadarantData;
+        }
+    }
+
+    public struct ChunkGameObjectData
+    {
+        public TileAxis m_QuadrantAxis { get; private set; }
+        public enum_TileObjectType m_ObjectType { get;private set; }
+        public enum_ObjectEventType m_EventType { get; private set; }
+        public Vector3 m_Pos { get; private set; }
+        public Quaternion m_Rot { get; private set; }
+        public ChunkGameObjectData(TileAxis _quadrantAxis, enum_TileObjectType _objectType,  enum_ObjectEventType _eventType, Vector3 _pos, Quaternion _rot)
+        {
+            m_QuadrantAxis = _quadrantAxis;
+            m_ObjectType = _objectType;
+            m_EventType = _eventType;
+            m_Pos = _pos;
+            m_Rot = _rot;
+        }
+    }
 
 }

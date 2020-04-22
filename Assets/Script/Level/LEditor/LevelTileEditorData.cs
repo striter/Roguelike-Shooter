@@ -34,7 +34,7 @@ public class LevelTileEditorData : LevelTileEditor {
     }
     public void ClearData()
     {
-        m_Data = ChunkTileData.Default();
+        m_Data = ChunkTileData.EditorDefault();
         InitTile(m_Axis, m_Data, null);
     }
 

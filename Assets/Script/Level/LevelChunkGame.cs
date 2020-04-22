@@ -9,8 +9,8 @@ using UnityEngine;
 
 public class LevelChunkGame : LevelChunkBase
 {
-    public int m_ChunkIndex { get; private set; }
-    public enum_ChunkEventType m_ChunkEventType { get; private set; } = enum_ChunkEventType.Invalid;
+    public int m_QuadrantIndex { get; private set; }
+    public TileAxis m_QuadrantAxis { get; private set; }
     public TileBounds m_ChunkMapBounds { get; private set; }
     public TileAxis m_Size { get; private set; }
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
@@ -24,25 +24,22 @@ public class LevelChunkGame : LevelChunkBase
         m_RoadBlockParent = transform.Find("RoadBlocks");
     }
 
-    public void InitGameChunk(TileAxis mapOrigin, ChunkGenerateData _data, System.Random _random, Action OnChunkObjectDestroy, Action<enum_ChunkEventType, enum_TileObjectType, ChunkGameObjectData> OnGenerateObjects)
+    public void InitGameChunk( ChunkQuadrantData _data, System.Random _random, Action OnChunkObjectDestroy)
     {
         m_NearbyChunks.Clear();
         m_RoadBlockTiles.Clear();
         m_TilePool.m_ActiveItemDic.Traversal((LevelTileBase tile) => { tile.Clear(); });
         m_TilePool.Clear();
 
-        m_ChunkIndex = _data.m_ChunkIndex;
-        m_ChunkEventType = _data.m_EventType;
-        gameObject.name = string.Format("{0}({1})", m_ChunkIndex, _data.m_Data.name);
+        m_QuadrantIndex = _data.m_QuadrantIndex;
+        m_QuadrantAxis = _data.m_QuadrantAxis;
+        gameObject.name = m_QuadrantIndex+"|"+ m_QuadrantAxis.ToString();
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;;
-        transform.localPosition = _data.m_Origin.ToPosition();
-        m_ChunkMapBounds = new TileBounds(_data.m_GenerateCheckBounds.m_Origin-mapOrigin, _data.m_GenerateCheckBounds.m_Size);
-        InitData(_data.m_Data, _random, (TileAxis axis, ChunkTileData tileData) => {
+        transform.localPosition = _data.m_QuadrantBounds.m_Origin.ToPosition();
+        m_ChunkMapBounds = _data.m_QuadrantBounds;
+        InitData(_data.m_QuadrantBounds.m_Size.X,_data.m_QuadrantBounds.m_Size.Y,_data.m_QuadrantDatas, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (!tileData.m_ObjectType.IsEditorTileObject())
                 return tileData;
-
-            Vector3 worldPosition = transform.position+ axis.ToPosition() + tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction).ToPosition() / 2f;
-            OnGenerateObjects(m_ChunkEventType, tileData.m_ObjectType, new ChunkGameObjectData(worldPosition, tileData.m_Direction.ToRotation()));
             return tileData.ChangeObjectType(enum_TileObjectType.Invalid);
         });
         StaticBatchingUtility.Combine(m_TilePool.transform.gameObject);

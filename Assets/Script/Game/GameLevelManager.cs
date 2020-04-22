@@ -21,13 +21,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
     enum_ChunkRevealType[,] m_FogRevealation;
     public bool CheckTileRevealed(int i, int j) => m_FogRevealation[i, j] == enum_ChunkRevealType.Revealed;
-    TileAxis m_MapOrigin, m_MapSize;
-    Vector3 m_MapOriginPos;
+    TileAxis  m_MapSize;
 
     #region Get
     public Vector2 GetOffsetPosition(Vector3 worldPosition)
     {
-        Vector3 offset = (worldPosition - m_MapOriginPos) / LevelConst.I_TileSize;
+        Vector3 offset = worldPosition / LevelConst.I_TileSize;
         return new Vector2(offset.x, offset.z);
     }
 
@@ -42,35 +41,17 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
     public TileAxis GetMapAxis(Vector3 worldPosition)
     {
-        Vector3 offset = (worldPosition - m_MapOriginPos) / LevelConst.I_TileSize;
+        Vector3 offset = worldPosition / LevelConst.I_TileSize;
         return new TileAxis(Mathf.RoundToInt(offset.x), Mathf.RoundToInt(offset.z));
     }
     #endregion
 
-    #region Minimap/Quadrant  Update
+    #region Quadrant
     protected TileAxis m_QuadrantRange, m_QuadrantSize;
-    protected LevelQuadrant[,] m_GameQuadrant;
-
+    List<int> m_ActiveQuadrants=new List<int>();
     TileAxis m_PrePlayerMapAxis;
     TileAxis m_PrePlayerQuadrantAxis;
     bool m_MinimapUpdating = false;
-
-    public void TickGameLevel(Vector3 playerPosition)
-    {
-        TileAxis playerMapAxis = GetMapAxis(playerPosition);
-        TileAxis playerAtQuadrant = GetQuadrantAxis(playerMapAxis);
-
-        if (m_PrePlayerMapAxis != playerMapAxis)
-        {
-            m_PrePlayerMapAxis = playerMapAxis;
-            CheckMinimapUpdate(m_PrePlayerMapAxis);
-        }
-        if (m_PrePlayerQuadrantAxis != playerAtQuadrant)
-        {
-            m_PrePlayerQuadrantAxis = playerAtQuadrant;
-            CheckQuadrantUpdate(m_PrePlayerQuadrantAxis);
-        }
-    }
 
     TileAxis GetQuadrantAxis(TileAxis playerAxis)
     {
@@ -82,20 +63,42 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         return quadrantAxis;
     }
 
-    void CheckQuadrantUpdate(TileAxis playerQuadrant)
+    void CheckActiveQuadrants(TileAxis playerQuadrant)
     {
-        List<int> _showChunks = new List<int>();
-        List<TileAxis> quadrantAxies = TileTools.GetAxisRange(m_QuadrantRange.X, m_QuadrantRange.Y, playerQuadrant - TileAxis.One, playerQuadrant + TileAxis.One);
-        quadrantAxies.Traversal((TileAxis quadrantAxis) =>
+        m_ActiveQuadrants.Clear();
+        List<TileAxis> willActiveQuadrants = TileTools.GetAxisRange(m_QuadrantRange.X, m_QuadrantRange.Y, playerQuadrant - TileAxis.One, playerQuadrant + TileAxis.One);
+        m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
         {
-            m_GameQuadrant[quadrantAxis.X, quadrantAxis.Y].m_QuadrantRelativeChunkIndex.Traversal((int chunkIndex) =>
-            {
-                if (!_showChunks.Contains(chunkIndex))
-                    _showChunks.Add(chunkIndex);
-            });
+            bool validChunk = willActiveQuadrants.Contains(chunk.m_QuadrantAxis);
+            chunk.SetActivate(validChunk);
+            if (!validChunk)
+                return;
+            m_ActiveQuadrants.Add(chunk.m_QuadrantIndex);
         });
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnQuadrantCheck, m_ActiveQuadrants);
     }
 
+#if UNITY_EDITOR
+    public bool m_DrawQuadrant = false;
+    private void OnDrawGizmos()
+    {
+        if (m_DrawQuadrant && m_ChunkPool != null && m_ChunkPool.Count > 0)
+        {
+            m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
+            {
+                bool playerAtQuadrant = m_PrePlayerQuadrantAxis == chunk.m_QuadrantAxis;
+                Gizmos.color = playerAtQuadrant ? Color.red : Color.white;
+                Vector3 quadrantSource = chunk.m_ChunkMapBounds.m_Origin.ToPosition();
+                Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 1f : .5f);
+                Gizmos.DrawWireCube(quadrantSource + size / 2, size);
+            });
+            Vector3 mapSize = m_MapSize.ToPosition();
+            Gizmos.DrawWireCube(mapSize / 2, mapSize);
+        }
+    }
+#endif
+    #endregion
+    #region Minimap
     public void CheckMinimapUpdate(TileAxis playerMapPos)
     {
         if (m_MinimapUpdating)
@@ -157,26 +160,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             }
         m_FogTexture.Apply();
     }
-
-#if UNITY_EDITOR
-    public bool m_DrawQuadrant = false;
-    private void OnDrawGizmos()
-    {
-        if (m_DrawQuadrant && m_GameQuadrant != null)
-        {
-            m_GameQuadrant.Traversal((int i, int j, LevelQuadrant quadrant) =>
-            {
-                bool playerAtQuadrant = m_PrePlayerQuadrantAxis == new TileAxis(i, j);
-                Gizmos.color = playerAtQuadrant ? Color.red : Color.white;
-                Vector3 quadrantSource = m_MapOriginPos + quadrant.m_QuadrantMapBounds.m_Origin.ToPosition();
-                Vector3 size = quadrant.m_QuadrantMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 1f : .5f);
-                Gizmos.DrawWireCube(quadrantSource + size / 2, size);
-            });
-            Vector3 mapSize = m_MapSize.ToPosition();
-            Gizmos.DrawWireCube(m_MapOriginPos + mapSize / 2, mapSize);
-        }
-    }
-#endif
     #endregion
 
     protected override void Awake()
@@ -185,22 +168,44 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_ChunkPool = new ObjectPoolListComponent<int, LevelChunkGame>(transform.Find("GameChunk"),"PoolItem",(LevelChunkGame chunk)=>chunk.Init());
     }
 
+    public void TickGameLevel(Vector3 playerPosition)
+    {
+        TileAxis playerMapAxis = GetMapAxis(playerPosition);
+        TileAxis playerAtQuadrant = GetQuadrantAxis(playerMapAxis);
+
+        if (m_PrePlayerMapAxis != playerMapAxis)
+        {
+            m_PrePlayerMapAxis = playerMapAxis;
+            CheckMinimapUpdate(m_PrePlayerMapAxis);
+        }
+        if (m_PrePlayerQuadrantAxis != playerAtQuadrant)
+        {
+            m_PrePlayerQuadrantAxis = playerAtQuadrant;
+            CheckActiveQuadrants(m_PrePlayerQuadrantAxis);
+        }
+    }
+
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
         NavigationManager.ClearNavMeshDatas();
     }
     
-    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action<enum_ChunkEventType , enum_TileObjectType , ChunkGameObjectData > OnGenerateObjects)
+    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action< ChunkGameObjectData > OnGenerateObjects)
     {
         m_PrePlayerMapAxis = -TileAxis.One;
+        m_PrePlayerQuadrantAxis = -TileAxis.One;
+        m_ActiveQuadrants.Clear();
+
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
         List<LevelChunkData> dataGenerateAvoid = new List<LevelChunkData>();
-        List<enum_ChunkEventType> mainChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Normal, enum_ChunkEventType.Normal, enum_ChunkEventType.Final };
-        List<enum_ChunkEventType> subChunkType = new List<enum_ChunkEventType>() { enum_ChunkEventType.Normal };
+        List<enum_ObjectEventType> mainChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal, enum_ObjectEventType.Normal, enum_ObjectEventType.Final };
+        List<enum_ObjectEventType> subChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal };
 
         LevelChunkData[] chunkDatas = TResources.GetChunkDatas();
+        //Generate All Connected Chunks
         yield return Task.Run(() =>
         {
             short generateCount = 0;
@@ -226,7 +231,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 };
 
                 //Generate Main Chunks
-                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, chunkDatas.RandomItem(random), enum_ChunkEventType.Start));
+                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, chunkDatas.RandomItem(random), enum_ObjectEventType.Start));
 
                 //Gemerate Main Chunks
                 List<ChunkGenerateData> mainConnectionChunks = null;
@@ -234,33 +239,25 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
                 //Generate Sub Chunks
-                Func<int, bool> GenerateSubChunks = (int subCount) =>
+                ChunkGenerateData subStartChunk = null;
+                List<ChunkGenerateData> subConnectionChunks = null;
+                mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
                 {
-                    ChunkGenerateData subStartChunk = null;
-                    List<ChunkGenerateData> subConnectionChunks = null;
-                    mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
-                    {
-                        if (!mainChunk.HaveEmptyConnection())
-                            return false;
-                        subStartChunk = mainChunk;
-                        return TryGenerateChunkDatas(subCount * 1000, subStartChunk, gameChunkGenerate, chunkDatas, dataGenerateAvoid, subChunkType, random, out subConnectionChunks);
-                    }, random);
-
-                    if (subConnectionChunks == null || subConnectionChunks.Count == 0)
+                    if (!mainChunk.HaveEmptyConnection())
                         return false;
+                    subStartChunk = mainChunk;
+                    return TryGenerateChunkDatas(1000, subStartChunk, gameChunkGenerate, chunkDatas, dataGenerateAvoid, subChunkType, random, out subConnectionChunks);
+                }, random);
 
-                    ConnectGameData(subStartChunk, subConnectionChunks);
-                    return true;
-                };
-
-                if (!GenerateSubChunks(1))
+                if (subConnectionChunks == null || subConnectionChunks.Count == 0)
                     continue;
 
+                ConnectGameData(subStartChunk, subConnectionChunks);
                 break;
             }
         }).TaskCoroutine();
 
-        //Set Map Data(Origin,Size,Texture)
+        //Generate Chunk Datas Map/Texture/Quadrant
         int originX = 0, originY = 0, oppositeX = 0, oppositeY = 0;
         gameChunkGenerate.Traversal((ChunkGenerateData chunkData) =>        //Check MapOrigin/MapSize
         {
@@ -275,46 +272,85 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             if (originY > chunkOrigin.Y)
                 originY = chunkOrigin.Y;
         });
-        m_MapOrigin = new TileAxis(originX, originY);
+        TileAxis  _mapOrigin = new TileAxis(originX, originY);
         m_MapSize = new TileAxis(oppositeX - originX, oppositeY - originY);
-        m_MapOriginPos = transform.TransformPoint(m_MapOrigin.ToPosition());
+        //Total Game Map
+        TileGenerateData?[,] mapTileDatas = new TileGenerateData?[m_MapSize.X,m_MapSize.Y];
+        gameChunkGenerate.Traversal((ChunkGenerateData generateData) =>
+        {
+            ChunkTileData[] chunkData = generateData.m_Data.GetData();
+            for(int i=0;i<generateData.m_Data.Width;i++)
+            {
+                for (int j = 0; j < generateData.m_Data.Height;j++)
+                {
+                    TileAxis chunkDataAxis = new TileAxis(i, j);
+                    TileAxis wholeDataAxis =   generateData.m_Origin-_mapOrigin+chunkDataAxis;
+                    mapTileDatas[wholeDataAxis.X, wholeDataAxis.Y] =new TileGenerateData(generateData.m_EventType, chunkData[TileTools.Get1DAxisIndex(chunkDataAxis, generateData.m_Data.Width)]);
+                }
+            }
+        });
 
-        //Init Quadrant
+        //Quadrant
         m_QuadrantRange = m_MapSize / LevelConst.I_QuadranteTileSize;
         m_QuadrantSize = new TileAxis(m_MapSize.X / m_QuadrantRange.X, m_MapSize.Y / m_QuadrantRange.Y);
-        m_GameQuadrant = new LevelQuadrant[m_QuadrantRange.X, m_QuadrantRange.Y];
+        List<ChunkQuadrantData> _quadrantDatas = new List<ChunkQuadrantData>();
         TileAxis quadrantSizeEdge = new TileAxis(m_MapSize.X % m_QuadrantSize.X, m_MapSize.Y % m_QuadrantSize.Y);
         for (int i = 0; i < m_QuadrantRange.X; i++)
             for (int j = 0; j < m_QuadrantRange.Y; j++)
             {
-                TileAxis quadrantSize = m_QuadrantSize;
+                TileAxis quadrantAxis = new TileAxis(i, j);
+                TileAxis quadrantMapOrigin = quadrantAxis * m_QuadrantSize;
+                TileAxis quadrantMapSize = m_QuadrantSize;
                 if (i == m_QuadrantRange.X - 1)
-                    quadrantSize.X += quadrantSizeEdge.X;
+                    quadrantMapSize.X += quadrantSizeEdge.X;
                 if (j == m_QuadrantRange.Y - 1)
-                    quadrantSize.Y += quadrantSizeEdge.Y;
-                m_GameQuadrant[i, j] = new LevelQuadrant(new TileBounds(new TileAxis(i, j) * m_QuadrantSize, quadrantSize));
+                    quadrantMapSize.Y += quadrantSizeEdge.Y;
+
+                ChunkTileData[] quadrantDatas = new ChunkTileData[quadrantMapSize.X*quadrantMapSize.Y];
+                bool validData = false;
+                for (int x = 0; x < quadrantMapSize.X; x++)
+                    for (int y = 0; y < quadrantMapSize.Y; y++)
+                    {
+                        TileAxis quadrantTileAxis = new TileAxis(x, y);
+                        TileAxis mapDataAxis = quadrantMapOrigin+ quadrantTileAxis;
+                        TileGenerateData? mapTileData = mapTileDatas[mapDataAxis.X, mapDataAxis.Y];
+                        ChunkTileData quadrantTileData=ChunkTileData.Empty();
+                        if (mapTileData.HasValue)
+                        {
+                            quadrantTileData = mapTileData.Value.m_Data;
+                            if(quadrantTileData.m_ObjectType.IsEditorTileObject())
+                            {
+                                Vector3 worldPosition =  mapDataAxis.ToPosition() + quadrantTileData.m_ObjectType.GetSizeAxis(quadrantTileData.m_Direction).ToPosition() / 2f;
+                                OnGenerateObjects(new ChunkGameObjectData(quadrantAxis,quadrantTileData.m_ObjectType,mapTileData.Value.m_eventType, worldPosition,quadrantTileData.m_Direction.ToRotation()));
+                                quadrantTileData = quadrantTileData.ChangeObjectType(enum_TileObjectType.Invalid);
+                            }
+                            validData = true;
+                        }
+
+                        quadrantDatas[TileTools.Get1DAxisIndex(quadrantTileAxis, quadrantMapSize.X)] = quadrantTileData;
+                    }
+
+                if (!validData)
+                    continue;
+                int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
+                _quadrantDatas.Add(new ChunkQuadrantData(quadrantIndex,quadrantAxis, new TileBounds(quadrantMapOrigin, quadrantMapSize), quadrantDatas));
             }
-
+        
         m_ChunkPool.Clear();
-        gameChunkGenerate.Traversal((ChunkGenerateData data) =>
+        for(int i=0;i<_quadrantDatas.Count;i++)
         {
-            LevelChunkGame curChunk = m_ChunkPool.AddItem(data.m_ChunkIndex);
-            curChunk.InitGameChunk(m_MapOrigin, data, random, NavigationManager.UpdateChunkData,OnGenerateObjects);
+            ChunkQuadrantData data = _quadrantDatas[i];
+            m_ChunkPool.AddItem(data.m_QuadrantIndex).InitGameChunk(data, random, NavigationManager.UpdateChunkData);
+            yield return null;
+        }
 
-            m_GameQuadrant.Traversal((LevelQuadrant quadrant) =>
-            {
-                if (!quadrant.m_QuadrantMapBounds.Intersects(curChunk.m_ChunkMapBounds))
-                    return;
-                quadrant.AddRelativeChunkIndex(curChunk.m_ChunkIndex);
-            });
-        });
-
+        #region Navigation Data
         //GenerateNavigationData
         Bounds mapBounds = new Bounds();
-        mapBounds.center = m_MapOriginPos + m_MapSize.ToPosition() / 2f ;
+        mapBounds.center = m_MapSize.ToPosition() / 2f ;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
         NavigationManager.InitNavMeshData(transform, mapBounds);
-
+        #endregion
         #region Generate Map Texture
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
@@ -336,7 +372,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 if (chunkColors[index].a <= 0)
                     continue;
 
-                TileAxis tileAxis = (chunkdata.m_Origin - m_MapOrigin) + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
+                TileAxis tileAxis = chunkdata.m_Origin-_mapOrigin + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
                 m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
 
                 List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X, m_MapSize.Y, tileAxis, 5);
@@ -348,7 +384,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         #endregion
     }
 
-    bool TryGenerateChunkDatas(int generateStartIndex, ChunkGenerateData generateStartChunk, List<ChunkGenerateData> intersectsCheckChunks, LevelChunkData[] chunkDatas, List<LevelChunkData> chunkDataAvoids, List<enum_ChunkEventType> generateMainTypes, System.Random random, out List<ChunkGenerateData> chunkGenerateData)
+    bool TryGenerateChunkDatas(int generateStartIndex, ChunkGenerateData generateStartChunk, List<ChunkGenerateData> intersectsCheckChunks, LevelChunkData[] chunkDatas, List<LevelChunkData> chunkDataAvoids, List<enum_ObjectEventType> generateMainTypes, System.Random random, out List<ChunkGenerateData> chunkGenerateData)
     {
         chunkGenerateData = new List<ChunkGenerateData>();
         List<LevelChunkData> chunkAvoidCheck = new List<LevelChunkData>(chunkDataAvoids);
@@ -364,32 +400,28 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                     return false;
 
                 ChunkConnectionData m_previousConnectionData = previousChunkGenerate.m_Data.Connections[previousConnectionIndex];
-                enum_TileDirection connectDirection = m_previousConnectionData.m_Direction.Inverse();
-                chunkDatas.TraversalRandomBreak((LevelChunkData curChunkData) =>
+                enum_TileDirection nextConnectDirection = m_previousConnectionData.m_Direction.Inverse();
+                chunkDatas.TraversalRandomBreak((LevelChunkData chunkData) =>
                 {
-                    if (chunkAvoidCheck.Contains(curChunkData) || !isConnectingFinalChunk && curChunkData.Connections.Length <= 1)
+                    if (chunkAvoidCheck.Contains(chunkData) || !isConnectingFinalChunk && chunkData.Connections.Length <= 1)
                         return false;
-
-                    ChunkConnectionData? nextConnectionData = null;
-                    curChunkData.Connections.TraversalRandomBreak((int curConnectionIndex) =>
+                    
+                    chunkData.Connections.TraversalRandomBreak((int curConnectionIndex) =>
                     {
-                        ChunkConnectionData _connectionData = curChunkData.Connections[curConnectionIndex];
-                        if (_connectionData.m_Direction == connectDirection)
-                            nextConnectionData = _connectionData;
+                        ChunkConnectionData _connectionData = chunkData.Connections[curConnectionIndex];
+                        if (_connectionData.m_Direction != nextConnectDirection)
+                            return false;
 
-                        if (nextConnectionData.HasValue)
-                        {
-                            TileAxis nextChunkAxis = previousChunkGenerate.m_Origin + m_previousConnectionData.m_Axis - nextConnectionData.GetValueOrDefault().m_Axis;
-                            TileBounds nextChunkSizeCheck = new TileBounds(nextChunkAxis + TileAxis.One, curChunkData.m_Size - TileAxis.One * 2);
-                            if (chunkIntersectsCheckData.Any(p => p.m_GenerateCheckBounds.Intersects(nextChunkSizeCheck)))
-                                return false;
+                        TileAxis nextChunkAxis = previousChunkGenerate.m_Origin + m_previousConnectionData.m_Axis - _connectionData.m_Axis;
+                        nextChunkAxis = TileTools.DirectionAxis(nextChunkAxis,m_previousConnectionData.m_Direction);
+                        TileBounds nextChunkSizeCheck = new TileBounds(nextChunkAxis + TileAxis.One, chunkData.m_Size - TileAxis.One * 2);
+                        if (chunkIntersectsCheckData.Any(p => p.m_GenerateCheckBounds.Intersects(nextChunkSizeCheck)))
+                            return false;
 
-                            nextChunkGenerate = new ChunkGenerateData(generateStartIndex, nextChunkAxis, curChunkData, generateMainTypes[i]); 
-                            nextChunkGenerate.SetPreConnectData(previousChunkGenerate.m_ChunkIndex, previousConnectionIndex, curConnectionIndex);
-                            generateStartIndex++;
-                            return true;
-                        }
-                        return nextConnectionData != null;
+                        nextChunkGenerate = new ChunkGenerateData(generateStartIndex, nextChunkAxis, chunkData, generateMainTypes[i]);
+                        nextChunkGenerate.SetPreConnectData(previousChunkGenerate.m_ChunkIndex, previousConnectionIndex, curConnectionIndex);
+                        generateStartIndex++;
+                        return true;
                     }, random);
                     return nextChunkGenerate != null;
                 }, random);
