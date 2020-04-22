@@ -335,12 +335,17 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
                 _quadrantDatas.Add(new ChunkQuadrantData(quadrantIndex,quadrantAxis, new TileBounds(quadrantMapOrigin, quadrantMapSize), quadrantDatas));
             }
-        
+
+
+        Dictionary<int, NavigationQuadrants> _quadrantNavigations = new Dictionary<int, NavigationQuadrants>();
+
         m_ChunkPool.Clear();
         for(int i=0;i<_quadrantDatas.Count;i++)
         {
-            ChunkQuadrantData data = _quadrantDatas[i];
-            m_ChunkPool.AddItem(data.m_QuadrantIndex).InitGameChunk(data, random, NavigationManager.UpdateChunkData);
+            ChunkQuadrantData quadrantData = _quadrantDatas[i];
+            LevelChunkGame chunk = m_ChunkPool.AddItem(quadrantData.m_QuadrantIndex);
+            chunk.InitGameChunk(quadrantData, random, NavigationManager.UpdateQuadrantData);
+            _quadrantNavigations.Add(quadrantData.m_QuadrantIndex,new NavigationQuadrants(chunk));
             yield return null;
         }
 
@@ -349,7 +354,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         Bounds mapBounds = new Bounds();
         mapBounds.center = m_MapSize.ToPosition() / 2f ;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
-        NavigationManager.InitNavMeshData(transform, mapBounds);
+        NavigationManager.InitNavMeshData(transform, mapBounds, _quadrantNavigations);
         #endregion
         #region Generate Map Texture
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
@@ -528,6 +533,21 @@ public static class LevelObjectManager
     public static LevelTileItemEditorTerrain GetEditorGroundItem(enum_EditorTerrainType type,Transform trans)=> ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
 }
 
+public class NavigationQuadrants
+{
+    public LevelChunkGame m_Chunk { get; private set; }
+    public List<NavMeshBuildSource> m_Sources { get; private set; } = new List<NavMeshBuildSource>();
+    public NavigationQuadrants(LevelChunkGame chunk)
+    {
+        m_Chunk = chunk;
+    }
+
+    public void RecollectSource()
+    {
+        m_Sources.Clear();
+        NavMeshBuilder.CollectSources(m_Chunk.transform,GameLayer.Mask.I_Static, NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>() { },m_Sources);
+    }
+}
 public static class NavigationManager
 {
     static Transform m_Transform;
@@ -537,32 +557,32 @@ public static class NavigationManager
     static NavMeshData m_Data;
     static Bounds m_Bounds;
     static List<NavMeshBuildSource> m_Sources=new List<NavMeshBuildSource>();
-
-    public static void InitNavMeshData(Transform transform, Bounds bound)
+    static Dictionary<int, NavigationQuadrants> m_Quadrants = new Dictionary<int, NavigationQuadrants>();
+    public static void InitNavMeshData(Transform transform, Bounds bound,Dictionary<int,NavigationQuadrants> quadrants)
     {
         ClearNavMeshDatas();
         m_Transform = transform;
         m_Bounds = bound;
+        m_Quadrants = quadrants;
+
         ReCollectSources();
         m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, m_Transform.position, m_Transform.rotation);
         m_DataInstance = NavMesh.AddNavMeshData(m_Data);
     }
-    public static void UpdateChunkData()
+
+    static void ReCollectSources(int quadrantIndex = -1)
     {
-        ReCollectSources();
+        m_Sources.Clear();
+        m_Quadrants.Traversal((NavigationQuadrants quadrants) => { if (quadrantIndex == -1 || quadrantIndex == quadrants.m_Chunk.m_QuadrantIndex) quadrants.RecollectSource(); });
+        m_Quadrants.Traversal((NavigationQuadrants quadrants) => { m_Sources.AddRange(quadrants.m_Sources); });
+    }
+
+    public static void UpdateQuadrantData(int quadrantID)
+    {
+        ReCollectSources(quadrantID);
         NavMeshBuilder.UpdateNavMeshData(m_Data, m_BuildSettings, m_Sources, m_Bounds);
     }
 
-    static void ReCollectSources()
-    {
-        m_Sources.Clear();
-        List<NavMeshBuildSource> _originSources = new List<NavMeshBuildSource>();
-        NavMeshBuilder.CollectSources(m_Transform, -1, NavMeshCollectGeometry.PhysicsColliders, 0, new List<NavMeshBuildMarkup>() { }, _originSources);
-        _originSources.Traversal((NavMeshBuildSource source) => {
-            if (source.component.gameObject.layer == GameLayer.I_Static)
-                m_Sources.Add(source);
-        });
-    }
 
 
     public static void ClearNavMeshDatas()
