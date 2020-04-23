@@ -58,7 +58,7 @@ public class CampManager : GameManagerBase
     {
         OnPortalEnter(1f, tf_CameraAttach, () => {
             GameDataManager.OnNewGame();
-            LoadingManager.Instance.ShowLoading(enum_Stage.Rookie);
+            LoadingManager.Instance.ShowLoading(enum_GameStage.Rookie);
             SwitchScene( enum_Scene.Game);
         });
     }

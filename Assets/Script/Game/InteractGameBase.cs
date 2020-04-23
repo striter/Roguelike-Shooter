@@ -9,7 +9,7 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
     protected virtual bool B_SelfRecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int m_TradePrice { get; protected set; } = -1;
-    public int m_KeyRequire { get; private set; } = -1;
+    public int m_KeyRequire { get; protected set; } = -1;
     public int I_MuzzleOnInteract;
     public virtual void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {

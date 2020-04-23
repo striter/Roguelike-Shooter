@@ -15,6 +15,7 @@ public class InteractPickup : InteractGameBase {
     {
         m_DropTimer.Replay();
         m_DropPosition = dropPosition;
+        SetInteractable(false);
         return this;
     }
 
@@ -22,7 +23,6 @@ public class InteractPickup : InteractGameBase {
     {
         m_MoveSpeed = 0;
         m_MoveTowards = towards;
-        SetInteractable(false);
         return this;
     }
 
@@ -32,6 +32,8 @@ public class InteractPickup : InteractGameBase {
         {
             transform.position = Vector3.Lerp(m_DropPosition,transform.position, m_DropTimer.m_TimeLeftScale);
             m_DropTimer.Tick(Time.deltaTime);
+            if(!m_DropTimer.m_Timing)
+                SetInteractable(true);
             return;
         }
 
@@ -49,7 +51,6 @@ public class InteractPickup : InteractGameBase {
             return;
         }
         transform.position = m_MoveTowards.transform.position+TCommon.RandomXZCircle()*.5f;
-        SetInteractable(true);
         m_MoveTowards = null;
     }
 

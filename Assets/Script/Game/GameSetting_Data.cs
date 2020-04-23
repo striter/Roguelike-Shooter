@@ -552,7 +552,7 @@ namespace GameSetting
             return buff;
         }
 
-        public static List<int> GetEnermyGenerate(enum_Stage stage,enum_GameDifficulty difficulty)
+        public static List<int> GetEnermyGenerate(enum_GameStage stage,enum_GameDifficulty difficulty)
         {
             return SheetProperties<SEnermyGenerate>.GetPropertiesList(0).RandomItem().m_EnermyGenerate;
         }
@@ -600,7 +600,7 @@ namespace GameSetting
     public class CPlayerBattleSave : ISave
     {
         public string m_GameSeed;
-        public enum_Stage m_Stage;
+        public enum_GameStage m_Stage;
         public float m_Health;
         public float m_Coins;
         public int m_Keys;
@@ -627,7 +627,7 @@ namespace GameSetting
             m_Perks = new List<PerkSaveData>();
             m_Weapon1 = WeaponSaveData.New(weapon);
             m_Weapon2 = WeaponSaveData.New(enum_PlayerWeapon.Invalid);
-            m_Stage = enum_Stage.Rookie;
+            m_Stage = enum_GameStage.Rookie;
             m_GameSeed = DateTime.Now.ToLongTimeString();
         }
 

@@ -8,6 +8,36 @@ namespace GameSetting
     #region For Designers Use
     public static class GameConst
     {
+        #region Battle
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(15, 25);
+        public const float F_SqrEnermyGenerateMinDistance = 400f; // 20*20
+
+        public const float F_SignalTowerTransmitDuration = 60f;
+
+        public const float F_BlastShakeMultiply = .5f;
+        public const float F_DamageImpactMultiply = 1f;
+
+        public const float F_EntityDeadFadeTime = 3f;
+        public const float F_PlayerReviveCheckAfterDead = 1.5f;
+        public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
+
+        public const float F_AimMovementReduction = .6f;
+        public const float F_MovementReductionDuration = .1f;
+        public const int I_ProjectileMaxDistance = 100;
+        public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
+        public const float F_AimAssistDistance = 100f;
+        public const short I_BoltLastTimeAfterHit = 5;
+
+        public const float F_PlayerWeaponFireReloadPause = 1f; //武器恢复间隔时间
+        public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
+        public const float F_PlayerDamageAdjustmentRange = 0f;     //Test 不方便数据测试 临时关闭
+        public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
+        public const int I_PlayerEnermyKillExpGain = 20;
+
+        public const float F_EliteBuffTimerDurationWhenFullHealth = 15f; //触发tick值
+        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
+        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(211, 12010, 32010), new EliteBuffCombine(213, 12030, 32030), new EliteBuffCombine(214, 12040, 32040), new EliteBuffCombine(215, 12050, 32050), new EliteBuffCombine(216, 12060, 32060) };
+        #endregion
         #region Interacts
         public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,3);
         public const float F_EnermyKeyGenerate = 2.5f;
@@ -20,8 +50,6 @@ namespace GameSetting
 
         public const int I_DangerzoneDamage = 50;
         public const float F_DangerzoneResetDuration = 2f;
-
-        public const float F_SignalTowerTransmitDuration = 30f;
 
         public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,10f }, { enum_GameEventType.HealthpackTrade, 10f }, { enum_GameEventType.WeaponTrade, 15f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 10f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 5f }, { enum_GameEventType.SafeBox, 2.5f }, };
 
@@ -49,42 +77,13 @@ namespace GameSetting
         public const int I_HealShrineTryCountMax = 5;
         public const float F_HealShrineHealthReceive = 30f;
 
-        public const int I_EventSafeCrackPrice = 20;
-        public const int I_EventSafeCoinsCount = 5;
-        public const int I_EventSafeCoinsAmount = 7;
+        public static readonly RangeInt I_EventSafeCoinsAmount = new RangeInt(10,10);
         public static readonly RangeInt RI_EventSafeWeaponCount = new RangeInt(1, 1);
         public static readonly Dictionary<enum_Rarity, int> D_EventSafeWeaponRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
         public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
         public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
 
         #endregion        
-        #region Entities
-        public const float F_BlastShakeMultiply = .5f;
-        public const float F_DamageImpactMultiply = 1f;
-
-        public const float F_EntityDeadFadeTime = 3f;
-        public const float F_PlayerReviveCheckAfterDead = 1.5f;
-        public const float F_PlayerReviveBuffDuration = 6f; //复活无敌时间
-
-        public const float F_AimMovementReduction = .6f;
-        public const float F_MovementReductionDuration = .1f;
-        public const int I_ProjectileMaxDistance = 100;
-        public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
-        public const float F_AimAssistDistance = 100f;
-        public const short I_BoltLastTimeAfterHit = 5;
-
-        public const float F_PlayerWeaponFireReloadPause = 1f; //武器恢复间隔时间
-        public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
-        public const float F_PlayerDamageAdjustmentRange = 0f;     //Test 不方便数据测试 临时关闭
-        public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
-        public const int I_PlayerEnermyKillExpGain = 20;
-
-        public const float F_EliteBuffTimerDurationWhenFullHealth = 15f; //触发tick值
-        public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
-        public static readonly RangeInt RI_GameFinalBattleEnermySpawnCheck = new RangeInt(10, 5); //BOSS关小怪刷新检测时间
-        public const float F_FinalBattleEnermySpawnEliteHealthScaleOffset = .1f; //BOSS血量减少百分比会判断刷新小怪
-        public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(211, 12010, 32010), new EliteBuffCombine(213, 12030, 32030), new EliteBuffCombine(214, 12040, 32040), new EliteBuffCombine(215, 12050, 32050), new EliteBuffCombine(216, 12060, 32060) };
-        #endregion
         public static class AI
         {
             public const float F_AIMovementCheckParam = .3f; //AI检查玩家频率
@@ -160,11 +159,11 @@ namespace GameSetting
 
         public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
 
-        public static SBuff GetEnermyGameBuff(enum_Stage stage, enum_GameDifficulty difficulty) => SBuff.CreateGameEnermyBuff((int)difficulty, ((int)stage - 1) * .3f+ ((int)difficulty - 1)*.3f );
-        public static float GetEnermyMaxHealthMultiplier(enum_Stage stage, enum_GameDifficulty difficulty) => 1f + ((int)stage - 1) * .5f + ((int)difficulty - 1) * .25f;
+        public static SBuff GetEnermyGameBuff(enum_GameStage stage, enum_GameDifficulty difficulty) => SBuff.CreateGameEnermyBuff((int)difficulty, ((int)stage - 1) * .3f+ ((int)difficulty - 1)*.3f );
+        public static float GetEnermyMaxHealthMultiplier(enum_GameStage stage, enum_GameDifficulty difficulty) => 1f + ((int)stage - 1) * .5f + ((int)difficulty - 1) * .25f;
         
-        public static float GetResultCompletion(bool win, enum_Stage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
-        public static float GetResultLevelScore(enum_Stage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
+        public static float GetResultCompletion(bool win, enum_GameStage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
+        public static float GetResultLevelScore(enum_GameStage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultDifficultyBonus(enum_GameDifficulty _difficulty) =>1f+ (int)_difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
         #region Interacts
@@ -267,7 +266,7 @@ namespace GameSetting
         public static string GetPassiveLocalizeKey(this EquipmentSaveData upgrade) => "Equipment_Passive_" + upgrade.m_Index;
         public static string GetPassiveLocalizeKey(this ExpireUpgrade upgrade) => "Equipment_Passive_" + upgrade.m_Index;
         public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
-        public static string GetLocalizeKey(this enum_Stage stage) => "Game_Stage_" + stage;
+        public static string GetLocalizeKey(this enum_GameStage stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Name";
         public static string GetLocalizeIntroKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Intro";

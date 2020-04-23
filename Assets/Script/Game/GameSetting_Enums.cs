@@ -46,7 +46,7 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
-    public enum enum_Stage {
+    public enum enum_GameStage {
         Invalid = -1,
         Rookie = 1,
         Militia = 2,
