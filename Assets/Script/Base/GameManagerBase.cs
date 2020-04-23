@@ -116,7 +116,11 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
         m_DepthSSAO.SetAOEnable(OptionsDataManager.m_OptionsData.m_Effect>=  enum_Option_Effect.High);
         m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Normal, OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.High);
-        CameraController.Instance.m_Effect.ResetCameraEffectParams();
+    }
+
+    protected void SetPostEffect_AreaScan(Vector3 position,Color color)
+    {
+        CameraController.Instance.m_Effect.StartAreaScan(position,color,null,1,.7f,1.5f,40,2f);
     }
 
     protected void SetPostEffect_Dead()

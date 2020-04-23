@@ -16,6 +16,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         {
             effectBase.InitEffect(this);
             m_CameraEffects.Add(effectBase);
+            ResetCameraEffectParams();
             return effectBase;
         }
         return null;
@@ -29,23 +30,26 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
             return;
 
         m_CameraEffects.Remove(effect);
+        ResetCameraEffectParams();
     }
     public void RemoveAllPostEffect()
     {
         m_CameraEffects.Traversal((CameraEffectBase effect)=> { effect.OnDestroy(); });
         m_CameraEffects.Clear();
+        ResetCameraEffectParams();
     }
 
     public void SetMainTextureCamera(bool enabled)
     {
         //m_Camera.depthTextureMode = enabled ? DepthTextureMode.Depth : DepthTextureMode.None;
         m_MainTextureCamera = enabled;
+        ResetCameraEffectParams();
         if (m_MainTextureCamera)
             GetOrAddCameraEffect<CE_MainCameraTexture>().SetTextureEnable(true, true);
         else
             RemoveCameraEffect<CE_MainCameraTexture>();
     }
-    public void ResetCameraEffectParams()
+    protected void ResetCameraEffectParams()
     {
         Shader.SetGlobalInt(m_GlobalCameraDepthTextureMode, m_MainTextureCamera ? 1 : 0);
         m_DoGraphicBlitz = false;
@@ -69,7 +73,10 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         areaScan.SetEffect(startPoint, scanColor, scanTex,texScale, colorOpacity, width);
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);
-        },0,1,duration,()=> { RemoveCameraEffect<PE_AreaScanDepth>(); }));
+        },0,1,duration,()=> {
+            RemoveCameraEffect<PE_AreaScanDepth>();
+            ResetCameraEffectParams();
+        }));
         ResetCameraEffectParams();
     }
     

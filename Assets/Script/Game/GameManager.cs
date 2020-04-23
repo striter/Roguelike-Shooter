@@ -167,7 +167,7 @@ public class GameManager : GameManagerBase
         CameraController.Instance.SetCameraRotation(-1, playerSpawn.m_Rot.eulerAngles.y);
 
         ChunkGameObjectData signalTowerSpawn = signalTowerSpawns.RandomItem(m_GameLevel.m_Random);
-        GameObjectManager.SpawnInteract<InteractSignalTower>(signalTowerSpawn.m_Pos, signalTowerSpawn.m_Rot,GameLevelManager.Instance.GetChunk(signalTowerSpawn.m_QuadrantIndex).m_InteractParent).Play(OnSignalTowerTransmitCountFinish);
+        GameObjectManager.SpawnInteract<InteractSignalTower>(signalTowerSpawn.m_Pos, signalTowerSpawn.m_Rot,GameLevelManager.Instance.GetChunk(signalTowerSpawn.m_QuadrantIndex).m_InteractParent).Play(OnSignalTowerTransmitStart,OnSignalTowerTransmitCountFinish);
 
         gameEventSpawns.Traversal((ChunkGameObjectData objectData) =>
         {
@@ -218,8 +218,15 @@ public class GameManager : GameManagerBase
         });
     }
 
+    void OnSignalTowerTransmitStart(InteractSignalTower signalTower)
+    {
+        SetPostEffect_AreaScan(signalTower.m_Canvas.position, Color.red);
+
+    }
+
     bool OnSignalTowerTransmitCountFinish(InteractSignalTower signalTower)
     {
+        SetPostEffect_AreaScan(signalTower.m_PortalPos.position,Color.green);
         enum_GamePortalType portal = m_GameLevel.GetNextStageGenerate();
         GameObjectManager.SpawnInteract<InteractPortal>(signalTower.m_PortalPos.position, signalTower.m_PortalPos.rotation).Play(portal, OnChunkPortalEnter);
         return true;
