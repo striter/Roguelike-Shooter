@@ -97,6 +97,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     }
 #endif
     #endregion
+
     #region Minimap
     enum_MapFogType[,] m_FogRevealation;
     public bool CheckTileRevealed(int i, int j) => m_FogRevealation[i, j] == enum_MapFogType.Cleared;
@@ -199,7 +200,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
-        List<LevelChunkData> dataGenerateAvoid = new List<LevelChunkData>();
         List<enum_ObjectEventType> mainChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal, enum_ObjectEventType.Normal, enum_ObjectEventType.Final };
         List<enum_ObjectEventType> subChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal };
 
@@ -214,46 +214,55 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 if (generateCount > 10240)
                     throw new Exception("Generate Overtime!");
 
+                List<LevelChunkData> availableChunkData = chunkDatas.ToList();
                 gameChunkGenerate.Clear();
-                dataGenerateAvoid.Clear();
-                Action<ChunkGenerateData, List<ChunkGenerateData>> ConnectGameData = (ChunkGenerateData startData, List<ChunkGenerateData> connectDatas) =>
+                Action<ChunkGenerateData, List<ChunkGenerateData>> ConnectGameData = (ChunkGenerateData startChunk, List<ChunkGenerateData> connectDatas) =>
                 {
-                    ChunkGenerateData preData = startData;
+                    ChunkGenerateData preChunk = startChunk;
                     connectDatas.Traversal((ChunkGenerateData data) =>
                     {
-                        dataGenerateAvoid.Add(data.m_Data);
-                        preData.OnConnectionSet(data.m_PreChunkConnectPoint);
+                        availableChunkData.Remove(data.m_Data);
+                        preChunk.OnConnectionSet(data.m_PreChunkConnectPoint);
                         data.OnConnectionSet(data.m_ChunkConnectPoint);
-                        preData = data;
+                        preChunk = data;
                         gameChunkGenerate.Add(data);
                     });
                 };
 
                 //Generate Main Chunks
-                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero, chunkDatas.RandomItem(random), enum_ObjectEventType.Start));
+                LevelChunkData startData = availableChunkData.RandomItem(random);
+                gameChunkGenerate.Add(new ChunkGenerateData(gameChunkGenerate.Count, TileAxis.Zero,startData, enum_ObjectEventType.Start));
+                availableChunkData.Remove(startData);
 
                 //Gemerate Main Chunks
                 List<ChunkGenerateData> mainConnectionChunks = null;
-                if (!TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, chunkDatas, dataGenerateAvoid, mainChunkType, random, out mainConnectionChunks))
+                if (!TryGenerateChunkDatas(gameChunkGenerate.Count, gameChunkGenerate[0], gameChunkGenerate, availableChunkData, mainChunkType, random, out mainConnectionChunks))
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
-                //Generate Sub Chunks
-                bool generateSuccessful=false;
-                mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
-                {
-                    if (!mainChunk.HaveEmptyConnection())
-                        return false;
-                    List<ChunkGenerateData> subConnectionChunks = null;
-                    if (TryGenerateChunkDatas(1000, mainChunk, gameChunkGenerate, chunkDatas, dataGenerateAvoid, subChunkType, random, out subConnectionChunks))
-                    {
-                        ConnectGameData(mainChunk, subConnectionChunks);
-                        generateSuccessful = true;
-                        return true;
-                    }
-                    return false;
-                }, random);
 
-                if (generateSuccessful)
+                bool subGenerateSuccessful = false;
+                for(int i=0;i<2;i++)
+                {
+                    bool generateSuccessful = false;
+                    mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
+                    {
+                        if (!mainChunk.HaveEmptyConnection())
+                            return false;
+                        List<ChunkGenerateData> subConnectionChunks = null;
+                        if (TryGenerateChunkDatas(1000 * i, mainChunk, gameChunkGenerate, availableChunkData, subChunkType, random, out subConnectionChunks))
+                        {
+                            ConnectGameData(mainChunk, subConnectionChunks);
+                            generateSuccessful = true;
+                            return true;
+                        }
+                        return false;
+                    }, random);
+                    subGenerateSuccessful = generateSuccessful;
+                    if (!subGenerateSuccessful)
+                        break;
+                }
+
+                if (subGenerateSuccessful)
                     break;
             }
         }).TaskCoroutine();
@@ -392,10 +401,9 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         #endregion
     }
 
-    bool TryGenerateChunkDatas(int generateStartIndex, ChunkGenerateData generateStartChunk, List<ChunkGenerateData> intersectsCheckChunks, LevelChunkData[] chunkDatas, List<LevelChunkData> chunkDataAvoids, List<enum_ObjectEventType> generateMainTypes, System.Random random, out List<ChunkGenerateData> chunkGenerateData)
+    bool TryGenerateChunkDatas(int generateStartIndex, ChunkGenerateData generateStartChunk, List<ChunkGenerateData> intersectsCheckChunks, List<LevelChunkData> chunkDatas, List<enum_ObjectEventType> generateMainTypes, System.Random random, out List<ChunkGenerateData> chunkGenerateData)
     {
         chunkGenerateData = new List<ChunkGenerateData>();
-        List<LevelChunkData> chunkAvoidCheck = new List<LevelChunkData>(chunkDataAvoids);
         List<ChunkGenerateData> chunkIntersectsCheckData = new List<ChunkGenerateData>(intersectsCheckChunks);
         ChunkGenerateData previousChunkGenerate = generateStartChunk;
         for (int i = 0; i < generateMainTypes.Count; i++)
@@ -411,7 +419,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 enum_TileDirection nextConnectDirection = m_previousConnectionData.m_Direction.Inverse();
                 chunkDatas.TraversalRandomBreak((LevelChunkData chunkData) =>
                 {
-                    if (chunkAvoidCheck.Contains(chunkData) || !isConnectingFinalChunk && chunkData.Connections.Length <= 1)
+                    if (!isConnectingFinalChunk && chunkData.Connections.Length <= 1)
                         return false;
                     
                     chunkData.Connections.TraversalRandomBreak((int curConnectionIndex) =>
@@ -441,7 +449,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 chunkGenerateData.Clear();
                 return false;
             }
-            chunkAvoidCheck.Add(nextChunkGenerate.m_Data);
+            chunkDatas.Remove(nextChunkGenerate.m_Data);
             chunkGenerateData.Add(nextChunkGenerate);
             chunkIntersectsCheckData.Add(nextChunkGenerate);
             previousChunkGenerate = nextChunkGenerate;
