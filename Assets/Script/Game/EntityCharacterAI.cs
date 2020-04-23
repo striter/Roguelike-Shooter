@@ -183,7 +183,6 @@ public class EntityCharacterAI : EntityCharacterBase {
             PauseAttack();
         }
     }
-
     
     public void AITick(float deltaTime)
     {

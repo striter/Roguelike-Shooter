@@ -450,7 +450,7 @@ public class GameManager : GameManagerBase
 
     void SpawnBattleEnermyDeadDrops(EntityCharacterBase entity)
     {
-        if (entity.m_Flag != enum_EntityFlag.Enermy)
+        if (entity.m_Flag != enum_EntityFlag.Enermy||entity.b_isSubEntity)
             return;
 
         Vector3 sourcePosition = entity.transform.position;

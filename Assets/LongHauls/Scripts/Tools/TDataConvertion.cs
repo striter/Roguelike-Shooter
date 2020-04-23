@@ -38,8 +38,8 @@ public interface IDataConvert
 }
 public static class TDataConvert
 {
-    static readonly char[] m_PhraseLiterateBreakPoints = new char[10] { ',','.','[', ']', '{', '}', '(', ')', '/', '|', };
-    const char m_PhraseBaseBreakPoint = '/';
+    static readonly char[] m_PhraseLiterateBreakPoints = new char[8] { '-', '[', ']', '{', '}', '(', ')', '/' };
+    const char m_PhraseBaseBreakPoint = '|';
 
     public static string Convert(object value) => ConvertToString(value.GetType(), value, 0);
     public static T Convert<T>(string xmlData) => (T)ConvertToObject(typeof(T), xmlData, 0);
