@@ -5,9 +5,9 @@ using TSpecialClasses;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIC_CoinsStatus : UIControlBase {
+public class UIC_GameCurrencyStatus : UIControlBase {
 
-    Text m_Coins;
+    Text m_Coins,m_Keys;
     ValueLerpSeconds m_CoinLerp;
 
     protected override void Init()
@@ -16,6 +16,7 @@ public class UIC_CoinsStatus : UIControlBase {
         m_Coins = transform.Find("CoinData/Data").GetComponent<Text>();
         m_CoinLerp = new ValueLerpSeconds(0f, 20f,1f,(float value)=> { m_Coins.text = ((int)value).ToString(); });
         m_Coins.text = "0";
+        m_Keys = transform.Find("KeyData/Data").GetComponent<Text>();
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OnCommonStatus);
     }
 
@@ -33,5 +34,6 @@ public class UIC_CoinsStatus : UIControlBase {
     void OnCommonStatus(EntityCharacterPlayer _player)
     {
         m_CoinLerp.ChangeValue(_player.m_CharacterInfo.m_Coins);
+        m_Keys.text = _player.m_CharacterInfo.m_Keys.ToString();
     }
 }

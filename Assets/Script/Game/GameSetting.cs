@@ -882,6 +882,7 @@ namespace GameSetting
         public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
         public ExpireUpgrade m_Upgrade { get; private set; }
         public float m_Coins { get; private set; } = 0;
+        public int m_Keys { get; private set; } = 0;
         public ExpRankBase m_RankManager { get; private set; }
 
         public PlayerExpireManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
@@ -1041,21 +1042,15 @@ namespace GameSetting
         public void OnAfterReceiveDamage(DamageInfo damageInfo,EntityCharacterBase damageEntity,float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveDamage(damageInfo, amountApply); });
         public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
         #endregion
-
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
-        #region CoinInfo
-        public bool CanCostCoins(float price)
-        {
-            return m_Coins >= price* F_CoinsCostMultiply;
-        }
-        public void OnCoinsCost(float price)
-        {
-            m_Coins -= price * F_CoinsCostMultiply;
-        }
-        public void OnCoinsGain(float coinAmount)
-        {
-            m_Coins += coinAmount;
-        }
+        #region Coin/Key Info
+        public bool CanCostCoins(float price)=> m_Coins >= price* F_CoinsCostMultiply;
+        public void OnCoinsCost(float price)=> m_Coins -= price * F_CoinsCostMultiply;
+        public void OnCoinsGain(float coinAmount)=>m_Coins += coinAmount;
+
+        public bool CanCostKeys(int keyCount) => m_Keys >=keyCount;
+        public void OnKeyCost(int keyAmount) => m_Keys--;
+        public void OnKeysGain(int keyAmount) => m_Keys += keyAmount;
         #endregion
         #region RankInfo
         public void OnExpReceived(int exp)

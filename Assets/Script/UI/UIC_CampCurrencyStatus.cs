@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using GameSetting;
 using TSpecialClasses;
 
-public class UIC_CurrencyStatus : UIControlBase {
+public class UIC_CampCurrencyStatus : UIControlBase {
     Text m_Credit;
     ValueLerpSeconds m_CreditLerp;
     protected override void Init()

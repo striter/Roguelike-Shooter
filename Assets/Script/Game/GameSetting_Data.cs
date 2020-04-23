@@ -603,6 +603,7 @@ namespace GameSetting
         public enum_Stage m_Stage;
         public float m_Health;
         public float m_Coins;
+        public int m_Keys;
         public int m_TotalExp;
         public enum_PlayerCharacter m_Character;
         public WeaponSaveData m_Weapon1;
@@ -617,6 +618,7 @@ namespace GameSetting
         public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
         {
             m_Coins = 0;
+            m_Keys = 0;
             m_TotalExp = 0;
             m_Health = -1;
             m_Character = character;
@@ -634,6 +636,7 @@ namespace GameSetting
             m_GameSeed = _level.m_GameSeed;
             m_Stage = _level.m_GameStage;
             m_Coins = _player.m_CharacterInfo.m_Coins;
+            m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;
             m_Weapon1 = WeaponSaveData.Save(_player.m_Weapon1);

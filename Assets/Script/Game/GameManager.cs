@@ -462,7 +462,10 @@ public class GameManager : GameManagerBase
             return;
 
         Vector3 sourcePosition = entity.transform.position;
-        
+
+        if (TCommon.RandomPercentage() <= GameConst.F_EnermyKeyGenerate)
+            GameObjectManager.SpawnInteract<InteractPickupKey>(sourcePosition, Quaternion.identity).Play(1).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
+
         int amount=GameConst.RI_EnermyCoinsGenerate.Random();
         for(int i=0;i<amount;i++)
             GameObjectManager.SpawnInteract<InteractPickupCoin>(sourcePosition, Quaternion.identity).Play(1).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);

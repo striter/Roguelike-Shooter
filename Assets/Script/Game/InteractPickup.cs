@@ -22,14 +22,12 @@ public class InteractPickup : InteractGameBase {
     {
         m_MoveSpeed = 0;
         m_MoveTowards = towards;
+        SetInteractable(false);
         return this;
     }
 
     private void Update()
     {
-        if (!m_InteractEnable)
-            return;
-
         if(m_DropTimer.m_Timing)
         {
             transform.position = Vector3.Lerp(m_DropPosition,transform.position, m_DropTimer.m_TimeLeftScale);
@@ -51,6 +49,7 @@ public class InteractPickup : InteractGameBase {
             return;
         }
         transform.position = m_MoveTowards.transform.position+TCommon.RandomXZCircle()*.5f;
+        SetInteractable(true);
         m_MoveTowards = null;
     }
 
