@@ -19,6 +19,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_GamePortalType.GameWin : enum_GamePortalType.StageEnd); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Signal Tower", KeyCode.None, () => { GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => { if (interact.m_InteractType == enum_Interaction.SignalTower) m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition( interact.transform.position),interact.transform.rotation); }); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Signal Tower Scane", KeyCode.None, () => { CameraController.Instance.m_Effect.StartAreaScan(m_LocalPlayer.transform.position,Color.white,null); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All", KeyCode.Alpha0, () => {
             GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
@@ -28,7 +29,7 @@ public class GameManager : GameManagerBase
         });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
-            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
+            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_GameStage);
         });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1, int.Parse(damage), enum_DamageType.Basic)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal", KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1, -int.Parse(damage), enum_DamageType.Basic)); });
@@ -95,7 +96,7 @@ public class GameManager : GameManagerBase
     IEnumerator DoLoadStage()     //PreInit Bigmap , Levels LocalPlayer Before  Start The game
     {
         m_GameLoading = true;
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_StageIndex);
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         CameraController.MainCamera.enabled = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoadBegin);
         yield return null;
@@ -256,7 +257,7 @@ public class GameManager : GameManagerBase
     public void OnGameExit()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_StageIndex);
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
         SwitchScene(enum_Scene.Camp, () => { LoadingManager.Instance.EndLoading(); return true; });
     }
     #region SFXHitCheck
@@ -493,7 +494,7 @@ public class GameManager : GameManagerBase
     {
         int spawnPointCount = 0;
         enermyGenerate.m_EnermyGenerate.Traversal((int enermyID) => {
-            GameObjectManager.SpawnEntityCharacterAI(enermyID, m_EnermySpawnPoints[spawnPointCount], Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_StageIndex);
+            GameObjectManager.SpawnEntityCharacterAI(enermyID, m_EnermySpawnPoints[spawnPointCount], Quaternion.identity, enum_EntityFlag.Enermy, m_GameLevel.m_GameDifficulty, m_GameLevel.m_GameStage);
             spawnPointCount++;
             if (spawnPointCount == m_EnermySpawnPoints.Count)
                 spawnPointCount = 0;
@@ -508,22 +509,21 @@ public class GameProgressManager
 {
     #region GameData
     public string m_GameSeed { get; private set; }
-    public int m_GameDifficulty { get; private set; }
-    public enum_Stage m_StageIndex { get; private set; }
+    public enum_GameDifficulty m_GameDifficulty { get; private set; }
+    public enum_Stage m_GameStage { get; private set; }
     Dictionary<enum_Stage, enum_GameStyle> m_StageStyle = new Dictionary<enum_Stage, enum_GameStyle>();
-    public enum_GameStyle m_GameStyle => m_StageStyle[m_StageIndex];
+    public enum_GameStyle m_GameStyle => m_StageStyle[m_GameStage];
     public bool m_GameWin { get; private set; }
     #endregion
     #region LevelData
     public System.Random m_Random { get; private set; }
-    Dictionary<bool, List<SEnermyGenerate>> m_EnermyGenerate;
     #endregion
     #region Get
-    public bool m_FinalStage => m_StageIndex == enum_Stage.Ranger;
+    public bool m_FinalStage => m_GameStage == enum_Stage.Elite;
     #endregion
     public GameProgressManager(CGameSave _gameSave,CPlayerBattleSave _battleSave)
     {
-        m_StageIndex = _battleSave.m_Stage;
+        m_GameStage = _battleSave.m_Stage;
         m_GameDifficulty = _gameSave.m_GameDifficulty;
         m_GameSeed =_battleSave.m_GameSeed;
         m_Random = new System.Random(m_GameSeed.GetHashCode());
@@ -536,19 +536,15 @@ public class GameProgressManager
     }
     public void StageInit()
     {
-        m_EnermyGenerate = GameDataManager.GetEnermyGenerate(m_StageIndex,m_GameStyle);
-        m_Random = new System.Random((m_GameSeed + m_StageIndex.ToString()).GetHashCode());
+        m_Random = new System.Random((m_GameSeed + m_GameStage.ToString()).GetHashCode());
     }
-    #region BattleData
-    public SEnermyGenerate GetBattleWaveData()=> m_EnermyGenerate[false].RandomItem();
-    public void NextStage() => m_StageIndex++;
+    public void NextStage() => m_GameStage++;
     public void GameFinished(bool win) => m_GameWin = win;
     public enum_GamePortalType GetNextStageGenerate() => m_FinalStage ? enum_GamePortalType.GameWin : enum_GamePortalType.StageEnd;
-    #endregion
 
     #region CalculateData
-    public float F_Completion => GameExpression.GetResultCompletion(m_GameWin, m_StageIndex, 0);
-    public float F_CompletionScore => GameExpression.GetResultLevelScore(m_StageIndex, 0);
+    public float F_Completion => GameExpression.GetResultCompletion(m_GameWin, m_GameStage, 0);
+    public float F_CompletionScore => GameExpression.GetResultLevelScore(m_GameStage, 0);
     public float F_DifficultyBonus => GameExpression.GetResultDifficultyBonus(m_GameDifficulty);
     public float F_FinalScore =>  F_CompletionScore *  F_DifficultyBonus;
     public float F_CreditGain => GameExpression.GetResultRewardCredits(F_FinalScore);

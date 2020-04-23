@@ -32,6 +32,7 @@ public class InteractSignalTower : InteractGameBase {
         this.OnTransmitCountFinish = OnTransmitCountFinish;
         return this;
     }
+
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
@@ -40,6 +41,7 @@ public class InteractSignalTower : InteractGameBase {
         tf_Canvas.SetActivate(true);
         m_Count.text = "0";
         m_Transmitting = true;
+        CameraController.Instance.m_Effect.StartAreaScan(tf_Canvas.position, Color.white, null, 1, .5f, 1f, 20, 1.5f);
         return false;
     }
     
@@ -52,8 +54,12 @@ public class InteractSignalTower : InteractGameBase {
         m_ActivateTimer.Tick(Time.deltaTime);
 
         if (m_Transmitting && !m_ActivateTimer.m_Timing)
+        {
             m_Transmitting = !OnTransmitCountFinish(this);
+            if(!m_Transmitting)
+                CameraController.Instance.m_Effect.StartAreaScan(m_PortalPos.position, Color.white, null, 1, .5f, 1f, 20, 1.5f);
+        }
 
-        m_Count.text = ((int)((1-m_ActivateTimer.m_TimeLeftScale)*80f+(m_Transmitting?0f:20f))).ToString();
+        m_Count.text = ((int)((1-m_ActivateTimer.m_TimeLeftScale)*99f+(m_Transmitting?0f:1f))).ToString();
     }
 }

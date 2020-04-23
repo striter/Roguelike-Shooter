@@ -63,13 +63,10 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     }
 
 
-    public void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float scale=1f, float lerp=.7f,float width=1f,float range=20,float duration=1.5f)
+    public void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float texScale=1f, float colorOpacity=.7f,float width=1f,float range=20,float duration=1.5f)
     {
-        if (GetCameraEffect<PE_AreaScanDepth>() != null)
-            RemoveCameraEffect<PE_AreaScanDepth>();
-
         PE_AreaScanDepth areaScan= GetOrAddCameraEffect<PE_AreaScanDepth>();
-        areaScan.SetEffect(startPoint, scanColor, scanTex,scale, lerp, width);
+        areaScan.SetEffect(startPoint, scanColor, scanTex,texScale, colorOpacity, width);
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);
         },0,1,duration,()=> { RemoveCameraEffect<PE_AreaScanDepth>(); }));

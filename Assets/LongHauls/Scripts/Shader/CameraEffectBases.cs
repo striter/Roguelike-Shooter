@@ -607,14 +607,14 @@ public class PE_AreaScanDepth : PostEffectBase
     {
         m_Material.SetFloat(ID_ScanElapse,elapse);
     }
-    public void SetEffect(Vector3 origin,Color scanColor,Texture scanTex=null, float _scanTexScale = 15f, float colorLerp=.7f,float width=1f)
+    public void SetEffect(Vector3 origin,Color scanColor,Texture scanTex=null, float _scanTexScale = 15f, float colorOpacity=.7f,float width=1f)
     {
         m_Material.SetVector("_ScanOrigin", origin);
         m_Material.SetColor("_ScanColor", scanColor);
         m_Material.SetTexture("_ScanTex", scanTex);
         m_Material.SetFloat("_ScanWidth", width);
         m_Material.SetFloat("_ScanTexScale", _scanTexScale);
-        m_Material.SetFloat("_ScanLerp", colorLerp);
+        m_Material.SetFloat("_ScanLerp", colorOpacity);
     }
 }
 public class PE_DepthSSAO : PostEffectBase

@@ -49,8 +49,18 @@ namespace GameSetting
     public enum enum_Stage {
         Invalid = -1,
         Rookie = 1,
-        Veteran = 2,
-        Ranger = 3,
+        Militia = 2,
+        Veteran = 3,
+        Ranger = 4,
+        Elite = 5,
+    }
+
+    public enum enum_GameDifficulty
+    {
+        Invalid=-1,
+        Normal=1,
+        Hard=2,
+        Hell=3,
     }
 
     public enum enum_GamePortalType
@@ -84,9 +94,7 @@ namespace GameSetting
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
 
     public enum enum_GameStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
-
-    public enum enum_EnermyType { Invalid = -1, Melee = 1, E2 = 2, E3 = 3, E4 = 4, E5 = 5,E6=6,Elite=7 }
-
+    
     public enum enum_Interaction
     {
         Invalid = -1,
