@@ -22,13 +22,13 @@ public class AudioManagerBase : SingletonMono <AudioManagerBase>
         AudioSource source= obj.AddComponent<AudioSource>();
         source.spatialBlend = 1;
         SFXAudioBase audioObj = obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 5);
+        ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 20);
 
         obj = new GameObject("AudioObj_2D");
         source = obj.AddComponent<AudioSource>();
         source.spatialBlend = 0;
         audioObj = obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 5);
+        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 20);
     }
     public virtual void Recycle()
     {

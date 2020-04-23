@@ -17,11 +17,13 @@ public class LevelChunkGame : LevelChunkBase
     public List<TileObjectBlockLift> m_RoadBlockTiles { get; private set; } = new List<TileObjectBlockLift>();
     Action<int> OnChunkObjectDestroy;
 
+    public Transform m_InteractParent { get; private set; }
     Transform m_RoadBlockParent;
     public override void Init()
     {
         base.Init();
         m_RoadBlockParent = transform.Find("RoadBlocks");
+        m_InteractParent = transform.Find("Interacts");
     }
 
     public void InitGameChunk( ChunkQuadrantData _data, System.Random _random, Action<int> OnChunkObjectDestroy)

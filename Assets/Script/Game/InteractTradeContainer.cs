@@ -25,12 +25,5 @@ public class InteractTradeContainer : InteractGameBase {
         return this;
     }
 
-    public override void OnQuadrantActivateCheck(bool activate)
-    {
-        base.OnQuadrantActivateCheck(activate);
-        if (m_TradeInteract)
-            m_TradeInteract.OnQuadrantActivateCheck(activate);
-    }
-
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=>base.OnTryInteractCheck(_interactor) &&  m_TradeInteract.TryInteract(_interactor); 
 }

@@ -45,7 +45,6 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
 {
     class ItemPoolInfo
     {
-        public int i_poolSaveAmount;
         public Y m_spawnItem;
         public Queue<Y> m_DeactiveQueue = new Queue<Y>();
         public List<Y> m_ActiveList = new List<Y>();
@@ -99,8 +98,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         registerItem.SetActivate(false);
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_spawnItem = registerItem;
-        info.i_poolSaveAmount = poolStartAmount;
-        for (int i = 0; i < info.i_poolSaveAmount; i++)
+        for (int i = 0; i < poolStartAmount; i++)
         {
             Y spawnItem = info.NewItem(identity, SelfRecycle);
             info.m_DeactiveQueue.Enqueue(spawnItem);
@@ -136,7 +134,6 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         }
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_ActiveList.Remove(obj);
-        info.i_poolSaveAmount++;
         obj.SetActivate(false);
         obj.transform.SetParent(tf_PoolSpawn);
         info.m_DeactiveQueue.Enqueue(obj);

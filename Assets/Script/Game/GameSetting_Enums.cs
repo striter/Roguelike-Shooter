@@ -11,8 +11,6 @@ namespace GameSetting
         OnEntityActivate,
         OnEntityRecycle,
 
-        OnQuadrantCheck,
-
         OnCharacterHealthWillChange,
         OnCharacterHealthChange,
         OnCharacterDead,
@@ -97,7 +95,7 @@ namespace GameSetting
         TradeContainer,PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, PickupWeapon, PerkSelect,
         PerkLottery,PerkShrine,BloodShrine,HealShrine,
         PickupArmoryBlueprint,PickupEquipment,
-        Portal,
+        SignalTower, Portal,
         GameEnd,
 
         CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampEquipmentDepot,CampCharacterUpgrade,CampCharaceterSelect, CampEnd,

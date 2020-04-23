@@ -18,6 +18,7 @@ namespace GameSetting
         public const int I_DangerzoneDamage = 50;
         public const float F_DangerzoneResetDuration = 2f;
 
+        public const float F_SignalTowerTransmitDuration = 30f;
 
         public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,10f }, { enum_GameEventType.HealthpackTrade, 10f }, { enum_GameEventType.WeaponTrade, 15f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 10f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 5f }, { enum_GameEventType.SafeBox, 2.5f }, };
 

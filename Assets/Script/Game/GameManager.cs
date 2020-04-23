@@ -18,6 +18,8 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextStageGenerate()); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_GamePortalType.GameWin : enum_GamePortalType.StageEnd); });
 
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Signal Tower", KeyCode.None, () => { GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => { if (interact.m_InteractType == enum_Interaction.SignalTower) m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition( interact.transform.position),interact.transform.rotation); }); });
+
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All", KeyCode.Alpha0, () => {
             GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
             {
@@ -52,7 +54,6 @@ public class GameManager : GameManagerBase
         base.Awake();
         nInstance = this;
         InitEntityDic();
-        TBroadCaster<enum_BC_GameStatus>.Add<List<int>>(enum_BC_GameStatus.OnQuadrantCheck, OnQuadrantCheck);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
@@ -66,7 +67,6 @@ public class GameManager : GameManagerBase
     {
         base.OnDestroy();
         nInstance = null;
-        TBroadCaster<enum_BC_GameStatus>.Remove<List<int>>(enum_BC_GameStatus.OnQuadrantCheck, OnQuadrantCheck);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
@@ -104,9 +104,6 @@ public class GameManager : GameManagerBase
         GameObjectManager.PresetRegistCommonObject();
         m_EnermySpawnIDs = GameObjectManager.RegistStyledInGamePrefabs(m_GameLevel.m_GameStyle, m_GameLevel.m_StageIndex);
 
-        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, Vector3.zero,Quaternion.identity).OnPlayerActivate(GameDataManager.m_BattleData);
-        AttachPlayerCamera(tf_CameraAttach);
-
         yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_Random, GenerateGameInteracts);
 
         InitGameEffects(m_GameLevel.m_GameStyle, TResources.GetRenderData(m_GameLevel.m_GameStyle).RandomItem(m_GameLevel.m_Random));
@@ -123,87 +120,108 @@ public class GameManager : GameManagerBase
     }
 
 
-    void GenerateGameInteracts(List<ChunkGameObjectData> objectDatas)
+    void GenerateGameInteracts(Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>> eventObjects)
     {
-        objectDatas.Traversal((ChunkGameObjectData objectData) =>
+        m_EnermySpawnPoints.Clear();
+        List<ChunkGameObjectData> playerSpawns=new List<ChunkGameObjectData>();
+        List<ChunkGameObjectData> signalTowerSpawns = new List<ChunkGameObjectData>();
+        List<ChunkGameObjectData> gameEventSpawns = new List<ChunkGameObjectData>();
+        eventObjects.Traversal((enum_ObjectEventType eventType, List<ChunkGameObjectData> objectDatas) =>
         {
-            switch (objectData.m_ObjectType)
+            objectDatas.Traversal((ChunkGameObjectData objectData) =>
             {
-                case enum_TileObjectType.EMainEvent3x3:
-                    if (objectData.m_EventType == enum_ObjectEventType.Start)
-                    {
-                        tf_CameraAttach.position = objectData.m_Pos;
-                        m_LocalPlayer.Teleport(objectData.m_Pos, objectData.m_Rot);
-                        CameraController.Instance.SetCameraPosition(objectData.m_Pos);
-                        CameraController.Instance.SetCameraRotation(-1, objectData.m_Rot.eulerAngles.y);
-                    }
-                    else if(objectData.m_EventType== enum_ObjectEventType.Final)
-                    {
-                        enum_GamePortalType portal = m_GameLevel.GetNextStageGenerate();
-                        GameObjectManager.SpawnInteract<InteractPortal>(objectData.m_Pos,objectData.m_Rot).Play(portal, OnChunkPortalEnter).SetInteractQuadrant(objectData.m_QuadrantIndex);
-                    }
+                switch (objectData.m_ObjectType)
+                {
+                    case enum_TileObjectType.EMainEvent3x3:
+                        switch(eventType)
+                        {
+                            case enum_ObjectEventType.Start:
+                                playerSpawns.Add(objectData);
+                                break;
+                            case enum_ObjectEventType.Final:
+                                signalTowerSpawns.Add(objectData);
+                                break;
+                            case enum_ObjectEventType.Normal:
+                                gameEventSpawns.Add(objectData);
+                                break;
+                        }
+                        break;
+                    case enum_TileObjectType.EEnermySpawn:
+                        m_EnermySpawnPoints.Add(objectData.m_Pos);
+                        break;
+                    case enum_TileObjectType.ERandomEvent3x3:
+                        gameEventSpawns.Add(objectData);
+                        break;
+                }
+            });
+        });
+
+        ChunkGameObjectData playerSpawn = playerSpawns.RandomItem(m_GameLevel.m_Random);
+        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_BattleData.m_Character, playerSpawn.m_Pos, playerSpawn.m_Rot).OnPlayerActivate(GameDataManager.m_BattleData);
+        AttachPlayerCamera(tf_CameraAttach);
+        tf_CameraAttach.position = playerSpawn.m_Pos;
+        CameraController.Instance.SetCameraPosition(playerSpawn.m_Pos);
+        CameraController.Instance.SetCameraRotation(-1, playerSpawn.m_Rot.eulerAngles.y);
+
+        ChunkGameObjectData signalTowerSpawn = signalTowerSpawns.RandomItem(m_GameLevel.m_Random);
+        GameObjectManager.SpawnInteract<InteractSignalTower>(signalTowerSpawn.m_Pos, signalTowerSpawn.m_Rot,GameLevelManager.Instance.GetChunk(signalTowerSpawn.m_QuadrantIndex).m_InteractParent).Play(OnSignalTowerTransmitCountFinish);
+
+        gameEventSpawns.Traversal((ChunkGameObjectData objectData) =>
+        {
+            enum_GameEventType eventType = TCommon.RandomPercentage(GameConst.D_GameEventRate, enum_GameEventType.Invalid, m_GameLevel.m_Random);
+            Transform spawnTrans= GameLevelManager.Instance.GetChunk(objectData.m_QuadrantIndex).m_InteractParent;
+            InteractGameBase eventInteract = null;
+            switch (eventType)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
                     break;
-                case enum_TileObjectType.EEnermySpawn:
-                    m_EnermySpawnPoints.Add(objectData.m_Pos);
+                case enum_GameEventType.CoinsSack:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractCoinSack>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.RI_CoinsSackAmount.Random(m_GameLevel.m_Random));
                     break;
-                case enum_TileObjectType.ERandomEvent3x3:
-                    enum_GameEventType eventType = TCommon.RandomPercentage(GameConst.D_GameEventRate, enum_GameEventType.Invalid, m_GameLevel.m_Random);
-                    InteractGameBase eventInteract = null;
-                    switch (eventType)
-                    {
-                        default:
-                            Debug.LogError("Invalid Convertions Here!");
-                            break;
-                        case enum_GameEventType.CoinsSack:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractCoinSack>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.RI_CoinsSackAmount.Random(m_GameLevel.m_Random));
-                            break;
-                        case enum_GameEventType.HealthpackTrade:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.I_EventMedpackPrice, GameObjectManager.SpawnInteract<InteractPickupHealthPack>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.I_HealthPackAmount));
-                            break;
-                        case enum_GameEventType.WeaponTrade:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.I_EventWeaponTradePrice, GameObjectManager.SpawnInteract<InteractPickupWeapon>(objectData.m_Pos, objectData.m_Rot).Play(WeaponSaveData.New(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponTradeRate, enum_Rarity.Invalid, m_GameLevel.m_Random)].RandomItem(m_GameLevel.m_Random))));
-                            break;
-                        case enum_GameEventType.WeaponReforge:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractWeaponReforge>(objectData.m_Pos, objectData.m_Rot).Play(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, null)].RandomItem());
-                            break;
-                        case enum_GameEventType.WeaponVendor:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractWeaponVendorMachine>(objectData.m_Pos, objectData.m_Rot).Play();
-                            break;
-                        case enum_GameEventType.PerkShrine:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractPerkShrine>(objectData.m_Pos, objectData.m_Rot).Play();
-                            break;
-                        case enum_GameEventType.BloodShrine:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractBloodShrine>(objectData.m_Pos, objectData.m_Rot).Play();
-                            break;
-                        case enum_GameEventType.HealShrine:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractHealShrine>(objectData.m_Pos, objectData.m_Rot).Play();
-                            break;
-                        case enum_GameEventType.PerkLottery:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractPerkLottery>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.I_EventPerkLotteryPrice, GameDataManager.RandomPerk(TCommon.RandomPercentage(GameConst.D_EventPerkLotteryRate), m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
-                            break;
-                        case enum_GameEventType.PerkSelect:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.I_EventPerkSelectPrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerks(3, GameConst.D_EventPerkSelectRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
-                            break;
-                        case enum_GameEventType.SafeBox:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractSafeCrack>(objectData.m_Pos, objectData.m_Rot).Play();
-                            break;
-                        case enum_GameEventType.WeaponRecycle:
-                            eventInteract = GameObjectManager.SpawnInteract<InteractWeaponRecycle>(objectData.m_Pos, objectData.m_Rot).Play();
-                            break;
-                    }
-                    eventInteract.SetInteractQuadrant(objectData.m_QuadrantIndex);
+                case enum_GameEventType.HealthpackTrade:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventMedpackPrice, GameObjectManager.SpawnInteract<InteractPickupHealthPack>(objectData.m_Pos, objectData.m_Rot).Play(GameConst.I_HealthPackAmount));
+                    break;
+                case enum_GameEventType.WeaponTrade:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventWeaponTradePrice, GameObjectManager.SpawnInteract<InteractPickupWeapon>(objectData.m_Pos, objectData.m_Rot).Play(WeaponSaveData.New(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponTradeRate, enum_Rarity.Invalid, m_GameLevel.m_Random)].RandomItem(m_GameLevel.m_Random))));
+                    break;
+                case enum_GameEventType.WeaponReforge:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractWeaponReforge>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, null)].RandomItem());
+                    break;
+                case enum_GameEventType.WeaponVendor:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractWeaponVendorMachine>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play();
+                    break;
+                case enum_GameEventType.PerkShrine:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractPerkShrine>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play();
+                    break;
+                case enum_GameEventType.BloodShrine:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractBloodShrine>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play();
+                    break;
+                case enum_GameEventType.HealShrine:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractHealShrine>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play();
+                    break;
+                case enum_GameEventType.PerkLottery:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractPerkLottery>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventPerkLotteryPrice, GameDataManager.RandomPerk(TCommon.RandomPercentage(GameConst.D_EventPerkLotteryRate), m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random));
+                    break;
+                case enum_GameEventType.PerkSelect:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventPerkSelectPrice, GameObjectManager.SpawnInteract<InteractPerkSelect>(Vector3.zero, Quaternion.identity).Play(GameDataManager.RandomPerks(3, GameConst.D_EventPerkSelectRate, m_LocalPlayer.m_CharacterInfo.m_ExpirePerks, m_GameLevel.m_Random)));
+                    break;
+                case enum_GameEventType.SafeBox:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractSafeCrack>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play();
+                    break;
+                case enum_GameEventType.WeaponRecycle:
+                    eventInteract = GameObjectManager.SpawnInteract<InteractWeaponRecycle>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play();
                     break;
             }
         });
     }
 
-
-    void OnQuadrantCheck(List<int> activateQuadrants)=> GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => {
-        if (interact.m_InteractQuadrant == -1)
-            return;
-
-        interact.OnQuadrantActivateCheck(activateQuadrants.Contains(interact.m_InteractQuadrant));
-    });
+    bool OnSignalTowerTransmitCountFinish(InteractSignalTower signalTower)
+    {
+        enum_GamePortalType portal = m_GameLevel.GetNextStageGenerate();
+        GameObjectManager.SpawnInteract<InteractPortal>(signalTower.m_PortalPos.position, signalTower.m_PortalPos.rotation).Play(portal, OnChunkPortalEnter);
+        return true;
+    }
 
     void OnChunkPortalEnter(enum_GamePortalType portalType)
     {

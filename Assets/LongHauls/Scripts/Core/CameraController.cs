@@ -131,5 +131,7 @@ public class CameraController : SingletonMono<CameraController>  {
             return rightward;
         }
     }
+
+    public static Quaternion CameraProjectionOnPlane(Vector3 position)=> Quaternion.LookRotation(Vector3.ProjectOnPlane(position - MainCamera.transform.position, MainCamera.transform.right), MainCamera.transform.up);
     #endregion
 }

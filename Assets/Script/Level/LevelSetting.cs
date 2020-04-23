@@ -346,14 +346,12 @@ namespace LevelSetting
     {
         public int m_QuadrantIndex { get; private set; }
         public enum_TileObjectType m_ObjectType { get;private set; }
-        public enum_ObjectEventType m_EventType { get; private set; }
         public Vector3 m_Pos { get; private set; }
         public Quaternion m_Rot { get; private set; }
-        public ChunkGameObjectData(int _quadrantIndex, enum_TileObjectType _objectType,  enum_ObjectEventType _eventType, Vector3 _pos, Quaternion _rot)
+        public ChunkGameObjectData(int _quadrantIndex, enum_TileObjectType _objectType, Vector3 _pos, Quaternion _rot)
         {
             m_QuadrantIndex = _quadrantIndex;
             m_ObjectType = _objectType;
-            m_EventType = _eventType;
             m_Pos = _pos;
             m_Rot = _rot;
         }

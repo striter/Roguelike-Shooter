@@ -264,7 +264,7 @@ public static class GameObjectManager
                 return;
             InteractGameBase gameInteract = TResources.GetInteract(enumValue);
             m_GameInteractTypes.Add(gameInteract.GetType(),gameInteract.m_InteractType);
-            ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue,gameInteract , 5);
+            ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue,gameInteract , 1);
         });
     }
     #endregion
@@ -295,7 +295,7 @@ public static class GameObjectManager
 
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
-    #region ModeledWeapon
+    #region Model Weapon
     public static WeaponBase SpawnWeapon(WeaponSaveData weaponData, Transform toTrans = null)
     {
         if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(weaponData.m_Weapon))
@@ -355,12 +355,12 @@ public static class GameObjectManager
     }
     #endregion
     #region Interact
-    public static T SpawnInteract<T>(Vector3 pos, Quaternion rot) where T : InteractGameBase
+    public static T SpawnInteract<T>(Vector3 pos, Quaternion rot,Transform trans=null) where T : InteractGameBase
     {
         Type targetType = typeof(T);
         if (!m_GameInteractTypes.ContainsKey(targetType))
             Debug.LogError("None Type Registed!" + targetType);
-        return ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[targetType], TF_Interacts, pos, rot) as T;
+        return ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[targetType], trans==null? TF_Interacts:trans, pos, rot) as T;
     } 
     public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType, target);
     public static void TraversalAllInteracts(Action<InteractGameBase> action) => ObjectPoolManager<enum_Interaction, InteractGameBase>.TraversalAllActive(action);

@@ -11,7 +11,7 @@ using System.Linq;
 
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
-    ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool; 
+    ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool;
     public Vector3 m_LevelCenter { get; private set; }
     public float m_LevelHeight { get; private set; }
     public float m_LevelWidth { get; private set; }
@@ -47,7 +47,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     #region Quadrant
     protected TileAxis m_QuadrantRange, m_QuadrantSize;
     List<int> m_ActiveQuadrants=new List<int>();
-    List<TileAxis> m_WillActiveList = new List<TileAxis>();
     TileAxis m_PrePlayerMapAxis;
     TileAxis m_PrePlayerQuadrantAxis;
     bool m_MinimapUpdating = false;
@@ -73,7 +72,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 return;
             m_ActiveQuadrants.Add(chunk.m_QuadrantIndex);
         });
-        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnQuadrantCheck, m_ActiveQuadrants);
     }
 
 #if UNITY_EDITOR
@@ -192,7 +190,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         NavigationManager.ClearNavMeshDatas();
     }
     
-    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action<List<ChunkGameObjectData>> OnGenerateEditorObjects)
+    public IEnumerator Generate(enum_GameStyle style, System.Random random,Action<Dictionary<enum_ObjectEventType,List<ChunkGameObjectData>>> OnGenerateEditorObjects)
     {
         m_PrePlayerMapAxis = -TileAxis.One;
         m_PrePlayerQuadrantAxis = -TileAxis.One;
@@ -301,7 +299,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         });
 
         //Quadrant Generate
-        List<ChunkGameObjectData> editorObjectDatas = new List<ChunkGameObjectData>();
+        Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>> editorObjectDatas = new Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>>();
         m_QuadrantRange = m_MapSize / LevelConst.I_QuadranteTileSize;
         m_QuadrantSize = new TileAxis(m_MapSize.X / m_QuadrantRange.X, m_MapSize.Y / m_QuadrantRange.Y);
         List<ChunkQuadrantData> _quadrantDatas = new List<ChunkQuadrantData>();
@@ -330,10 +328,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                         if (mapTileData.HasValue)
                         {
                             quadrantTileData = mapTileData.Value.m_Data;
-                            if(quadrantTileData.m_ObjectType.IsEditorTileObject())
+                            if (quadrantTileData.m_ObjectType.IsEditorTileObject())
                             {
-                                Vector3 worldPosition =  mapDataAxis.ToPosition() + quadrantTileData.m_ObjectType.GetSizeAxis(quadrantTileData.m_Direction).ToPosition() / 2f;
-                                editorObjectDatas.Add(new ChunkGameObjectData(quadrantIndex, quadrantTileData.m_ObjectType,mapTileData.Value.m_eventType, worldPosition,quadrantTileData.m_Direction.ToRotation()));
+                                enum_ObjectEventType eventType = mapTileData.Value.m_eventType;
+                                Vector3 worldPosition = mapDataAxis.ToPosition() + quadrantTileData.m_ObjectType.GetSizeAxis(quadrantTileData.m_Direction).ToPosition() / 2f;
+                                if (!editorObjectDatas.ContainsKey(eventType))
+                                    editorObjectDatas.Add(eventType, new List<ChunkGameObjectData>());
+                                editorObjectDatas[eventType].Add(new ChunkGameObjectData(quadrantIndex, quadrantTileData.m_ObjectType, worldPosition, quadrantTileData.m_Direction.ToRotation()));
                                 quadrantTileData = quadrantTileData.ChangeObjectType(enum_TileObjectType.Invalid);
                             }
                             validData = true;
@@ -347,10 +348,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 _quadrantDatas.Add(new ChunkQuadrantData(quadrantIndex,quadrantAxis, new TileBounds(quadrantMapOrigin, quadrantMapSize), quadrantDatas));
             }
 
-        OnGenerateEditorObjects(editorObjectDatas);
-
         Dictionary<int, NavigationQuadrants> _quadrantNavigations = new Dictionary<int, NavigationQuadrants>();
-
         m_ChunkPool.Clear();
         for(int i=0;i<_quadrantDatas.Count;i++)
         {
@@ -361,13 +359,14 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             yield return null;
         }
 
-        #region Navigation Data
+        OnGenerateEditorObjects(editorObjectDatas);
+
         //GenerateNavigationData
         Bounds mapBounds = new Bounds();
-        mapBounds.center = m_MapSize.ToPosition() / 2f ;
+        mapBounds.center = m_MapSize.ToPosition() / 2f;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
         NavigationManager.InitNavMeshData(transform, mapBounds, _quadrantNavigations);
-        #endregion
+
         #region Generate Map Texture
         m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
@@ -575,16 +574,15 @@ public static class NavigationManager
         m_Transform = transform;
         m_Bounds = bound;
         m_Quadrants = quadrants;
-
         ReCollectSources();
         m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, m_Transform.position, m_Transform.rotation);
         m_DataInstance = NavMesh.AddNavMeshData(m_Data);
     }
 
-    static void ReCollectSources(int quadrantIndex = -1)
+    static void ReCollectSources(int targetQuadrantIndex = -1)
     {
         m_Sources.Clear();
-        m_Quadrants.Traversal((NavigationQuadrants quadrants) => { if (quadrantIndex == -1 || quadrantIndex == quadrants.m_Chunk.m_QuadrantIndex) quadrants.RecollectSource(); });
+        m_Quadrants.Traversal((NavigationQuadrants quadrants) => { if (targetQuadrantIndex == -1 || targetQuadrantIndex == quadrants.m_Chunk.m_QuadrantIndex) quadrants.RecollectSource(); });
         m_Quadrants.Traversal((NavigationQuadrants quadrants) => { m_Sources.AddRange(quadrants.m_Sources); });
     }
 
@@ -593,8 +591,6 @@ public static class NavigationManager
         ReCollectSources(quadrantID);
         NavMeshBuilder.UpdateNavMeshData(m_Data, m_BuildSettings, m_Sources, m_Bounds);
     }
-
-
 
     public static void ClearNavMeshDatas()
     {
