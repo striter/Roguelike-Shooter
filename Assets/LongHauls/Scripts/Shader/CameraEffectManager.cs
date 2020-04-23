@@ -70,6 +70,7 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
             areaScan.SetElapse(range*value);
         },0,1,duration,()=> { RemoveCameraEffect<PE_AreaScanDepth>(); }));
+        ResetCameraEffectParams();
     }
     
     #endregion
