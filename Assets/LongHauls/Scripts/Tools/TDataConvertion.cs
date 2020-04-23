@@ -38,12 +38,12 @@ public interface IDataConvert
 }
 public static class TDataConvert
 {
-    static readonly char[] m_PhraseLiterateBreakPoints = new char[10] { ',','.','[', ']', '{', '}', '(', ')', '/', '|', };
-    const char m_PhraseBaseBreakPoint = '/';
+    static readonly char[] m_PhraseLiterateBreakPoints = new char[8] { '-', '[', ']', '{', '}', '(', ')', '/' };
+    const char m_PhraseBaseBreakPoint = '|';
 
-    public static string Convert(object value) => ConvertToString(value.GetType(), value, 0);
-    public static T Convert<T>(string xmlData) => (T)ConvertToObject(typeof(T), xmlData, 0);
-    public static object Convert(Type type, string xmlData) => ConvertToObject(type, xmlData, 0);
+    public static string Convert(object value) => ConvertToString(value.GetType(), value, -1);
+    public static T Convert<T>(string xmlData) => (T)ConvertToObject(typeof(T), xmlData, -1);
+    public static object Convert(Type type, string xmlData) => ConvertToObject(type, xmlData, -1);
     public static object Default(Type type) => type.IsValueType ? Activator.CreateInstance(type) : null;
     static string ConvertToString( Type type, object value, int iteration)
     {

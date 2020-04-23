@@ -19,7 +19,6 @@ public class ShaderTest : MonoBehaviour
         //m_Effect.GetOrAddCameraEffect<PE_ViewDepth>();
         m_DepthSSAO = m_Effect.GetOrAddCameraEffect<PE_DepthSSAO>();
         m_Effect.SetMainTextureCamera(true);
-        m_Effect.ResetCameraEffectParams();
     }
 
     void Update()

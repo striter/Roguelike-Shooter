@@ -93,11 +93,11 @@ namespace GameSetting
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameCurrencyStatus);
         }
 
-        public static int OnCampDifficultySwitch()
+        public static enum_GameDifficulty OnCampDifficultySwitch()
         {
-            m_GameData.m_GameDifficulty += 1;
+            m_GameData.m_GameDifficulty ++;
             if (m_GameData.m_GameDifficulty > m_GameData.m_DifficultyUnlocked)
-                m_GameData.m_GameDifficulty = 1;
+                m_GameData.m_GameDifficulty =  enum_GameDifficulty.Normal;
 
             TGameData<CGameSave>.Save();
             return m_GameData.m_GameDifficulty;
@@ -551,12 +551,10 @@ namespace GameSetting
                 Debug.LogError("Error Properties Found Of Index:" + index);
             return buff;
         }
-        public static Dictionary<bool, List<SEnermyGenerate>> GetEnermyGenerate(enum_Stage stage, enum_GameStyle style)
+
+        public static List<int> GetEnermyGenerate(enum_Stage stage,enum_GameDifficulty difficulty)
         {
-            int sheetIndex = ((int)style - 1) * 3 + (int)stage - 1;
-            Dictionary<bool, List<SEnermyGenerate>> m_GenerateDic = new Dictionary<bool, List<SEnermyGenerate>>() { { true, new List<SEnermyGenerate>() }, { false, new List<SEnermyGenerate>() } };
-            SheetProperties<SEnermyGenerate>.GetPropertiesList(sheetIndex).Traversal((SEnermyGenerate generate) => { m_GenerateDic[generate.m_IsFinal].Add(generate); });
-            return m_GenerateDic;
+            return SheetProperties<SEnermyGenerate>.GetPropertiesList(0).RandomItem().m_EnermyGenerate;
         }
         #endregion
     }
@@ -565,14 +563,14 @@ namespace GameSetting
     public class CGameSave : ISave
     {
         public float f_Credits;
-        public int m_GameDifficulty;
-        public int m_DifficultyUnlocked;
+        public enum_GameDifficulty m_GameDifficulty;
+        public enum_GameDifficulty m_DifficultyUnlocked;
         public int m_LastDailyRewardStamp;
         public CGameSave()
         {
             f_Credits = 100;
-            m_GameDifficulty = 1;
-            m_DifficultyUnlocked = 1;
+            m_GameDifficulty =  enum_GameDifficulty.Normal;
+            m_DifficultyUnlocked =  enum_GameDifficulty.Normal;
             m_LastDailyRewardStamp = -1;
         }
 
@@ -605,6 +603,7 @@ namespace GameSetting
         public enum_Stage m_Stage;
         public float m_Health;
         public float m_Coins;
+        public int m_Keys;
         public int m_TotalExp;
         public enum_PlayerCharacter m_Character;
         public WeaponSaveData m_Weapon1;
@@ -619,6 +618,7 @@ namespace GameSetting
         public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
         {
             m_Coins = 0;
+            m_Keys = 0;
             m_TotalExp = 0;
             m_Health = -1;
             m_Character = character;
@@ -634,8 +634,9 @@ namespace GameSetting
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
             m_GameSeed = _level.m_GameSeed;
-            m_Stage = _level.m_StageIndex;
+            m_Stage = _level.m_GameStage;
             m_Coins = _player.m_CharacterInfo.m_Coins;
+            m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;
             m_Weapon1 = WeaponSaveData.Save(_player.m_Weapon1);
@@ -905,7 +906,6 @@ namespace GameSetting
 
     public struct SEnermyGenerate : ISExcel
     {
-        public bool m_IsFinal { get; private set; }
         public List<int> m_EnermyGenerate { get; private set; }
 
         public void InitAfterSet()

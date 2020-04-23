@@ -56,6 +56,8 @@ namespace GameSetting
                     return "";
                 case enum_Interaction.PickupCoin:
                     return "NumericIcon_Coin";
+                case enum_Interaction.PickupKey:
+                    return "NumericIcon_Key";
                 case enum_Interaction.PickupArmor:
                     return "NumericIcon_Armor";
                 case enum_Interaction.PickupHealth:
@@ -70,6 +72,8 @@ namespace GameSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return Color.magenta;
+                case enum_Interaction.PickupKey:
+                    return Color.green;
                 case enum_Interaction.PickupCoin:
                     return TCommon.GetHexColor("FFCC1FFF");
                 case enum_Interaction.PickupArmor:

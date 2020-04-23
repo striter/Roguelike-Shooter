@@ -55,13 +55,13 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				float linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth));
-				float3 worldPos = _WorldSpaceCameraPos+ i.interpolatedRay*linearDepth;
-				float offsetLength = length(worldPos - _ScanOrigin.xyz);
+				float3 worldPos = _WorldSpaceCameraPos + i.interpolatedRay*linearDepth;
+				float offsetLength = length(_ScanOrigin.xyz-worldPos );
 				float scanValue = .0f;
 				float4 texColor = tex2D(_ScanTex, i.uv*_ScanTexScale);
 				if (offsetLength<_ScanElapse&&offsetLength>_ScanElapse - _ScanWidth)
 					scanValue = _ScanLerp*texColor.r;
-				return fixed4(lerp(tex2D(_MainTex,i.uv).rgb, _ScanColor.rgb, scanValue),1);
+				return tex2D(_MainTex,i.uv)+_ScanColor* scanValue;
 			}
 			ENDCG
 		}

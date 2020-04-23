@@ -358,7 +358,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             LevelChunkGame chunk = m_ChunkPool.AddItem(quadrantData.m_QuadrantIndex);
             chunk.InitGameChunk(quadrantData, random, NavigationManager.UpdateQuadrantData);
             _quadrantNavigations.Add(quadrantData.m_QuadrantIndex,new NavigationQuadrants(chunk));
-            yield return null;
+            if (i % 5 == 0)
+                yield return null;
         }
 
         OnGenerateEditorObjects(editorObjectDatas);
