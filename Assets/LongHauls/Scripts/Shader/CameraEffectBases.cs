@@ -152,10 +152,9 @@ public class CB_GenerateTransparentOverlayTexture:CommandBufferBase
     public CB_GenerateTransparentOverlayTexture SetOpaqueBlurTextureEnabled(bool enable, float blurSpread = 1.5f, int downSample = 2, int iteration = 3)
     {
         m_TransparentBlurTextureEnabled = enable;
-        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture1);
-        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture2);
         m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, blurSpread);
         m_Buffer.Clear();
+        ReleaseTexture();
         if (m_TransparentBlurTextureEnabled)
         {
             m_TransparentBlurTexture1 = RenderTexture.GetTemporary(m_Manager.m_Camera.pixelWidth / downSample, m_Manager.m_Camera.pixelHeight / downSample, 0, RenderTextureFormat.ARGB32);
@@ -177,11 +176,20 @@ public class CB_GenerateTransparentOverlayTexture:CommandBufferBase
         return this;
     }
 
+    void ReleaseTexture()
+    {
+        if (!m_TransparentBlurTexture1)
+            return;
+        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture1);
+        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture2);
+        m_TransparentBlurTexture1 = null;
+        m_TransparentBlurTexture2 = null;
+    }
+
     public override void OnDestroy()
     {
         m_Blur.OnDestroy();
-        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture1);
-        RenderTexture.ReleaseTemporary(m_TransparentBlurTexture2);
+        ReleaseTexture();
         base.OnDestroy();
     }
 }

@@ -10,8 +10,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
     public float F_AssassinttackRange = 8;
     public float F_AssassinAttackDuration = .2f;
 
-    public float F_normalFinish = .25f;
-    public float F_eliteFInish = .15f;
+    public float F_FinishBlowRate = .25f;
     public float F_AbilityDamagePerStack = 30;
     public int I_MaxAbilityDamageStack = 5;
     public float F_AssassinDamageStackResetDuration = 20;
@@ -76,9 +75,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         if (!m_AssassinTarget.m_IsDead)
         {
             m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.F_BaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack));
-            bool isElite = (m_AssassinTarget as EntityCharacterAI != null);
-            isElite = isElite && (m_AssassinTarget as EntityCharacterAI).E_SpawnType == enum_EnermyType.Elite;
-            if (m_AssassinTarget.m_Health.F_HealthMaxScale <= (isElite ? F_eliteFInish : F_normalFinish))
+            if (m_AssassinTarget.m_Health.F_HealthMaxScale <= F_FinishBlowRate)
                 m_AssassinTarget.m_HitCheck.TryHit(new DamageInfo(m_EntityID, m_AssassinTarget.m_Health.m_MaxHealth, enum_DamageType.HealthPenetrate));
         }
 

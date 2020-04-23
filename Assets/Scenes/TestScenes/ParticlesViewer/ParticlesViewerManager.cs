@@ -11,7 +11,7 @@ public class ParticlesViewerManager : MonoBehaviour {
     private void Awake()
     {
         GameObjectManager.Init();
-        GameObjectManager.PresetRegistCommonObject();
+        GameObjectManager.RegisterGameObjects();
         tf_Muzzle = transform.Find("Muzzle");
         tf_Indicator = transform.Find("Indicator");
         tf_Impact = transform.Find("Impact");

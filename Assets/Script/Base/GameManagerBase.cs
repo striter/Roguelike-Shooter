@@ -33,7 +33,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     {
         GameObjectManager.Init();
         AudioManagerBase.Instance.Init();
-        GameObjectManager.PresetRegistCommonObject();
+        GameObjectManager.RegisterGameObjects();
         UIManager.Activate(B_InGame);
 
         AddConsoleBinding();
@@ -227,9 +227,20 @@ public static class GameObjectManager
         ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Destroy();
     }
     #region Register
-    public static void PresetRegistCommonObject()
+    static Dictionary<Type, enum_Interaction> m_GameInteractTypes = new Dictionary<Type, enum_Interaction>();
+    public static void RegisterGameObjects()
     {
         TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => { ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
+
+        m_GameInteractTypes.Clear();
+        TCommon.TraversalEnum((enum_Interaction enumValue) =>
+        {
+            if (enumValue <= enum_Interaction.GameBegin || enumValue >= enum_Interaction.GameEnd)
+                return;
+            InteractGameBase gameInteract = TResources.GetInteract(enumValue);
+            m_GameInteractTypes.Add(gameInteract.GetType(), gameInteract.m_InteractType);
+            ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue, gameInteract, 1);
+        });
     }
     static void RegisterPlayerCharacter(enum_PlayerCharacter character)
     {
@@ -238,34 +249,12 @@ public static class GameObjectManager
             return;
         ObjectPoolManager<int, EntityBase>.Register(characterIndex,TResources.GetPlayerCharacter(character),1);
     }
-    public static Dictionary<enum_EnermyType, int> RegistStyledInGamePrefabs(enum_GameStyle currentStyle, enum_Stage stageLevel)
+    static void RegisterEnermyCharacter(int characterIndex)
     {
-        RegisterInGameInteractions(currentStyle, stageLevel);
+        if (ObjectPoolManager<int, EntityBase>.Registed(characterIndex))
+            return;
 
-        Dictionary<enum_EnermyType, int> enermyDic = new Dictionary<enum_EnermyType, int>();
-        TResources.GetEnermyEntities(currentStyle).Traversal((int index, EntityCharacterAI enermy) => {
-            ObjectPoolManager<int, EntityBase>.Register(index, enermy, 1);
-            if (enermy.E_SpawnType == enum_EnermyType.Invalid)
-                return;
-            if (enermyDic.ContainsKey(enermy.E_SpawnType))
-                Debug.LogError("Same Enermy Type Found!" + enermy.name );
-            enermyDic.Add(enermy.E_SpawnType, index);
-        });
-        return enermyDic;
-    }
-
-    static Dictionary<Type, enum_Interaction> m_GameInteractTypes = new Dictionary<Type, enum_Interaction>();
-    static void RegisterInGameInteractions(enum_GameStyle portalStyle, enum_Stage stageIndex)
-    {
-        m_GameInteractTypes.Clear();
-        TCommon.TraversalEnum((enum_Interaction enumValue) =>
-        {
-            if (enumValue <= enum_Interaction.GameBegin || enumValue >= enum_Interaction.GameEnd)
-                return;
-            InteractGameBase gameInteract = TResources.GetInteract(enumValue);
-            m_GameInteractTypes.Add(gameInteract.GetType(),gameInteract.m_InteractType);
-            ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue,gameInteract , 1);
-        });
+        ObjectPoolManager<int, EntityBase>.Register(characterIndex, TResources.GetEnermyCharacter(characterIndex), 1);
     }
     #endregion
     #region Spawn/Recycle
@@ -280,16 +269,23 @@ public static class GameObjectManager
         return entity;
     }
 
-    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_Stage _stage) => SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, toRot).OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty));
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int gameDifficulty, enum_Stage _stage)
+    {
+        RegisterEnermyCharacter(poolIndex);
+        return SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, toRot).OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty)); 
+    }
 
-    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth) => SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up)).OnSubAIActivate(_flag, spawnerID, startHealth);
+    public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth)
+    {
+        RegisterEnermyCharacter(poolIndex);
+       return SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up)).OnSubAIActivate(_flag, spawnerID, startHealth);
+    } 
 
     public static EntityCharacterPlayer SpawnPlayerCharacter(enum_PlayerCharacter character, Vector3 position, Quaternion rotation)
     {
         RegisterPlayerCharacter(character);
         return SpawnEntity<EntityCharacterPlayer>((int)character, position, rotation); 
     }
-
 
     public static EntityNPC SpawnNPC(enum_InteractCharacter npc, Vector3 toPosition, Quaternion rot) => SpawnEntity<EntityNPC>((int)npc, toPosition, rot).OnActivate();
 

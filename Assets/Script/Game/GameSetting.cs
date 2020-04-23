@@ -9,6 +9,9 @@ namespace GameSetting
     public static class GameConst
     {
         #region Interacts
+        public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,3);
+        public const float F_EnermyKeyGenerate = 2.5f;
+
         public const float F_PickupMaxSpeed = 100f;
         public const float F_PickupAcceleration = 50f; //拾取物的飞行加速速度
         public const int I_HealthPickupAmount = 25;
@@ -54,7 +57,6 @@ namespace GameSetting
         public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
         public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
 
-
         #endregion        
         #region Entities
         public const float F_BlastShakeMultiply = .5f;
@@ -85,19 +87,13 @@ namespace GameSetting
         #endregion
         public static class AI
         {
-            public const float F_AIShowDistance = 30f;
-            public const float F_AIIdleTargetDistance = 12;
-            public const int F_AIIdleTargetAngle = 60;
-            public const float F_AITargetIndicateRange = 5f;
-            public static readonly float F_AIPatrolRange = 5f; //AI idle巡逻范围
-            public static readonly RangeFloat RF_AIPatrolDuration = new RangeFloat(1f, 3f); //AI idle巡逻时间
             public const float F_AIMovementCheckParam = .3f; //AI检查玩家频率
             public const float F_AITargetCheckParam = .5f;      //AI Target Duration .5f is Suggested
             public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
             public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
             public const float F_AIMaxRepositionDuration = .5f;
             public const float F_AIDeadImpact = 0.03f;   //.003f;
-            public const int I_AIIdlePercentage = 50;
+            public const int I_AIBattleIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
         #region Cultivate
@@ -239,44 +235,6 @@ namespace GameSetting
             }
         }
         
-        public static StageInteractGenerateData GetInteractGenerate(enum_Stage level)
-        {
-            switch (level)
-            {
-                default: return new StageInteractGenerateData();
-                case enum_Stage.Rookie:
-                    return StageInteractGenerateData.Create(
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } },        //Trade Perk
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 100 }, { enum_Rarity.Rare, 0 }, { enum_Rarity.Epic, 0 } },        //Trade Weapon
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 0 }, { enum_Rarity.Epic, 0 } },        //Reward Weapon
-                        PickupGenerateData.Create(10, 10, 100, new RangeInt(1, 0),       //Normal Pickups
-                        new Dictionary<enum_Rarity, float> {{ enum_Rarity.Ordinary, 6 },{ enum_Rarity.Advanced,3} }),          //Normal Weapon Pikcups
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(1, 0),     //Elite Pickups
-                        new Dictionary<enum_Rarity, float> { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 100 } })        //Elite Weapon Pickups
-                        );
-                case enum_Stage.Veteran:
-                    return StageInteractGenerateData.Create(
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } },        //Trade Perk
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 }, { enum_Rarity.Rare, 100 }, { enum_Rarity.Epic, 0 } },
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced,50 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 0 } },
-                        PickupGenerateData.Create(10, 10, 100, new RangeInt(1, 0),
-                        new Dictionary<enum_Rarity, float> {{ enum_Rarity.Advanced, 3.8f },{ enum_Rarity.Rare,1.9f} }),
-                        PickupGenerateData.Create(10, 100, 100, new RangeInt(1, 0),
-                        new Dictionary<enum_Rarity, float> { { enum_Rarity.Rare, 100 } })
-                        );
-                case enum_Stage.Ranger:
-                    return StageInteractGenerateData.Create(
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } },        //Trade Perk
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 }, { enum_Rarity.Rare, 0 }, { enum_Rarity.Epic, 100 } },
-                        new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 50 } },
-                        PickupGenerateData.Create(10, 10, 100, new RangeInt(1, 0),
-                        new Dictionary<enum_Rarity, float> {{ enum_Rarity.Rare, 2.8f },{ enum_Rarity.Epic, 2.8f} }),
-                        PickupGenerateData.Create(0, 0, 0, new RangeInt(10, 5),
-                        new Dictionary<enum_Rarity, float> { { enum_Rarity.Ordinary, 0 }, { enum_Rarity.Advanced, 0 } })
-                        );
-            }
-        }
-
         #region Cultivate
         public static int GetEquipmentEnhanceRequirement(enum_Rarity rarity, int level) => (1000 + 500 * (int)rarity) + (500 + (int)rarity * 250) * level;
         public static int GetEquipmentDeconstruct(enum_Rarity rarity, int level) => (500 + 250 * (int)rarity) + (250 + (int)rarity * 125) * level;
@@ -345,40 +303,6 @@ namespace GameSetting
 
     #region For Developers Use
     #region Structs
-
-    public struct PickupGenerateData
-    {
-        public int m_HealthRate { get; private set; }
-        public int m_ArmorRate { get; private set; }
-        public int m_CoinRate { get; private set; }
-        public RangeInt m_CoinRange { get; private set; }
-        public Dictionary<enum_Rarity, float> m_WeaponRate { get; private set; }
-
-        public bool CanGenerateHealth() => TCommon.RandomPercentage() <= m_HealthRate;
-        public bool CanGenerateArmor() => TCommon.RandomPercentage() <= m_ArmorRate;
-        public bool CanGenerateCoins(out int amount)
-        {
-            amount = -1;
-            if (TCommon.RandomPercentage() <= m_CoinRate)
-            {
-                amount = m_CoinRange.Random();
-                return true;
-            }
-            return false;
-        }
-        public static PickupGenerateData Create(int healthRate, int armorRate, int coinRate, RangeInt coinAmount, Dictionary<enum_Rarity, float> _weaponRate) => new PickupGenerateData() { m_HealthRate = healthRate, m_ArmorRate = armorRate, m_CoinRate = coinRate, m_CoinRange = coinAmount, m_WeaponRate = _weaponRate };
-    }
-
-    public struct StageInteractGenerateData
-    {
-        public Dictionary<enum_Rarity, int> m_TradePerk { get; private set; }
-        public Dictionary<enum_Rarity, int> m_TradeWeapon { get; private set; }
-        public Dictionary<enum_Rarity, int> m_RewardWeapon { get; private set; }
-        public PickupGenerateData m_NormalPickupData { get; private set; }
-        public PickupGenerateData m_ElitePickupData { get; private set; }
-        public static StageInteractGenerateData Create(Dictionary<enum_Rarity, int> _tradePerkRate, Dictionary<enum_Rarity, int> _tradeWeaponRate, Dictionary<enum_Rarity, int> _rewardWeaponRate, PickupGenerateData _normalGenerate, PickupGenerateData _eliteGenerate) => new StageInteractGenerateData() { m_TradePerk = _tradePerkRate, m_TradeWeapon = _tradeWeaponRate, m_RewardWeapon = _rewardWeaponRate, m_NormalPickupData = _normalGenerate, m_ElitePickupData = _eliteGenerate };
-    }
-
     public struct EliteBuffCombine
     {
         public int m_BuffIndex;

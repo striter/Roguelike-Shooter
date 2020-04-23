@@ -906,48 +906,10 @@ namespace GameSetting
     public struct SEnermyGenerate : ISExcel
     {
         public bool m_IsFinal { get; private set; }
-        public int m_MeleeCount { get; private set; }
-        public int m_E2Count { get; private set; }
-        public int m_E3Count { get; private set; }
-        public int m_E4Count { get; private set; }
-        public int m_E5Count { get; private set; }
-        public int m_E6Count { get; private set; }
-        public int m_EliteCount { get; private set; }
+        public List<int> m_EnermyGenerate { get; private set; }
 
         public void InitAfterSet()
         {
-        }
-
-        public static SEnermyGenerate operator +(SEnermyGenerate data1, SEnermyGenerate data2)
-        {
-            data1.m_MeleeCount += data2.m_MeleeCount;
-            data1.m_E2Count += data2.m_E2Count;
-            data1.m_E3Count += data2.m_E3Count;
-            data1.m_E4Count += data2.m_E4Count;
-            data1.m_E5Count += data2.m_E5Count;
-            data1.m_E6Count += data2.m_E6Count;
-            data1.m_EliteCount += data2.m_EliteCount;
-            return data1;
-        }
-
-        public List<int> GetEnermyIDList(Dictionary<enum_EnermyType, int> m_EnermyIDs)
-        {
-            List<int> enermyID = new List<int>();
-            for (int i = 0; i < m_MeleeCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Melee]);
-            for (int i = 0; i < m_E2Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E2]);
-            for (int i = 0; i < m_E3Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E3]);
-            for (int i = 0; i < m_E4Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E4]);
-            for (int i = 0; i < m_E5Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E5]);
-            for (int i = 0; i < m_E6Count; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.E6]);
-            for (int i = 0; i < m_EliteCount; i++)
-                enermyID.Add(m_EnermyIDs[enum_EnermyType.Elite]);
-            return enermyID;
         }
     }
     #endregion

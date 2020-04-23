@@ -12,6 +12,7 @@ public class TResources
     public class ConstPath
     {
         public const string S_PlayerEntity = "Entity/PlayerCharacter/";
+        public const string S_EnermyEntity = "Entity/Enermy/";
 
         public const string S_ChunkRender = "Chunk/Render/";
         public const string S_ChunkTile = "Chunk/Tile/";
@@ -19,7 +20,6 @@ public class TResources
         public const string S_ChunkData = "Chunk/Data";
 
         public const string S_PlayerWeapon = "WeaponModel/";
-        public const string S_Entity = "Entity/";
         public const string S_SFXEffects = "SFX_Effects/";
         public const string S_SFXWeapon = "Weapon/";
         public const string S_InteractPortal = "Interact/Portal_";
@@ -72,28 +72,12 @@ public class TResources
         Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
         LoadAll<SFXBase>(ConstPath.S_SFXEffects).Traversal((SFXBase sfx) => {
             sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]), GameObject.Instantiate<SFXBase>(sfx));
-            PreloadMaterials(sfx.gameObject);
         });
         return sfxsDic;
     }
 
     public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity+(int)character);
-
-    public static Dictionary<int, EntityCharacterAI> GetEnermyEntities(enum_GameStyle entityStyle)
-    {
-        Dictionary<int, EntityCharacterAI> entitisDic = new Dictionary<int, EntityCharacterAI>();
-        EntityCharacterAI[] entities = LoadAll<EntityCharacterAI>(ConstPath.S_Entity +  entityStyle.ToString());
-        entities.Traversal((EntityCharacterAI entity) => {
-            int index = int.Parse(entity.name.Split('_')[0]);
-            entitisDic.Add(index, GameObject.Instantiate<EntityCharacterAI>(entity));
-            PreloadMaterials(entity.gameObject);
-        });
-        return entitisDic;
-    }
-    static void PreloadMaterials(GameObject targetObject)
-    {
-        targetObject.GetComponentsInChildren<Renderer>().Traversal((Renderer render) => { render.sharedMaterials.Traversal((Material material) => {if(material) material.hideFlags = material.hideFlags; }); });
-    }
+    public static EntityCharacterBase GetEnermyCharacter(int index) => Instantiate<EntityCharacterBase>(ConstPath.S_EnermyEntity + index);
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon);
     public static InteractGameBase GetInteractPortal(enum_GameStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle);
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);

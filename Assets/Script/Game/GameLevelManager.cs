@@ -80,6 +80,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     {
         if (m_DrawQuadrant && m_ChunkPool != null && m_ChunkPool.Count > 0)
         {
+            Gizmos.color = Color.white;
+            Vector3 mapSize = m_MapSize.ToPosition();
+            Gizmos.DrawWireCube(mapSize / 2, mapSize);
+
             m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
             {
                 bool playerAtQuadrant = m_PrePlayerQuadrantAxis == chunk.m_QuadrantAxis;
@@ -89,8 +93,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 2f : (activateQuadrant ? 1f : .5f));
                 Gizmos.DrawWireCube(quadrantSource + size / 2, size);
             });
-            Vector3 mapSize = m_MapSize.ToPosition();
-            Gizmos.DrawWireCube(mapSize / 2, mapSize);
         }
     }
 #endif
