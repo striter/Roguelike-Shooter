@@ -67,10 +67,11 @@ public class EntityCharacterBase : EntityBase
         OnEntityActivate(_flag,I_MaxHealth);
         m_SpawnerEntityID = -1;
     }
-    protected void OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID , float startHealth )
+    public virtual EntityCharacterBase OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
     {
         OnEntityActivate(_flag, startHealth);
         m_SpawnerEntityID = _spawnerID;
+        return this;
     }
 
     protected virtual void OnExpireChange(){ }

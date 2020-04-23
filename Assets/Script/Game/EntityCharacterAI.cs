@@ -51,9 +51,9 @@ public class EntityCharacterAI : EntityCharacterBase {
         AIActivate();
         return this;
     }
-    public EntityCharacterAI OnSubAIActivate(enum_EntityFlag _flag, int _spawnerID = -1, float startHealth = 0)
+    public override EntityCharacterBase OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
     {
-        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth==0?I_MaxHealth:startHealth);
+        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth == 0 ? I_MaxHealth : startHealth);
         AIActivate();
         return this;
     }

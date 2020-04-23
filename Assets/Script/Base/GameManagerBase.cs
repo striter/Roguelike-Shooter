@@ -278,7 +278,7 @@ public static class GameObjectManager
     public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth)
     {
         RegisterEnermyCharacter(poolIndex);
-       return SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up)).OnSubAIActivate(_flag, spawnerID, startHealth);
+       return SpawnEntity<EntityCharacterBase>(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up)).OnSubCharacterActivate(_flag, spawnerID, startHealth);
     } 
 
     public static EntityCharacterPlayer SpawnPlayerCharacter(enum_PlayerCharacter character, Vector3 position, Quaternion rotation)
