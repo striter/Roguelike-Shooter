@@ -1044,7 +1044,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 200
-  I_DefaultArmor: 100
+  I_DefaultArmor: 30
   F_MovementSpeed: 7
   F_AttackSpread: 0
   F_AbilityCoolDown: 1
