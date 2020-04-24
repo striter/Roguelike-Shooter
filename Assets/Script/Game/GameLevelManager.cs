@@ -200,7 +200,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
-        List<enum_ObjectEventType> mainChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal, enum_ObjectEventType.Normal, enum_ObjectEventType.Final };
+        List<enum_ObjectEventType> mainChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal, enum_ObjectEventType.Final };
         List<enum_ObjectEventType> subChunkType = new List<enum_ObjectEventType>() { enum_ObjectEventType.Normal };
 
         LevelChunkData[] chunkDatas = TResources.GetChunkDatas();
@@ -241,7 +241,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
 
                 bool subGenerateSuccessful = false;
-                for(int i=0;i<2;i++)
+                for(int i=0;i<1;i++)
                 {
                     bool generateSuccessful = false;
                     mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>
