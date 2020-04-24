@@ -39,17 +39,16 @@ public class EntityBase : CObjectPoolMono<int>
         EnableHitbox(true);
         m_IsDead = false;
     }
-    protected virtual bool OnReceiveDamage(DamageInfo damageInfo,Vector3 damageDirection)
+    protected virtual bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
         if (m_IsDead)
             return false;
-        
-        return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply,HealReceiveMultiply);
-    }
+       return m_Health.OnReceiveDamage(damageInfo, DamageReceiveMultiply, HealReceiveMultiply);
+    } 
 
     protected virtual void OnUIHealthChanged(enum_HealthChangeMessage message)
     {
-        if (m_Health.m_CurrentHealth <= 0)
+        if ( m_Health.m_CurrentHealth <= 0)
             OnDead();
     }
     protected virtual void OnDead()

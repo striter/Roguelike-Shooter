@@ -145,12 +145,10 @@ public class EntityCharacterBase : EntityBase
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if (!base.OnReceiveDamage(damageInfo, damageDirection))
+        if (m_IsDead)
             return false;
-
         damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_SourceID, buffInfo)); });
-
-        return true;
+        return OnReceiveDamage(damageInfo, damageDirection);
     }
 
     protected override void OnDead()

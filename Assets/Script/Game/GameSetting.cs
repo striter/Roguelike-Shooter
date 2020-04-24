@@ -899,7 +899,7 @@ namespace GameSetting
             });
 
             m_BuffEffects.Traversal((int effectIndex) => {
-                if (m_Expires.Find(p => p.m_EffectIndex == effectIndex) != null)
+                if (m_Expires.Any(p => p.m_EffectIndex == effectIndex))
                     return;
 
                 m_BuffEffects[effectIndex].Stop();
