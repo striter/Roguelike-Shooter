@@ -35,7 +35,7 @@ namespace GameSetting
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
         public static CEquipmentDepotData m_EquipmentDepotData => TGameData<CEquipmentDepotData>.Data;
         public static CCharacterUpgradeData m_CharacterData => TGameData<CCharacterUpgradeData>.Data;
-        public static CPlayerBattleSave m_BattleData => TGameData<CPlayerBattleSave>.Data;
+        public static CGameProgressSave m_GameProgressData => TGameData<CGameProgressSave>.Data;
 
         public static bool m_Inited { get; private set; } = false;
         public static void Init()
@@ -46,7 +46,8 @@ namespace GameSetting
             Properties<SBuff>.Init();
             SheetProperties<SEnermyGenerate>.Init();
 
-            InitPerks();
+            InitPlayerPerks();
+            InitEnermyPerks();
             InitArmory();
             InitEquipment();
 
@@ -54,21 +55,21 @@ namespace GameSetting
             TGameData<CEquipmentDepotData>.Init();
             TGameData<CCharacterUpgradeData>.Init();
             TGameData<CArmoryData>.Init();
-            TGameData<CPlayerBattleSave>.Init();
+            TGameData<CGameProgressSave>.Init();
 
             InitArmoryGameWeaponUnlocked();
         }
         #region GameSave
         public static void OnNewGame()
         {
-            TGameData<CPlayerBattleSave>.Reset();
-            TGameData<CPlayerBattleSave>.Save();
+            TGameData<CGameProgressSave>.Reset();
+            TGameData<CGameProgressSave>.Save();
         }
 
         public static void StageFinishSaveData(EntityCharacterPlayer data, GameProgressManager level)
         {
-            m_BattleData.Adjust(data, level);
-            TGameData<CPlayerBattleSave>.Save();
+            m_GameProgressData.Adjust(data, level);
+            TGameData<CGameProgressSave>.Save();
         }
 
         public static void OnGameResult(GameProgressManager progress)
@@ -77,8 +78,8 @@ namespace GameSetting
                 m_GameData.UnlockDifficulty();
             OnCreditStatus(progress.F_CreditGain);
 
-            TGameData<CPlayerBattleSave>.Reset();
-            TGameData<CPlayerBattleSave>.Save();
+            TGameData<CGameProgressSave>.Reset();
+            TGameData<CGameProgressSave>.Save();
         }
         #endregion
 
@@ -230,33 +231,34 @@ namespace GameSetting
         #endregion
 
         #region Upgrade Combination
-        static Dictionary<int, ExpireUpgrade> m_AllEquipments = new Dictionary<int, ExpireUpgrade>();
+        public const int m_DefaultEquipmentCombinationIdentity = 20000;
+        static Dictionary<int, ExpirePlayerUpgradeCombine> m_AllEquipments = new Dictionary<int, ExpirePlayerUpgradeCombine>();
         static List<int> m_AvailableEquipments = new List<int>();
         public static void InitEquipment()
         {
             List<EquipmentSaveData> tempData1 = new List<EquipmentSaveData>();
             CharacterUpgradeData tempData2 = CharacterUpgradeData.Default();
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpireUpgrade equipment) => {
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpirePlayerUpgradeCombine equipment) => {
                 m_AllEquipments.Add(equipment.m_Index, equipment);
-                if (equipment.m_Index != GameConst.m_DefaultEquipmentCombinationIdentity)
+                if (equipment.m_Index != m_DefaultEquipmentCombinationIdentity)
                     m_AvailableEquipments.Add(equipment.m_Index);
             }), tempData1,tempData2);
         }
 
-        public static ExpireUpgrade CreateUpgradeCombination(List<EquipmentSaveData> equipmentDatas,CharacterUpgradeData upgradeData)
+        public static ExpirePlayerUpgradeCombine CreateUpgradeCombination(List<EquipmentSaveData> equipmentDatas,CharacterUpgradeData upgradeData)
         {
             int equipmentIndex = equipmentDatas.Find(p => equipmentDatas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
             if (equipmentIndex <= 0)
             {
-                equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
+                equipmentIndex = m_DefaultEquipmentCombinationIdentity;
             }
             else if (!m_AllEquipments.ContainsKey(equipmentIndex))
             {
                 Debug.LogError("Error Equipment:" + equipmentIndex + " ,Does not exist");
-                equipmentIndex = GameConst.m_DefaultEquipmentCombinationIdentity;
+                equipmentIndex = m_DefaultEquipmentCombinationIdentity;
             }
 
-            return TReflection.CreateInstance<ExpireUpgrade>(m_AllEquipments[equipmentIndex].GetType(), equipmentDatas, upgradeData);
+            return TReflection.CreateInstance<ExpirePlayerUpgradeCombine>(m_AllEquipments[equipmentIndex].GetType(), equipmentDatas, upgradeData);
         }
         #endregion
 
@@ -462,35 +464,35 @@ namespace GameSetting
         }
         #endregion
 
-        #region PerkData
-        static Dictionary<int, ExpirePerkBase> m_AllPerks = new Dictionary<int, ExpirePerkBase>();
-        static Dictionary<enum_Rarity, List<int>> m_PerkRarities = new Dictionary<enum_Rarity, List<int>>();
-        public static void InitPerks()
+        #region Player Perk Data
+        static Dictionary<int, ExpirePlayerPerkBase> m_AllPlayerPerks = new Dictionary<int, ExpirePlayerPerkBase>();
+        static Dictionary<enum_Rarity, List<int>> m_PlayerPerkRarities = new Dictionary<enum_Rarity, List<int>>();
+        public static void InitPlayerPerks()
         {
-            m_AllPerks.Clear();
-            m_PerkRarities.Clear();
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpirePerkBase perk) => {
-                m_AllPerks.Add(perk.m_Index, perk);
+            m_AllPlayerPerks.Clear();
+            m_PlayerPerkRarities.Clear();
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpirePlayerPerkBase perk) => {
+                m_AllPlayerPerks.Add(perk.m_Index, perk);
                 if (perk.m_DataHidden)
                     return;
-                if (!m_PerkRarities.ContainsKey(perk.m_Rarity))
-                    m_PerkRarities.Add(perk.m_Rarity, new List<int>());
-                m_PerkRarities[perk.m_Rarity].Add(perk.m_Index);
+                if (!m_PlayerPerkRarities.ContainsKey(perk.m_Rarity))
+                    m_PlayerPerkRarities.Add(perk.m_Rarity, new List<int>());
+                m_PlayerPerkRarities[perk.m_Rarity].Add(perk.m_Index);
             }), PerkSaveData.New(-1));
         }
-        public static int RandomPerk(enum_Rarity rarity, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random = null)
+        public static int RandomPlayerPerk(enum_Rarity rarity, Dictionary<int, ExpirePlayerPerkBase> playerPerks, System.Random random = null)
         {
-            List<int> rarityIDs = m_PerkRarities[rarity].DeepCopy();
-            playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Rarity == rarity && perk.m_Stack == perk.m_MaxStack) rarityIDs.Remove(perk.m_Index); });
+            List<int> rarityIDs = m_PlayerPerkRarities[rarity].DeepCopy();
+            playerPerks.Traversal((ExpirePlayerPerkBase perk) => { if (perk.m_Rarity == rarity && perk.m_Stack == perk.m_MaxStack) rarityIDs.Remove(perk.m_Index); });
             return rarityIDs.RandomItem(random);
         }
 
-        public static List<int> RandomPerks(int perkCount, Dictionary<enum_Rarity, int> perkGenerate, Dictionary<int, ExpirePerkBase> playerPerks, System.Random random = null)
+        public static List<int> RandomPlayerPerks(int perkCount, Dictionary<enum_Rarity, int> perkGenerate, Dictionary<int, ExpirePlayerPerkBase> playerPerks, System.Random random = null)
         {
-            Dictionary<enum_Rarity, List<int>> _perkIDs = m_PerkRarities.DeepCopy();
+            Dictionary<enum_Rarity, List<int>> _perkIDs = m_PlayerPerkRarities.DeepCopy();
             Dictionary<enum_Rarity, int> _rarities = perkGenerate.DeepCopy();
 
-            playerPerks.Traversal((ExpirePerkBase perk) => { if (perk.m_Stack == perk.m_MaxStack) _perkIDs[perk.m_Rarity].Remove(perk.m_Index); });
+            playerPerks.Traversal((ExpirePlayerPerkBase perk) => { if (perk.m_Stack == perk.m_MaxStack) _perkIDs[perk.m_Rarity].Remove(perk.m_Index); });
 
             List<int> randomIDs = new List<int>();
             for (int i = 0; i < perkCount; i++)
@@ -506,15 +508,34 @@ namespace GameSetting
             return randomIDs;
         }
 
-        public static ExpirePerkBase GetPerkData(int index) => m_AllPerks[index];
+        public static ExpirePlayerPerkBase GetPlayerPerkData(int index) => m_AllPlayerPerks[index];
 
-        public static ExpirePerkBase CreatePerk(PerkSaveData data)
+        public static ExpirePlayerPerkBase CreatePlayerPerk(PerkSaveData data)
         {
-            if (!m_AllPerks.ContainsKey(data.m_Index))
+            if (!m_AllPlayerPerks.ContainsKey(data.m_Index))
                 Debug.LogError("Error Perk:" + data.m_Index + " ,Does not exist");
-            ExpirePerkBase equipment = TReflection.CreateInstance<ExpirePerkBase>(m_AllPerks[data.m_Index].GetType(), data);
+            ExpirePlayerPerkBase equipment = TReflection.CreateInstance<ExpirePlayerPerkBase>(m_AllPlayerPerks[data.m_Index].GetType(), data);
             return equipment;
         }
+        #endregion
+
+        #region Enermy Perk Data
+       public const int m_DefaultEnermyPerkIdentity= 30000;
+        static Dictionary<int, ExpireEnermyPerkBase> m_AllEnermyPerks = new Dictionary<int, ExpireEnermyPerkBase>();
+        static List<int> m_AvailableEnermyPerks = new List<int>();
+        public static void InitEnermyPerks()
+        {
+            m_AllPlayerPerks.Clear();
+            m_AvailableEnermyPerks.Clear();
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpireEnermyPerkBase perk) => {
+                m_AllEnermyPerks.Add(perk.m_Index, perk);
+                if (perk.m_Index == m_DefaultEnermyPerkIdentity)
+                    return;
+                m_AvailableEnermyPerks.Add(perk.m_Index);
+            }),0,0);
+        }
+
+        public static ExpireEnermyPerkBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireEnermyPerkBase>(m_AllEnermyPerks[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity].GetType(), GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
         #endregion
 
         #region ExcelData
@@ -558,7 +579,7 @@ namespace GameSetting
         }
         #endregion
     }
-
+    #region Structs
     #region SaveData
     public class CGameSave : ISave
     {
@@ -579,6 +600,9 @@ namespace GameSetting
             if (m_GameDifficulty != m_DifficultyUnlocked)
                 return;
 
+            if (m_DifficultyUnlocked == enum_GameDifficulty.Hard)
+                return;
+
             m_DifficultyUnlocked++;
             m_GameDifficulty++;
         }
@@ -597,12 +621,12 @@ namespace GameSetting
         }
     }
 
-    public class CPlayerBattleSave : ISave
+    public class CGameProgressSave : ISave
     {
         public string m_GameSeed;
         public enum_GameStage m_Stage;
+        public float m_GameTime;
         public float m_Health;
-        public float m_Coins;
         public int m_Keys;
         public int m_TotalExp;
         public enum_PlayerCharacter m_Character;
@@ -611,13 +635,13 @@ namespace GameSetting
         public List<PerkSaveData> m_Perks;
         public List<EquipmentSaveData> m_Equipments;
         public CharacterUpgradeData m_Upgrade;
-        public CPlayerBattleSave() : this(GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(),GameDataManager.m_CharacterData.CurrentUpgrade)
+        public CGameProgressSave() : this(GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(),GameDataManager.m_CharacterData.CurrentUpgrade)
         {
         }
 
-        public CPlayerBattleSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
+        public CGameProgressSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
         {
-            m_Coins = 0;
+            m_GameTime = 0;
             m_Keys = 0;
             m_TotalExp = 0;
             m_Health = -1;
@@ -634,8 +658,8 @@ namespace GameSetting
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
             m_GameSeed = _level.m_GameSeed;
+            m_GameTime = _level.m_GameTime;
             m_Stage = _level.m_GameStage;
-            m_Coins = _player.m_CharacterInfo.m_Coins;
             m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;
@@ -785,11 +809,11 @@ namespace GameSetting
         public int m_PerkStack { get; private set; }
         public float m_RecordData { get; private set; }
         public static PerkSaveData New(int index) => new PerkSaveData() { m_Index = index, m_PerkStack = 1, m_RecordData = -1 };
-        public static PerkSaveData Create(ExpirePerkBase perk) => new PerkSaveData() { m_Index = perk.m_Index, m_PerkStack = perk.m_Stack, m_RecordData = perk.m_RecordData };
-        public static List<PerkSaveData> Create(List<ExpirePerkBase> perks)
+        public static PerkSaveData Create(ExpirePlayerPerkBase perk) => new PerkSaveData() { m_Index = perk.m_Index, m_PerkStack = perk.m_Stack, m_RecordData = perk.m_RecordData };
+        public static List<PerkSaveData> Create(List<ExpirePlayerPerkBase> perks)
         {
             List<PerkSaveData> data = new List<PerkSaveData>();
-            perks.Traversal((ExpirePerkBase perk) => { data.Add(Create(perk)); });
+            perks.Traversal((ExpirePlayerPerkBase perk) => { data.Add(Create(perk)); });
             return data;
         }
     }
@@ -894,14 +918,6 @@ namespace GameSetting
             buff.m_ExpireDuration = duration;
             return buff;
         }
-        public static SBuff CreateGameEnermyBuff(int difficulty, float damageMultiply)
-        {
-            SBuff buff = new SBuff();
-            buff.m_Index = 2000 + difficulty;
-            buff.m_Refresh = (int)enum_ExpireRefreshType.AddUp;
-            buff.m_DamageMultiply = damageMultiply;
-            return buff;
-        }
     }
 
     public struct SEnermyGenerate : ISExcel
@@ -912,5 +928,6 @@ namespace GameSetting
         {
         }
     }
+    #endregion
     #endregion
 }

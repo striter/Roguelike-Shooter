@@ -12,7 +12,7 @@ public class UIGI_ActionBase : UIT_GridItem {
         base.Init();
         m_Action = GetActionDataBase(rtf_Container);
     }
-    public virtual void SetInfo(ExpirePerkBase action)
+    public virtual void SetInfo(ExpirePlayerPerkBase action)
     {
         m_Action.SetInfo(action);
     }

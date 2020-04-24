@@ -10,6 +10,11 @@ namespace GameSetting
     {
         #region Battle
         public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(15, 25);
+        public const float F_EnermyGenerateTickMultiplierPerMinute =.04f;
+        public const float F_EnermyGenerateTickMultiplierTransmiting = 2f;
+
+        public const float F_EnermyEliteGenerateBase = 20f;
+        public const float F_EnermyEliteGeneratePerMinuteMultiplier = 1f;
         public const float F_SqrEnermyGenerateMinDistance = 400f; // 20*20
 
         public const float F_SignalTowerTransmitDuration = 60f;
@@ -30,12 +35,12 @@ namespace GameSetting
 
         public const float F_PlayerWeaponFireReloadPause = 1f; //武器恢复间隔时间
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
-        public const float F_PlayerDamageAdjustmentRange = 0f;     //Test 不方便数据测试 临时关闭
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
         public const int I_PlayerEnermyKillExpGain = 20;
 
         public const float F_EliteBuffTimerDurationWhenFullHealth = 15f; //触发tick值
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
+        public static readonly List<int> L_GameEliteIndexes = new List<int>() { 107, 207, 306, 407, 507 };
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(211, 12010, 32010), new EliteBuffCombine(213, 12030, 32030), new EliteBuffCombine(214, 12040, 32040), new EliteBuffCombine(215, 12050, 32050), new EliteBuffCombine(216, 12060, 32060) };
         #endregion
         #region Interacts
@@ -100,7 +105,6 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
         
         #region Equipment
-        public const int m_DefaultEquipmentCombinationIdentity = 20000;
         public static readonly Dictionary<enum_Rarity, float> m_EquipmentGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public const int m_EquipmentEnhanceMaxLevel = 15;
         public const float m_EquipmentEnhanceCoinsCostMultiply = .2f;
@@ -159,9 +163,9 @@ namespace GameSetting
 
         public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
 
-        public static SBuff GetEnermyGameBuff(enum_GameStage stage, enum_GameDifficulty difficulty) => SBuff.CreateGameEnermyBuff((int)difficulty, ((int)stage - 1) * .3f+ ((int)difficulty - 1)*.3f );
-        public static float GetEnermyMaxHealthMultiplier(enum_GameStage stage, enum_GameDifficulty difficulty) => 1f + ((int)stage - 1) * .5f + ((int)difficulty - 1) * .25f;
-        
+        public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_GameDifficulty difficulty) => minutePassed * .1f + ((int)difficulty - 1) * .25f;
+        public static float GetEnermyDamageMultilier(int minutesPassed, enum_GameDifficulty difficulty) => minutesPassed * .05f + ((int)difficulty - 1) * .25f;
+
         public static float GetResultCompletion(bool win, enum_GameStage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_GameStage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
         public static float GetResultDifficultyBonus(enum_GameDifficulty _difficulty) =>1f+ (int)_difficulty * .05f;
@@ -257,14 +261,14 @@ namespace GameSetting
     public static class LocalizationKeyJoint
     {
         public static string GetNameLocalizeKey(this EntityExpirePreset buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this ExpirePerkBase action) => "Perk_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this ExpirePerkBase action) => "Perk_Intro_" + action.m_Index;
+        public static string GetNameLocalizeKey(this ExpirePlayerPerkBase action) => "Perk_Name_" + action.m_Index;
+        public static string GetIntroLocalizeKey(this ExpirePlayerPerkBase action) => "Perk_Intro_" + action.m_Index;
         public static string GetNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Name_" + character;
         public static string GetIntroLocalizeKey(this enum_PlayerCharacter character) => "Character_Intro_" + character;
         public static string GetAbilityLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_" + character;
         public static string GetNameLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Name_" + equipment.m_Index;
         public static string GetPassiveLocalizeKey(this EquipmentSaveData upgrade) => "Equipment_Passive_" + upgrade.m_Index;
-        public static string GetPassiveLocalizeKey(this ExpireUpgrade upgrade) => "Equipment_Passive_" + upgrade.m_Index;
+        public static string GetPassiveLocalizeKey(this ExpirePlayerUpgradeCombine upgrade) => "Equipment_Passive_" + upgrade.m_Index;
         public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
         public static string GetLocalizeKey(this enum_GameStage stage) => "Game_Stage_" + stage;
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
@@ -276,7 +280,7 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
-        public static string SetActionIntro(this ExpirePerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+        public static string SetActionIntro(this ExpirePlayerPerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
     }
 
     public static class GameLayer
@@ -406,12 +410,14 @@ namespace GameSetting
             m_CurrentArmor = setArmor;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-        public void SetHealthMultiplier(float healthMultiplier)
+
+        public void OnHealthMultiplierChange(float healthMultiplier)
         {
             m_HealthMultiplier = healthMultiplier;
             OnActivate(base.m_BaseHealth);
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
+
         public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthWillChange, damageInfo, m_Entity);
@@ -538,7 +544,6 @@ namespace GameSetting
             if(changed)
                 OnHealthChanged(enum_HealthChangeMessage.Default);
         }
-
     }
 
     public class DamageInfo
@@ -718,6 +723,7 @@ namespace GameSetting
         public float m_FireRateMultiply { get; private set; } = 1f;
         public float m_ReloadRateMultiply { get; private set; } = 1f;
         public float m_DamageMultiply { get; private set; } = 0f;
+        public float m_DamageAdditive { get; private set; } = 0f;
         public float m_CriticalDamageMultiply { get; private set; } = 1f;
         public float m_CriticalRate { get; private set; } = 0f;
         public float DoFireRateTick(float deltaTime) => deltaTime * m_FireRateMultiply;
@@ -727,77 +733,113 @@ namespace GameSetting
         public float m_ExtraFireRateMultiply => m_FireRateMultiply - 1;
         public float m_ExtraCriticalHitMultiply => m_CriticalDamageMultiply - 1;
         public float m_ExtraMovemendSpeedMultiply => m_MovementSpeedMultiply-1f;
-        
-        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic) =>new DamageInfo(m_Entity.m_EntityID, baseDamage, m_DamageMultiply, m_CriticalRate, m_CriticalDamageMultiply , type, buff);
 
-        Func<DamageInfo, bool> OnReceiveDamage;
+        public virtual DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic)
+        {
+            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, baseDamage + m_DamageAdditive, m_DamageMultiply, m_CriticalRate, m_CriticalDamageMultiply, type, buff);
+            m_Expires.Traversal((EntityExpireBase interact) => { interact.OnAttackSetDamage(info); });
+            return info;
+        } 
+
         Action OnExpireInfoChange;
-
         bool b_expireUpdated = false;
         public void UpdateEntityInfo() => b_expireUpdated = false;
 
-        public CharacterExpireManager(EntityCharacterBase _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange)
+        public CharacterExpireManager(EntityCharacterBase _attacher, Action _OnExpireChange)
         {
             m_Entity = _attacher;
-            OnReceiveDamage = _OnReceiveDamage;
             OnExpireInfoChange = _OnExpireChange;
         }
 
-        public virtual void OnActivate()=>Reset();
-        public virtual void OnDead() => Reset();
-        public virtual void OnRecycle() => Reset();
-        public virtual void OnRevive() => Reset();
-
-        protected virtual void Reset()
+        public virtual void OnDead()
         {
-            m_Expires.Traversal((EntityExpireBase expire) => { if (expire.m_ExpireType == enum_ExpireType.Preset) RemoveExpire(expire); }, true);
+            m_Expires.Traversal((EntityExpireBase expire) =>
+            {
+                switch (expire.m_ExpireType)
+                {
+                    default: Debug.LogError("Invalid Convertions Here!"); return;
+                    case enum_ExpireType.Perk:
+                    case enum_ExpireType.Upgrades:
+                        break;
+                    case enum_ExpireType.Preset:
+                    case enum_ExpireType.EnermyElite:
+                        RemoveExpire(expire);
+                        break;
+                }
+            }, true);
             UpdateExpireInfo();
             UpdateExpireEffect();
+
         }
-
-        public virtual void Tick(float deltaTime) {
-            m_Expires.Traversal((EntityExpireBase expire) => { expire.OnTick(deltaTime); },true);
-
-            if (b_expireUpdated)
-                return;
+        public virtual void OnRecycle()
+        {
+            m_Expires.Clear();
             UpdateExpireInfo();
             UpdateExpireEffect();
-            OnExpireInfoChange?.Invoke();
-            b_expireUpdated = true;
-        }
+        } 
 
-        protected virtual void AddExpire(EntityExpireBase expire)
+
+        public virtual void AddExpire(EntityExpireBase expire)
         {
             m_Expires.Add(expire);
+            expire.OnActivate(m_Entity);
+            switch (expire.m_ExpireType)
+            {
+                case enum_ExpireType.Perk:
+                    EntityExpirePreset buff = expire as EntityExpirePreset;
+                    switch (buff.m_RefreshType)
+                    {
+                        default:
+                            Debug.LogError("Invalid Convertions Here!");
+                            break;
+                        case enum_ExpireRefreshType.AddUp:
+                            AddExpire(buff);
+                            break;
+                        case enum_ExpireRefreshType.Refresh:
+                            {
+                                EntityExpirePreset buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as EntityExpirePreset;
+                                if (buffRefresh != null)
+                                    buffRefresh.BuffRefresh();
+                                else
+                                    AddExpire(buff);
+                            }
+                            break;
+                    }
+                    break;
+            }
             UpdateEntityInfo();
         }
         protected virtual void RemoveExpire(EntityExpireBase expire)
         {
             m_Expires.Remove(expire);
             UpdateEntityInfo();
+
         }
-        public void AddBuff(int sourceID, SBuff buffInfo)
-        {
-            EntityExpirePreset buff = new EntityExpirePreset(sourceID, buffInfo, OnReceiveDamage, RemoveExpire);
-            switch (buff.m_RefreshType)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!");
-                    break;
-                case enum_ExpireRefreshType.AddUp:
-                    AddExpire(buff);
-                    break;
-                case enum_ExpireRefreshType.Refresh:
-                    {
-                        EntityExpirePreset buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as EntityExpirePreset;
-                        if (buffRefresh != null)
-                            buffRefresh.BuffRefresh();
-                        else
-                            AddExpire(buff);
-                    }
-                    break;
-            }
+
+        public virtual void Tick(float deltaTime) {
+            m_Expires.Traversal((EntityExpireBase expire) => {
+                if (expire.m_Expired)
+                {
+                    RemoveExpire(expire);
+                    return;
+                }
+                expire.OnTick(deltaTime);
+            },true);
+
+            if (b_expireUpdated)
+                return;
+            b_expireUpdated = true;
+            UpdateExpireInfo();
+            UpdateExpireEffect();
+            OnExpireInfoChange?.Invoke();
         }
+
+        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
+        public void OnDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float applyAmount) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnDealtDamage(damageEntity, damageInfo, applyAmount); });
+        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
+        public void OnAfterReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnReceiveDamage(damageInfo, amountApply); });
+        public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
+        
         #region ExpireInfo
         void UpdateExpireInfo()
         {
@@ -813,17 +855,19 @@ namespace GameSetting
             m_FireRateMultiply = 1f;
             m_ReloadRateMultiply = 1f;
             m_DamageMultiply = 0f;
+            m_DamageAdditive = 0f;
             m_CriticalRate = 0f;
             m_CriticalDamageMultiply = 1f;
         }
         protected virtual void OnSetExpireInfo(EntityExpireBase expire)
         {
-            m_DamageMultiply += expire.m_DamageMultiply;
             m_DamageReceiveMultiply -= expire.m_DamageReduction;
             m_HealReceiveMultiply += expire.m_HealAdditive;
             m_MovementSpeedMultiply += expire.m_MovementSpeedMultiply;
             m_FireRateMultiply += expire.m_FireRateMultiply;
             m_ReloadRateMultiply += expire.m_ReloadRateMultiply;
+            m_DamageMultiply += expire.m_DamageMultiply;
+            m_DamageAdditive += expire.m_DamageAdditive;
             m_CriticalRate += expire.m_CriticalRateAdditive;
             m_CriticalDamageMultiply += expire.m_CriticalHitMultiplyAdditive;
         }
@@ -862,10 +906,8 @@ namespace GameSetting
 
     public class PlayerExpireManager : CharacterExpireManager
     {
-        EntityCharacterPlayer m_Player;
         public float F_MaxHealthAdditive { get; private set; } = 0;
         public float F_MaxArmorAdditive { get; private set; } = 0;
-        public float F_DamageAdditive { get; private set; } = 0f;
 
         public float F_SpreadMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
@@ -877,16 +919,15 @@ namespace GameSetting
         public float F_ClipMultiply { get; private set; } = 1f;
         public int CheckClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
 
-        public List<ExpireInteractBase> m_ExpireInteracts { get; private set; } = new List<ExpireInteractBase>();
-        public Dictionary<int, ExpirePerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePerkBase>();
-        public ExpireUpgrade m_Upgrade { get; private set; }
+        public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
+        public Dictionary<int, ExpirePlayerPerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePlayerPerkBase>();
+        public ExpirePlayerUpgradeCombine m_Upgrade { get; private set; }
         public float m_Coins { get; private set; } = 0;
         public int m_Keys { get; private set; } = 0;
         public ExpRankBase m_RankManager { get; private set; }
 
-        public PlayerExpireManager(EntityCharacterPlayer _attacher, Func<DamageInfo, bool> _OnReceiveDamage, Action _OnExpireChange) : base(_attacher, _OnReceiveDamage, _OnExpireChange)
+        public PlayerExpireManager(EntityCharacterPlayer _attacher ,Action _OnExpireChange) : base(_attacher, _OnExpireChange)
         {
-            m_Player = _attacher;
             m_RankManager = new ExpRankBase(GameExpression.GetPlayerRankUpExp);
         }
 
@@ -897,41 +938,39 @@ namespace GameSetting
         }
 
         #region Interact
-        public void SetInfoData(CPlayerBattleSave _battleSave)
+        public void SetInfoData(CGameProgressSave _battleSave)
         {
-            m_Coins = _battleSave.m_Coins;
+            m_Coins = 0;
             m_RankManager.OnExpSet(_battleSave.m_TotalExp);
 
             AddExpire(GameDataManager.CreateUpgradeCombination(_battleSave.m_Equipments, _battleSave.m_Upgrade));
-            _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePerk(perkData)); });
+            _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePlayerPerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
         public bool CheckRevive() => m_ExpirePerks.Any(p => p.Value.OnCheckRevive());
+        public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpirePlayerBase interact) => { interact.OnAbilityTrigger(); });
+
         public void OnActionPerkAcquire(int perkID)
         {
             if (m_ExpirePerks.ContainsKey(perkID))
                 m_ExpirePerks[perkID].OnStackUp();
             else
-                AddExpire(GameDataManager.CreatePerk(PerkSaveData.New(perkID)));
+                AddExpire(GameDataManager.CreatePlayerPerk(PerkSaveData.New(perkID)));
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
         #endregion
         #region Expire Update
-        protected override void AddExpire(EntityExpireBase expire)
+        public override void AddExpire(EntityExpireBase expire)
         {
             base.AddExpire(expire);
             if (expire.m_ExpireType.IsInteractExpire())
-            {
-                ExpireInteractBase interactExpire = expire as ExpireInteractBase;
-                interactExpire.OnActivate(m_Player, RemoveExpire);
-                m_ExpireInteracts.Add(interactExpire);
-            }
+                m_ExpireInteracts.Add(expire as ExpirePlayerBase);
 
             switch (expire.m_ExpireType)
             {
                 case enum_ExpireType.Perk:
                     {
-                        ExpirePerkBase targetExpire = expire as ExpirePerkBase;
+                        ExpirePlayerPerkBase targetExpire = expire as ExpirePlayerPerkBase;
                         m_ExpirePerks.Add(targetExpire.m_Index, targetExpire);
                         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
                     }
@@ -940,7 +979,7 @@ namespace GameSetting
                     {
                         if (m_Upgrade != null)
                             Debug.LogError("Can't Add Extra Equipment Upgrade!");
-                        m_Upgrade = expire as ExpireUpgrade;
+                        m_Upgrade = expire as ExpirePlayerUpgradeCombine;
                     }
                     break;
             }
@@ -950,7 +989,7 @@ namespace GameSetting
         {
             base.RemoveExpire(expire);
             if(expire.m_ExpireType.IsInteractExpire())
-                m_ExpireInteracts.Remove(expire as ExpireInteractBase);
+                m_ExpireInteracts.Remove(expire as ExpirePlayerBase);
 
             switch (expire.m_ExpireType)
             {
@@ -970,7 +1009,6 @@ namespace GameSetting
         protected override void OnResetInfo()
         {
             base.OnResetInfo();
-            F_DamageAdditive = 0f;
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
             F_PenetrateAdditive = 0;
@@ -991,16 +1029,14 @@ namespace GameSetting
                 case enum_ExpireType.Preset:break;
                 case enum_ExpireType.Upgrades:
                     {
-                        ExpireUpgrade equipment = expire as ExpireUpgrade;
-                        F_DamageAdditive += equipment.m_DamageAdditive;
+                        ExpirePlayerUpgradeCombine equipment = expire as ExpirePlayerUpgradeCombine;
                         F_MaxHealthAdditive += equipment.m_MaxHealthAdditive;
                         F_MaxArmorAdditive += equipment.m_MaxArmorAdditive;
                     }
                     break;
                 case enum_ExpireType.Perk:
                     {
-                        ExpirePerkBase perk = expire as ExpirePerkBase;
-                        F_DamageAdditive += perk.m_DamageAdditive;
+                        ExpirePlayerPerkBase perk = expire as ExpirePlayerPerkBase;
                         F_SpreadMultiply -= perk.F_SpreadReduction;
                         F_AimMovementStrictMultiply -= perk.F_AimPressureReduction;
 
@@ -1025,22 +1061,6 @@ namespace GameSetting
             if (F_CoinsCostMultiply < 0) F_CoinsCostMultiply = 0;
         }
         #endregion
-        #region Interacts
-        public override DamageInfo GetDamageBuffInfo(float baseDamage,int buff=0,enum_DamageType type= enum_DamageType.Basic)
-        {
-            float randomDamageMultiply = UnityEngine.Random.Range(-GameConst.F_PlayerDamageAdjustmentRange, GameConst.F_PlayerDamageAdjustmentRange);
-            DamageInfo info= new DamageInfo(m_Entity.m_EntityID, baseDamage + F_DamageAdditive, m_DamageMultiply+ randomDamageMultiply, m_CriticalRate, m_CriticalDamageMultiply , type, buff);
-            m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAttack(info); });
-            return info;
-        }
-
-        public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnAbilityTrigger(); });
-        public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
-        public void OnDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity,float applyAmount) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnDealtDamage(damageEntity,damageInfo,applyAmount); });
-        public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
-        public void OnAfterReceiveDamage(DamageInfo damageInfo,EntityCharacterBase damageEntity,float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveDamage(damageInfo, amountApply); });
-        public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_ExpireInteracts.Traversal((ExpireInteractBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
-        #endregion
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
         #region Coin/Key Info
         public bool CanCostCoins(float price)=> m_Coins >= price* F_CoinsCostMultiply;
@@ -1059,10 +1079,10 @@ namespace GameSetting
         }
         #endregion
     }
-
+    
     #endregion
 
-    #region Expires
+    #region ExpireBases
     public class EntityExpireBase
     {
         public virtual int m_EffectIndex => -1;
@@ -1073,25 +1093,25 @@ namespace GameSetting
         public virtual float m_FireRateMultiply => 0;
         public virtual float m_ReloadRateMultiply => 0;
         public virtual float m_DamageMultiply => 0;
+        public virtual float m_DamageAdditive => 0;
         public virtual float m_DamageReduction => 0;
         public virtual float m_CriticalRateAdditive => 0;
         public virtual float m_CriticalHitMultiplyAdditive => 0f;
         public virtual float m_HealAdditive => 0;
-        private Action<EntityExpireBase> OnExpired;
-        bool forceExpire = false;
-        protected void OnActivate( Action<EntityExpireBase> _OnExpired)
-        {
-            OnExpired = _OnExpired;
-            forceExpire = false;
-        }
 
-        public void DoExpire() => forceExpire = true;
-        public virtual void OnTick(float deltaTime)
-        {
-            if (forceExpire) OnExpired(this);
-        }
+        public bool m_Expired { get; protected set; } = false;
+
+        public EntityCharacterBase m_Attacher { get; private set; }
+        public virtual void OnActivate(EntityCharacterBase _actionEntity) { m_Attacher = _actionEntity; }
+        public virtual void OnTick(float deltaTime) { }
+        public virtual void OnAttackSetDamage(DamageInfo info) { }
+        public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
+        public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
+        public virtual void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) { }
+        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
+        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
     }
-    
+
     public class EntityExpirePreset : EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Preset;
@@ -1108,14 +1128,11 @@ namespace GameSetting
         public float f_expireLeftScale => f_expireCheck / m_ExpireDuration;
         public int I_SourceID { get; private set; }
         SBuff m_buffInfo;
-        Func<DamageInfo, bool> OnDOTDamage;
         float f_dotCheck;
-        public EntityExpirePreset(int sourceID, SBuff _buffInfo, Func<DamageInfo, bool> _OnDOTDamage, Action<EntityExpireBase> _OnExpired)
+        public EntityExpirePreset(int sourceID, SBuff _buffInfo)
         {
-            base.OnActivate(_OnExpired);
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
-            OnDOTDamage = _OnDOTDamage;
             SetDuration(_buffInfo.m_ExpireDuration);
         }
         protected void SetDuration(float duration)
@@ -1132,7 +1149,7 @@ namespace GameSetting
                 return;
             f_expireCheck -= deltaTime;
             if (f_expireCheck <= 0)
-                DoExpire();
+                m_Expired = true;
 
             if (m_buffInfo.m_DamageTickTime <= 0)
                 return;
@@ -1140,18 +1157,21 @@ namespace GameSetting
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {
                 f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                OnDOTDamage(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType));
             }
         }
     }
     
-
-    public class ExpireInteractBase: EntityExpireBase
+    public class ExpirePlayerBase: EntityExpireBase
     {
-        public EntityCharacterPlayer m_Attacher { get; private set; }
-        public virtual void OnActivate(EntityCharacterPlayer _actionEntity, Action<EntityExpireBase> OnExpired) { m_Attacher = _actionEntity; OnActivate(OnExpired); }
-
-        public virtual float m_DamageAdditive => 0;
+        public new EntityCharacterPlayer m_Attacher { get; private set; }
+        public override void OnActivate(EntityCharacterBase _actionEntity)
+        {
+            base.OnActivate(_actionEntity);
+            if (_actionEntity.m_ControllType != enum_EntityType.Player)
+                Debug.LogError("Invalid Expire Type Attached!");
+            m_Attacher = base.m_Attacher as EntityCharacterPlayer;
+        }
         public virtual float m_MaxHealthAdditive => 0;
         public virtual float m_MaxArmorAdditive => 0;
 
@@ -1159,20 +1179,14 @@ namespace GameSetting
         public virtual float Value2 => 0;
         public virtual float Value3 => 0;
 
-        public virtual void OnBeforeReceiveDamage(DamageInfo info) { }
-        public virtual void OnReceiveDamage(DamageInfo info, float amount) { }
-        public virtual void OnAttack(DamageInfo info) { }
-        public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
-        public virtual void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount) { }
-        public virtual void OnReceiveHealing(DamageInfo info, float applyAmount) { }
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }
     }
 
-    public class ExpireUpgrade: ExpireInteractBase
+    public class ExpirePlayerUpgradeCombine: ExpirePlayerBase
     {
         public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Upgrades;
-        public bool m_HavePassive => m_Index != GameConst.m_DefaultEquipmentCombinationIdentity;
+        public bool m_HavePassive => m_Index != GameDataManager.m_DefaultEquipmentCombinationIdentity;
         public List<EquipmentSaveData> m_EquipmentData { get; private set; }
         public CharacterUpgradeData m_CharacterData { get; private set; }
         public Dictionary<enum_CharacterUpgradeType, float> m_UpgradeDatas { get; private set; } = new Dictionary<enum_CharacterUpgradeType, float>();
@@ -1183,7 +1197,7 @@ namespace GameSetting
         public override float m_MaxArmorAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Armor];
         public override float m_MaxHealthAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Health];
         public override float m_DamageAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Damage];
-        public ExpireUpgrade(List<EquipmentSaveData> equipmentData, CharacterUpgradeData characterUpgrade)
+        public ExpirePlayerUpgradeCombine(List<EquipmentSaveData> equipmentData, CharacterUpgradeData characterUpgrade)
         {
             m_CharacterData = characterUpgrade;
             m_EquipmentData = equipmentData;
@@ -1201,7 +1215,7 @@ namespace GameSetting
         }
     }
 
-    public class ExpirePerkBase: ExpireInteractBase
+    public class ExpirePlayerPerkBase: ExpirePlayerBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Perk;
         public virtual enum_Rarity m_Rarity { get; private set; } = enum_Rarity.Invalid;
@@ -1210,7 +1224,7 @@ namespace GameSetting
 
         public int m_Stack { get; private set; } = 0;
         public virtual float m_RecordData { get; protected set; }
-        public ExpirePerkBase(PerkSaveData data) { m_Stack = data.m_PerkStack; m_RecordData = data.m_RecordData; }
+        public ExpirePlayerPerkBase(PerkSaveData data) { m_Stack = data.m_PerkStack; m_RecordData = data.m_RecordData; }
         
         public void OnStackUp() => m_Stack++;
 
@@ -1226,6 +1240,21 @@ namespace GameSetting
         public virtual float F_Discount => 0f;
     }
 
+    public class ExpireEnermyPerkBase:EntityExpireBase
+    {
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.EnermyElite;
+        public virtual float m_MaxHealthMultiplierAdditive => m_GameBaseMaxHealthMultiplier;
+        public override float m_DamageMultiply => m_GameBaseMaxHealthMultiplier;
+
+        protected float m_GameBaseMaxHealthMultiplier = 0;
+        protected float m_GameBaseDamageMultiplier = 0;
+
+        public ExpireEnermyPerkBase(float baseMaxHealthMultiplier,float baseDamageMultiplier)
+        {
+            m_GameBaseDamageMultiplier = baseDamageMultiplier;
+            m_GameBaseMaxHealthMultiplier = baseMaxHealthMultiplier;
+        }
+    }
     #endregion
 
     #region Physics

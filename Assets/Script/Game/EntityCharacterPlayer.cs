@@ -43,7 +43,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     protected override CharacterExpireManager GetEntityInfo()
     {
-        m_CharacterInfo = new PlayerExpireManager(this, m_HitCheck.TryHit, OnExpireChange);
+        m_CharacterInfo = new PlayerExpireManager(this, OnExpireChange);
         return m_CharacterInfo;
     }
 
@@ -63,20 +63,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Controller = GetComponent<CharacterController>();
     }
     
-    protected override void OnPoolItemEnable()
-    {
-        base.OnPoolItemEnable();
-        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
-    }
-    protected override void OnPoolItemDisable()
-    {
-        base.OnPoolItemDisable();
-        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
-    }
-
-    public  EntityCharacterPlayer OnPlayerActivate(CPlayerBattleSave _battleSave)
+    public  EntityCharacterPlayer OnPlayerActivate(CGameProgressSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
         UIManager.Instance.DoBindings(this, OnMovementDelta, null, OnMainDown, OnSubDown, OnAbilityDown);
@@ -192,9 +179,17 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual Quaternion GetCharacterRotation() => m_CharacterRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
     protected virtual bool CheckWeaponFiring() =>!Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
-
+    #region Expire
+    protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
+        if (damageInfo.m_SourceID == m_EntityID)
+            if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
+                m_CharacterInfo.OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
+    }
+    #endregion
     #region WeaponControll
-    
+
     void TrySwapWeapon(bool mainWeapon)
     {
         if (!mainWeapon && !m_Weapon2)
@@ -424,36 +419,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
                 break;
         }
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerInteractPickup, pickup.transform.position, pickup.m_InteractType, amount);
-    }
-    #endregion
-    #region Expire Interact
-    protected void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
-    {
-        if (damageInfo.m_AmountApply <= 0)
-            return;
-
-        if (damageInfo.m_SourceID == m_EntityID)
-            m_CharacterInfo.OnWillDealtDamage(damageInfo, damageEntity);
-        else if (damageEntity.m_EntityID == m_EntityID)
-            m_CharacterInfo.OnWillReceiveDamage(damageInfo, damageEntity);
-    }
-
-    protected void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
-    {
-        if(damageInfo.m_SourceID==m_EntityID)
-        {
-            m_CharacterInfo.OnDealtDamage(damageInfo, damageEntity, amountApply);
-            if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
-                m_CharacterInfo.OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
-        }
-
-        if (damageEntity.m_EntityID == m_EntityID)
-        {
-            if (amountApply > 0)
-                m_CharacterInfo.OnAfterReceiveDamage(damageInfo,damageEntity,amountApply);
-            else
-                m_CharacterInfo.OnReceiveHealing(damageInfo, damageEntity, amountApply);
-        }
     }
     #endregion
     #region UI Indicator

@@ -20,7 +20,7 @@ public class EntityCharacterBase : EntityBase
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     public int m_SpawnerEntityID { get; private set; }
     public bool b_isSubEntity => m_SpawnerEntityID != -1;
-    protected virtual CharacterExpireManager GetEntityInfo() => new CharacterExpireManager(this, m_HitCheck.TryHit, OnExpireChange);
+    protected virtual CharacterExpireManager GetEntityInfo() => new CharacterExpireManager(this,  OnExpireChange);
     
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
     protected override float DamageReceiveMultiply => m_CharacterInfo.m_DamageReceiveMultiply;
@@ -47,13 +47,16 @@ public class EntityCharacterBase : EntityBase
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
-        m_CharacterInfo.OnActivate();
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
+        TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
 
     protected override void OnPoolItemDisable()
     {
         base.OnPoolItemDisable();
         m_CharacterSkinEffect.OnDisable();
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
+        TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     public bool m_TargetAvailable =>  !m_IsDead;
     protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
@@ -76,6 +79,34 @@ public class EntityCharacterBase : EntityBase
 
     protected virtual void OnExpireChange(){ }
 
+    #region Expire Interact
+    protected virtual void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
+    {
+        if (damageInfo.m_AmountApply <= 0)
+            return;
+
+        if (damageInfo.m_SourceID == m_EntityID)
+            m_CharacterInfo.OnWillDealtDamage(damageInfo, damageEntity);
+        else if (damageEntity.m_EntityID == m_EntityID)
+            m_CharacterInfo.OnWillReceiveDamage(damageInfo, damageEntity);
+    }
+
+    protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        if (damageInfo.m_SourceID == m_EntityID)
+        {
+            m_CharacterInfo.OnDealtDamage(damageInfo, damageEntity, amountApply);
+        }
+
+        if (damageEntity.m_EntityID == m_EntityID)
+        {
+            if (amountApply > 0)
+                m_CharacterInfo.OnAfterReceiveDamage(damageInfo, damageEntity, amountApply);
+            else
+                m_CharacterInfo.OnReceiveHealing(damageInfo, damageEntity, amountApply);
+        }
+    }
+    #endregion
     private void Update()
     {
         if (!m_Activating)
@@ -107,7 +138,6 @@ public class EntityCharacterBase : EntityBase
             return;
         OnRevive();
         m_CharacterSkinEffect.OnReset();
-        m_CharacterInfo.OnRevive();
         EntityHealth health = (m_Health as EntityHealth);
         health.OnSetStatus( health.m_MaxHealth,health.m_MaxArmor);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
@@ -118,7 +148,7 @@ public class EntityCharacterBase : EntityBase
         if (!base.OnReceiveDamage(damageInfo, damageDirection))
             return false;
 
-        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddBuff(damageInfo.m_SourceID, buffInfo); });
+        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_SourceID, buffInfo)); });
 
         return true;
     }

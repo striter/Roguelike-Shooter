@@ -9,6 +9,7 @@ public class InteractPerkShrine : InteractGameBase {
     public int I_MuzzleSuccess;
     public new InteractPerkShrine Play()
     {
+        base.Play();
         m_TryCount = 0;
         m_TradePrice = GameExpression.GetPerkShrinePrice(m_TryCount);
         return this;
@@ -22,7 +23,7 @@ public class InteractPerkShrine : InteractGameBase {
         enum_Rarity rarity = TCommon.RandomPercentage(GameConst.D_PerkShrineRate, enum_Rarity.Invalid);
         if (rarity != enum_Rarity.Invalid)
         {
-            _interactor.m_CharacterInfo.OnActionPerkAcquire(GameDataManager.RandomPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));
+            _interactor.m_CharacterInfo.OnActionPerkAcquire(GameDataManager.RandomPlayerPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));
             GameObjectManager.PlayMuzzle(-1,_interactor.transform.position,Vector3.up, I_MuzzleSuccess);
         }
         return m_TryCount < GameConst.I_PerkShrineTryCountMax;

@@ -181,7 +181,7 @@ namespace GameSetting
             m_Image = transform.Find("Mask/Image").GetComponent<Image>();
             m_Rarity = new UIC_RarityLevel(transform.Find("Rarity"));
         }
-        public virtual void SetInfo(ExpirePerkBase equipmentInfo)
+        public virtual void SetInfo(ExpirePlayerPerkBase equipmentInfo)
         {
             m_Image.sprite = GameUIManager.Instance.m_ExpireSprites[equipmentInfo.m_Index.ToString()];
             m_Rarity.SetRarity(equipmentInfo.m_Rarity);
@@ -195,7 +195,7 @@ namespace GameSetting
         {
             m_Name = transform.Find("Name").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(ExpirePerkBase equipmentInfo)
+        public override void SetInfo(ExpirePlayerPerkBase equipmentInfo)
         {
             base.SetInfo(equipmentInfo);
             m_Name.localizeKey = equipmentInfo.GetNameLocalizeKey();
@@ -211,7 +211,7 @@ namespace GameSetting
 
             m_Intro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
         }
-        public override void SetInfo(ExpirePerkBase equipmentInfo)
+        public override void SetInfo(ExpirePlayerPerkBase equipmentInfo)
         {
             base.SetInfo(equipmentInfo);
             m_Intro.formatText(equipmentInfo.GetIntroLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", equipmentInfo.Value3));

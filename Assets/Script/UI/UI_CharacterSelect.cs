@@ -70,7 +70,7 @@ public class UI_CharacterSelect : UIPage {
         m_CharacterConfirm.interactable = GameDataManager.CanChangeCharacter(character);
 
         EntityCharacterBase characterModel = m_SelectModel.ShowCharacter(character);
-        ExpireUpgrade upgrade= GameDataManager.CreateUpgradeCombination(GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(), GameDataManager.m_CharacterData.GetUpgradeData(character));
+        ExpirePlayerUpgradeCombine upgrade= GameDataManager.CreateUpgradeCombination(GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(), GameDataManager.m_CharacterData.GetUpgradeData(character));
 
         m_EquipmentsGrid.ClearGrid();
         upgrade.m_EquipmentData.Traversal((int index, EquipmentSaveData equipment) => { m_EquipmentsGrid.AddItem(index).Play(equipment); });

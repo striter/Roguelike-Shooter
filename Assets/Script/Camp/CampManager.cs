@@ -45,7 +45,7 @@ public class CampManager : GameManagerBase
         if (m_LocalPlayer)
             m_LocalPlayer.DoRecycle();
 
-        m_LocalPlayer = character.OnPlayerActivate(new CPlayerBattleSave());
+        m_LocalPlayer = character.OnPlayerActivate(new CGameProgressSave());
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
 

@@ -273,10 +273,10 @@ public static class GameObjectManager
         return entity;
     }
 
-    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, enum_GameDifficulty gameDifficulty, enum_GameStage _stage)
+    public static EntityCharacterAI SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int minutesPassed, enum_GameDifficulty gameDifficulty,bool isElite)
     {
         RegisterEnermyCharacter(poolIndex);
-        return SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, toRot).OnAIActivate(_flag, GameExpression.GetEnermyMaxHealthMultiplier(_stage, gameDifficulty), GameExpression.GetEnermyGameBuff(_stage, gameDifficulty)); 
+        return SpawnEntity<EntityCharacterAI>(poolIndex, toPosition, toRot).OnAIActivate(_flag, GameDataManager.RandomEnermyPerk(minutesPassed,gameDifficulty,isElite)); 
     }
 
     public static EntityCharacterBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, float startHealth)

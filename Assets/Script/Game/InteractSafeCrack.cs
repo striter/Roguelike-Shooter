@@ -20,7 +20,7 @@ public class InteractSafeCrack : InteractGameBase {
         for(int i=0;i< coinsAmount; i++)
         GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position , Quaternion.identity).Play(1).PlayDropAnim(transform.position+ TCommon.RandomXZCircle());
 
-        List<int> perks = GameDataManager.RandomPerks(GameConst.RI_EventSafePerkCount.Random(),GameConst.D_EventSafePerkRate,_interactor.m_CharacterInfo.m_ExpirePerks);
+        List<int> perks = GameDataManager.RandomPlayerPerks(GameConst.RI_EventSafePerkCount.Random(),GameConst.D_EventSafePerkRate,_interactor.m_CharacterInfo.m_ExpirePerks);
         for (int i = 0; i < perks.Count; i++)
             GameObjectManager.SpawnInteract<InteractPerkPickup>(transform.position + TCommon.RandomXZCircle(), Quaternion.identity).Play(perks[i]);
 

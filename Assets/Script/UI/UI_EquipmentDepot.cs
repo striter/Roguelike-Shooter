@@ -186,7 +186,7 @@ public class UI_EquipmentDepot : UIPage {
         Dictionary<enum_CharacterUpgradeType, float> _entryData = new Dictionary<enum_CharacterUpgradeType, float>();
         TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { _entryData.Add(type, 0); });
 
-        ExpireUpgrade upgrade = GameDataManager.CreateUpgradeCombination(m_DepotData.GetSelectedEquipments(),CharacterUpgradeData.Default());
+        ExpirePlayerUpgradeCombine upgrade = GameDataManager.CreateUpgradeCombination(m_DepotData.GetSelectedEquipments(),CharacterUpgradeData.Default());
         m_AttributesEntryGrid.ClearGrid();
         TCommon.TraversalEnum((enum_CharacterUpgradeType type) => { m_AttributesEntryGrid.AddItem((int)type).text = type + ":" + upgrade.m_UpgradeDatas[type]; });
         m_Passive.SetActivate(upgrade.m_HavePassive);

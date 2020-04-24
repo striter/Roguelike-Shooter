@@ -4,17 +4,17 @@ using UnityEngine;
 using GameSetting;
 using System;
 
-namespace GameSetting_Equipments
+namespace GameSetting_PlayerUpgradeCombine
 {
-    public class E20000_Default:ExpireUpgrade
+    public class E20000_Default:ExpirePlayerUpgradeCombine
     {
-        public override int m_Index => GameConst.m_DefaultEquipmentCombinationIdentity;
+        public override int m_Index => GameDataManager.m_DefaultEquipmentCombinationIdentity;
 
         public E20000_Default(List<EquipmentSaveData> equipmentUpgrade,CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade,characterUpgrade) {  }
     }
 
 
-    public class E20001:ExpireUpgrade
+    public class E20001:ExpirePlayerUpgradeCombine
     {
         public override int m_Index => 20001;
 
@@ -38,7 +38,7 @@ namespace GameSetting_Equipments
         public E20001(List<EquipmentSaveData> equipmentUpgrade, CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade, characterUpgrade) { m_Timer = new TimerBase(Value2, true); }
     }
 
-    public class E20002:ExpireUpgrade
+    public class E20002:ExpirePlayerUpgradeCombine
     {
         public override int m_Index => 20002;
         public override float Value1 => 20;
@@ -52,7 +52,7 @@ namespace GameSetting_Equipments
         public E20002(List<EquipmentSaveData> equipmentUpgrade, CharacterUpgradeData characterUpgrade) : base(equipmentUpgrade, characterUpgrade) { }
     }
 
-    public class E20003:ExpireUpgrade
+    public class E20003:ExpirePlayerUpgradeCombine
     {
         public override int m_Index => 20003;
         public override float Value1 => 8f;

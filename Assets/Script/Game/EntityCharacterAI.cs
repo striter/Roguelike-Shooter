@@ -39,15 +39,16 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageBuffInfo(F_BaseDamage,I_BuffApplyOnHit, enum_DamageType.Basic);
 
-    public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, float maxHealthMultiplier, SBuff difficultyBuff)
+    public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, ExpireEnermyPerkBase enermyPerk )
     {
         base.OnMainCharacterActivate(_flag);
         if (m_Animator != null)
             m_Animator.OnActivate(E_AnimatorIndex);
         m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
-        m_CharacterInfo.AddBuff(-1, difficultyBuff);
-        m_Health.SetHealthMultiplier(maxHealthMultiplier);
+        m_CharacterInfo.AddExpire(enermyPerk);
+        m_Health.OnHealthMultiplierChange(1f+enermyPerk.m_MaxHealthMultiplierAdditive);
+
         AIActivate();
         return this;
     }
@@ -124,7 +125,6 @@ public class EntityCharacterAI : EntityCharacterBase {
                 break;
         }
     }
-
 
     #region AI
     protected NavMeshAgent m_Agent;
