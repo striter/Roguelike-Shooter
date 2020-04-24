@@ -18,6 +18,7 @@ public class GameUIManager : UIManager {
         base.InitControls(inGame);
         ShowControls<UIC_GameNumericVisualize>();
         ShowControls<UIC_GameCurrencyStatus>();
+        ShowControls<UIC_GameBattleStatus>();
     }
 
     public void OnGameFinished(GameProgressManager level, Action _OnButtonClick)

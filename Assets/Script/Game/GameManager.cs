@@ -29,7 +29,7 @@ public class GameManager : GameManagerBase
         });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
-            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy,m_GameLevel.m_GameMinutesPassed, m_GameLevel.m_GameDifficulty,false);
+            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy,m_GameLevel.m_MinutesElapsed, m_GameLevel.m_GameDifficulty,false);
         });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1, int.Parse(damage), enum_DamageType.Basic)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal", KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1, -int.Parse(damage), enum_DamageType.Basic)); });
@@ -511,8 +511,8 @@ public class GameProgressManager
     public string m_GameSeed { get; private set; }
     public enum_GameDifficulty m_GameDifficulty { get; private set; }
     public enum_GameStage m_GameStage { get; private set; }
-    public float m_GameTime { get; private set; }
-    public int m_GameMinutesPassed { get; private set; }
+    public float m_TimeElapsed { get; private set; }
+    public int m_MinutesElapsed { get; private set; }
     Dictionary<enum_GameStage, enum_GameStyle> m_StageStyle = new Dictionary<enum_GameStage, enum_GameStyle>();
     public enum_GameStyle m_GameStyle => m_StageStyle[m_GameStage];
     public bool m_GameWin { get; private set; }
@@ -528,8 +528,8 @@ public class GameProgressManager
         m_GameStage = _battleSave.m_Stage;
         m_GameDifficulty = _gameSave.m_GameDifficulty;
         m_GameSeed =_battleSave.m_GameSeed;
-        m_GameTime = _battleSave.m_GameTime;
-        m_GameMinutesPassed = (int)(m_GameTime / 60f);
+        m_TimeElapsed = _battleSave.m_GameTime;
+        m_MinutesElapsed = (int)(m_TimeElapsed / 60f);
 
         m_Random = new System.Random(m_GameSeed.GetHashCode());
         List<enum_GameStyle> styleList = TCommon.GetEnumList<enum_GameStyle>();
@@ -549,8 +549,8 @@ public class GameProgressManager
 
     public void Tick(float deltaTime,Vector3 playerPosition)
     {
-        m_GameTime += deltaTime;
-        m_GameMinutesPassed = (int)(m_GameTime / 60f);
+        m_TimeElapsed += deltaTime;
+        m_MinutesElapsed = (int)(m_TimeElapsed / 60f);
 
         BattleTick(deltaTime,playerPosition);
     }
@@ -559,7 +559,7 @@ public class GameProgressManager
     List<Vector3> m_EnermySpawnPoints = new List<Vector3>();
     TimerBase m_BattleCheckTimer = new TimerBase();
     public float m_TimePassed { get; private set; }
-    bool m_BattleTransmiting =>m_TransmitEliteID>0;
+    public bool m_BattleTransmiting =>m_TransmitEliteID>0;
     int m_TransmitEliteID;
 
     public void BattleInit(List<Vector3> _spawnPoints, enum_GameDifficulty difficulty, enum_GameStage stage)
@@ -572,7 +572,7 @@ public class GameProgressManager
     protected void BattleTick(float deltaTime, Vector3 playerPosition)
     {
 
-        float tickMultiplier = 1f+GameConst.F_EnermyGenerateTickMultiplierPerMinute * m_GameMinutesPassed +(m_BattleTransmiting?GameConst.F_EnermyGenerateTickMultiplierTransmiting:0f);
+        float tickMultiplier = 1f+GameConst.F_EnermyGenerateTickMultiplierPerMinute * m_MinutesElapsed +(m_BattleTransmiting?GameConst.F_EnermyGenerateTickMultiplierTransmiting:0f);
         m_BattleCheckTimer.Tick(deltaTime*tickMultiplier);
         if (m_BattleCheckTimer.m_Timing)
             return;
@@ -581,7 +581,7 @@ public class GameProgressManager
         m_BattleCheckTimer.SetTimerDuration(GameConst.RI_EnermyGenerateDuration.Random());
     }
 
-    public void OnTransmitTrigger(Vector3 playerPos)=>m_TransmitEliteID = GameObjectManager.SpawnEntityCharacterAI(GameConst.L_GameEliteIndexes.RandomItem(), GetNeariestSpawnPos(playerPos), Quaternion.identity, enum_EntityFlag.Enermy, m_GameMinutesPassed, m_GameDifficulty, false).m_EntityID;
+    public void OnTransmitTrigger(Vector3 playerPos)=>m_TransmitEliteID = GameObjectManager.SpawnEntityCharacterAI(GameConst.L_GameEliteIndexes.RandomItem(), GetNeariestSpawnPos(playerPos), Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty, false).m_EntityID;
 
     public void OnCharacterDead(int enermyID)
     {
@@ -595,11 +595,11 @@ public class GameProgressManager
     void GenerateCommonEnermies(List<int> enermyGenerate, Vector3 targetPoint)
     {
         Vector3 spawnPoint = GetNeariestSpawnPos(targetPoint);
-        float eliteGenerateRate = GameConst.F_EnermyEliteGenerateBase + GameConst.F_EnermyEliteGeneratePerMinuteMultiplier * m_GameMinutesPassed;
+        float eliteGenerateRate = GameConst.F_EnermyEliteGenerateBase + GameConst.F_EnermyEliteGeneratePerMinuteMultiplier * m_MinutesElapsed;
 
         enermyGenerate.Traversal((int enermyID) => {
             bool isElite = eliteGenerateRate > 100f ? true : eliteGenerateRate > TCommon.RandomPercentage();
-            GameObjectManager.SpawnEntityCharacterAI(enermyID, spawnPoint, Quaternion.identity, enum_EntityFlag.Enermy, m_GameMinutesPassed, m_GameDifficulty,isElite );
+            GameObjectManager.SpawnEntityCharacterAI(enermyID, spawnPoint, Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty,isElite );
         });
     }
 

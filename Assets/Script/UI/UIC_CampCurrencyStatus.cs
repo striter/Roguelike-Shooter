@@ -15,12 +15,12 @@ public class UIC_CampCurrencyStatus : UIControlBase {
         m_Credit = transform.Find("Credit/Data").GetComponent<Text>();
         m_CreditLerp = new ValueLerpSeconds(GameDataManager.m_GameData.f_Credits, 100f,1f,(float value)=> { m_Credit.text = string.Format("{0:N2}",value); });
         OnCampStatus();
-        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_GameCurrencyStatus, OnCampStatus);
+        TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampCurrencyStatus, OnCampStatus);
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_GameCurrencyStatus, OnCampStatus);
+        TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_CampCurrencyStatus, OnCampStatus);
     }
     private void Update()
     {

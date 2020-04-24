@@ -30,6 +30,7 @@ namespace GameSetting
     {
         Invalid = -1,
         UI_PlayerCommonUpdate,
+        UI_PlayerCurrencyUpdate,
         UI_PlayerInteractUpdate,
         UI_PlayerInteractPickup,
         UI_PlayerHealthUpdate,
@@ -38,7 +39,7 @@ namespace GameSetting
 
         UI_OnWillAIAttack,
 
-        UI_GameCurrencyStatus,
+        UI_CampCurrencyStatus,
 
         UI_PageOpen,
         UI_PageClose,

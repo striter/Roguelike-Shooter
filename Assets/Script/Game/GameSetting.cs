@@ -945,7 +945,9 @@ namespace GameSetting
         public void SetInfoData(CGameProgressSave _battleSave)
         {
             m_Coins = 0;
+            m_Keys = _battleSave.m_Keys;
             m_RankManager.OnExpSet(_battleSave.m_TotalExp);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
 
             AddExpire(GameDataManager.CreateUpgradeCombination(_battleSave.m_Equipments, _battleSave.m_Upgrade));
             _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePlayerPerk(perkData)); });
@@ -1068,18 +1070,33 @@ namespace GameSetting
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
         #region Coin/Key Info
         public bool CanCostCoins(float price)=> m_Coins >= price* F_CoinsCostMultiply;
-        public void OnCoinsCost(float price)=> m_Coins -= price * F_CoinsCostMultiply;
-        public void OnCoinsGain(float coinAmount)=>m_Coins += coinAmount;
+        public void OnCoinsCost(float price)
+        {
+            m_Coins -= price * F_CoinsCostMultiply;
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate,this);
+        }
+        public void OnCoinsGain(float coinAmount)
+        {
+            m_Coins += coinAmount;
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
+        } 
 
         public bool CanCostKeys(int keyCount) => m_Keys >=keyCount;
-        public void OnKeyCost(int keyAmount) => m_Keys--;
-        public void OnKeysGain(int keyAmount) => m_Keys += keyAmount;
-        #endregion
-        #region RankInfo
+        public void OnKeyCost(int keyAmount)
+        {
+            m_Keys--;
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
+        }
+        public void OnKeysGain(int keyAmount)
+        {
+            m_Keys += keyAmount;
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
+        }
         public void OnExpReceived(int exp)
         {
-            if (m_RankManager.OnExpGain(exp) != 0)
-                Debug.Log("Rank Up!"+ m_RankManager.m_Rank);
+            if (m_RankManager.OnExpGainCheckLevelOffset(exp) != 0)
+                Debug.Log("Rank Up!" + m_RankManager.m_Rank);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
         }
         #endregion
     }

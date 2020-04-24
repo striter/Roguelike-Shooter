@@ -965,10 +965,10 @@ public class ExpRankBase
         m_Rank = 0;
         m_ExpCurRank = 0;
         m_ExpToNextRank = 0;
-        OnExpGain(totalExp);
+        OnExpGainCheckLevelOffset(totalExp);
     }
 
-    public int OnExpGain(int exp)
+    public int OnExpGainCheckLevelOffset(int exp)
     {
         int startRank = m_Rank;
         m_TotalExp += exp;

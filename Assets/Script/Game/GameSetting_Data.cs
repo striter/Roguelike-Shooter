@@ -91,7 +91,7 @@ namespace GameSetting
                 return;
             m_GameData.f_Credits += credit;
             TGameData<CGameSave>.Save();
-            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameCurrencyStatus);
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCurrencyStatus);
         }
 
         public static enum_GameDifficulty OnCampDifficultySwitch()
@@ -658,7 +658,7 @@ namespace GameSetting
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
             m_GameSeed = _level.m_GameSeed;
-            m_GameTime = _level.m_GameTime;
+            m_GameTime = _level.m_TimeElapsed;
             m_Stage = _level.m_GameStage;
             m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
