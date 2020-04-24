@@ -573,10 +573,7 @@ namespace GameSetting
             return buff;
         }
 
-        public static List<int> GetEnermyGenerate(enum_GameStage stage,enum_GameDifficulty difficulty)
-        {
-            return SheetProperties<SEnermyGenerate>.GetPropertiesList(0).RandomItem().m_EnermyGenerate;
-        }
+        public static List<SEnermyGenerate> GetEnermyGenerate(enum_GameStage stage,enum_GameDifficulty difficulty)=> SheetProperties<SEnermyGenerate>.GetPropertiesList(((int)difficulty-1)*5+((int)stage-1));
         #endregion
     }
     #region Structs

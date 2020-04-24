@@ -43,7 +43,6 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
     {
         //m_Camera.depthTextureMode = enabled ? DepthTextureMode.Depth : DepthTextureMode.None;
         m_MainTextureCamera = enabled;
-        ResetCameraEffectParams();
         if (m_MainTextureCamera)
             GetOrAddCameraEffect<CE_MainCameraTexture>().SetTextureEnable(true, true);
         else

@@ -561,10 +561,12 @@ public class GameProgressManager
     public float m_TimePassed { get; private set; }
     public bool m_BattleTransmiting =>m_TransmitEliteID>0;
     int m_TransmitEliteID;
+    List<SEnermyGenerate> m_EnermyGenerate;
 
     public void BattleInit(List<Vector3> _spawnPoints, enum_GameDifficulty difficulty, enum_GameStage stage)
     {
         m_EnermySpawnPoints = _spawnPoints;
+        m_EnermyGenerate = GameDataManager.GetEnermyGenerate(stage,difficulty);
         m_BattleCheckTimer.SetTimerDuration(GameConst.RI_EnermyGenerateDuration.Random());
         m_TransmitEliteID = -1;
     }
@@ -577,7 +579,7 @@ public class GameProgressManager
         if (m_BattleCheckTimer.m_Timing)
             return;
 
-        GenerateCommonEnermies(GameDataManager.GetEnermyGenerate(m_GameStage, m_GameDifficulty), playerPosition);
+        GenerateCommonEnermies(m_EnermyGenerate.RandomItem().m_EnermyGenerate, playerPosition);
         m_BattleCheckTimer.SetTimerDuration(GameConst.RI_EnermyGenerateDuration.Random());
     }
 
