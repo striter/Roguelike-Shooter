@@ -55,6 +55,7 @@ namespace GameSetting_EnermyPerks
             m_HealTimer.Tick(Time.deltaTime);
             if (m_HealTimer.m_Timing)
                 return;
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth/100f, enum_DamageType.Health));
             m_HealTimer.Replay();
         }
         public EB30003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }

@@ -34,6 +34,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     
     NavMeshAgent m_Agent;
     CharacterController m_Controller;
+    TimerBase m_ArmorRegenTimer = new TimerBase(GameConst.F_PlayerArmorRegenDuration);
 
     protected float m_BaseMovementSpeed;
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
@@ -168,10 +169,27 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
+        m_ArmorRegenTimer.Tick(deltaTime);
+        if(!m_ArmorRegenTimer.m_Timing&&!m_Health.m_ArmorFull)
+            OnReceiveDamage(new DamageInfo(-1,-GameConst.F_PlayerArmorRegenPerSec*deltaTime, enum_DamageType.Armor),Vector3.zero);
+
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
         m_Health.OnMaxChange(m_CharacterInfo.F_MaxHealthAdditive,m_CharacterInfo.F_MaxArmorAdditive);
         OnUICommonStatus();
+    }
+
+    protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
+        if (damageInfo.m_SourceID == m_EntityID)
+        {
+            if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
+                m_CharacterInfo.OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
+        }
+
+        if (damageEntity.m_EntityID == m_EntityID&&amountApply>0)
+            m_ArmorRegenTimer.Replay();
     }
 
     protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
@@ -179,17 +197,8 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected virtual Quaternion GetCharacterRotation() => m_CharacterRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
     protected virtual bool CheckWeaponFiring() =>!Physics.SphereCast(new Ray(tf_WeaponAim.position, tf_WeaponAim.forward), .3f, 1.5f, GameLayer.Mask.I_Static);
-    #region Expire
-    protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
-    {
-        base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
-        if (damageInfo.m_SourceID == m_EntityID)
-            if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
-                m_CharacterInfo.OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
-    }
-    #endregion
-    #region WeaponControll
 
+    #region Weapon Controll
     void TrySwapWeapon(bool mainWeapon)
     {
         if (!mainWeapon && !m_Weapon2)
@@ -306,7 +315,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     
     #endregion
-    #region CharacterControll
+    #region Character Controll
     protected Vector2 m_MoveAxisInput { get; private set; } = Vector2.zero;
     protected Quaternion m_CharacterRotation { get; private set; } = Quaternion.identity;
     protected EntityCharacterBase m_AimingTarget { get; private set; } = null;
@@ -355,14 +364,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public Vector3 GetAimingPosition() => m_AimingTarget ? m_AimingTarget.transform.position : (tf_Head.transform.position + tf_Head.forward * 50f);
     #endregion
-    #region CharacterAbility
+    #region Character Ability
     public virtual float m_AbilityCooldownScale => 0f;
     public virtual bool m_AbilityAvailable => false;
     public virtual void OnAbilityDown(bool down)
     {
     }
     #endregion
-    #region PlayerInteract
+    #region Player Interact
     public void OnInteractCheck(InteractBase interactTarget, bool isEnter)
     {
         if (interactTarget.B_InteractOnTrigger)
@@ -483,7 +492,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             m_WeaponCurrent.OnAnimEvent(animEvent);
     }
     
-
 #if UNITY_EDITOR
     CapsuleCollider hitBox;
     private void OnDrawGizmos()

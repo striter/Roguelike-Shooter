@@ -15,7 +15,7 @@ namespace GameSetting
 
         public const float F_EnermyEliteGenerateBase = 20f;
         public const float F_EnermyEliteGeneratePerMinuteMultiplier = 1f;
-        public const float F_SqrEnermyGenerateMinDistance = 400f; // 20*20
+        public const float F_SqrEnermyGenerateMinDistance = 900f; // 30*00
 
         public const float F_SignalTowerTransmitDuration = 60f;
 
@@ -33,6 +33,8 @@ namespace GameSetting
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;
 
+        public const float F_PlayerArmorRegenDuration = 5f;
+        public const float F_PlayerArmorRegenPerSec = 5f;
         public const float F_PlayerWeaponFireReloadPause = 1f; //武器恢复间隔时间
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
@@ -379,7 +381,7 @@ namespace GameSetting
         public override float m_MaxHealth => base.m_MaxHealth * m_HealthMultiplier;
         public virtual float m_MaxArmor => m_BaseArmor;
         public float F_ArmorMaxScale => m_CurrentArmor / m_MaxArmor;
-        public bool m_ArmorFull => m_CurrentArmor >= m_MaxHealth;
+        public bool m_ArmorFull => m_CurrentArmor >= m_MaxArmor;
         protected EntityCharacterBase m_Entity;
         protected void DamageArmor(float amount)
         {
