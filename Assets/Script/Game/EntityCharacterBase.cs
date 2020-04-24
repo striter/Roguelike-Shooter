@@ -148,7 +148,7 @@ public class EntityCharacterBase : EntityBase
         if (m_IsDead)
             return false;
         damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_SourceID, buffInfo)); });
-        return OnReceiveDamage(damageInfo, damageDirection);
+        return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
     protected override void OnDead()
