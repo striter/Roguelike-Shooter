@@ -525,7 +525,7 @@ namespace GameSetting
         static List<int> m_AvailableEnermyPerks = new List<int>();
         public static void InitEnermyPerks()
         {
-            m_AllPlayerPerks.Clear();
+            m_AllEnermyPerks.Clear();
             m_AvailableEnermyPerks.Clear();
             TReflection.TraversalAllInheritedClasses(((Type type, ExpireEnermyPerkBase perk) => {
                 m_AllEnermyPerks.Add(perk.m_Index, perk);
