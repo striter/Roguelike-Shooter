@@ -57,7 +57,6 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         m_CameraEffects.Sort((a, b) => a.m_Sorting - b.m_Sorting);
         m_CameraEffects.Traversal((CameraEffectBase effectBase) =>
         {
-            effectBase.OnCheckEffectTextureEnable(m_MainTextureCamera);
             if (!effectBase.m_Enabled)
                 return;
 

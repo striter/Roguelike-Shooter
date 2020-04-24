@@ -19,7 +19,7 @@ public class CameraEffectBase
     public virtual bool m_DoGraphicBlitz => false;
     protected CameraEffectManager m_Manager { get; private set; }
     public bool m_Supported { get; private set; }
-    public bool m_Enabled { get; private set; }
+    public bool m_Enabled { get; protected set; }
     public CameraEffectBase()
     {
         m_Supported=OnCreate();
@@ -37,10 +37,7 @@ public class CameraEffectBase
     {
         Graphics.Blit(source, destination);
     }
-    protected virtual bool CheckEnabled(bool depthEnabled) => true;
-    public void OnCheckEffectTextureEnable(bool depthEnabled) {
-        m_Enabled = CheckEnabled(depthEnabled); 
-    }
+
     public virtual void OnDestroy()
     {
     }
@@ -539,9 +536,7 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
     RenderTexture m_RenderTexture;
     Shader m_RenderBloomShader,m_RenderOcclusionShader;
     public PE_Blurs m_Blur { get; private set; }
-    public bool m_BloomEnabled { get; private set; }
     public bool m_OccludeEnabled { get; private set; }
-    protected override bool CheckEnabled(bool depthEnabled)=> base.CheckEnabled(depthEnabled)&&m_BloomEnabled;
     public override void InitEffect(CameraEffectManager _manager)
     {
         base.InitEffect(_manager);
@@ -565,13 +560,12 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
         m_RenderCamera.enabled = false;
         m_RenderTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelWidth, m_Manager.m_Camera.scaledPixelHeight, 1);
         m_RenderCamera.targetTexture = m_RenderTexture;
-        m_BloomEnabled = true;
         m_OccludeEnabled = true;
     }
 
     public void SetBloomEnable(bool enable,bool occludeEnable)
     {
-        m_BloomEnabled = enable;
+        m_Enabled = enable;
         m_OccludeEnabled = occludeEnable;
     }
     
@@ -625,14 +619,7 @@ public class PE_DepthSSAO : PostEffectBase
             new Vector3( 0.0689f,-0.1598f,-0.8547f),  new Vector3( 0.0560f, 0.0069f,-0.1843f),new Vector3(-0.0146f, 0.1402f, 0.0762f),  new Vector3( 0.0100f,-0.1924f,-0.0344f),
             new Vector3(-0.3577f,-0.5301f,-0.4358f),  new Vector3(-0.3169f, 0.1063f, 0.0158f),new Vector3( 0.0103f,-0.5869f, 0.0046f),  new Vector3(-0.0897f,-0.4940f, 0.3287f),
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
-    public bool m_AOEnable { get; private set; } = false;
-    public void SetAOEnable(bool enable)=> m_AOEnable = enable;
-    protected override bool CheckEnabled(bool depthEnabled)=>base.CheckEnabled(depthEnabled)&&m_AOEnable;
-    public override void InitEffect(CameraEffectManager _manager)
-    {
-        base.InitEffect(_manager);
-        m_AOEnable = true;
-    }
+    public void SetAOEnable(bool enable)=>m_Enabled = enable;
 
     public PE_DepthSSAO SetEffect(Color aoColor, float strength = 1f, float texelRadius = 15f, float _fallOff = 0.002f, Texture _noiseTex = null, int _sampleCount = 16)
     {
