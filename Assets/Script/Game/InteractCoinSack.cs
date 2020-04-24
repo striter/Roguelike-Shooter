@@ -15,7 +15,8 @@ public class InteractCoinSack : InteractGameBase {
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, transform.rotation).Play(m_CoinCount).PlayDropAnim(transform.position + TCommon.RandomXZCircle() * 4f).PlayMoveAnim(_interactor.transform);
+        for(int i=0;i<m_CoinCount;i++)
+            GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, transform.rotation).Play(1).PlayDropAnim(transform.position + TCommon.RandomXZCircle() * 4f).PlayMoveAnim(_interactor.transform);
         return false;
     }
 }
