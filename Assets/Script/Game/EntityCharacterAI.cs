@@ -82,32 +82,31 @@ public class EntityCharacterAI : EntityCharacterBase {
         m_Agent.speed = m_CharacterInfo.GetMovementSpeed;
     }
 
-    Vector3 m_Impact;
+    Vector3 m_DamageImpact;
     protected override void OnAliveTick(float deltaTime)
     {
         base.OnAliveTick(deltaTime);
-        if (m_Animator != null)
-            m_Animator.SetForward(m_Moving ? 1f:0f);
+        if (m_Animator != null) m_Animator.SetForward(m_Moving ? 1f:0f);
+        m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 30f);
+        Debug.Log(m_DamageImpact.sqrMagnitude);
         AITick(Time.deltaTime);
     }
 
     protected override void OnDeadTick(float deltaTime)
     {
         base.OnDeadTick(deltaTime);
-        m_Impact = Vector3.Lerp(Vector3.zero, m_Impact, Time.deltaTime * 20f);
-        if (m_Impact.magnitude > .2f) transform.position = NavigationManager.NavMeshPosition(transform.position + m_Impact);
         if (m_Animator!=null)  m_Animator.SetPause(false);
+        m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 5f);
+        Debug.Log(m_DamageImpact.sqrMagnitude);
+        transform.position = NavigationManager.NavMeshPosition(transform.position + m_DamageImpact);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
     {
-        if (!base.OnReceiveDamage(damageInfo, damageDirection))
-            return false;
+        if (damageDirection != Vector3.zero)
+            m_DamageImpact += -damageDirection * GameConst.AI.F_AIDeadImpactPerDamageValue * -damageInfo.m_AmountApply;
 
-        if (m_IsDead && damageDirection != Vector3.zero)
-            m_Impact += -damageDirection * GameConst.AI.F_AIDeadImpact * -damageInfo.m_AmountApply;
-
-        return true;
+        return base.OnReceiveDamage(damageInfo, damageDirection);
     }
 
     protected virtual void OnAttackAnim(bool startAttack)
