@@ -96,7 +96,7 @@ namespace GameSetting
             public const float F_AIReTargetCheckParam = 3f;       //AI Retarget Duration,3f is suggested
             public const float F_AITargetCalculationParam = .5f;       //AI Target Param Calculation Duration, 1 is suggested;
             public const float F_AIMaxRepositionDuration = .5f;
-            public const float F_AIDeadImpactPerDamageValue = 0.05f;   //0.05f;
+            public const float F_AIDeadImpactPerDamageValue = 0.1f;   //0.05f;
             public const int I_AIBattleIdlePercentage = 50;
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }

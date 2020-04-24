@@ -87,8 +87,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnAliveTick(deltaTime);
         if (m_Animator != null) m_Animator.SetForward(m_Moving ? 1f:0f);
-        m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 30f);
-        Debug.Log(m_DamageImpact.sqrMagnitude);
+        m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 10f);
         AITick(Time.deltaTime);
     }
 
@@ -97,8 +96,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         base.OnDeadTick(deltaTime);
         if (m_Animator!=null)  m_Animator.SetPause(false);
         m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 5f);
-        Debug.Log(m_DamageImpact.sqrMagnitude);
-        transform.position = NavigationManager.NavMeshPosition(transform.position + m_DamageImpact);
+        transform.position = NavigationManager.NavMeshPosition(transform.position + m_DamageImpact*deltaTime);
     }
 
     protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
