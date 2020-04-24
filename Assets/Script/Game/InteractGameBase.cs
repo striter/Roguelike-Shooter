@@ -34,6 +34,8 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
 
         if (m_TradePrice > 0)
             _interactor.m_CharacterInfo.OnCoinsCost(m_TradePrice);
+        if (m_KeyRequire > 0)
+            _interactor.m_CharacterInfo.OnKeyCost(m_KeyRequire);
 
         GameObjectManager.PlayMuzzle(_interactor.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
         if (B_SelfRecycleOnInteract)
