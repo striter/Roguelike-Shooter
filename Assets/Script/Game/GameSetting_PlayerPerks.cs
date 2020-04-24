@@ -427,10 +427,11 @@ namespace GameSetting_Action
             Debug.LogError("Override This Please!");
             return null; 
         }
-        public override void OnActivate(EntityCharacterBase _actionEntity)
+
+        public override EntityExpireBase OnActivate(EntityCharacterBase _actionEntity)
         {
-            base.OnActivate(_actionEntity);
             m_SFXWeapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerPerkSFXWeaponIndex(m_Index), m_Attacher, GetDamageInfo);
+            return base.OnActivate(_actionEntity);
         }
         public PerkSFXweapon(PerkSaveData data):base(data) { }
     }

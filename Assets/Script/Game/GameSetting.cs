@@ -761,7 +761,7 @@ namespace GameSetting
                     case enum_ExpireType.Perk:
                     case enum_ExpireType.Upgrades:
                         break;
-                    case enum_ExpireType.Preset:
+                    case enum_ExpireType.PresetBuff:
                     case enum_ExpireType.EnermyElite:
                         RemoveExpire(expire);
                         break;
@@ -781,11 +781,15 @@ namespace GameSetting
 
         public virtual void AddExpire(EntityExpireBase expire)
         {
-            m_Expires.Add(expire);
-            expire.OnActivate(m_Entity);
             switch (expire.m_ExpireType)
             {
+                default:Debug.LogError("Invalid Convertions Here!");break;
+                case enum_ExpireType.Upgrades:
                 case enum_ExpireType.Perk:
+                case enum_ExpireType.EnermyElite:
+                    m_Expires.Add(expire.OnActivate(m_Entity));
+                    break;
+                case enum_ExpireType.PresetBuff:
                     EntityExpirePreset buff = expire as EntityExpirePreset;
                     switch (buff.m_RefreshType)
                     {
@@ -793,7 +797,7 @@ namespace GameSetting
                             Debug.LogError("Invalid Convertions Here!");
                             break;
                         case enum_ExpireRefreshType.AddUp:
-                            AddExpire(buff);
+                            m_Expires.Add(expire.OnActivate(m_Entity));
                             break;
                         case enum_ExpireRefreshType.Refresh:
                             {
@@ -801,7 +805,7 @@ namespace GameSetting
                                 if (buffRefresh != null)
                                     buffRefresh.BuffRefresh();
                                 else
-                                    AddExpire(buff);
+                                    m_Expires.Add(expire.OnActivate(m_Entity));
                             }
                             break;
                     }
@@ -1026,7 +1030,7 @@ namespace GameSetting
             switch(expire.m_ExpireType)
             {
                 default:  Debug.LogError("Invalid Convertions Here!");  break;
-                case enum_ExpireType.Preset:break;
+                case enum_ExpireType.PresetBuff:break;
                 case enum_ExpireType.Upgrades:
                     {
                         ExpirePlayerUpgradeCombine equipment = expire as ExpirePlayerUpgradeCombine;
@@ -1102,7 +1106,7 @@ namespace GameSetting
         public bool m_Expired { get; protected set; } = false;
 
         public EntityCharacterBase m_Attacher { get; private set; }
-        public virtual void OnActivate(EntityCharacterBase _actionEntity) { m_Attacher = _actionEntity; }
+        public virtual EntityExpireBase OnActivate(EntityCharacterBase _actionEntity) { m_Attacher = _actionEntity;return this; }
         public virtual void OnTick(float deltaTime) { }
         public virtual void OnAttackSetDamage(DamageInfo info) { }
         public virtual void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info) { }
@@ -1114,7 +1118,7 @@ namespace GameSetting
 
     public class EntityExpirePreset : EntityExpireBase
     {
-        public override enum_ExpireType m_ExpireType => enum_ExpireType.Preset;
+        public override enum_ExpireType m_ExpireType => enum_ExpireType.PresetBuff;
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
         public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_AddType;
         public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
@@ -1165,12 +1169,13 @@ namespace GameSetting
     public class ExpirePlayerBase: EntityExpireBase
     {
         public new EntityCharacterPlayer m_Attacher { get; private set; }
-        public override void OnActivate(EntityCharacterBase _actionEntity)
+
+        public override EntityExpireBase OnActivate(EntityCharacterBase _actionEntity)
         {
-            base.OnActivate(_actionEntity);
             if (_actionEntity.m_ControllType != enum_EntityType.Player)
                 Debug.LogError("Invalid Expire Type Attached!");
-            m_Attacher = base.m_Attacher as EntityCharacterPlayer;
+            m_Attacher = _actionEntity as EntityCharacterPlayer;
+            return base.OnActivate(_actionEntity);
         }
         public virtual float m_MaxHealthAdditive => 0;
         public virtual float m_MaxArmorAdditive => 0;

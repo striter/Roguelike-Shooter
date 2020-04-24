@@ -121,7 +121,7 @@ namespace GameSetting
 
     public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,HealthPenetrate=10, }
     
-    public enum enum_ExpireType { Invalid = -1, Preset = 1,  Perk = 2,Upgrades=3,EnermyElite=4, }
+    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,  Perk = 2,Upgrades=3,EnermyElite=4, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,  }
 
