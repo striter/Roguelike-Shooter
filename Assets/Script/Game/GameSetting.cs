@@ -73,9 +73,9 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventWeaponVendotTryCount = 5;
         public const int I_EventPerkLotteryPrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
         public const int I_EventPerkSelectPrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Advanced, 20 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 30 } };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
         public const int I_PerkShrineTryCountMax = 5;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 10 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 5;
