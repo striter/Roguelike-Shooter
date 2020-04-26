@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace GameSetting_Action
+namespace GameSetting_PlayerPerks
 {
     public class P10000Bonefire : ExpirePlayerPerkBase
     {
@@ -430,7 +430,7 @@ namespace GameSetting_Action
 
         public override EntityExpireBase OnActivate(EntityCharacterBase _actionEntity)
         {
-            m_SFXWeapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerPerkSFXWeaponIndex(m_Index), m_Attacher, GetDamageInfo);
+            m_SFXWeapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerPerkSFXWeaponIndex(m_Index), _actionEntity, GetDamageInfo);
             return base.OnActivate(_actionEntity);
         }
         public PerkSFXweapon(PerkSaveData data):base(data) { }
