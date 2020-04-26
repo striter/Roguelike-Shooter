@@ -301,11 +301,16 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         });
 
         //Quadrant Generate
-        Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>> editorObjectDatas = new Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>>();
-        m_QuadrantRange = m_MapSize / LevelConst.I_QuadranteTileSize;
-        m_QuadrantSize = new TileAxis(m_MapSize.X / m_QuadrantRange.X, m_MapSize.Y / m_QuadrantRange.Y);
         List<ChunkQuadrantData> _quadrantDatas = new List<ChunkQuadrantData>();
+        Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>> editorObjectDatas = new Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>>();
+        m_QuadrantRange = (m_MapSize / LevelConst.I_QuadranteTileSize);
+        m_QuadrantSize = TileAxis.One * LevelConst.I_QuadranteTileSize;
+
         TileAxis quadrantSizeEdge = new TileAxis(m_MapSize.X % m_QuadrantSize.X, m_MapSize.Y % m_QuadrantSize.Y);
+        bool edgeQuadrantX = quadrantSizeEdge.X != 0;
+        bool edgeQuadrantY = quadrantSizeEdge.Y != 0;
+        m_QuadrantRange += new TileAxis(edgeQuadrantX?1:0,edgeQuadrantY?1:0);
+
         for (int i = 0; i < m_QuadrantRange.X; i++)
             for (int j = 0; j < m_QuadrantRange.Y; j++)
             {
@@ -313,10 +318,10 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 int quadrantIndex = TileTools.Get1DAxisIndex(quadrantAxis, m_QuadrantRange.X);
                 TileAxis quadrantMapOrigin = quadrantAxis * m_QuadrantSize;
                 TileAxis quadrantMapSize = m_QuadrantSize;
-                if (i == m_QuadrantRange.X - 1)
-                    quadrantMapSize.X += quadrantSizeEdge.X;
-                if (j == m_QuadrantRange.Y - 1)
-                    quadrantMapSize.Y += quadrantSizeEdge.Y;
+                if (edgeQuadrantX && i == m_QuadrantRange.X - 1)
+                    quadrantMapSize.X = quadrantSizeEdge.X;
+                if (edgeQuadrantY && j == m_QuadrantRange.Y - 1)
+                    quadrantMapSize.Y = quadrantSizeEdge.Y;
 
                 ChunkTileData[] quadrantDatas = new ChunkTileData[quadrantMapSize.X*quadrantMapSize.Y];
                 bool validData = false;

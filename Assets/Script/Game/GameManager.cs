@@ -129,7 +129,7 @@ public class GameManager : GameManagerBase
         List<Vector3> enermySpawns = new List<Vector3>();
         List<ChunkGameObjectData> playerSpawns=new List<ChunkGameObjectData>();
         List<ChunkGameObjectData> signalTowerSpawns = new List<ChunkGameObjectData>();
-        List<ChunkGameObjectData> gameEventSpawns = new List<ChunkGameObjectData>();
+        List<ChunkGameObjectData> gameEventSpawnsPool = new List<ChunkGameObjectData>();
         eventObjects.Traversal((enum_ObjectEventType eventType, List<ChunkGameObjectData> objectDatas) =>
         {
             objectDatas.Traversal((ChunkGameObjectData objectData) =>
@@ -146,7 +146,7 @@ public class GameManager : GameManagerBase
                                 signalTowerSpawns.Add(objectData);
                                 break;
                             case enum_ObjectEventType.Normal:
-                                gameEventSpawns.Add(objectData);
+                                gameEventSpawnsPool.Add(objectData);
                                 break;
                         }
                         break;
@@ -154,21 +154,41 @@ public class GameManager : GameManagerBase
                         enermySpawns.Add(objectData.m_Pos);
                         break;
                     case enum_TileObjectType.ERandomEvent3x3:
-                        gameEventSpawns.Add(objectData);
+                        gameEventSpawnsPool.Add(objectData);
                         break;
                 }
             });
         });
 
-        ChunkGameObjectData playerSpawn = playerSpawns.RandomItem(m_GameLevel.m_Random);
+        int playerSpawnIndex= playerSpawns.RandomIndex(m_GameLevel.m_Random);
+        ChunkGameObjectData playerSpawn = playerSpawns[playerSpawnIndex];
+        playerSpawns.RemoveAt(playerSpawnIndex);
+        gameEventSpawnsPool.AddRange(playerSpawns);
+
+        int signalTowerIndex = signalTowerSpawns.RandomIndex(m_GameLevel.m_Random);
+        ChunkGameObjectData signalTowerSpawn = signalTowerSpawns[signalTowerIndex];
+        signalTowerSpawns.RemoveAt(signalTowerIndex);
+        gameEventSpawnsPool.AddRange(signalTowerSpawns);
+
+        List<ChunkGameObjectData> gameEventSpawns = new List<ChunkGameObjectData>();
+        int eventCount = GameConst.RI_GameEventGenerate.Random(m_GameLevel.m_Random);
+        if (gameEventSpawnsPool.Count < eventCount)
+            Debug.LogError("Event Shuffle Pool Not Match Required Size!");
+        for(int i=0;i<eventCount;i++)
+        {
+            int shuffleIndex = gameEventSpawnsPool.RandomIndex(m_GameLevel.m_Random);
+            gameEventSpawns.Add(gameEventSpawnsPool[shuffleIndex]);
+            gameEventSpawnsPool.RemoveAt(shuffleIndex);
+        }
+
         m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_GameProgressData.m_Character, playerSpawn.m_Pos, playerSpawn.m_Rot).OnPlayerActivate(GameDataManager.m_GameProgressData);
         AttachPlayerCamera(tf_CameraAttach);
         tf_CameraAttach.position = playerSpawn.m_Pos;
         CameraController.Instance.SetCameraPosition(playerSpawn.m_Pos);
         CameraController.Instance.SetCameraRotation(-1, playerSpawn.m_Rot.eulerAngles.y);
 
-        ChunkGameObjectData signalTowerSpawn = signalTowerSpawns.RandomItem(m_GameLevel.m_Random);
         GameObjectManager.SpawnInteract<InteractSignalTower>(signalTowerSpawn.m_Pos, signalTowerSpawn.m_Rot,GameLevelManager.Instance.GetChunk(signalTowerSpawn.m_QuadrantIndex).m_InteractParent).Play(OnSignalTowerTransmitStart,OnSignalTowerTransmitCountFinish);
+
 
         gameEventSpawns.Traversal((ChunkGameObjectData objectData) =>
         {
