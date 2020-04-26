@@ -85,7 +85,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         m_ActiveCheckQuadrants.Traversal((int quadrantIndex) =>
         {
             LevelChunkGame chunk = m_ChunkPool.GetItem(quadrantIndex);
-            bool activeQuadrant = GeometryUtility.TestPlanesAABB(cameraFrustumPlanes,chunk.m_ChunkBounds);
+            bool activeQuadrant = GeometryUtility.TestPlanesAABB(cameraFrustumPlanes,chunk.m_ChunkCullBounds);
             chunk.SetActivate(activeQuadrant);
             if (!activeQuadrant)
                 return;
@@ -464,6 +464,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
 #if UNITY_EDITOR
     public bool m_DrawQuadrant = false;
+    public bool m_DrawQuadrantActivateCull = false;
     private void OnDrawGizmos()
     {
         if (m_DrawQuadrant && m_ChunkPool != null && m_ChunkPool.Count > 0)
@@ -480,7 +481,15 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
                 Gizmos.color = playerAtQuadrant ? Color.red : (activateCheckQuadrant ? (activateQuadrant ? Color.green: Color.yellow) : Color.white);
                 float height = (playerAtQuadrant ? 3f : (activateCheckQuadrant ?(activateQuadrant? 2f:1f) : 0f));
-                Gizmos.DrawWireCube(chunk.m_ChunkBounds.center, chunk.m_ChunkBounds.size + Vector3.up* height);
+
+                if (m_DrawQuadrantActivateCull)
+                {
+                    if(activateQuadrant)
+                        Gizmos.DrawWireCube(chunk.m_ChunkCullBounds.center, chunk.m_ChunkCullBounds.size);
+                }
+                else
+                    Gizmos.DrawWireCube(chunk.m_ChunkBaseBounds.center, chunk.m_ChunkBaseBounds.size + Vector3.up * height);
+
             });
         }
     }
