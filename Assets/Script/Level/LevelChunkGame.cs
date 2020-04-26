@@ -12,6 +12,7 @@ public class LevelChunkGame : LevelChunkBase
     public int m_QuadrantIndex { get; private set; }
     public TileAxis m_QuadrantAxis { get; private set; }
     public TileBounds m_ChunkMapBounds { get; private set; }
+    public Bounds m_ChunkBounds { get; private set; }
     public TileAxis m_Size { get; private set; }
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
     Action<int> OnChunkObjectDestroy;
@@ -32,6 +33,10 @@ public class LevelChunkGame : LevelChunkBase
         this.OnChunkObjectDestroy = OnChunkObjectDestroy;;
         transform.localPosition = _data.m_QuadrantBounds.m_Origin.ToPosition();
         m_ChunkMapBounds = _data.m_QuadrantBounds;
+        Vector3 quadrantSource = m_ChunkMapBounds.m_Origin.ToPosition();
+        Vector3 quadrantSize = m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * LevelConst.I_TileSize*2;
+        m_ChunkBounds = new Bounds(quadrantSource + quadrantSize / 2, quadrantSize);
+
         InitData(_data.m_QuadrantBounds.m_Size.X,_data.m_QuadrantBounds.m_Size.Y,_data.m_QuadrantDatas, _random, (TileAxis axis, ChunkTileData tileData) => {
             if (!tileData.m_ObjectType.IsEditorTileObject())
                 return tileData;
