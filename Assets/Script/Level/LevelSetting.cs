@@ -109,7 +109,6 @@ namespace LevelSetting
     {
         Invalid=-1,
         Dangerzone = 1,
-        Block=2,
 
         Static1x1A =11,
         Static1x1B=12,

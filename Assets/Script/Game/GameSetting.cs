@@ -219,7 +219,6 @@ namespace GameSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return -1;
-                case enum_TileObjectType.Block:
                 case enum_TileObjectType.Dangerzone:
                     return -1;
                 case enum_TileObjectType.Static1x1A:

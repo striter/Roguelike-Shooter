@@ -169,7 +169,6 @@ public class LevelChunkData : ScriptableObject {
                         case enum_TileObjectType.EEnermySpawn:
                             tileColor = Color.red;
                             break;
-                        case enum_TileObjectType.Block:
                         case enum_TileObjectType.Dangerzone:
                             tileColor = Color.yellow;
                             break;
