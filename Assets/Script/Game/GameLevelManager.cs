@@ -74,28 +74,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         });
     }
 
-#if UNITY_EDITOR
-    public bool m_DrawQuadrant = false;
-    private void OnDrawGizmos()
-    {
-        if (m_DrawQuadrant && m_ChunkPool != null && m_ChunkPool.Count > 0)
-        {
-            Gizmos.color = Color.white;
-            Vector3 mapSize = m_MapSize.ToPosition();
-            Gizmos.DrawWireCube(mapSize / 2, mapSize);
-
-            m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
-            {
-                bool playerAtQuadrant = m_PrePlayerQuadrantAxis == chunk.m_QuadrantAxis;
-                bool activateQuadrant = m_ActiveQuadrants.Contains(chunk.m_QuadrantIndex);
-                Gizmos.color = playerAtQuadrant ? Color.red :(activateQuadrant ? Color.yellow:Color.white);
-                Vector3 quadrantSource = chunk.m_ChunkMapBounds.m_Origin.ToPosition();
-                Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 2f : (activateQuadrant ? 1f : .5f));
-                Gizmos.DrawWireCube(quadrantSource + size / 2, size);
-            });
-        }
-    }
-#endif
     #endregion
 
     #region Minimap
@@ -464,9 +442,29 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         return true;
     }
 
+#if UNITY_EDITOR
+    public bool m_DrawQuadrant = false;
+    private void OnDrawGizmos()
+    {
+        if (m_DrawQuadrant && m_ChunkPool != null && m_ChunkPool.Count > 0)
+        {
+            Gizmos.color = Color.white;
+            Vector3 mapSize = m_MapSize.ToPosition();
+            Gizmos.DrawWireCube(mapSize / 2, mapSize);
 
+            m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
+            {
+                bool playerAtQuadrant = m_PrePlayerQuadrantAxis == chunk.m_QuadrantAxis;
+                bool activateQuadrant = m_ActiveQuadrants.Contains(chunk.m_QuadrantIndex);
+                Gizmos.color = playerAtQuadrant ? Color.red : (activateQuadrant ? Color.yellow : Color.white);
+                Vector3 quadrantSource = chunk.m_ChunkMapBounds.m_Origin.ToPosition();
+                Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 2f : (activateQuadrant ? 1f : .5f));
+                Gizmos.DrawWireCube(quadrantSource + size / 2, size);
+            });
+        }
+    }
+#endif
 }
-
 
 public static class LevelObjectManager
 {
@@ -566,6 +564,7 @@ public class NavigationQuadrants
         NavMeshBuilder.CollectSources(m_Chunk.transform,GameLayer.Mask.I_Static, NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>() { },m_Sources);
     }
 }
+
 public static class NavigationManager
 {
     static Transform m_Transform;

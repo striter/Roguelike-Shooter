@@ -603,7 +603,10 @@ public class GameProgressManager
         m_BattleCheckTimer.SetTimerDuration(GameConst.RI_EnermyGenerateDuration.Random());
     }
 
-    public void OnTransmitTrigger(Vector3 playerPos)=>m_TransmitEliteID = GameObjectManager.SpawnEntityCharacterAI(GameConst.L_GameEliteIndexes.RandomItem(), GetNeariestSpawnPos(playerPos), Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty, false).m_EntityID;
+    public void OnTransmitTrigger(Vector3 playerPos)
+    {
+        m_TransmitEliteID = GameObjectManager.SpawnEntityCharacterAI(GameConst.L_GameEliteIndexes.RandomItem(), GetSpawnList(playerPos)[0], Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty, false).m_EntityID;
+    } 
 
     public void OnCharacterDead(int enermyID)
     {
@@ -616,25 +619,26 @@ public class GameProgressManager
 
     void GenerateCommonEnermies(List<int> enermyGenerate, Vector3 targetPoint)
     {
-        Vector3 spawnPoint = GetNeariestSpawnPos(targetPoint);
+        List<Vector3> spawnPoint = GetSpawnList(targetPoint);
+        int pointLength = spawnPoint.Count > 5 ? 5 : spawnPoint.Count;
         float eliteGenerateRate = GameConst.F_EnermyEliteGenerateBase + GameConst.F_EnermyEliteGeneratePerMinuteMultiplier * m_MinutesElapsed;
-
         enermyGenerate.Traversal((int enermyID) => {
             bool isElite = eliteGenerateRate > 100f ? true : eliteGenerateRate > TCommon.RandomPercentage();
-            GameObjectManager.SpawnEntityCharacterAI(enermyID, spawnPoint, Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty,isElite );
+            GameObjectManager.SpawnEntityCharacterAI(enermyID, spawnPoint[TCommon.RandomLength(pointLength)], Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty,isElite );
         });
     }
 
-    Vector3 GetNeariestSpawnPos(Vector3 sourcePosition)
+    List<Vector3> GetSpawnList(Vector3 sourcePos)
     {
-        Vector3 spawnPoint = Vector3.zero;
-        float preDistance = float.MaxValue;
-        m_EnermySpawnPoints.Traversal((Vector3 point) => {
-            float sqrDistance = Vector3.SqrMagnitude(sourcePosition - point);
-            if (sqrDistance > GameConst.F_SqrEnermyGenerateMinDistance && preDistance > sqrDistance)
-                spawnPoint = point;
+        List<Vector3> list = new List<Vector3>();
+
+        m_EnermySpawnPoints.Traversal((Vector3 point) =>
+        {
+            if (Vector3.SqrMagnitude(sourcePos - point) >= GameConst.F_SqrEnermyGenerateMinDistance)
+                list.Add(point);
         });
-        return NavigationManager.NavMeshPosition( spawnPoint);
+        list.Sort((a,b)=>Vector3.Magnitude(sourcePos-a)>Vector3.Magnitude(sourcePos-b)?1:-1);
+        return list;
     }
     #endregion
 
