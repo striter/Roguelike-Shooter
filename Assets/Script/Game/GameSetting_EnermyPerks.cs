@@ -38,7 +38,7 @@ namespace GameSetting_EnermyPerks
         public override int m_EffectIndex => 40002;
         public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+3f;
         TimerBase m_CooldownTimer = new TimerBase(5f,true);
-        TimerBase m_HealTimer = new TimerBase(5f,true);
+        TimerBase m_HealTimer = new TimerBase(1f,true);
         public override void OnReceiveDamage(DamageInfo info, float amount)
         {
             base.OnReceiveDamage(info, amount);
@@ -55,7 +55,7 @@ namespace GameSetting_EnermyPerks
             m_HealTimer.Tick(Time.deltaTime);
             if (m_HealTimer.m_Timing)
                 return;
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth/100f, enum_DamageType.Health));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth/20f, enum_DamageType.Health));
             m_HealTimer.Replay();
         }
         public EB30003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
