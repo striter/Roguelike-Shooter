@@ -34,7 +34,7 @@ public class LevelChunkGame : LevelChunkBase
         transform.localPosition = _data.m_QuadrantBounds.m_Origin.ToPosition();
         m_ChunkMapBounds = _data.m_QuadrantBounds;
         Vector3 quadrantSource = m_ChunkMapBounds.m_Origin.ToPosition();
-        Vector3 quadrantSize = m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * LevelConst.I_TileSize/2;
+        Vector3 quadrantSize = m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * LevelConst.I_TileSize*2;
         m_ChunkBounds = new Bounds(quadrantSource + quadrantSize / 2, quadrantSize);
 
         InitData(_data.m_QuadrantBounds.m_Size.X,_data.m_QuadrantBounds.m_Size.Y,_data.m_QuadrantDatas, _random, (TileAxis axis, ChunkTileData tileData) => {
