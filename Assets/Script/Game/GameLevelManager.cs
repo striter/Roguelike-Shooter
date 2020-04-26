@@ -46,7 +46,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
     #region Quadrant
     protected TileAxis m_QuadrantRange, m_QuadrantSize;
-    List<int> m_ActiveQuadrants=new List<int>();
+    List<int> m_ActiveQuadrants = new List<int>();
+    List<int> m_ActiveCheckQuadrants=new List<int>();
     TileAxis m_PrePlayerMapAxis;
     TileAxis m_PrePlayerQuadrantAxis;
     bool m_MinimapUpdating = false;
@@ -63,14 +64,32 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
     void CheckActiveQuadrants(TileAxis playerQuadrant)
     {
-        m_ActiveQuadrants.Clear();
+        m_ActiveCheckQuadrants.Clear();
         m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
         {
-            bool validChunk = (playerQuadrant - chunk.m_QuadrantAxis).SqrMagnitude <= 2;
-            chunk.SetActivate(validChunk);
-            if (!validChunk)
+            bool activeCheckQuadrant = (playerQuadrant - chunk.m_QuadrantAxis).SqrMagnitude <= 2;
+            chunk.SetActivate(activeCheckQuadrant);
+            if (!activeCheckQuadrant)
                 return;
-            m_ActiveQuadrants.Add(chunk.m_QuadrantIndex);
+            m_ActiveCheckQuadrants.Add(chunk.m_QuadrantIndex);
+        });
+    }
+
+    void CheckActiveCullQuadrants()
+    {
+        if (m_ActiveCheckQuadrants.Count == 0)
+            return;
+
+        m_ActiveQuadrants.Clear();
+        Plane[] cameraFrustumPlanes= GeometryUtility.CalculateFrustumPlanes(CameraController.MainCamera);
+        m_ActiveCheckQuadrants.Traversal((int quadrantIndex) =>
+        {
+            LevelChunkGame chunk = m_ChunkPool.GetItem(quadrantIndex);
+            bool activeQuadrant = GeometryUtility.TestPlanesAABB(cameraFrustumPlanes,chunk.m_ChunkBounds);
+            chunk.SetActivate(activeQuadrant);
+            if (!activeQuadrant)
+                return;
+            m_ActiveQuadrants.Add(quadrantIndex);
         });
     }
 
@@ -161,6 +180,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             m_PrePlayerQuadrantAxis = playerAtQuadrant;
             CheckActiveQuadrants(m_PrePlayerQuadrantAxis);
         }
+        CheckActiveCullQuadrants();
     }
 
 
@@ -174,7 +194,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     {
         m_PrePlayerMapAxis = -TileAxis.One;
         m_PrePlayerQuadrantAxis = -TileAxis.One;
-        m_ActiveQuadrants.Clear();
+        m_ActiveCheckQuadrants.Clear();
 
         LevelObjectManager.Register(TResources.GetChunkTiles(style));
         List<ChunkGenerateData> gameChunkGenerate = new List<ChunkGenerateData>();
@@ -455,11 +475,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
             {
                 bool playerAtQuadrant = m_PrePlayerQuadrantAxis == chunk.m_QuadrantAxis;
+                bool activateCheckQuadrant = m_ActiveCheckQuadrants.Contains(chunk.m_QuadrantIndex);
                 bool activateQuadrant = m_ActiveQuadrants.Contains(chunk.m_QuadrantIndex);
-                Gizmos.color = playerAtQuadrant ? Color.red : (activateQuadrant ? Color.yellow : Color.white);
-                Vector3 quadrantSource = chunk.m_ChunkMapBounds.m_Origin.ToPosition();
-                Vector3 size = chunk.m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * (playerAtQuadrant ? 2f : (activateQuadrant ? 1f : .5f));
-                Gizmos.DrawWireCube(quadrantSource + size / 2, size);
+
+                Gizmos.color = playerAtQuadrant ? Color.red : (activateCheckQuadrant ? (activateQuadrant ? Color.green: Color.yellow) : Color.white);
+                float height = (playerAtQuadrant ? 3f : (activateCheckQuadrant ?(activateQuadrant? 2f:1f) : 0f));
+                Gizmos.DrawWireCube(chunk.m_ChunkBounds.center, chunk.m_ChunkBounds.size + Vector3.up* height);
             });
         }
     }
