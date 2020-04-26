@@ -69,7 +69,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224420490743809836}
   m_Layer: 14
-  m_Name: Contaienr
+  m_Name: Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
