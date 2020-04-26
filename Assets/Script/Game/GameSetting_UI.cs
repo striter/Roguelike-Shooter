@@ -251,4 +251,45 @@ namespace GameSetting
             LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
         }
     }
+
+    class UIC_MapBase
+    {
+        protected RectTransform rectTransform { get; private set; }
+        protected RectTransform m_Map_Origin { get; private set; }
+        protected RawImage m_Map_Origin_Base { get; private set; }
+        protected RawImage m_Map_Origin_Base_Fog { get; private set; }
+        protected UIGI_MapEntityLocation m_Player { get; private set; }
+        protected float m_MapScale { get; private set; }
+        protected float m_MapAngle { get; private set; }
+        public UIC_MapBase(Transform transform, float mapScale)
+        {
+            rectTransform = transform as RectTransform;
+            m_Map_Origin = transform.Find("Origin") as RectTransform;
+            m_Map_Origin_Base = m_Map_Origin.Find("Base").GetComponent<RawImage>();
+            m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
+            m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
+            m_Player.Init();
+            ChangeMapScale(mapScale);
+        }
+
+        public virtual void DoMapInit()
+        {
+            m_Player.Play(GameManager.Instance.m_LocalPlayer);
+            m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;
+            m_Map_Origin_Base.SetNativeSize();
+            m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;
+        }
+        protected void UpdateMap(float mapAngle)
+        {
+            m_MapAngle = mapAngle;
+            m_Map_Origin.localRotation = Quaternion.Euler(0, 0, m_MapAngle);
+            m_Player.Tick();
+        }
+
+        protected void ChangeMapScale(float mapScale)
+        {
+            m_MapScale = mapScale;
+            m_Map_Origin_Base.rectTransform.localScale = Vector3.one * m_MapScale;
+        }
+    }
 }

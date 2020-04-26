@@ -15,7 +15,7 @@ namespace GameSetting
 
         public const float F_EnermyEliteGenerateBase = 20f;
         public const float F_EnermyEliteGeneratePerMinuteMultiplier = 1f;
-        public const float F_SqrEnermyGenerateMinDistance = 900f; // 30*00
+        public const float F_SqrEnermyGenerateMinDistance = 400f; // 20*20
 
         public const float F_SignalTowerTransmitDuration = 60f;
 
