@@ -14,22 +14,18 @@ public class LevelChunkGame : LevelChunkBase
     public TileBounds m_ChunkMapBounds { get; private set; }
     public TileAxis m_Size { get; private set; }
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
-    public List<TileObjectBlockLift> m_RoadBlockTiles { get; private set; } = new List<TileObjectBlockLift>();
     Action<int> OnChunkObjectDestroy;
 
     public Transform m_InteractParent { get; private set; }
-    Transform m_RoadBlockParent;
     public override void Init()
     {
         base.Init();
-        m_RoadBlockParent = transform.Find("RoadBlocks");
         m_InteractParent = transform.Find("Interacts");
     }
 
     public void InitGameChunk( ChunkQuadrantData _data, System.Random _random, Action<int> OnChunkObjectDestroy)
     {
         m_NearbyChunks.Clear();
-        m_RoadBlockTiles.Clear();
         m_QuadrantIndex = _data.m_QuadrantIndex;
         m_QuadrantAxis = _data.m_QuadrantAxis;
         gameObject.name = m_QuadrantIndex+"|"+ m_QuadrantAxis.ToString();
@@ -50,19 +46,5 @@ public class LevelChunkGame : LevelChunkBase
         base.OnTileInit(tile, axis, data, random);
         if (tile.m_Object)
             tile.m_Object.GameInit(GameExpression.GetLevelObjectHealth(tile.m_Object.m_ObjectType), OnObjectDestroy);
-        if (data.m_ObjectType == enum_TileObjectType.Block)
-        {
-            TileObjectBlockLift roadBlock = tile.m_Object as TileObjectBlockLift;
-            roadBlock.transform.SetParent(m_RoadBlockParent);
-            m_RoadBlockTiles.Add(roadBlock);
-        }
-    }
-
-
-    public void SetBlocksLift(bool lift)
-    {
-        m_RoadBlockTiles.Traversal((TileObjectBlockLift tile) => {
-            tile.SetLift(lift);
-        });
     }
 }

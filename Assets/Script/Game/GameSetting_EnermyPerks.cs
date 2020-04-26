@@ -60,6 +60,4 @@ namespace GameSetting_EnermyPerks
         }
         public EB30003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
-
-
 }
