@@ -611,7 +611,7 @@ public class GameProgressManager
         float preDistance = float.MaxValue;
         m_EnermySpawnPoints.Traversal((Vector3 point) => {
             float sqrDistance = Vector3.SqrMagnitude(sourcePosition - point);
-            if (sqrDistance < GameConst.F_SqrEnermyGenerateMinDistance && preDistance > sqrDistance)
+            if (sqrDistance > GameConst.F_SqrEnermyGenerateMinDistance && preDistance > sqrDistance)
                 spawnPoint = point;
         });
         return NavigationManager.NavMeshPosition( spawnPoint);
