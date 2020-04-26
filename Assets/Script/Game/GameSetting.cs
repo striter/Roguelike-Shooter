@@ -9,7 +9,7 @@ namespace GameSetting
     public static class GameConst
     {
         #region Battle
-        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(10, 30);
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(10, 25);
         public const float F_EnermyGenerateTickMultiplierPerMinute =.04f;
         public const float F_EnermyGenerateTickMultiplierTransmiting = 2f;
 
@@ -46,7 +46,7 @@ namespace GameSetting
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(211, 12010, 32010), new EliteBuffCombine(213, 12030, 32030), new EliteBuffCombine(214, 12040, 32040), new EliteBuffCombine(215, 12050, 32050), new EliteBuffCombine(216, 12060, 32060) };
         #endregion
         #region Interacts
-        public static readonly RangeInt RI_GameEventGenerate = new RangeInt(16, 4);
+        public static readonly RangeInt RI_GameEventGenerate = new RangeInt(20, 6);
 
         public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,3);
         public const float F_EnermyKeyGenerate = 2.5f;
