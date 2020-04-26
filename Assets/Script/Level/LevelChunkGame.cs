@@ -37,7 +37,7 @@ public class LevelChunkGame : LevelChunkBase
         Vector3 quadrantSource = m_ChunkMapBounds.m_Origin.ToPosition();
         Vector3 quadrantSize = m_ChunkMapBounds.m_Size.ToPosition() + Vector3.up * LevelConst.I_TileSize;
         m_ChunkBaseBounds = new Bounds(quadrantSource + quadrantSize / 2, quadrantSize);
-        Vector3 xzOffset = (TileAxis.One * 1).ToPosition();
+        Vector3 xzOffset = (TileAxis.One * 2).ToPosition();
         Vector3 yoffset = Vector3.up*LevelConst.I_TileSize*2;
         m_ChunkCullBounds = new Bounds(m_ChunkBaseBounds.center+xzOffset/2,m_ChunkBaseBounds.size+xzOffset+yoffset);
 
