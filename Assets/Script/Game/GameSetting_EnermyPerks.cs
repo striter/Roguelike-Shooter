@@ -36,9 +36,9 @@ namespace GameSetting_EnermyPerks
     {
         public override int m_Index => 30003;
         public override int m_EffectIndex => 40002;
-        public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+5f;
+        public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+3f;
         TimerBase m_CooldownTimer = new TimerBase(5f,true);
-        TimerBase m_HealTimer = new TimerBase(1f,true);
+        TimerBase m_HealTimer = new TimerBase(5f,true);
         public override void OnReceiveDamage(DamageInfo info, float amount)
         {
             base.OnReceiveDamage(info, amount);
