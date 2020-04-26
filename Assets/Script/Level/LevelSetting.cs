@@ -239,6 +239,8 @@ namespace LevelSetting
                 default:
                     Debug.LogError("Invalid Convertions Here!");
                     return enum_TileTerrainType.Invalid;
+                case enum_EditorTerrainType.Invalid:
+                    return enum_TileTerrainType.Invalid;
                 case enum_EditorTerrainType.Plane:
                     return enum_TileTerrainType.Plane;
                 case enum_EditorTerrainType.River:

@@ -322,7 +322,7 @@ public class LevelChunkEditor : LevelChunkBase
         switch(m_EditType)
         {
             case enum_LevelEditorEditType.Terrain:
-                data.SetTerrain(enum_EditorTerrainType.Plane, m_Random);
+                data.SetTerrain(enum_EditorTerrainType.Invalid, m_Random);
                 break;
             case enum_LevelEditorEditType.Object:
                 data.SetData(enum_TileObjectType.Invalid, enum_TileDirection.Top, m_Random);
