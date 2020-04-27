@@ -21,7 +21,8 @@ public class UI_Map : UIPage {
             m_EventTrigger.OnWorldClick = OnMapClick;
             DoMapInit();
             m_MapScaleBase = GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y);
-            UpdateMap(m_MapScaleBase);
+            UpdateMapRotation(m_MapScaleBase);
+            UpdatePlayer();
             m_MapOffsetBase = m_Player.rectTransform.anchoredPosition;
             m_PreValidOffset = m_MapOffsetBase;
             m_Map_Origin_Base.rectTransform.anchoredPosition = Vector2.zero;

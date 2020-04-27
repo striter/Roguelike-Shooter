@@ -24,7 +24,7 @@ public class UIGI_EquipmentItemSelected : UIGI_EquipmentItemBase {
         {
             m_EntryGrid.AddItem(index).text=entryData.m_Type+":"+entryData.m_Value;
         });
-        m_EntryGrid.AddItem(m_EntryGrid.I_Count).text = "Passive" + data.GetPassiveLocalizeKey();
+        m_EntryGrid.AddItem(m_EntryGrid.m_Count).text = "Passive" + data.GetPassiveLocalizeKey();
         m_EnhanceRequirementLeft.text = "Next Require:" + data.GetEnhanceRequireNextLevel();
 
         m_EnhanceDetail.SetActivate(enhanceReceive > 0);

@@ -23,7 +23,12 @@ namespace LevelSetting
         public static readonly Color C_MapFogHeavyColor = TCommon.GetHexColor("191919FF");
         public static readonly Color C_MapFogFadeColor = TCommon.GetHexColor("191919D0");
         public static readonly Color C_MapFogClearColor = TCommon.GetHexColor("19191900");
-        public static readonly Color C_MapTextureGroundColor = TCommon.GetHexColor("808080FF");
+
+        public static readonly Color C_MapTerrainInvalidColor = TCommon.GetHexColor("323232FF");
+        public static readonly Color C_MapTerrainHighlandColor = TCommon.GetHexColor("C7C7C7FF");
+        public static readonly Color C_MapTerrainRiverColor = TCommon.GetHexColor("25CDC0FF");
+        public static readonly Color C_MapTerrainPlaneColor = TCommon.GetHexColor("797979FF");
+
         #endregion
         public const int I_TileSize = 2;
         public const int I_QuadranteTileSize = 12;

@@ -124,30 +124,37 @@ public class LevelChunkData : ScriptableObject {
         return texture;
     }
 
-    public Color[] CalculateMapTextureColors(bool editorMode)
+    public Color[] CalculateMapTextureColors(bool editor)
     {
         Color[] colors = new Color[m_Width*m_Height];
         for (int i = 0; i < m_Width; i++)
             for (int j = 0; j < m_Height; j++)
             {
-                switch (m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_TerrainType)
+                enum_TileTerrainType terrainType = m_TileData[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)].m_TerrainType;
+                enum_EditorTerrainType editorTerrainType = terrainType.GetEditorGroundType();
+                switch(editorTerrainType)
                 {
-                    default:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] =  Color.black;
+                    case enum_EditorTerrainType.Invalid:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = LevelConst.C_MapTerrainInvalidColor;
                         break;
-                    case enum_TileTerrainType.Invalid:
-                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = Color.clear;
+                    case enum_EditorTerrainType.Highland:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = LevelConst.C_MapTerrainHighlandColor;
+                        break;
+                    case enum_EditorTerrainType.River:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = LevelConst.C_MapTerrainRiverColor;
+                        break;
+                    case enum_EditorTerrainType.Plane:
+                        colors[TileTools.Get1DAxisIndex(new TileAxis(i, j), m_Width)] = LevelConst.C_MapTerrainPlaneColor;
                         break;
                 }
-
             }
-        if (editorMode)
+        if (editor)
             for (int i = 0; i < m_Width; i++)
-            for (int j = 0; j < m_Height; j++)
-            {
-                TileAxis axis = new TileAxis(i, j);
-                ChunkTileData tileData = m_TileData[TileTools.Get1DAxisIndex(axis, m_Width)];
-                TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
+                for (int j = 0; j < m_Height; j++)
+                {
+                    TileAxis axis = new TileAxis(i, j);
+                    ChunkTileData tileData = m_TileData[TileTools.Get1DAxisIndex(axis, m_Width)];
+                    TileAxis size = tileData.m_ObjectType.GetSizeAxis(tileData.m_Direction);
                     List<TileAxis> axies = TileTools.GetAxisRange(m_Width, m_Height, axis, axis + size - TileAxis.One);
                     Color tileColor = Color.clear;
                     switch (tileData.m_ObjectType)

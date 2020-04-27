@@ -136,7 +136,7 @@ public class UIC_PlayerStatus : UIControlBase
             m_AmmoAmount.text = ammoText;
             m_AmmoAmountProjection.text = ammoText;
 
-            if (m_AmmoGrid.I_Count != weaponInfo.I_ClipAmount)
+            if (m_AmmoGrid.m_Count != weaponInfo.I_ClipAmount)
             {
                 m_AmmoGrid.ClearGrid();
                 for (int i = 0; i < weaponInfo.I_ClipAmount; i++)

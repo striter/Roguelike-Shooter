@@ -46,6 +46,15 @@ namespace GameSetting
     {
         public static string GetInteractMainIcon(this InteractBase interact) =>  "control_main_interact";
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
+        public static string GetInteractMapIcon(this InteractGameBase interact)
+        {
+            switch(interact.m_InteractType)
+            {
+                default:return "Map_Icon_Unknown";
+                case enum_Interaction.SignalTower:
+                    return "Map_Icon_" + interact.m_InteractType;
+            }
+        }
 
         public static string GetNumericVisualizeIcon(this enum_Interaction type)
         {
@@ -279,12 +288,13 @@ namespace GameSetting
             m_Map_Origin_Base.SetNativeSize();
             m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;
         }
-        protected void UpdateMap(float mapAngle)
+        protected void UpdateMapRotation(float mapAngle)
         {
             m_MapAngle = mapAngle;
             m_Map_Origin.localRotation = Quaternion.Euler(0, 0, m_MapAngle);
             m_Player.Tick();
         }
+        protected void UpdatePlayer()=> m_Player.Play(GameManager.Instance.m_LocalPlayer);
 
         protected void ChangeMapScale(float mapScale)
         {
