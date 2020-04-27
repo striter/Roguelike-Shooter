@@ -366,6 +366,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             if (i % 5 == 0)
                 yield return null;
         }
+        _quadrantDatas = null;
 
         OnGenerateEditorObjects(editorObjectDatas);
 
@@ -376,16 +377,18 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         NavigationManager.InitNavMeshData(transform, mapBounds, _quadrantNavigations);
 
         #region Generate Map Texture
-        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
-        m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
         m_FogRevealation = new enum_MapFogType[m_MapSize.X, m_MapSize.Y];
+        Color[,] mapColors = new Color[m_MapSize.X,m_MapSize.Y];
+        Color[,] fogColors = new Color[m_MapSize.X, m_MapSize.Y];
         for (int i = 0; i < m_MapSize.X; i++)
+        {
             for (int j = 0; j < m_MapSize.Y; j++)
             {
                 m_FogRevealation[i, j] = enum_MapFogType.Heavy;
-                m_MapTexture.SetPixel(i, j, LevelConst.C_MapTerrainInvalidColor);
-                m_FogTexture.SetPixel(i, j, LevelConst.C_MapFogHeavyColor);
+                mapColors[i, j] = LevelConst.C_MapTerrainInvalidColor;
+                fogColors[i, j] = LevelConst.C_MapFogHeavyColor;
             }
+        }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
         {
@@ -394,14 +397,25 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             for (int index = 0; index < length; index++)
             {
                 TileAxis tileAxis = chunkdata.m_Origin-_mapDataOrigin + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
-                m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
-
-                List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X, m_MapSize.Y, tileAxis, 5);
-                axisRange.Traversal((TileAxis axis) => { m_FogRevealation[axis.X, axis.Y] = enum_MapFogType.Heavy; });
+                mapColors[tileAxis.X, tileAxis.Y] = chunkColors[index];
             }
+            chunkColors = null;
         });
+
+        m_MapTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        m_FogTexture = new Texture2D(m_MapSize.X, m_MapSize.Y, TextureFormat.RGBA32, false) { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+        for (int i=0;i<m_MapSize.X;i++)
+        {
+            for(int j=0;j<m_MapSize.Y;j++)
+            {
+                m_MapTexture.SetPixel(i,j,mapColors[i,j]);
+                m_FogTexture.SetPixel(i,j,fogColors[i,j]);
+            }
+        }
         m_MapTexture.Apply();
         m_FogTexture.Apply();
+        mapColors = null;
+        fogColors = null;
         #endregion
     }
 

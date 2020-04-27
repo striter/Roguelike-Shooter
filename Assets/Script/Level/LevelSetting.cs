@@ -15,8 +15,8 @@ namespace LevelSetting
         public const int I_UIMapPullbackCheckRange = 30;
         public const int I_UIMapPullbackSpeedMultiply = 8;
 
-        public const int I_UIPlayerViewRevealRange = 10;
-        public const int I_UIPlayerViewFadeRange = 12;
+        public const int I_UIPlayerViewRevealRange = 8;
+        public const int I_UIPlayerViewFadeRange = 10;
         public static readonly int I_UIPlayerViewRevealSqrRange = I_UIPlayerViewRevealRange * I_UIPlayerViewRevealRange;
         public static readonly int I_UIPlayerViewFadeSqrRange = I_UIPlayerViewFadeRange * I_UIPlayerViewFadeRange;
 
