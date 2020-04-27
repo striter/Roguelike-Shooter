@@ -25,7 +25,7 @@ public class UI_Map : UIPage {
             UpdatePlayer();
             m_MapOffsetBase = m_Player.rectTransform.anchoredPosition;
             m_PreValidOffset = m_MapOffsetBase;
-            m_Map_Origin_Base.rectTransform.anchoredPosition = Vector2.zero;
+            m_Map_Origin_Base.rectTransform.anchoredPosition = m_MapOffsetBase * -m_MapScale;
         }
 
         void OnMapScaleChange(float scale)
