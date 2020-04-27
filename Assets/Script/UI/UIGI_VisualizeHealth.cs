@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UIGI_VisualizeHealth : UIT_GridItem {
     EntityBase m_AttachEntity;
-    Image m_HealthBar1,m_HealthBar2,m_HealthBar3;
+    Image m_HealthBar;
     bool b_showItem = false;
     float f_hideCheck;
     Graphic[] m_Graphics;
@@ -17,9 +17,7 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
     public override void Init()
     {
         base.Init();
-        m_HealthBar1 = rtf_Container.Find("HealthBar1").GetComponent<Image>();
-        m_HealthBar2 = rtf_Container.Find("HealthBar2").GetComponent<Image>();
-        m_HealthBar3 = rtf_Container.Find("HealthBar3").GetComponent<Image>();
+        m_HealthBar = rtf_Container.Find("HealthBar").GetComponent<Image>();
         m_Graphics = GetComponentsInChildren<Graphic>();
         rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;
     }
@@ -28,7 +26,7 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
     {
         m_AttachEntity = _attachTo;
         OnHide();
-        m_HealthLerp = new ValueLerpSeconds(m_AttachEntity.m_Health.F_HealthMaxScale, 1f, .5f, SetHealthValue);
+        m_HealthLerp = new ValueLerpSeconds(m_AttachEntity.m_Health.F_HealthMaxScale, 1f, .5f, (float value) => m_HealthBar.fillAmount = value);
     }
 
     public void OnHide()
@@ -68,11 +66,5 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
         if (f_hideCheck < 0)
             OnHide();
     }
-
-    void SetHealthValue(float value)
-    {
-        m_HealthBar1.fillAmount = value>1?1:value;
-        m_HealthBar2.fillAmount = value>2?1:value-1;
-        m_HealthBar3.fillAmount = value>3?1:value-2;
-    }
+    
 }
