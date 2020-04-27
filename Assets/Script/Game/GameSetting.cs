@@ -9,12 +9,12 @@ namespace GameSetting
     public static class GameConst
     {
         #region Battle
-        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(10, 25);
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(25, 10);
         public const float F_EnermyGenerateTickMultiplierPerMinute =.04f;
         public const float F_EnermyGenerateTickMultiplierTransmiting = 2f;
 
         public const float F_EnermyEliteGenerateBase = 10f;
-        public const float F_EnermyEliteGeneratePerMinuteMultiplier = 2f;
+        public const float F_EnermyEliteGeneratePerMinuteMultiplier = 1f;
         public const float F_SqrEnermyGenerateMinDistance = 400f; // 20*20
 
         public const float F_SignalTowerTransmitDuration = 40f;
@@ -167,8 +167,8 @@ namespace GameSetting
 
         public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
 
-        public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_GameDifficulty difficulty) => minutePassed * .2f + ((int)difficulty - 1) * .25f;
-        public static float GetEnermyDamageMultilier(int minutesPassed, enum_GameDifficulty difficulty) => minutesPassed * .1f + ((int)difficulty - 1) * .25f;
+        public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_GameDifficulty difficulty) => minutePassed * .1f + ((int)difficulty - 1) * .25f;
+        public static float GetEnermyDamageMultilier(int minutesPassed, enum_GameDifficulty difficulty) => minutesPassed * .05f + ((int)difficulty - 1) * .25f;
 
         public static float GetResultCompletion(bool win, enum_GameStage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
         public static float GetResultLevelScore(enum_GameStage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
