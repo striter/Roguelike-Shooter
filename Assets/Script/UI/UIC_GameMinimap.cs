@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIC_GameBattleStatus : UIControlBase {
+public class UIC_GameMinimap : UIControlBase {
     Text m_Data;
     Transform m_Minimap;
     Text m_Stage, m_Style;

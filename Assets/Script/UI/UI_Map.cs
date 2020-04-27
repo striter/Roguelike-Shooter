@@ -70,6 +70,7 @@ public class UI_Map : UIPage {
         {
             delta=m_Map_Origin_Base.rectTransform.InverseTransformDirection(delta);
             m_MapOffsetBase -= delta / m_MapScale;
+            m_Map_Origin_Base.rectTransform.anchoredPosition = m_MapOffsetBase;
         }
 
         public void Tick(float deltaTime)
