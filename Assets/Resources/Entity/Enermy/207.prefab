@@ -953,7 +953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c79b78d0b3b0b144a80e76641840b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 9000
+  I_MaxHealth: 3000
   I_DefaultArmor: 0
   F_MovementSpeed: 5
   F_AttackSpread: 6

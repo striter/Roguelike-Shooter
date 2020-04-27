@@ -11,7 +11,7 @@ namespace GameSetting
         #region Battle
         public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(25, 10);
         public const float F_EnermyGenerateTickMultiplierPerMinute =.04f;
-        public const float F_EnermyGenerateTickMultiplierTransmiting = 2f;
+        public const float F_EnermyGenerateTickMultiplierTransmiting = 1f;
 
         public const float F_EnermyEliteGenerateBase = 10f;
         public const float F_EnermyEliteGeneratePerMinuteMultiplier = 1f;
