@@ -19,13 +19,18 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     public Texture2D m_MapTexture { get; private set; }
     public Texture2D m_FogTexture { get; private set; }
 
-    TileAxis  m_MapSize;
-
+    TileAxis m_MapSize;
     #region Get
     public Vector2 GetOffsetPosition(Vector3 worldPosition)
     {
-        Vector3 offset = worldPosition / LevelConst.I_TileSize;
+        Vector3 offset =  worldPosition / LevelConst.I_TileSize;
         return new Vector2(offset.x, offset.z);
+    }
+
+    public TileAxis GetMapAxis(Vector3 worldPosition)
+    {
+        Vector3 offset =  worldPosition / LevelConst.I_TileSize;
+        return new TileAxis(Mathf.RoundToInt(offset.x), Mathf.RoundToInt(offset.z));
     }
 
     public float GetMapAngle(float cameraYAngle) => cameraYAngle;
@@ -37,11 +42,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         return null;
     }
 
-    public TileAxis GetMapAxis(Vector3 worldPosition)
-    {
-        Vector3 offset = worldPosition / LevelConst.I_TileSize;
-        return new TileAxis(Mathf.RoundToInt(offset.x), Mathf.RoundToInt(offset.z));
-    }
     #endregion
 
     #region Quadrant
@@ -280,19 +280,21 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             if (originY > chunkOrigin.Y)
                 originY = chunkOrigin.Y;
         });
-        TileAxis  _mapOrigin = new TileAxis(originX, originY);
-        m_MapSize = new TileAxis(oppositeX - originX, oppositeY - originY);
+        TileAxis mapDataFill = TileAxis.One * LevelConst.I_UIPlayerViewFadeRange;
+        m_MapSize = new TileAxis(oppositeX - originX, oppositeY - originY)+mapDataFill*2;
         //Total Game Map
         TileGenerateData?[,] mapTileDatas = new TileGenerateData?[m_MapSize.X,m_MapSize.Y];
+        TileAxis _mapDataOrigin = new TileAxis(originX, originY)-mapDataFill;
         gameChunkGenerate.Traversal((ChunkGenerateData generateData) =>
         {
             ChunkTileData[] chunkData = generateData.m_Data.GetData();
-            for(int i=0;i<generateData.m_Data.Width;i++)
+            TileAxis _chunkWholeDataOrigin = generateData.m_Origin - _mapDataOrigin;
+            for (int i=0;i<generateData.m_Data.Width;i++)
             {
                 for (int j = 0; j < generateData.m_Data.Height;j++)
                 {
                     TileAxis chunkDataAxis = new TileAxis(i, j);
-                    TileAxis wholeDataAxis =   generateData.m_Origin-_mapOrigin+chunkDataAxis;
+                    TileAxis wholeDataAxis = _chunkWholeDataOrigin+chunkDataAxis;
                     mapTileDatas[wholeDataAxis.X, wholeDataAxis.Y] =new TileGenerateData(generateData.m_EventType, chunkData[TileTools.Get1DAxisIndex(chunkDataAxis, generateData.m_Data.Width)]);
                 }
             }
@@ -381,7 +383,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             for (int j = 0; j < m_MapSize.Y; j++)
             {
                 m_FogRevealation[i, j] = enum_MapFogType.Heavy;
-                m_MapTexture.SetPixel(i, j, Color.clear);
+                m_MapTexture.SetPixel(i, j, LevelConst.C_MapTerrainInvalidColor);
                 m_FogTexture.SetPixel(i, j, LevelConst.C_MapFogHeavyColor);
             }
 
@@ -391,10 +393,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             int length = chunkColors.Length;
             for (int index = 0; index < length; index++)
             {
-                if (chunkColors[index].a <= 0)
-                    continue;
-
-                TileAxis tileAxis = chunkdata.m_Origin-_mapOrigin + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
+                TileAxis tileAxis = chunkdata.m_Origin-_mapDataOrigin + TileTools.GetAxisByIndex(index, chunkdata.m_Data.Width);
                 m_MapTexture.SetPixel(tileAxis.X, tileAxis.Y, chunkColors[index]);
 
                 List<TileAxis> axisRange = TileTools.GetAxisRange(m_MapSize.X, m_MapSize.Y, tileAxis, 5);
