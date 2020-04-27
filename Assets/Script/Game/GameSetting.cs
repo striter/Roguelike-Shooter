@@ -1097,8 +1097,7 @@ namespace GameSetting
         }
         public void OnExpReceived(int exp)
         {
-            if (m_RankManager.OnExpGainCheckLevelOffset(exp) != 0)
-                Debug.Log("Rank Up!" + m_RankManager.m_Rank);
+            m_RankManager.OnExpGainCheckLevelOffset(exp);
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
         }
         #endregion
