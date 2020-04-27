@@ -95,7 +95,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     {
         base.OnDeadTick(deltaTime);
         if (m_Animator!=null)  m_Animator.SetPause(false);
-        m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 5f);
+        m_DamageImpact = Vector3.Lerp( m_DamageImpact, Vector3.zero, Time.deltaTime * 7f);
         transform.position = NavigationManager.NavMeshPosition(transform.position + m_DamageImpact*deltaTime);
     }
 
