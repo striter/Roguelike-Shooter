@@ -97,6 +97,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
 
     #region Minimap
     enum_MapFogType[,] m_FogRevealation;
+    Dictionary<TileAxis, enum_MapFogType> m_FogRevealMarkup = new Dictionary<TileAxis, enum_MapFogType>();
+
     public bool CheckTileRevealed(int i, int j) => m_FogRevealation[i, j] == enum_MapFogType.Cleared;
     public void CheckMinimapUpdate(TileAxis playerMapPos)
     {
@@ -105,7 +107,6 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         StartCoroutine(UpdateMinimap(playerMapPos));
     }
 
-    Dictionary<TileAxis, enum_MapFogType> m_FogRevealMarkup = new Dictionary<TileAxis, enum_MapFogType>();
     IEnumerator UpdateMinimap(TileAxis updatePos)
     {
         m_MinimapUpdating = true;
@@ -115,7 +116,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             for (int i = 0; i < m_MapSize.X; i++)
                 for (int j = 0; j < m_MapSize.Y; j++)
                 {
-                    if (m_FogRevealation[i, j] == enum_MapFogType.Cleared)
+                    enum_MapFogType fogRevealation = m_FogRevealation[i, j];
+                    if (fogRevealation == enum_MapFogType.Cleared)
                         continue;
 
                     float sqrMagnitude = (updatePos - new TileAxis(i, j)).SqrMagnitude;
@@ -123,16 +125,31 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                         continue;
 
                     if (sqrMagnitude <= LevelConst.I_UIPlayerViewRevealSqrRange)
-                        m_FogRevealMarkup.Add(new TileAxis(i, j), enum_MapFogType.Cleared); 
+                    {
+                        if (fogRevealation != enum_MapFogType.Cleared)
+                            m_FogRevealMarkup.Add(new TileAxis(i, j), enum_MapFogType.Cleared);
+                    }
                     else if (sqrMagnitude <= LevelConst.I_UIPlayerViewFadeSqrRange)
-                        m_FogRevealMarkup.Add(new TileAxis(i,j), enum_MapFogType.Faded);
+                    {
+                        if (fogRevealation != enum_MapFogType.Faded)
+                            m_FogRevealMarkup.Add(new TileAxis(i, j), enum_MapFogType.Faded);
+                    }
                 }
         }).TaskCoroutine();
         m_MinimapUpdating = false;
 
         UpdateMapFog(m_FogRevealMarkup);
-        m_FogRevealMarkup.Clear();
         yield break;
+    }
+
+    public void ClearAllFog()
+    {
+        Dictionary<TileAxis, enum_MapFogType> _fogReveal = new Dictionary<TileAxis, enum_MapFogType>();
+        for (int i = 0; i < m_MapSize.X; i++)
+            for (int j = 0; j < m_MapSize.Y; j++)
+                _fogReveal.Add(new TileAxis(i, j), enum_MapFogType.Cleared);
+        UpdateMapFog(_fogReveal);
+        _fogReveal = null;
     }
 
     void UpdateMapFog(Dictionary<TileAxis, enum_MapFogType> _fogReveal)
@@ -143,20 +160,11 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 return;
 
             m_FogRevealation[axis.X, axis.Y] = type;
-            m_FogTexture.SetPixel(axis.X, axis.Y,type== enum_MapFogType.Faded ? LevelConst.C_MapFogFadeColor : LevelConst.C_MapFogClearColor);
+            m_FogTexture.SetPixel(axis.X, axis.Y, type == enum_MapFogType.Faded ? LevelConst.C_MapFogFadeColor : LevelConst.C_MapFogClearColor);
         });
         m_FogTexture.Apply();
     }
 
-    public void ClearAllFog()
-    {
-        Dictionary<TileAxis, enum_MapFogType> _fogReveal = new Dictionary<TileAxis, enum_MapFogType>();
-        for (int i = 0; i < m_MapSize.X; i++)
-            for (int j = 0; j < m_MapSize.Y; j++)
-                _fogReveal.Add(new TileAxis(i, j), enum_MapFogType.Cleared);
-        UpdateMapFog(_fogReveal);
-        _fogReveal.Clear();
-    }
     #endregion
 
     protected override void Awake()
