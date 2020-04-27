@@ -22,14 +22,13 @@ public class SFXCast : SFXWeaponBase {
     protected Transform CastTransform => tf_ControlledCast ? tf_ControlledCast : transform;
     protected float F_PlayDuration => I_TickCount * F_Tick;
     Transform tf_ControlledCast;
-    float f_blastTickChest = 0;
+    TimerBase m_CastTickTimer = new TimerBase();
     public bool m_ControlledCast => tf_ControlledCast != null;
     SFXIndicator m_ControlledParticles;
     public virtual void Play(DamageInfo buffInfo)
     {
         m_DamageInfo = buffInfo;
         base.PlayUncontrolled(m_DamageInfo.m_SourceID, F_PlayDuration, F_DelayDuration);
-
         if (I_DelayIndicatorIndex > 0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID,0 ,F_DelayDuration);
     }
@@ -76,9 +75,16 @@ public class SFXCast : SFXWeaponBase {
 
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
-        
+
         if (F_Tick <= 0)
+        {
             DoCastDealtDamage();
+        }
+        else
+        {
+            m_CastTickTimer.SetTimerDuration(F_Tick);
+            m_CastTickTimer.Stop();
+        }
     }
     
     protected override void Update()
@@ -86,16 +92,16 @@ public class SFXCast : SFXWeaponBase {
         base.Update();
         if (!B_Playing)
             return;
-        
+
         if (F_Tick <= 0)
             return;
-        if (f_blastTickChest > 0)
+
+        m_CastTickTimer.Tick(Time.deltaTime);
+        if (!m_CastTickTimer.m_Timing)
         {
-            f_blastTickChest -= Time.deltaTime;
-            return;
+            DoCastDealtDamage();
+            m_CastTickTimer.Replay();
         }
-        DoCastDealtDamage();
-        f_blastTickChest = F_Tick;
     }
 
     protected virtual List<EntityBase> DoCastDealtDamage()

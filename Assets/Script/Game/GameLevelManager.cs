@@ -363,14 +363,12 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 _quadrantDatas.Add(new ChunkQuadrantData(quadrantIndex,quadrantAxis, new TileBounds(quadrantMapOrigin, quadrantMapSize), quadrantDatas));
             }
 
-        Dictionary<int, NavigationQuadrants> _quadrantNavigations = new Dictionary<int, NavigationQuadrants>();
         m_ChunkPool.Clear();
         for(int i=0;i<_quadrantDatas.Count;i++)
         {
             ChunkQuadrantData quadrantData = _quadrantDatas[i];
             LevelChunkGame chunk = m_ChunkPool.AddItem(quadrantData.m_QuadrantIndex);
-            chunk.InitGameChunk(quadrantData, random, NavigationManager.UpdateQuadrantData);
-            _quadrantNavigations.Add(quadrantData.m_QuadrantIndex,new NavigationQuadrants(chunk));
+            chunk.InitGameChunk(quadrantData, random);
             if (i % 5 == 0)
                 yield return null;
         }
@@ -382,7 +380,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         Bounds mapBounds = new Bounds();
         mapBounds.center = m_MapSize.ToPosition() / 2f;
         mapBounds.size = new Vector3(m_MapSize.X, .1f, m_MapSize.Y) * LevelConst.I_TileSize;
-        NavigationManager.InitNavMeshData(transform, mapBounds, _quadrantNavigations);
+        NavigationManager.InitNavMeshData(transform, mapBounds);
 
         #region Generate Map Texture
         m_FogRevealation = new enum_MapFogType[m_MapSize.X, m_MapSize.Y];
@@ -600,22 +598,6 @@ public static class LevelObjectManager
     public static LevelTileItemEditorTerrain GetEditorGroundItem(enum_EditorTerrainType type,Transform trans)=> ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.Spawn(type, trans, Vector3.zero, Quaternion.identity);
 }
 
-public class NavigationQuadrants
-{
-    public LevelChunkGame m_Chunk { get; private set; }
-    public List<NavMeshBuildSource> m_Sources { get; private set; } = new List<NavMeshBuildSource>();
-    public NavigationQuadrants(LevelChunkGame chunk)
-    {
-        m_Chunk = chunk;
-    }
-
-    public void RecollectSource()
-    {
-        m_Sources.Clear();
-        NavMeshBuilder.CollectSources(m_Chunk.transform,GameLayer.Mask.I_Static, NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>() { },m_Sources);
-    }
-}
-
 public static class NavigationManager
 {
     static Transform m_Transform;
@@ -624,35 +606,20 @@ public static class NavigationManager
     static NavMeshDataInstance m_DataInstance;
     static NavMeshData m_Data;
     static Bounds m_Bounds;
-    static List<NavMeshBuildSource> m_Sources=new List<NavMeshBuildSource>();
-    static Dictionary<int, NavigationQuadrants> m_Quadrants = new Dictionary<int, NavigationQuadrants>();
-    public static void InitNavMeshData(Transform transform, Bounds bound,Dictionary<int,NavigationQuadrants> quadrants)
+    public static void InitNavMeshData(Transform transform, Bounds bound)
     {
         ClearNavMeshDatas();
         m_Transform = transform;
         m_Bounds = bound;
-        m_Quadrants = quadrants;
-        ReCollectSources();
+        List<NavMeshBuildSource> m_Sources = new List<NavMeshBuildSource>();
+        NavMeshBuilder.CollectSources(bound,GameLayer.Mask.I_Static, NavMeshCollectGeometry.PhysicsColliders,0,new List<NavMeshBuildMarkup>(),m_Sources);
         m_Data = NavMeshBuilder.BuildNavMeshData(m_BuildSettings, m_Sources, m_Bounds, m_Transform.position, m_Transform.rotation);
         m_DataInstance = NavMesh.AddNavMeshData(m_Data);
-    }
-
-    static void ReCollectSources(int targetQuadrantIndex = -1)
-    {
-        m_Sources.Clear();
-        m_Quadrants.Traversal((NavigationQuadrants quadrants) => { if (targetQuadrantIndex == -1 || targetQuadrantIndex == quadrants.m_Chunk.m_QuadrantIndex) quadrants.RecollectSource(); });
-        m_Quadrants.Traversal((NavigationQuadrants quadrants) => { m_Sources.AddRange(quadrants.m_Sources); });
-    }
-
-    public static void UpdateQuadrantData(int quadrantID)
-    {
-        ReCollectSources(quadrantID);
-        NavMeshBuilder.UpdateNavMeshData(m_Data, m_BuildSettings, m_Sources, m_Bounds);
+        m_Sources = null;
     }
 
     public static void ClearNavMeshDatas()
     {
-        m_Sources.Clear();
         NavMesh.RemoveNavMeshData(m_DataInstance);
     }
 
