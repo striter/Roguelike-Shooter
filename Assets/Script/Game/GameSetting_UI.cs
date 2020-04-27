@@ -278,6 +278,7 @@ namespace GameSetting
             m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
             m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
             m_Player.Init();
+            m_Player.Play(GameManager.Instance.m_LocalPlayer);
             ChangeMapScale(mapScale);
         }
 
@@ -294,7 +295,6 @@ namespace GameSetting
             m_Map_Origin.localRotation = Quaternion.Euler(0, 0, m_MapAngle);
             m_Player.Tick();
         }
-        protected void UpdatePlayer()=> m_Player.Play(GameManager.Instance.m_LocalPlayer);
 
         protected void ChangeMapScale(float mapScale)
         {

@@ -55,7 +55,7 @@ public class UIC_GameBattleStatus : UIControlBase {
         {
             m_Map_Origin_Base.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(player.transform.position) * -m_MapScale;
             m_Enermys.m_Pool.m_ActiveItemDic.Traversal((int identity, UIGI_MapEntityLocation item) => { item.Tick(); });
-            UpdatePlayer();
+            m_Player.Tick();
         }
     }
 
