@@ -11,11 +11,7 @@ public class CampUIManager : UIManager {
     {
         base.Init();
         Instance = this;
-    }
-    protected override void InitControls(bool inGame)
-    {
-        base.InitControls(inGame);
-        m_Coins=ShowControls<UIC_CampCurrencyStatus>(false);
+        m_Coins = ShowControls<UIC_CampCurrencyStatus>(false);
     }
 
     public T ShowCoinsPage<T>(bool animate,bool blurBG, Action OnPageExit,float bulletTime = 1f) where T : UIPage

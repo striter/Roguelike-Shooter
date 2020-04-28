@@ -20,6 +20,7 @@ public class GameManager : GameManagerBase
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Signal Tower", KeyCode.None, () => { GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => { if (interact.m_InteractType == enum_Interaction.SignalTower) m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition( interact.transform.position),interact.transform.rotation); }); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Fog", KeyCode.None, () => { GameLevelManager.Instance.ClearAllFog();});
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Pass One Minutes", KeyCode.None, () => { m_GameLevel.Tick(60f,m_LocalPlayer.transform.position); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Kill All", KeyCode.Alpha0, () => {
             GetCharacters(enum_EntityFlag.Enermy, true).Traversal((EntityCharacterBase character) =>
@@ -253,12 +254,14 @@ public class GameManager : GameManagerBase
     void OnStageStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameMissionUpdate, "UI_MISSION_SEARCHSIGNAL");
     }
 
     void OnSignalTowerTransmitStart(InteractSignalTower signalTower)
     {
         SetPostEffect_AreaScan(signalTower.m_Canvas.position, Color.red);
         m_GameLevel.OnTransmitTrigger(m_LocalPlayer.transform.position);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameMissionUpdate, "UI_MISSION_SURVIVE");
     }
 
     bool OnSignalTowerTransmitCountFinish(InteractSignalTower signalTower)
@@ -266,6 +269,7 @@ public class GameManager : GameManagerBase
         if (!m_GameLevel.CheckTransmitFinish())
             return false;
 
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameMissionUpdate, "UI_MISSION_ENTERPORTAL");
         SetPostEffect_AreaScan(signalTower.m_PortalPos.position,Color.green);
         enum_GamePortalType portal = m_GameLevel.GetNextStageGenerate();
         GameObjectManager.SpawnInteract<InteractPortal>(signalTower.m_PortalPos.position, signalTower.m_PortalPos.rotation).Play(portal, OnChunkPortalEnter);
@@ -585,7 +589,6 @@ public class GameProgressManager
     #region Battle
     List<Vector3> m_EnermySpawnPoints = new List<Vector3>();
     TimerBase m_BattleCheckTimer = new TimerBase();
-    public float m_TimePassed { get; private set; }
     public bool m_BattleTransmiting =>m_TransmitEliteID>0;
     int m_TransmitEliteID;
     List<SEnermyGenerate> m_EnermyGenerate;

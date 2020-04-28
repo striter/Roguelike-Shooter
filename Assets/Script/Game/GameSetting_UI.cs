@@ -11,7 +11,9 @@ namespace GameSetting
     {
         public const int I_PlayerDyingMinValue = 10;
         public const int I_PlayerDyingMaxValue = 50;
-        
+
+        public const int I_GameProgressDifficultyColorRampMaxMinutes = 30;
+
         public static Vector2 V2_UINumericVisualizeOffset = new Vector2(0, 100f);
     }
 

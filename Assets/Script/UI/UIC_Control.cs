@@ -8,10 +8,8 @@ using UnityEngine.UI;
 
 public class UIC_Control : UIControlBase {
     protected TouchDeltaManager m_TouchDelta { get; private set; }
-    Transform tf_InGame;
     Image m_AbilityBG, m_AbilityImg, m_AbilityCooldown;
     Image m_Settings;
-    ControlWeaponData m_weapon1Data, m_weapon2Data;
     ControlMainButton m_weapon1Btn, m_weapon2Btn;
     Action<bool> OnCharacterAbility;
     Action<bool> OnMainDown, OnSubDown;
@@ -19,7 +17,6 @@ public class UIC_Control : UIControlBase {
     protected override void Init()
     {
         base.Init();
-        tf_InGame = transform.Find("InGame");
         m_AbilityBG = transform.Find("Ability").GetComponent<Image>();
         m_AbilityImg = transform.Find("Ability/Image").GetComponent<Image>();
         m_AbilityCooldown = transform.Find("Ability/Cooldown").GetComponent<Image>();
@@ -29,12 +26,9 @@ public class UIC_Control : UIControlBase {
 
         transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
         m_Settings = transform.Find("Settings/Image").GetComponent<Image>();
-        transform.Find("Equipments").GetComponent<Button>().onClick.AddListener(OnEquipmentBtnClick);
 
         m_weapon1Btn = new ControlMainButton(transform.Find("Main"));
         m_weapon2Btn = new ControlMainButton(transform.Find("Sub"));
-        m_weapon1Data = new ControlWeaponData(tf_InGame.Find("Weapon1Data"));
-        m_weapon2Data = new ControlWeaponData(tf_InGame.Find("Weapon2Data"));
 
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
@@ -52,11 +46,7 @@ public class UIC_Control : UIControlBase {
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnMainButtonStatus);
     }
-    public UIC_Control SetInGame(bool inGame)
-    {
-        tf_InGame.SetActivate(inGame);
-        return this;
-    }
+
 
     void OnOptionsChanged() => UIT_JoyStick.Instance.SetMode(OptionsDataManager.m_OptionsData.m_JoyStickMode);
     bool CheckControlable() => !UIManager.Instance.m_PageOpening;
@@ -71,9 +61,6 @@ public class UIC_Control : UIControlBase {
             m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
             m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
         }
-
-        m_weapon1Data.Tick(Time.deltaTime);
-        m_weapon2Data.Tick(Time.deltaTime);
     }
 
     #region Controls
@@ -116,11 +103,6 @@ public class UIC_Control : UIControlBase {
         UIManager.Instance.ShowPage<UI_Options>(true,true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
     }
 
-    void OnEquipmentBtnClick()
-    {
-        UIManager.Instance.ShowPage<UI_PlayerPerks>(true,true, 0f).Show();
-    }
-
     Action OnSettingClick;
     public void OverrideSetting(Action Override = null)
     {
@@ -133,9 +115,6 @@ public class UIC_Control : UIControlBase {
 
     void OnWeaponStatus(EntityCharacterPlayer _player)
     {
-        m_weapon1Data.UpdateInfo(_player.m_Weapon1, _player.m_weaponEquipingFirst);
-        m_weapon2Data.UpdateInfo(_player.m_Weapon2, !_player.m_weaponEquipingFirst);
-
         OnMainButtonStatus(_player);
     }
 
@@ -168,56 +147,6 @@ public class UIC_Control : UIControlBase {
             m_Weapon.SetActivate(!m_interactValid && m_weaponValid);
         }
 
-    }
-
-    class ControlWeaponData
-    {
-        WeaponBase m_weapon;
-        Transform transform;
-        Transform tf_Equiping, tf_Unequiping;
-        UIC_WeaponData m_weaponData;
-        TSpecialClasses.ValueChecker<int, int> m_AmmoStatusChecker;
-        public ControlWeaponData(Transform _transform)
-        {
-            transform = _transform;
-            m_weaponData = new UIC_WeaponData(transform.Find("WeaponData"));
-            tf_Equiping = m_weaponData.transform.Find("Equiping");
-            tf_Unequiping = m_weaponData.transform.Find("Unequiping");
-            m_AmmoStatusChecker = new TSpecialClasses.ValueChecker<int, int>(-1, -1);
-            m_weaponData.transform.GetComponent<UIT_EventTriggerListener>().SetOnPressDuration(.25f, OnWeaponDetailPressed);
-        }
-        public void UpdateInfo(WeaponBase weapon, bool equiping)
-        {
-            m_weapon = weapon;
-            m_AmmoStatusChecker.Check(-1, -1);
-            bool weaponInvalid = m_weapon == null;
-            tf_Unequiping.SetActivate(!equiping);
-            tf_Equiping.SetActivate(equiping);
-            m_weaponData.transform.SetActivate(!weaponInvalid);
-            if (weaponInvalid)
-                return;
-            m_weaponData.UpdateInfo(weapon);
-            UpdateAmmoStatus();
-        }
-        
-        public void Tick(float deltaTime)
-        {
-            if (m_weapon == null)
-                return;
-            UpdateAmmoStatus();
-        }
-
-        void UpdateAmmoStatus()
-        {
-            if (m_AmmoStatusChecker.Check(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount))
-                m_weaponData.UpdateAmmoInfo(m_weapon.I_AmmoLeft, m_weapon.I_ClipAmount);
-        }
-        
-        void OnWeaponDetailPressed(bool pressed)
-        {
-            if (pressed)
-                UIManager.Instance.ShowPage<UI_WeaponStatus>(true,true, 0f).Play(m_weapon.m_WeaponInfo,null);
-        }
     }
 
 #if UNITY_EDITOR

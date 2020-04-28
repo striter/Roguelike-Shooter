@@ -418,13 +418,9 @@ namespace TTime
         public static int GetDayStampNow() => GetDayStamp(DateTime.Now);
         public static int GetDayStamp(DateTime dt)=> (int)(dt - m_StampBegin).TotalDays;
 
-        public static string GetHMS(int stamp)
-        {
-            int hours = stamp / 3600;
-            int minutes = (stamp - hours * 3600) / 60;
-            int seconds = stamp - hours * 3600 - minutes * 60;
-            return string.Format("{0:D2}:{1:D2}:{2:D2}", hours, + minutes, seconds);
-        }
+        public static string GetHourMinuteSecond(int seconds)=> string.Format("{0:D2}:{1:D2}:{2:D2}", seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60);
+
+        public static string GetMinuteSecond(int seconds) => string.Format("{0:D2}:{1:D2}", (seconds % 3600) / 60, (seconds % 3600) % 60);
 
         public static DateTime GetDateTime(int timeStamp)
         {

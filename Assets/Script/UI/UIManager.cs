@@ -26,7 +26,6 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         else
             manager = uiObj.AddComponent<CampUIManager>();
         manager.Init();
-        manager.InitControls(inGame);
     }
 
     protected override void Init()
@@ -43,12 +42,9 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
         m_BlurBG = m_Effect.GetOrAddCameraEffect<CB_GenerateTransparentOverlayTexture>().SetOpaqueBlurTextureEnabled(false);
-    }
 
-    protected virtual void InitControls(bool inGame)
-    {
         m_PlayerStatus = ShowControls<UIC_PlayerStatus>();
-        m_UIControl = ShowControls<UIC_Control>().SetInGame(inGame);
+        m_UIControl = ShowControls<UIC_Control>();
         m_Interact = ShowControls<UIC_PlayerInteract>();
         m_Indicate = ShowControls<UIC_Indicates>();
     }

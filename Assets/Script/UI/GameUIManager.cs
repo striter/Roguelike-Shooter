@@ -12,13 +12,8 @@ public class GameUIManager : UIManager {
         Instance = this;
         base.Init();
         m_InGameSprites = TResources.GetUIAtlas_InGame();
-    }
-    protected override void InitControls(bool inGame)
-    {
-        base.InitControls(inGame);
         ShowControls<UIC_GameNumericVisualize>();
-        ShowControls<UIC_GameCurrencyStatus>();
-        ShowControls<UIC_GameMinimap>();
+        ShowControls<UIC_GameStatus>();
     }
 
     public void OnGameFinished(GameProgressManager level, Action _OnButtonClick)

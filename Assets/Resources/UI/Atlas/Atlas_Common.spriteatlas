@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3183973
+    totalSpriteSurfaceArea: 3164482
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -66,7 +66,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 493c8f27165db8a48a66957e0e7ce49d, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
-  - {fileID: 21300000, guid: 527541f51bd9bcc47a19fa9880ece3d4, type: 3}
   - {fileID: 21300000, guid: 389b60b53720261438d8fdcd07fc2234, type: 3}
   - {fileID: 21300000, guid: a386833f607b4ba478930b8dfe4656ee, type: 3}
   - {fileID: 21300000, guid: 9047f140630863245ae8f4d97a50502d, type: 3}
@@ -149,7 +148,6 @@ SpriteAtlas:
   - status_armor
   - control_rocker_move
   - control_ability_Beth
-  - coins_bottom
   - control_main_interact
   - control_setting_bottom
   - bottom_black
