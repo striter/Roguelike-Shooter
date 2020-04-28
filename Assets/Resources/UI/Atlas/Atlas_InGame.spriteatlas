@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 727333
+    totalSpriteSurfaceArea: 803311
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -39,6 +39,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fc9bdc16cd5c0bf4a873d1f53fefde7c, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: ce23f48acd6ddf541b7a5d298771ae09, type: 3}
+  - {fileID: 21300000, guid: d3693ba12401d8c4cac8765412e6c015, type: 3}
   - {fileID: 21300000, guid: 873f6ee8629a62a4584701274dba416f, type: 3}
   - {fileID: 21300000, guid: 19689f5286d802d4cb4a63c7fa61b086, type: 3}
   - {fileID: 21300000, guid: 1dfff60a4d340614f8574902c4683851, type: 3}
@@ -57,6 +58,7 @@ SpriteAtlas:
   - map_bg
   - result_title_win_CN
   - backpack_bottom
+  - settlement_bottom
   - Map_Icon_SignalTower
   - Map_Icon_Unknown
   - equipmentPack_empty
