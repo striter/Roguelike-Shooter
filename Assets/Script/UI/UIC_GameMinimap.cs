@@ -85,8 +85,8 @@ public class UIC_GameMinimap : UIControlBase {
     void OnStageStart()
     {
         m_Map.DoMapInit();
-        m_Stage.text = string.Format("<color=#ffffff88>{0}</color>{0}:<color=#fe9e00>{1}</color>", TLocalization.GetKeyLocalized("UI_MAP_STAGE"),TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey()));
-        m_Style.text = string.Format("<color=#ffffff88>{0}</color>{0}:<color=#fe9e00>{1}</color>", TLocalization.GetKeyLocalized("UI_MAP_STYLE"), TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey()));
+        m_Stage.text = string.Format("<color=#ffffff88>{0}</color>:<color=#fe9e00>{1}</color>", TLocalization.GetKeyLocalized("UI_MAP_STAGE"),TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey()));
+        m_Style.text = string.Format("<color=#ffffff88>{0}</color>:<color=#fe9e00>{1}</color>", TLocalization.GetKeyLocalized("UI_MAP_STYLE"), TLocalization.GetKeyLocalized(GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey()));
     }
 
     private void Update()
