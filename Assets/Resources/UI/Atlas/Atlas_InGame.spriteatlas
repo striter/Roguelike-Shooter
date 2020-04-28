@@ -58,7 +58,7 @@ SpriteAtlas:
   - map_bg
   - result_title_win_CN
   - backpack_bottom
-  - settlement_bottom
+  - result_bg
   - Map_Icon_SignalTower
   - Map_Icon_Unknown
   - equipmentPack_empty
