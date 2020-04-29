@@ -126,6 +126,8 @@ namespace GameSetting_PlayerPerks
         public override void OnReceiveHealing(DamageInfo info, float applyAmount)
         {
             base.OnReceiveHealing(info, applyAmount);
+            if (info.m_DamageType != enum_DamageType.Health)
+                return;
             m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, applyAmount*m_Stack, enum_DamageType.Armor,true));
         }
         public P10011(PerkSaveData saveData) : base(saveData) { }
