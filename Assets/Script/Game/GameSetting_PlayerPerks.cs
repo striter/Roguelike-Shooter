@@ -83,7 +83,7 @@ namespace GameSetting_PlayerPerks
     {
         public override int m_Index => 10007;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
-        public override float Value1 => 5;
+        public override float Value1 => 20;
         public override float m_MaxArmorAdditive => Value1 * m_Stack;
         public P10007(PerkSaveData saveData) : base(saveData) { }
     }
