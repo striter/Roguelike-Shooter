@@ -78,7 +78,7 @@ public class TResources
 
     public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity+(int)character);
     public static EntityCharacterBase GetEnermyCharacter(int index) => Instantiate<EntityCharacterBase>(ConstPath.S_EnermyEntity + index);
-    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + weapon);
+    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
     public static InteractGameBase GetInteractPortal(enum_GameStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle);
     public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion

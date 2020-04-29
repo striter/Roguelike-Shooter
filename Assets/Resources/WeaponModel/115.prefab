@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4746248021268372}
   - component: {fileID: 114543465331602008}
   m_Layer: 0
-  m_Name: Rocketlauncher
+  m_Name: 115
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -546,5 +546,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 1004
   B_AttachLeft: 0
-  F_BaseDamage: 243.2
   I_ExtraBuffApply: -1
+  F_AimSpread: 3

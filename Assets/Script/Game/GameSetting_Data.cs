@@ -863,12 +863,10 @@ namespace GameSetting
         public int m_Index { get; private set; }
         public bool m_Hidden { get; private set; }
         public enum_Rarity m_Rarity { get; private set; }
+        public float m_Damage { get; private set; }
         public float m_FireRate { get; private set; }
         public int m_ClipAmount { get; private set; }
-        public float m_Spread { get; private set; }
-        public float m_BulletRefillTime { get; private set; }
-        public int m_PelletsPerShot { get; private set; }
-        public float m_Weight { get; private set; }
+        public float m_RefillTime { get; private set; }
         public float m_RecoilPerShot { get; private set; }
 
         public float m_UIDamage { get; private set; }

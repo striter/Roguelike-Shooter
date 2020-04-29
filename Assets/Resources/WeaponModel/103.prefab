@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 4620733109291788}
   - component: {fileID: 114879565510000318}
   m_Layer: 0
-  m_Name: M82A1
+  m_Name: 103
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -904,5 +904,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 1001
   B_AttachLeft: 0
-  F_BaseDamage: 83.8
   I_ExtraBuffApply: -1
+  F_AimSpread: 1.5

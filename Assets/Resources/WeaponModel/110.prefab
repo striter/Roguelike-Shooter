@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 4772891903605380}
   - component: {fileID: 114386811037037924}
   m_Layer: 0
-  m_Name: P92
+  m_Name: 110
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -329,5 +329,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 1002
   B_AttachLeft: 0
-  F_BaseDamage: 40.9
   I_ExtraBuffApply: -1
+  F_AimSpread: 3

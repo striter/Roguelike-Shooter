@@ -141,6 +141,13 @@ namespace GameSetting
 
     public enum enum_CharacterUpgradeType { Invalid = -1, Health = 1, Armor = 2, MovementSpeed = 3, CriticalRate = 4, FireRate = 5, Damage = 6 }
 
+    public enum enum_PlayerWeaponType
+    {
+        Invalid=-1,
+        ProjectileShot,
+        ProjectileShotMulti,
+        CastMelee,
+    }
     public enum enum_PlayerWeapon
     {
         Invalid = -1,

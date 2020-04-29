@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class WeaponProjectileRailgun : WeaponProjectileBase
 {
-    public float F_StoreDamage;
     public int I_ChargeIndicatorIndex;
     protected int m_StoreProjectileDataIndex { get; private set; }
     SFXIndicator m_Indicator;
@@ -26,7 +25,7 @@ public class WeaponProjectileRailgun : WeaponProjectileBase
 
     protected void OnStoreTriggerSuccessful(bool storeScale)
     {
-        FireProjectiles(storeScale ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex,storeScale?GetWeaponDamageInfo(F_StoreDamage):GetWeaponDamageInfo(F_BaseDamage));
+        OnTriggerOnce(storeScale ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex,storeScale?GetWeaponDamageInfo(m_WeaponInfo.m_Damage):GetWeaponDamageInfo(m_WeaponInfo.m_Damage));
         OnTriggerSuccessful();
         PlayIndicator(false);
     }

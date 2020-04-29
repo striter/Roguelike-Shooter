@@ -192,7 +192,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
     }
 
-    protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
+    protected virtual float CalculateMovementSpeedBase() => F_MovementSpeed;
     protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_CharacterInfo.F_AimMovementStrictMultiply) : 1f;
     protected virtual Quaternion GetCharacterRotation() => m_CharacterRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);

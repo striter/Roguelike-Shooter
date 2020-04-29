@@ -191,7 +191,7 @@ namespace GameSetting_PlayerPerks
         public override int m_Index => 10015;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 25f;
-        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, Value1*m_Stack / 100f *m_Attacher.m_WeaponCurrent.m_BaseDamage, enum_DamageType.Basic,105,true);
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, Value1*m_Stack / 100f *m_Attacher.m_WeaponCurrent.m_WeaponInfo.m_Damage, enum_DamageType.Basic,105,true);
         public override void OnKillEnermy(EntityCharacterBase target)
         {
             base.OnKillEnermy(target);
@@ -429,6 +429,15 @@ namespace GameSetting_PlayerPerks
             m_SFXWeapon.OnPlay(null,m_Attacher.GetAimingPosition());
         }
         public P10030(PerkSaveData saveData) : base(saveData) { }
+    }
+
+    public class P10031:ExpirePlayerPerkBase
+    {
+        public override int m_Index => 10031;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override float Value1 => 3;
+        public override int I_Projectile_Multi_PelletsAdditive => (int)Value1 * m_Stack;
+        public P10031(PerkSaveData saveData) : base(saveData) { }
     }
 
     public class ExpirePlayerPerkWeapon : ExpirePlayerPerkBase

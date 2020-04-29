@@ -946,6 +946,7 @@ namespace GameSetting
         public float F_ClipMultiply { get; private set; } = 1f;
         public float F_Projectile_SpeedMuiltiply { get; private set; } = 1f;
         public bool B_Projectile_Penetrate { get; private set; } = false;
+        public int I_Projectile_Multi_PelletsAdditive { get; private set; } = 0;
         public int CheckClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
@@ -1047,12 +1048,13 @@ namespace GameSetting
             base.OnResetInfo();
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
-            B_Projectile_Penetrate = false;
             F_SpreadMultiply = 1f;
+            B_Projectile_Penetrate = false;
             F_Projectile_SpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
             F_MaxHealthAdditive = 0f;
             F_MaxArmorAdditive = 0;
+            I_Projectile_Multi_PelletsAdditive = 0;
         }
         protected override void OnSetExpireInfo(EntityExpireBase expire)
         {
@@ -1077,10 +1079,11 @@ namespace GameSetting
                         I_ClipAdditive += perk.I_ClipAdditive;
                         F_ClipMultiply += perk.F_ClipMultiply;
 
-                        F_Projectile_SpeedMuiltiply += perk.F_ProjectileSpeedMultiply;
-                        B_Projectile_Penetrate |= perk.B_Projectile_Penetrate;
                         F_MaxHealthAdditive += perk.m_MaxHealthAdditive;
                         F_MaxArmorAdditive += perk.m_MaxArmorAdditive;
+                        F_Projectile_SpeedMuiltiply += perk.F_Projectile_SpeedMultiply;
+                        B_Projectile_Penetrate |= perk.B_Projectile_Penetrate;
+                        I_Projectile_Multi_PelletsAdditive += perk.I_Projectile_Multi_PelletsAdditive;
                     }
                     break;
             }
@@ -1276,12 +1279,13 @@ namespace GameSetting
         
         public void OnStackUp() => m_Stack++;
 
-        public virtual float F_SpreadReduction => 0;
         public virtual float F_AimPressureReduction => 0;
-        public virtual float F_ProjectileSpeedMultiply => 0;
+        public virtual float F_SpreadReduction => 0;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
+        public virtual float F_Projectile_SpeedMultiply => 0;
         public virtual bool B_Projectile_Penetrate => false;
+        public virtual int I_Projectile_Multi_PelletsAdditive => 0;
     }
 
     public class ExpireEnermyPerkBase:EntityExpireBase

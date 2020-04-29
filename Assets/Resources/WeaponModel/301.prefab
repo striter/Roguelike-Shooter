@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 4013817647996756}
   - component: {fileID: 114637620076019142}
   m_Layer: 0
-  m_Name: HeavySword
+  m_Name: 301
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -400,5 +400,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 2001
   B_AttachLeft: 0
-  F_BaseDamage: 30
   I_ExtraBuffApply: -1
