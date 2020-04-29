@@ -237,7 +237,7 @@ namespace GameSetting_PlayerPerks
             m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, -m_Attacher.m_Health.m_MaxHealth *m_Stack* Value2 / 100f, enum_DamageType.Health, true));
             m_HealTimer.Replay();
         }
-        public P10017(PerkSaveData saveData) : base(saveData) { m_HealTimer = new TimerBase(Value1); }
+        public P10017(PerkSaveData saveData) : base(saveData) { m_HealTimer = new TimerBase(Value1,true); }
     }
 
     public class P10018 : ExpirePlayerPerkBase
