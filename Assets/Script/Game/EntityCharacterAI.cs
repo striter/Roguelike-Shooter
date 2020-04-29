@@ -99,12 +99,11 @@ public class EntityCharacterAI : EntityCharacterBase {
         transform.position = NavigationManager.NavMeshPosition(transform.position + m_DamageImpact*deltaTime);
     }
 
-    protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
+    protected override float OnReceiveDamageAmount(DamageInfo damageInfo, Vector3 direction)
     {
-        if (damageDirection != Vector3.zero)
-            m_DamageImpact += -damageDirection * GameConst.AI.F_AIDeadImpactPerDamageValue * -damageInfo.m_AmountApply;
-
-        return base.OnReceiveDamage(damageInfo, damageDirection);
+        float amount = base.OnReceiveDamageAmount(damageInfo, direction);
+        m_DamageImpact += direction * GameConst.AI.F_AIDeadImpactPerDamageValue * amount;
+        return amount;
     }
 
     protected virtual void OnAttackAnim(bool startAttack)

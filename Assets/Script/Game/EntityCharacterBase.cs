@@ -143,14 +143,18 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterRevive, this);
     }
 
-    protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
+    protected override float OnReceiveDamageAmount(DamageInfo damageInfo, Vector3 direction)
     {
         if (m_IsDead)
-            return false;
-        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_SourceID, buffInfo)); });
-        return base.OnReceiveDamage(damageInfo, damageDirection);
-    }
+            return 0;
 
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthWillChange, damageInfo, this);
+        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_SourceID, buffInfo)); });
+        float amount = base.OnReceiveDamageAmount(damageInfo, direction);
+        if (amount != 0)
+            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, this,amount);
+        return amount;
+    }
     protected override void OnDead()
     {
         base.OnDead();

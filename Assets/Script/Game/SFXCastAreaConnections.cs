@@ -43,35 +43,30 @@ public class SFXCastAreaConnections : SFXCast {
             m_Renderer.SetPosition(1, targetTrans.position);
         }
     }
-    TSpecialClasses.ParticleControlBase m_GroundParticles;
-    Transform tf_GroundAttach;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         Transform connections = transform.Find("Connections");
         m_Connections = new ObjectPoolListClass<EntityBase, ConnectionsItem>(connections,"Item");
-        m_GroundParticles = new TSpecialClasses.ParticleControlBase(transform.Find("ParticlesGround"));
     }
     public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans)
     {
         base.PlayControlled(sourceID, entity, directionTrans);
-        tf_GroundAttach = entity.transform;
         m_Particle.Clear();
     }
 
     protected override void OnPlay()
     {
         base.OnPlay();
-        m_GroundParticles.Play();
         m_Connections.Clear();
     }
 
     protected override void OnStop()
     {
         base.OnStop();
-        m_GroundParticles.Stop();
         m_Connections.Clear();
     }
+
     protected override List<EntityBase> DoCastDealtDamage()
     {
         List<EntityBase> entityEffecting = base.DoCastDealtDamage();
@@ -85,6 +80,7 @@ public class SFXCastAreaConnections : SFXCast {
         });
         return entityEffecting;
     }
+
     float check;
     protected override void Update()
     {
@@ -92,8 +88,6 @@ public class SFXCastAreaConnections : SFXCast {
         if (!B_Playing)
             return;
 
-        m_GroundParticles.transform.position = tf_GroundAttach.position;
-        m_GroundParticles.transform.rotation = tf_GroundAttach.rotation;
         m_Connections.m_ActiveItemDic.Traversal((ConnectionsItem item)=>item.Tick(Time.deltaTime));
     }
 }

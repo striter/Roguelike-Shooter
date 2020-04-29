@@ -182,14 +182,14 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
     {
         base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
+        if (damageEntity.m_EntityID == m_EntityID && amountApply > 0)
+            m_ArmorRegenTimer.Replay();
+
         if (damageInfo.m_SourceID == m_EntityID)
         {
             if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
-                m_CharacterInfo.OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
+                m_CharacterInfo.OnKilledEnermy(damageEntity);
         }
-
-        if (damageEntity.m_EntityID == m_EntityID&&amountApply>0)
-            m_ArmorRegenTimer.Replay();
     }
 
     protected virtual float CalculateMovementSpeedBase() => (F_MovementSpeed - m_WeaponCurrent.m_WeaponInfo.m_Weight);
@@ -357,7 +357,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_TargetCheckTimer.Tick(deltaTime);
         if (m_AimingTarget == null || !m_AimingTarget.m_TargetAvailable || !m_TargetCheckTimer.m_Timing)
         {
-            m_AimingTarget =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase+ m_CharacterInfo.F_AimRangeAdditive):null;
+            m_AimingTarget =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase):null;
             m_TargetCheckTimer.Replay();
         }
     }
@@ -431,14 +431,11 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     }
     #endregion
     #region UI Indicator
-    protected override bool OnReceiveDamage(DamageInfo damageInfo, Vector3 damageDirection)
+    protected override float OnReceiveDamageAmount(DamageInfo damageInfo, Vector3 direction)
     {
-        if (base.OnReceiveDamage(damageInfo, damageDirection))
-        {
-            if(damageDirection!=Vector3.zero) GameManagerBase.Instance.SetEffect_Impact(transform.InverseTransformDirection(damageDirection));
-            return true;
-        }
-        return false;
+        float amount= base.OnReceiveDamageAmount(damageInfo, direction);
+        GameManagerBase.Instance.SetEffect_Impact(transform.InverseTransformDirection(direction));
+        return amount;
     }
 
     protected void OnUICommonStatus()

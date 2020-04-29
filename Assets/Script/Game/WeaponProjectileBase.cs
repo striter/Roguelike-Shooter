@@ -42,9 +42,8 @@ public class WeaponProjectileBase : WeaponBase
     void FireProjectile(int projectilIndex, SFXProjectile projectileData,DamageInfo damageInfo, Vector3 direction)
     {
         SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(projectilIndex, m_Muzzle.position, direction);
-        projectile.F_Speed = m_Attacher.m_CharacterInfo.F_ProjectileSpeedMuiltiply*projectileData.F_Speed;
-        projectile.B_Penetrate = projectileData.B_Penetrate || m_Attacher.m_CharacterInfo.F_PenetrateAdditive > UnityEngine.Random.Range(0, 1);
-
+        projectile.F_Speed = m_Attacher.m_CharacterInfo.F_Projectile_SpeedMuiltiply*projectileData.F_Speed;
+        projectile.B_Penetrate = projectileData.B_Penetrate || m_Attacher.m_CharacterInfo.B_Projectile_Penetrate;
         projectile.Play(damageInfo, direction, m_Attacher.tf_Weapon.position + direction * GameConst.I_ProjectileMaxDistance);
     }
 }

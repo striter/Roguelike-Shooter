@@ -65,7 +65,7 @@ public class CE_MainCameraTexture:CameraEffectBase
         m_DepthTextureBuffer = new CommandBuffer() { name="Depth Texture Copy"};
         m_OpaqueTextureBuffer = new CommandBuffer() { name="Opaque Texture Copy"};
         m_Manager.m_Camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, m_DepthTextureBuffer);
-        m_Manager.m_Camera.AddCommandBuffer(CameraEvent.BeforeForwardAlpha, m_OpaqueTextureBuffer);
+        m_Manager.m_Camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, m_OpaqueTextureBuffer);
     }
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -107,7 +107,7 @@ public class CE_MainCameraTexture:CameraEffectBase
         RenderTexture.ReleaseTemporary(m_ColorBuffer);
         RenderTexture.ReleaseTemporary(m_DepthBuffer);
         m_Manager.m_Camera.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, m_DepthTextureBuffer);
-        m_Manager.m_Camera.RemoveCommandBuffer(CameraEvent.BeforeForwardAlpha, m_OpaqueTextureBuffer);
+        m_Manager.m_Camera.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, m_OpaqueTextureBuffer);
         m_Manager.m_Camera.targetTexture = null;
         base.OnDestroy();
     }
@@ -620,7 +620,9 @@ public class PE_DepthSSAO : PostEffectBase
             new Vector3(-0.3577f,-0.5301f,-0.4358f),  new Vector3(-0.3169f, 0.1063f, 0.0158f),new Vector3( 0.0103f,-0.5869f, 0.0046f),  new Vector3(-0.0897f,-0.4940f, 0.3287f),
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
     public void SetAOEnable(bool enable)=>m_Enabled = enable;
-
+    public override bool m_DoGraphicBlitz => false;
+    CommandBuffer m_Buffer;
+    
     public PE_DepthSSAO SetEffect(Color aoColor, float strength = 1f, float texelRadius = 15f, float _fallOff = 0.002f, Texture _noiseTex = null, int _sampleCount = 16)
     {
         Vector4[] array = new Vector4[m_DepthSampleArray.Length];

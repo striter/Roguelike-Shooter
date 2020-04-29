@@ -49,6 +49,8 @@ namespace GameSetting
         public const float F_EliteBuffTimerTickRateMultiplyHealthLoss = 2f; //每秒加几tick=(1+血量损失比例* X)
         public static readonly List<int> L_GameEliteIndexes = new List<int>() { 107, 207, 306, 407, 507 };
         public static readonly List<EliteBuffCombine> L_GameEliteBuff = new List<EliteBuffCombine>() { new EliteBuffCombine(211, 12010, 32010), new EliteBuffCombine(213, 12030, 32030), new EliteBuffCombine(214, 12040, 32040), new EliteBuffCombine(215, 12050, 32050), new EliteBuffCombine(216, 12060, 32060) };
+
+        public static readonly List<int> m_GameDebuffID = new List<int>() { 103, 104, 105 };
         #endregion
         #region Interacts
         public static readonly RangeInt RI_GameEventGenerate = new RangeInt(20, 6);
@@ -359,23 +361,25 @@ namespace GameSetting
             m_CurrentHealth = m_MaxHealth;
         }
         public void OnSetHealth(float reviveHealth)=> m_CurrentHealth = reviveHealth;
-        public virtual bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
+        public virtual float OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
+            float amountApply = 0;
             if (damageInfo.m_DamageType == enum_DamageType.Armor)
-                return false;
+                return amountApply;
 
             if (damageInfo.m_AmountApply < 0)
             {
-                DamageHealth(damageInfo.m_AmountApply * healEnhance);
+                amountApply = damageInfo.m_AmountApply * healEnhance;
+                DamageHealth(amountApply);
                 OnHealthChanged?.Invoke(enum_HealthChangeMessage.ReceiveHealth);
             }
             else
             {
-                DamageHealth(damageInfo.m_AmountApply * damageReduction);
+                amountApply = damageInfo.m_AmountApply * damageReduction;
+                DamageHealth(amountApply);
                 OnHealthChanged?.Invoke(enum_HealthChangeMessage.DamageHealth);
             }
-            
-            return true;
+            return amountApply;
         }
     }
     public class EntityHealth : HealthBase
@@ -426,46 +430,47 @@ namespace GameSetting
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
 
-        public override bool OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
+        public override float OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
-            TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthWillChange, damageInfo, m_Entity);
-            
-            if(damageInfo.m_DamageType== enum_DamageType.HealthPenetrate)
+            float amountApply = damageInfo.m_AmountApply;
+            if (amountApply == 0)
+                return amountApply;
+            enum_HealthChangeMessage message = enum_HealthChangeMessage.Invalid;
+            if (damageInfo.m_DamageType == enum_DamageType.HealthPenetrate)
             {
                 damageReduction = 1;
                 healEnhance = 1;
             }
 
-            float basicAmount = damageInfo.m_AmountApply;
             if (damageInfo.m_AmountApply > 0)    //Damage
             {
                 if (damageReduction <= 0)
-                    return false;
-                basicAmount *= damageReduction;
+                    return 0;
+                amountApply *= damageReduction;
                 switch (damageInfo.m_DamageType)
                 {
                     case enum_DamageType.Basic:
                         {
-                            float healthDamage = basicAmount - m_CurrentArmor;
-                            DamageArmor(basicAmount);
+                            float healthDamage = amountApply - m_CurrentArmor;
+                            DamageArmor(amountApply);
                             if (healthDamage > 0)
                                 DamageHealth(healthDamage);
-                            OnHealthChanged(healthDamage >= 0 ? enum_HealthChangeMessage.DamageHealth : enum_HealthChangeMessage.DamageArmor);
+                            message = healthDamage >= 0 ? enum_HealthChangeMessage.DamageHealth : enum_HealthChangeMessage.DamageArmor;
                         }
                         break;
                     case enum_DamageType.Armor:
                         {
                             if (m_CurrentArmor <= 0)
-                                return false;
-                            DamageArmor(basicAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.DamageArmor);
+                                return 0;
+                            DamageArmor(amountApply);
+                            message = enum_HealthChangeMessage.DamageArmor;
                         }
                         break;
                     case enum_DamageType.HealthPenetrate:
                     case enum_DamageType.Health:
                         {
-                            DamageHealth(basicAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.DamageHealth);
+                            DamageHealth(amountApply);
+                            message = enum_HealthChangeMessage.DamageHealth;
                         }
                         break;
                     default:
@@ -479,35 +484,35 @@ namespace GameSetting
                 {
                     case enum_DamageType.Basic:
                         {
-                            basicAmount *= healEnhance;
-                            float armorReceive = basicAmount - m_CurrentHealth + m_MaxHealth;
-                            DamageHealth(basicAmount);
+                            amountApply *= healEnhance;
+                            float armorReceive = amountApply - m_CurrentHealth + m_MaxHealth;
+                            DamageHealth(amountApply);
                             if (armorReceive > 0)
                             {
-                                OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
-                                return true;
+                                message = enum_HealthChangeMessage.ReceiveHealth;
+                                break;
                             }
 
                             DamageArmor(armorReceive);
-                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
+                            message = enum_HealthChangeMessage.ReceiveArmor;
                         }
                         break;
                     case enum_DamageType.Armor:
                         {
                             if (m_ArmorFull)
                                 break;
-                            DamageArmor(basicAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.ReceiveArmor);
+                            DamageArmor(amountApply);
+                            message = enum_HealthChangeMessage.ReceiveArmor;
                         }
                         break;
                     case enum_DamageType.HealthPenetrate:
                     case enum_DamageType.Health:
                         {
-                            basicAmount *= healEnhance;
-                            if (m_HealthFull || basicAmount > 0)
+                            amountApply *= healEnhance;
+                            if (m_HealthFull || amountApply > 0)
                                 break;
-                            DamageHealth(basicAmount);
-                            OnHealthChanged(enum_HealthChangeMessage.ReceiveHealth);
+                            DamageHealth(amountApply);
+                            message = enum_HealthChangeMessage.ReceiveHealth;
                         }
                         break;
                     default:
@@ -515,10 +520,12 @@ namespace GameSetting
                         break;
                 }
             }
-            if (basicAmount != 0)
-                TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, m_Entity, basicAmount);
-            return true;
+            if (message != enum_HealthChangeMessage.Invalid)
+                OnHealthChanged(message);
+
+            return amountApply;
         }
+
     }
 
     public class EntityPlayerHealth:EntityHealth
@@ -564,6 +571,7 @@ namespace GameSetting
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageCriticalMultipy { get; private set; } = 0;
         public enum_DamageType m_DamageType { get; private set; } = enum_DamageType.Invalid;
+        public bool m_ExpireDamage { get; private set; } = false;
 
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
         public void AddExtraBuff(int presetBuffID) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(presetBuffID));
@@ -585,11 +593,12 @@ namespace GameSetting
                 AddExtraBuff(extraBuffID);
         }
 
-        public DamageInfo(int sourceID,float damage,enum_DamageType type)
+        public DamageInfo(int sourceID,float damage,enum_DamageType type,bool expireDamage=false)
         {
             m_SourceID = sourceID;
             m_DamageBase = damage;
             m_DamageType = type;
+            m_ExpireDamage = expireDamage;
         }
 
         public DamageInfo(int sourceID, int buffInfo)
@@ -601,6 +610,15 @@ namespace GameSetting
         {
             m_SourceID = sourceID;
             m_BaseBuffApply.Add(buffInfo);
+        }
+
+        public DamageInfo(int sourceID,float damage,enum_DamageType type,  int buffInfo, bool expireDamage = false)
+        {
+            m_SourceID = sourceID;
+            m_DamageBase = damage;
+            m_DamageType = type;
+            m_ExpireDamage = expireDamage;
+            AddExtraBuff(buffInfo);
         }
 
         public float m_AmountApply => m_DamageBase * m_BaseDamageMultiply;
@@ -848,6 +866,7 @@ namespace GameSetting
 
         public void OnWillDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnBeforeDealtDamage(damageEntity, damageInfo); });
         public void OnDealtDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float applyAmount) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnDealtDamage(damageEntity, damageInfo, applyAmount); });
+        public void OnKillEnermy(EntityCharacterBase damageEntity) => m_Expires.Traversal((EntityExpireBase interact) => { });
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
         public void OnAfterReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnReceiveDamage(damageInfo, amountApply); });
         public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
@@ -923,12 +942,10 @@ namespace GameSetting
 
         public float F_SpreadMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
-        public float F_ProjectileSpeedMuiltiply { get; private set; } = 1f;
-        public float F_PenetrateAdditive { get; private set; } = 0;
-        public float F_AimRangeAdditive { get; private set; } = 0;
-        public float F_CoinsCostMultiply { get; private set; } = 0f;
         public int I_ClipAdditive { get; private set; } = 0;
         public float F_ClipMultiply { get; private set; } = 1f;
+        public float F_Projectile_SpeedMuiltiply { get; private set; } = 1f;
+        public bool B_Projectile_Penetrate { get; private set; } = false;
         public int CheckClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
@@ -962,7 +979,12 @@ namespace GameSetting
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
         public bool CheckRevive() => m_ExpirePerks.Any(p => p.Value.OnCheckRevive());
-        public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpirePlayerBase interact) => { interact.OnAbilityTrigger(); });
+        public void OnAbilityTrigger() => m_ExpireInteracts.Traversal((ExpirePlayerBase expire) => { expire.OnAbilityTrigger(); });
+        public void OnKilledEnermy(EntityCharacterBase target)
+        {
+            m_ExpireInteracts.Traversal((ExpirePlayerBase expire) => { expire.OnKillEnermy(target); });
+            OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
+        }
 
         public void OnActionPerkAcquire(int perkID)
         {
@@ -1025,14 +1047,12 @@ namespace GameSetting
             base.OnResetInfo();
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
-            F_PenetrateAdditive = 0;
-            F_AimRangeAdditive = 0;
+            B_Projectile_Penetrate = false;
             F_SpreadMultiply = 1f;
-            F_ProjectileSpeedMuiltiply = 1f;
+            F_Projectile_SpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
             F_MaxHealthAdditive = 0f;
             F_MaxArmorAdditive = 0;
-            F_CoinsCostMultiply = 1f;
         }
         protected override void OnSetExpireInfo(EntityExpireBase expire)
         {
@@ -1057,12 +1077,10 @@ namespace GameSetting
                         I_ClipAdditive += perk.I_ClipAdditive;
                         F_ClipMultiply += perk.F_ClipMultiply;
 
-                        F_ProjectileSpeedMuiltiply += perk.F_ProjectileSpeedMultiply;
-                        F_PenetrateAdditive += perk.F_PenetradeAdditive;
-                        F_AimRangeAdditive += perk.F_AimRangeAdditive;
+                        F_Projectile_SpeedMuiltiply += perk.F_ProjectileSpeedMultiply;
+                        B_Projectile_Penetrate |= perk.B_Projectile_Penetrate;
                         F_MaxHealthAdditive += perk.m_MaxHealthAdditive;
                         F_MaxArmorAdditive += perk.m_MaxArmorAdditive;
-                        F_CoinsCostMultiply -= perk.F_Discount;
                     }
                     break;
             }
@@ -1072,15 +1090,14 @@ namespace GameSetting
             base.AfterInfoSet();
             if (F_AimMovementStrictMultiply < 0) F_AimMovementStrictMultiply = 0;
             if (F_SpreadMultiply < 0) F_SpreadMultiply = 0;
-            if (F_CoinsCostMultiply < 0) F_CoinsCostMultiply = 0;
         }
         #endregion
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
         #region Coin/Key Info
-        public bool CanCostCoins(float price)=> m_Coins >= price* F_CoinsCostMultiply;
+        public bool CanCostCoins(float price)=> m_Coins >= price;
         public void OnCoinsCost(float price)
         {
-            m_Coins -= price * F_CoinsCostMultiply;
+            m_Coins -= price;
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate,this);
         }
         public void OnCoinsGain(float coinAmount)
@@ -1100,6 +1117,7 @@ namespace GameSetting
             m_Keys += keyAmount;
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
         }
+
         public void OnExpReceived(int exp)
         {
             m_RankManager.OnExpGainCheckLevelOffset(exp);
@@ -1185,7 +1203,7 @@ namespace GameSetting
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {
                 f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID,m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType,true));
             }
         }
     }
@@ -1210,6 +1228,7 @@ namespace GameSetting
 
         public virtual bool OnCheckRevive() { return false; }
         public virtual void OnAbilityTrigger() { }
+        public virtual void OnKillEnermy(EntityCharacterBase target) { }
     }
 
     public class ExpirePlayerUpgradeCombine: ExpirePlayerBase
@@ -1260,13 +1279,9 @@ namespace GameSetting
         public virtual float F_SpreadReduction => 0;
         public virtual float F_AimPressureReduction => 0;
         public virtual float F_ProjectileSpeedMultiply => 0;
-        public virtual bool B_ClipOverride => false;
         public virtual int I_ClipAdditive => 0;
         public virtual float F_ClipMultiply => 0;
-        public virtual float F_PenetradeAdditive => 0;
-        public virtual float F_AimRangeAdditive => 0;
-        public virtual float F_AllyHealthMultiplierAdditive => 0;
-        public virtual float F_Discount => 0f;
+        public virtual bool B_Projectile_Penetrate => false;
     }
 
     public class ExpireEnermyPerkBase:EntityExpireBase
