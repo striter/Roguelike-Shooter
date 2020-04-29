@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameSetting;
 using UnityEngine;
 
 public class WeaponCastMelee : WeaponCastBase {
-
+    protected override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.CastMelee;
+    
     public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
     {
         base.OnAnimEvent(eventType);
