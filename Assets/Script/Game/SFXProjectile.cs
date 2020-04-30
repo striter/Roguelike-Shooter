@@ -84,7 +84,7 @@ public class SFXProjectile : SFXWeaponBase
         return true;
     }
 
-    protected virtual void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
         {
@@ -97,11 +97,15 @@ public class SFXProjectile : SFXWeaponBase
                 break;
             case enum_HitCheck.Entity:
                 HitCheckEntity _entity = hitCheck as HitCheckEntity;
-                if (CanDamageEntity(_entity))
-                    _entity.TryHit(m_DamageInfo, transform.forward);
+                OnHitEntityDealtDamage(_entity);
                 m_EntityHitted.Add(_entity.I_AttacherID);
                 break;
         }
+    }
+    protected virtual void OnHitEntityDealtDamage(HitCheckEntity _entity)
+    {
+        if (CanDamageEntity(_entity))
+            _entity.TryHit(m_DamageInfo, transform.forward);
     }
     protected virtual bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {

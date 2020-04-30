@@ -18,12 +18,12 @@ public class SFXProjectileCastTrigger : SFXProjectile
         OnRecycle();
     }
 
-    protected override void OnHitTarget(RaycastHit hit, HitCheckBase hitCheck)
+    protected override void OnHitEntityDealtDamage(HitCheckEntity _entity)
     {
-        if (B_DealHitDamage)
-            base.OnHitTarget(hit, hitCheck);
+        if (!B_DealHitDamage)
+            return;
+        base.OnHitEntityDealtDamage(_entity);
     }
-
     protected override bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {
         OnCastTrigger(v3_castPoint);
