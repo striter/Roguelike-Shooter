@@ -9,8 +9,8 @@ namespace GameSetting
     public static class GameConst
     {
         #region Battle
-        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(25, 10);
-        public const float F_EnermyGenerateTickMultiplierPerMinute =.04f;
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(5, 35);
+        public const float F_EnermyGenerateTickMultiplierPerMinute =.02f;
         public const float F_EnermyGenerateTickMultiplierTransmiting = 1f;
 
         public const float F_EnermyMaxHealthMultiplierPerMinutePassed=.1f;
@@ -67,10 +67,10 @@ namespace GameSetting
         public const int I_DangerzoneDamage = 50;
         public const float F_DangerzoneResetDuration = 2f;
 
-        public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,10f }, { enum_GameEventType.HealthpackTrade, 10f }, { enum_GameEventType.WeaponTrade, 15f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 10f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 5f }, { enum_GameEventType.SafeBox, 2.5f }, };
+        public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,17.5f }, { enum_GameEventType.HealthpackTrade, 7.5f }, { enum_GameEventType.WeaponTrade, 15f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 10f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 0f }, { enum_GameEventType.SafeBox, 2.5f }, };
 
         public static RangeInt RI_CoinsSackAmount = new RangeInt(6, 9);
-        public const int I_EventMedpackPrice = 25;
+        public const int I_EventMedpackPrice = 0;
 
         public const int I_EventWeaponTradePrice = 15;
         public static Dictionary<enum_Rarity, float> D_EventWeaponTradeRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 25 },{ enum_Rarity.Epic, 15 } };
@@ -87,8 +87,8 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
         public const int I_PerkShrineTryCountMax = 5;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
-        public const int I_BloodShrineTryCountMax = 5;
-        public const int I_BloodShrineCoinsRate = 50;
+        public const int I_BloodShrineTryCountMax = 1;
+        public const int I_BloodShrineCoinsRate = 100;
         public const int I_BloodShrineCoinsAmount = 15;
         public const int I_HealShrineTryCountMax = 5;
         public const float F_HealShrineHealthReceive = 30f;
