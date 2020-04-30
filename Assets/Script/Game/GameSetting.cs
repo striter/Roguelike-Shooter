@@ -940,13 +940,15 @@ namespace GameSetting
         public float F_MaxHealthAdditive { get; private set; } = 0;
         public float F_MaxArmorAdditive { get; private set; } = 0;
 
-        public float F_SpreadMultiply { get; private set; } = 1f;
+        public float F_AimSpreadMultiply { get; private set; } = 1f;
         public float F_AimMovementStrictMultiply { get; private set; } = 1f;
         public int I_ClipAdditive { get; private set; } = 0;
         public float F_ClipMultiply { get; private set; } = 1f;
         public float F_Projectile_SpeedMuiltiply { get; private set; } = 1f;
         public bool B_Projectile_Penetrate { get; private set; } = false;
         public int I_Projectile_Multi_PelletsAdditive { get; private set; } = 0;
+        public float F_Projectile_Store_TickMultiply { get; private set; } = 1f;
+        public float F_Cast_Melee_SizeMultiply { get; private set; } = 1f;
         public int CheckClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
@@ -1048,13 +1050,15 @@ namespace GameSetting
             base.OnResetInfo();
             I_ClipAdditive = 0;
             F_ClipMultiply = 1f;
-            F_SpreadMultiply = 1f;
+            F_AimSpreadMultiply = 1f;
             B_Projectile_Penetrate = false;
             F_Projectile_SpeedMuiltiply = 1f;
             F_AimMovementStrictMultiply = 1f;
             F_MaxHealthAdditive = 0f;
             F_MaxArmorAdditive = 0;
             I_Projectile_Multi_PelletsAdditive = 0;
+            F_Projectile_Store_TickMultiply = 1f;
+            F_Cast_Melee_SizeMultiply = 1f;
         }
         protected override void OnSetExpireInfo(EntityExpireBase expire)
         {
@@ -1073,7 +1077,7 @@ namespace GameSetting
                 case enum_ExpireType.Perk:
                     {
                         ExpirePlayerPerkBase perk = expire as ExpirePlayerPerkBase;
-                        F_SpreadMultiply -= perk.F_SpreadReduction;
+                        F_AimSpreadMultiply -= perk.F_SpreadReduction;
                         F_AimMovementStrictMultiply -= perk.F_AimPressureReduction;
 
                         I_ClipAdditive += perk.I_ClipAdditive;
@@ -1084,6 +1088,8 @@ namespace GameSetting
                         F_Projectile_SpeedMuiltiply += perk.F_Projectile_SpeedMultiply;
                         B_Projectile_Penetrate |= perk.B_Projectile_Penetrate;
                         I_Projectile_Multi_PelletsAdditive += perk.I_Projectile_Multi_PelletsAdditive;
+                        F_Projectile_Store_TickMultiply += perk.F_Projectile_Store_TickMultiply;
+                        F_Cast_Melee_SizeMultiply += perk.F_Cast_Melee_SizeMultiply;
                     }
                     break;
             }
@@ -1092,7 +1098,9 @@ namespace GameSetting
         {
             base.AfterInfoSet();
             if (F_AimMovementStrictMultiply < 0) F_AimMovementStrictMultiply = 0;
-            if (F_SpreadMultiply < 0) F_SpreadMultiply = 0;
+            if (F_AimSpreadMultiply < 0) F_AimSpreadMultiply = 0;
+            if (F_Projectile_Store_TickMultiply < .1f) F_Projectile_Store_TickMultiply = .1f;
+            if (F_Cast_Melee_SizeMultiply < .1f) F_Cast_Melee_SizeMultiply = .1f;
         }
         #endregion
         public void RefreshEffects() => m_BuffEffects.Traversal((int expire, SFXEffect effect) => { effect.Play(m_Entity); });
@@ -1286,6 +1294,8 @@ namespace GameSetting
         public virtual float F_Projectile_SpeedMultiply => 0;
         public virtual bool B_Projectile_Penetrate => false;
         public virtual int I_Projectile_Multi_PelletsAdditive => 0;
+        public virtual float F_Projectile_Store_TickMultiply => 0f;
+        public virtual float F_Cast_Melee_SizeMultiply => 0f;
     }
 
     public class ExpireEnermyPerkBase:EntityExpireBase

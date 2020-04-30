@@ -147,6 +147,7 @@ namespace GameSetting
         ProjectileShot,
         ProjectileShotMulti,
         CastMelee,
+        CastDuration,
     }
     public enum enum_PlayerWeapon
     {

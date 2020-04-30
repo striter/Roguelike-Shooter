@@ -7,13 +7,14 @@ using UnityEngine;
 public class WeaponProjectileRailgun : WeaponProjectileBase
 {
     public int I_ChargeIndicatorIndex;
+    public float F_ChargeDuration;
     protected int m_StoreProjectileDataIndex { get; private set; }
     SFXIndicator m_Indicator;
     
     new WeaponTriggerStoring m_Trigger;
     protected override WeaponTrigger GetTrigger()
     {
-        m_Trigger= new WeaponTriggerStoring(m_WeaponInfo.m_FireRate, OnTriggerCheck, OnStoreTriggerSuccessful);
+        m_Trigger= new WeaponTriggerStoring(F_ChargeDuration, OnTriggerCheck, OnStoreTriggerSuccessful);
         return m_Trigger;
     } 
 
@@ -32,13 +33,13 @@ public class WeaponProjectileRailgun : WeaponProjectileBase
 
     public override void Tick(bool firePausing, float fireTick, float reloadTick)
     {
-        base.Tick(firePausing, fireTick, reloadTick);
+        base.Tick(firePausing, fireTick*m_Attacher.m_CharacterInfo.F_Projectile_Store_TickMultiply, reloadTick);
         PlayIndicator(m_Trigger.m_Storing);
     }
 
-    public override void OnPlay(bool play)
+    public override void OnShow(bool play)
     {
-        base.OnPlay(play);
+        base.OnShow(play);
         if (!play)
             PlayIndicator(false);
     }

@@ -16,7 +16,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
     public int I_ClipAmount { get; private set; } = 0;
-    public float F_Recoil => m_Attacher.m_CharacterInfo.F_SpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
+    public float F_Recoil => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
     protected WeaponTrigger m_Trigger { get; private set; }
     protected virtual WeaponTrigger GetTrigger() => new WeaponTriggerAuto(m_WeaponInfo.m_FireRate, OnTriggerCheck,OnAutoTriggerSuccessful);
     Action<float> OnFireRecoil;
@@ -40,25 +40,23 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_BaseSFXWeaponIndex = GameExpression.GetPlayerWeaponIndex(m_WeaponInfo.m_Index);
     }
 
-    public void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil)
+    public virtual void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo,Action<float> _OnFireRecoil)
     {
         m_Attacher = _attacher;
         transform.SetParentResetTransform(_attachTo);
         OnFireRecoil = _OnFireRecoil;
-        OnShow(true);
     }
-
-    public DamageInfo GetWeaponDamageInfo(float damage) => m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damage, I_ExtraBuffApply, enum_DamageType.Basic);
 
     public virtual void OnDetach()
     {
         m_Attacher = null;
-        OnShow(true);
     }
+    public DamageInfo GetWeaponDamageInfo(float damage) => m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damage, I_ExtraBuffApply, enum_DamageType.Basic);
 
-    public virtual void OnPlay(bool play)
+
+    public virtual void OnShow(bool play)
     {
-        OnShow(play);
+        transform.SetActivate(play);
 
         if (play)
             return;
@@ -66,7 +64,6 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_Trigger.OnTriggerStop();
     }
 
-    void OnShow(bool show)=>transform.SetActivate(show);
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
 
@@ -84,9 +81,9 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
         m_BulletRefillTimer.Replay();
     }
 
-    public virtual void Tick(bool firePausing, float fireTick,float reloadTick)
+    public virtual void Tick(bool firePausing, float triggerTick,float reloadTick)
     {
-        m_Trigger.Tick(firePausing,fireTick);
+        m_Trigger.Tick(firePausing,triggerTick);
         ReloadTick(reloadTick);
 
         int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(m_WeaponInfo.m_ClipAmount);
