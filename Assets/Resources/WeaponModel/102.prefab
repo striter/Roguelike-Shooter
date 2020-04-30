@@ -187,3 +187,4 @@ MonoBehaviour:
   I_ExtraBuffApply: -1
   F_AimSpread: 3
   I_ChargeIndicatorIndex: 39002
+  F_ChargeDuration: 2

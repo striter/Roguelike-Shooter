@@ -8,7 +8,7 @@ public class WeaponProjectileMultiShot : WeaponProjectileBase {
     public int I_PelletsPerShot=1;
     public float F_PelletSpreadAngle = 1;
 
-    public float GetPelletSpread() => m_Attacher.m_CharacterInfo.F_SpreadMultiply * F_PelletSpreadAngle;
+    public float GetPelletSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_PelletSpreadAngle;
     public int GetPelletPerShot() => m_Attacher.m_CharacterInfo.I_Projectile_Multi_PelletsAdditive + I_PelletsPerShot;
 
     protected override void FireProjectileTowards(Vector3 direction, int projectileIndex, SFXProjectile projectileData, DamageInfo damageInfo)

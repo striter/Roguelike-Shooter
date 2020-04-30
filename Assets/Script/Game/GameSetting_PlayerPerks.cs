@@ -440,6 +440,22 @@ namespace GameSetting_PlayerPerks
         public P10031(PerkSaveData saveData) : base(saveData) { }
     }
 
+    public class P10032 : ExpirePlayerPerkBase
+    {
+        public override int m_Index => 10032;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override float Value1 => 50f;
+        public override float F_Projectile_Store_TickMultiply => Value1 / 100f * m_Stack;
+        public P10032(PerkSaveData saveData) : base(saveData) { }
+    }
+    public class P10033 : ExpirePlayerPerkBase
+    {
+        public override int m_Index => 10033;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override float Value1 => 50f;
+        public override float F_Cast_Melee_SizeMultiply => Value1 / 100f * m_Stack;
+        public P10033(PerkSaveData saveData) : base(saveData) { }
+    }
     public class ExpirePlayerPerkWeapon : ExpirePlayerPerkBase
     {
         public WeaponHelperBase m_SFXWeapon { get; private set; }

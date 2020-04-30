@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using GameSetting;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponCastDuration : WeaponCastBase {
+    protected override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.CastDuration;
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
     protected override void OnAutoTriggerSuccessful()
@@ -13,16 +15,17 @@ public class WeaponCastDuration : WeaponCastBase {
             m_Cast.ControlledCheck(GetWeaponDamageInfo(m_WeaponInfo.m_Damage) );
     }
 
-    public override void OnPlay(bool play)
+    public override void OnShow(bool play)
     {
-        base.OnPlay(play);
+        base.OnShow(play);
         if (!play)
             SetCastAvailable(false);
     }
 
-    void Update()
+    public override void Tick(bool firePausing, float triggerTick, float reloadTick)
     {
-        SetCastAvailable(m_Attacher != null && m_Trigger.m_TriggerDown && m_HaveAmmoLeft && !m_Attacher.m_IsDead && !m_Attacher.m_weaponFirePause);
+        base.Tick(firePausing, triggerTick, reloadTick);
+        SetCastAvailable(m_Trigger.m_TriggerDown && m_HaveAmmoLeft && !m_Attacher.m_IsDead && !m_Attacher.m_weaponFirePause);
     }
 
     void SetCastAvailable(bool showCast)
@@ -32,7 +35,7 @@ public class WeaponCastDuration : WeaponCastBase {
 
         if (showCast)
         {
-            m_Cast = ShowCast();
+            m_Cast = ShowCast(m_Muzzle.position);
             m_Cast.PlayControlled(m_Attacher.m_EntityID, m_Attacher, m_Attacher.tf_WeaponAim);
         }
         else
