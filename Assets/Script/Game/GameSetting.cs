@@ -9,17 +9,17 @@ namespace GameSetting
     public static class GameConst
     {
         #region Battle
-        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(5, 35);
-        public const float F_EnermyGenerateTickMultiplierPerMinute =.02f;
-        public const float F_EnermyGenerateTickMultiplierTransmiting = 1f;
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(10, 30);
+        public const float F_EnermyGenerateTickMultiplierPerMinute =.05f;
+        public const float F_EnermyGenerateTickMultiplierTransmiting = 0.5f;
 
-        public const float F_EnermyMaxHealthMultiplierPerMinutePassed=.1f;
+        public const float F_EnermyMaxHealthMultiplierPerMinutePassed=.2f;
         public const float F_EnermyMaxHealthMultiplierPerDifficultyAboveNormal = .25f;
-        public const float F_EnermyDamageMultiplierPerMinutePassed = .05f;
+        public const float F_EnermyDamageMultiplierPerMinutePassed = .1f;
         public const float F_EnermyDamageMultiplierPerDifficultyAboveNormal = .25f;
 
-        public const float F_EnermyEliteGenerateBase = 10f;
-        public const float F_EnermyEliteGeneratePerMinuteMultiplier = 1f;
+        public const float F_EnermyEliteGenerateBase = 5f;
+        public const float F_EnermyEliteGeneratePerMinuteMultiplier = 2f;
         public const float F_SqrEnermyGenerateMinDistance = 400f; // 20*20
 
         public const float F_SignalTowerTransmitDuration = 40f;
@@ -55,7 +55,7 @@ namespace GameSetting
         #region Interacts
         public static readonly RangeInt RI_GameEventGenerate = new RangeInt(20, 6);
 
-        public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,3);
+        public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,5);
         public const float F_EnermyKeyGenerate = 2.5f;
 
         public const float F_PickupMaxSpeed = 100f;
@@ -82,10 +82,10 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventWeaponVendotTryCount = 5;
         public const int I_EventPerkLotteryPrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventPerkSelectPrice = 15;
-        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
-        public const int I_PerkShrineTryCountMax = 5;
+        public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+        public const int I_PerkShrineTryCountMax = 3;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 1;
         public const int I_BloodShrineCoinsRate = 100;
