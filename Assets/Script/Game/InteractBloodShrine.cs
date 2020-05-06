@@ -23,10 +23,10 @@ public class InteractBloodShrine : InteractGameBase {
         _interactor.m_HitCheck.TryHit(new DamageInfo(-1, _interactor.m_Health.m_MaxHealth*m_damageHealthScale, enum_DamageType.HealthPenetrate));
         m_TryCount++;
         m_damageHealthScale = GameExpression.GetBloodShrineHealthCostMultiple(m_TryCount);
-        if (TCommon.RandomPercentage() > GameConst.I_BloodShrineCoinsRate)
+        if (TCommon.RandomPercentage() <= GameConst.I_BloodShrineCoinsRate)
         {
             for (int i = 0; i < GameConst.I_BloodShrineCoinsAmount; i++)
-                GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, Quaternion.identity).Play(1).PlayDropAnim(NavigationManager.NavMeshPosition(_interactor.transform.position + TCommon.RandomXZCircle() * 4f)).PlayMoveAnim(_interactor.transform.position);
+                GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, Quaternion.identity).Play(1).PlayDropAnim(NavigationManager.NavMeshPosition(_interactor.transform.position + TCommon.RandomXZCircle() * 4f)).PlayMoveAnim(_interactor.transform);
             GameObjectManager.PlayMuzzle(-1, _interactor.transform.position, Vector3.up, I_MuzzleSuccess);
         }
         return m_TryCount < GameConst.I_BloodShrineTryCountMax;
