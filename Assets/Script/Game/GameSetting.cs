@@ -88,8 +88,7 @@ namespace GameSetting
         public const int I_PerkShrineTryCountMax = 3;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 1;
-        public const int I_BloodShrineCoinsRate = 100;
-        public const int I_BloodShrineCoinsAmount = 15;
+        public static readonly RangeInt RI_BloodShrintCoinsAmount = new RangeInt(10, 10);
         public const int I_HealShrineTryCountMax = 5;
         public const float F_HealShrineHealthReceive = 30f;
 
