@@ -224,7 +224,7 @@ namespace GameSetting_PlayerPerks
         public override int m_Index => 10017;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 3f;
-        public override float Value2 => 1f;
+        public override float Value2 => 5f;
         TimerBase m_HealTimer = new TimerBase(3f,true);
         public override void OnTick(float deltaTime)
         {
