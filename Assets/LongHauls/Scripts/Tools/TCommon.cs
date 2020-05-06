@@ -384,8 +384,8 @@ public static class TCommon
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
     public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(1, 101)  : UnityEngine.Random.Range(1, 101);
 
-    public static T RandomPercentage<T>(Dictionary<T, int> percentageRate, System.Random seed) => RandomPercentage(percentageRate,default(T),seed);
-    public static T RandomPercentage<T>( Dictionary<T, int> percentageRate,T invlaid=default(T), System.Random seed = null)
+    public static T RandomPercentage<T>(this Dictionary<T, int> percentageRate, System.Random seed) => RandomPercentage(percentageRate,default(T),seed);
+    public static T RandomPercentage<T>(this Dictionary<T, int> percentageRate,T invlaid=default(T), System.Random seed = null)
     {
         float value = RandomPercentage(seed);
         T targetLevel = invlaid;
@@ -403,7 +403,7 @@ public static class TCommon
         });
         return targetLevel;
     }
-    public static T RandomPercentage<T>(Dictionary<T, float> percentageRate, T invalid = default(T), System.Random seed = null)
+    public static T RandomPercentage<T>(this Dictionary<T, float> percentageRate, T invalid = default(T), System.Random seed = null)
     {
         float value = RandomPercentage(seed);
         T targetLevel = invalid;

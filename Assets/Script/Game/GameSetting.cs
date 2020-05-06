@@ -79,8 +79,8 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
 
         public const int I_EventWeaponVendorMachinePrice = 10;
-        public static readonly Dictionary<enum_Rarity, int> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
-        public const int I_EventWeaponVendotTryCount = 5;
+        public static readonly Dictionary<enum_Rarity, float> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+        public const int I_EventWeaponVendorTryCount = 5;
         public const int I_EventPerkLotteryPrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventPerkSelectPrice = 15;
@@ -94,10 +94,18 @@ namespace GameSetting
 
         public static readonly RangeInt I_EventSafeCoinsAmount = new RangeInt(10,10);
         public static readonly RangeInt RI_EventSafeWeaponCount = new RangeInt(1, 1);
-        public static readonly Dictionary<enum_Rarity, int> D_EventSafeWeaponRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
+        public static readonly Dictionary<enum_Rarity, float> D_EventSafeWeaponRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
         public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
         public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
 
+        public static readonly Dictionary<enum_GameStage, Dictionary<int, float>> m_StageWeaponEnhanceLevel = new Dictionary<enum_GameStage, Dictionary<int, float>>()
+        {
+            {enum_GameStage.Rookie,new Dictionary<int, float>(){ {1,15 },{2,5 } } },
+            {enum_GameStage.Militia,new Dictionary<int, float>(){ { 1,20},{2,10 },{3,5 } } },
+            {enum_GameStage.Veteran,new Dictionary<int, float>(){ {1,25 },{2,25 },{3,15 },{4,5 } } },
+            {enum_GameStage.Elite,new Dictionary<int, float>(){ {1,30 },{2,20 },{3,7.5f },{ 4,5},{ 5,2.5f} } },
+            {enum_GameStage.Ranger,new Dictionary<int, float>(){ {1,35 },{2,25 },{3,10 },{ 4,5} ,{ 5,5} } },
+        };
         #endregion        
         public static class AI
         {
@@ -167,7 +175,9 @@ namespace GameSetting
         public static int GetPlayerPerkSFXWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
-        
+
+        public static float GetPlayerWeaponBaseDamageMultiplyAdditive(enum_Rarity weaponRarity, int enhanceLevel) => (.10f + .05f * (int)weaponRarity) * enhanceLevel;
+
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 
@@ -218,35 +228,6 @@ namespace GameSetting
             }
         }
         #endregion
-        public static float GetLevelObjectHealth(enum_TileObjectType objectType)
-        {
-            switch(objectType)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!");
-                    return -1;
-                case enum_TileObjectType.Dangerzone:
-                    return -1;
-                case enum_TileObjectType.Static1x1A:
-                case enum_TileObjectType.Static1x1B:
-                case enum_TileObjectType.Static1x1C:
-                case enum_TileObjectType.Static1x1D:
-                    return 100;
-                case enum_TileObjectType.Static2x1A:
-                case enum_TileObjectType.Static2x1B:
-                    return 200;
-                case enum_TileObjectType.Static2x2A:
-                case enum_TileObjectType.Static2x2B:
-                    return 400;
-                case enum_TileObjectType.Static3x2A:
-                case enum_TileObjectType.Static3x2B:
-                    return 600;
-                case enum_TileObjectType.Static3x3A:
-                case enum_TileObjectType.Static3x3B:
-                    return 900;
-            }
-        }
-        
         #region Cultivate
         public static int GetEquipmentEnhanceRequirement(enum_Rarity rarity, int level) => (1000 + 500 * (int)rarity) + (500 + (int)rarity * 250) * level;
         public static int GetEquipmentDeconstruct(enum_Rarity rarity, int level) => (500 + 250 * (int)rarity) + (250 + (int)rarity * 125) * level;

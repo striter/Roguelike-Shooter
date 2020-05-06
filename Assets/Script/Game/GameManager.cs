@@ -224,7 +224,7 @@ public class GameManager : GameManagerBase
                 interact = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventMedpackPrice, GameObjectManager.SpawnInteract<InteractPickupHealthPack>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_HealthPackAmount));
                 break;
             case enum_GameEventType.WeaponTrade:
-                interact = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventWeaponTradePrice, GameObjectManager.SpawnInteract<InteractPickupWeapon>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(WeaponSaveData.New(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponTradeRate, enum_Rarity.Invalid, m_GameLevel.m_Random)].RandomItem(m_GameLevel.m_Random))));
+                interact = GameObjectManager.SpawnInteract<InteractTradeContainer>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.I_EventWeaponTradePrice, SpawnRandomUnlockedWeapon(objectData.m_Pos,objectData.m_Rot,GameConst.D_EventWeaponTradeRate,spawnTrans,m_GameLevel.m_Random));
                 break;
             case enum_GameEventType.WeaponReforge:
                 interact = GameObjectManager.SpawnInteract<InteractWeaponReforge>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponReforgeRate, null)].RandomItem());
@@ -331,6 +331,8 @@ public class GameManager : GameManagerBase
     }
     #endregion
     #region Pickup Management
+    public InteractPickupWeapon SpawnRandomUnlockedWeapon(Vector3 pos,Quaternion rot,Dictionary<enum_Rarity,float> weaponGenerate,Transform trans=null, System.Random random = null)=> GameObjectManager.SpawnInteract<InteractPickupWeapon>(pos, rot,trans).Play(GameDataManager.RandomUnlockedWeaponData(weaponGenerate.RandomPercentage( enum_Rarity.Ordinary,random),m_GameLevel.m_GameStage,random));
+
     void SpawnBattleEnermyDeadDrops(EntityCharacterBase entity)
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy||entity.b_isSubEntity)

@@ -303,8 +303,7 @@ public static class GameObjectManager
             WeaponBase preset = TResources.GetPlayerWeapon(weaponData.m_Weapon);
             ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
         }
-        WeaponBase targetWeapon = ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity, Vector3.zero, Quaternion.identity);
-        return targetWeapon;
+        return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity, Vector3.zero, Quaternion.identity).InitWeapon(weaponData);
     }
     public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
     #endregion

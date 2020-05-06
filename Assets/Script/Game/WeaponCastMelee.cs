@@ -43,7 +43,7 @@ public class WeaponCastMelee : WeaponCastBase {
             return;
         SFXCast cast= ShowCast(m_Attacher.tf_Head.position);
         cast.V4_CastInfo = m_BaseSize * m_ScaleChecker.check1;
-        cast.Play(GetWeaponDamageInfo(m_WeaponInfo.m_Damage));
+        cast.Play(GetWeaponDamageInfo(m_BaseDamage));
     }
 
 }
