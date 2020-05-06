@@ -53,7 +53,7 @@ namespace GameSetting
         public static readonly List<int> m_GameDebuffID = new List<int>() { 103, 104, 105 };
         #endregion
         #region Interacts
-        public static readonly RangeInt RI_GameEventGenerate = new RangeInt(20, 6);
+        public static readonly RangeInt RI_GameEventGenerate = new RangeInt(30, 6);
 
         public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,5);
         public const float F_EnermyKeyGenerate = 2.5f;
@@ -67,7 +67,7 @@ namespace GameSetting
         public const int I_DangerzoneDamage = 50;
         public const float F_DangerzoneResetDuration = 2f;
 
-        public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,17.5f }, { enum_GameEventType.HealthpackTrade, 7.5f }, { enum_GameEventType.WeaponTrade, 15f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 10f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 0f }, { enum_GameEventType.SafeBox, 2.5f }, };
+        public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,17.5f }, { enum_GameEventType.HealthpackTrade, 7.5f }, { enum_GameEventType.WeaponTrade, 0f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 15f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 0f }, { enum_GameEventType.SafeBox, 2.5f }, };
 
         public static RangeInt RI_CoinsSackAmount = new RangeInt(6, 4);
         public const int I_EventMedpackPrice = 0;
@@ -88,7 +88,7 @@ namespace GameSetting
         public const int I_PerkShrineTryCountMax = 3;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 1;
-        public static readonly RangeInt RI_BloodShrintCoinsAmount = new RangeInt(10, 10);
+        public static readonly RangeInt RI_BloodShrintCoinsAmount = new RangeInt(10, 20);
         public const int I_HealShrineTryCountMax = 5;
         public const float F_HealShrineHealthReceive = 30f;
 
@@ -184,7 +184,7 @@ namespace GameSetting
 
         public static int GetPerkShrinePrice(int tryCount) =>5+ 5 * tryCount;
         public static int GetBloodShrinePrice(int tryCount) => 5 + 3 * tryCount;
-        public static float GetBloodShrineHealthCostMultiple(int count) => .1f + .05f * count;
+        public static float GetBloodShrineHealthCostMultiple(int count) => .5f + .05f * count;
         public static int GetHealShrinePrice(int tryCount) => 5 + 2 * tryCount;
         public static RangeInt GetEventTradePrice(enum_Interaction interactType,enum_Rarity perkRarity= enum_Rarity.Invalid,enum_Rarity weaponRarity= enum_Rarity.Invalid)
         {
