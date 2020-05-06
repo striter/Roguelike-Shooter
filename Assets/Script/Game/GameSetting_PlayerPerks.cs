@@ -174,7 +174,7 @@ namespace GameSetting_PlayerPerks
     public class P10014 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10014;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 100f;
         public override void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info)
         {
