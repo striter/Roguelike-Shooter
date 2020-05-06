@@ -16,8 +16,8 @@ public class InteractWeaponVendorMachine : InteractGameBase {
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        GameObjectManager.SpawnInteract<InteractPickupWeapon>(transform.position+TCommon.RandomXZCircle() , Quaternion.identity).Play(WeaponSaveData.New(GameDataManager.m_GameWeaponUnlocked[TCommon.RandomPercentage(GameConst.D_EventWeaponVendorMachineRate)].RandomItem()));
+        GameManager.Instance.SpawnRandomUnlockedWeapon(transform.position + TCommon.RandomXZCircle(), Quaternion.identity,GameConst.D_EventWeaponVendorMachineRate);
         m_TryCount++;
-        return m_TryCount<=GameConst.I_PerkShrineTryCountMax;
+        return m_TryCount<=GameConst.I_EventWeaponVendorTryCount;
     }
 }

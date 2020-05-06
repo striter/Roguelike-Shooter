@@ -130,25 +130,25 @@ public class UIC_PlayerStatus : UIControlBase
         public void UpdateData(WeaponBase weaponInfo)
         {
             transform.SetActivate(weaponInfo != null);
-            if (weaponInfo == null || !m_AmmoUpdate.Check(weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount))
+            if (weaponInfo == null || !m_AmmoUpdate.Check(weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount))
                 return;
 
-            string ammoText = string.Format("{0} / {1}", weaponInfo.I_AmmoLeft, weaponInfo.I_ClipAmount);
+            string ammoText = string.Format("{0} / {1}", weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount);
             m_AmmoAmount.text = ammoText;
             m_AmmoAmountProjection.text = ammoText;
 
-            if (m_AmmoGrid.m_Count != weaponInfo.I_ClipAmount)
+            if (m_AmmoGrid.m_Count != weaponInfo.m_ClipAmount)
             {
                 m_AmmoGrid.ClearGrid();
-                for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
+                for (int i = 0; i < weaponInfo.m_ClipAmount; i++)
                     m_AmmoGrid.AddItem(i);
 
-                float size = (m_AmmoGridWidth - m_AmmoLayout.padding.right - m_AmmoLayout.padding.left - (weaponInfo.I_ClipAmount - 1) * m_AmmoLayout.spacing.x) / weaponInfo.I_ClipAmount;
+                float size = (m_AmmoGridWidth - m_AmmoLayout.padding.right - m_AmmoLayout.padding.left - (weaponInfo.m_ClipAmount - 1) * m_AmmoLayout.spacing.x) / weaponInfo.m_ClipAmount;
                 m_AmmoLayout.cellSize = new Vector2(size, m_AmmoLayout.cellSize.y);
             }
 
-            for (int i = 0; i < weaponInfo.I_ClipAmount; i++)
-                m_AmmoGrid.GetItem(i).SetValid(i < weaponInfo.I_AmmoLeft);
+            for (int i = 0; i < weaponInfo.m_ClipAmount; i++)
+                m_AmmoGrid.GetItem(i).SetValid(i < weaponInfo.m_AmmoLeft);
 
         }
     }

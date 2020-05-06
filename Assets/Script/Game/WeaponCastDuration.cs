@@ -12,7 +12,7 @@ public class WeaponCastDuration : WeaponCastBase {
         base.OnAutoTriggerSuccessful();
         SetCastAvailable(true);
         if (m_Cast)
-            m_Cast.ControlledCheck(GetWeaponDamageInfo(m_WeaponInfo.m_Damage) );
+            m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage) );
     }
 
     public override void OnShow(bool play)

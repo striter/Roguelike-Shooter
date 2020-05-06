@@ -24,9 +24,9 @@ public class WeaponProjectileRailgun : WeaponProjectileBase
         m_StoreProjectileDataIndex = GameExpression.GetPlayerExtraWeaponIndex(m_WeaponInfo.m_Index);
     }
 
-    protected void OnStoreTriggerSuccessful(bool storeScale)
+    protected void OnStoreTriggerSuccessful(bool storeSuccessful)
     {
-        OnTriggerOnce(storeScale ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex,storeScale?GetWeaponDamageInfo(m_WeaponInfo.m_Damage):GetWeaponDamageInfo(m_WeaponInfo.m_Damage));
+        OnTriggerOnce(storeSuccessful ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex,GetWeaponDamageInfo(m_BaseDamage));
         OnTriggerSuccessful();
         PlayIndicator(false);
     }

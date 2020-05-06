@@ -74,7 +74,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         Teleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         if (!m_AssassinTarget.m_IsDead)
         {
-            m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.m_WeaponInfo.m_Damage + F_AbilityDamagePerStack * m_AssassinDamageStack));
+            m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.m_BaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack));
             if (m_AssassinTarget.m_Health.F_HealthMaxScale <= F_FinishBlowRate)
                 m_AssassinTarget.m_HitCheck.TryHit(new DamageInfo(m_EntityID, m_AssassinTarget.m_Health.m_MaxHealth, enum_DamageType.HealthPenetrate));
         }

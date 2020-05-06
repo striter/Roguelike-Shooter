@@ -13,7 +13,7 @@ public class WeaponProjectileBase : WeaponBase
     protected override void OnAutoTriggerSuccessful()
     {
         base.OnAutoTriggerSuccessful();
-        OnTriggerOnce(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_WeaponInfo.m_Damage));
+        OnTriggerOnce(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
     }
 
     RaycastHit hit;

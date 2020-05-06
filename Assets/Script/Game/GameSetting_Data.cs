@@ -142,6 +142,12 @@ namespace GameSetting
             });
         }
 
+        public static WeaponSaveData RandomUnlockedWeaponData(enum_Rarity rarity,enum_GameStage stage, System.Random random = null)
+        {
+            if (!m_GameWeaponUnlocked.ContainsKey(rarity))
+                rarity = enum_Rarity.Ordinary;
+            return WeaponSaveData.New(m_GameWeaponUnlocked[rarity].RandomItem(random), GameConst.m_StageWeaponEnhanceLevel[stage].RandomPercentage(0,random));
+        }
 
         public static float GetArmoryUnlockPrice(enum_PlayerWeapon weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
         public static bool CanArmoryUnlock(enum_PlayerWeapon weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
@@ -782,8 +788,9 @@ namespace GameSetting
     public struct WeaponSaveData : IDataConvert
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
-        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid };
-        public static WeaponSaveData New(enum_PlayerWeapon weapon) => new WeaponSaveData() { m_Weapon = weapon };
+        public int m_Enhance { get; private set; }
+        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:-1 };
+        public static WeaponSaveData New(enum_PlayerWeapon weapon,int enhanceLevel=0) => new WeaponSaveData() { m_Weapon = weapon,m_Enhance=enhanceLevel };
     }
 
     public struct MercenarySaveData : IDataConvert
