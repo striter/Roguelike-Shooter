@@ -79,7 +79,7 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
 
         public const int I_EventWeaponVendorMachinePrice = 15;
-        public static readonly Dictionary<enum_Rarity, float> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 35 }, { enum_Rarity.Advanced, 50 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+        public static readonly Dictionary<enum_Rarity, float> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
         public const int I_EventWeaponVendorTryCount = 0;
         public const int I_EventPerkLotteryPrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
