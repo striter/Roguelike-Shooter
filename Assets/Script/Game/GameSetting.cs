@@ -9,7 +9,7 @@ namespace GameSetting
     public static class GameConst
     {
         #region Battle
-        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(10, 30);
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(15, 30);
         public const float F_EnermyGenerateTickMultiplierPerMinute =.05f;
         public const float F_EnermyGenerateTickMultiplierTransmiting = 0.5f;
 
