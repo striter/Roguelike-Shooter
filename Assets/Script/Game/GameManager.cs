@@ -38,7 +38,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Coins", KeyCode.F5, "20", (string coins) => { GameObjectManager.SpawnInteract<InteractPickupCoin>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(coins)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Health", KeyCode.F6, "20", (string health) => { GameObjectManager.SpawnInteract<InteractPickupHealth>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(health)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => { GameObjectManager.SpawnInteract<InteractPickupArmor>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(armor)); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, enum_PlayerWeapon.Railgun, (enum_PlayerWeapon weapon) => {  GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(weapon));  });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, enum_PlayerWeapon.Railgun, (enum_PlayerWeapon weapon) => {  GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(weapon,5));  });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Interact", KeyCode.F9, enum_GameEventType.CoinsSack, (enum_GameEventType eventType) => { GenerateStageInteract(eventType, new ChunkGameObjectData(GameLevelManager.Instance.GetPlayerAtQuadrant().m_QuadrantIndex, enum_TileObjectType.Invalid, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + Vector3.forward * 2), Quaternion.identity)); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Rank Exp", KeyCode.F10, "10", (string value) => { m_LocalPlayer.m_CharacterInfo.OnExpReceived(int.Parse(value)); });
@@ -216,7 +216,7 @@ public class GameManager : GameManagerBase
         {
             default:
                 Debug.LogError("Invalid Convertions Here!");
-                break;
+                return;
             case enum_GameEventType.CoinsSack:
                 interact = GameObjectManager.SpawnInteract<InteractCoinSack>(objectData.m_Pos, objectData.m_Rot, spawnTrans).Play(GameConst.RI_CoinsSackAmount.Random(m_GameLevel.m_Random));
                 break;
