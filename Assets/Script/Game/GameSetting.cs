@@ -9,7 +9,7 @@ namespace GameSetting
     public static class GameConst
     {
         #region Battle
-        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(10, 30);
+        public static readonly RangeInt RI_EnermyGenerateDuration = new RangeInt(15, 30);
         public const float F_EnermyGenerateTickMultiplierPerMinute =.05f;
         public const float F_EnermyGenerateTickMultiplierTransmiting = 0.5f;
 
@@ -69,7 +69,7 @@ namespace GameSetting
 
         public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,17.5f }, { enum_GameEventType.HealthpackTrade, 7.5f }, { enum_GameEventType.WeaponTrade, 15f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 10f }, { enum_GameEventType.WeaponRecycle, 2.5f }, { enum_GameEventType.PerkLottery, 15f }, { enum_GameEventType.PerkSelect, 10f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 0f }, { enum_GameEventType.SafeBox, 2.5f }, };
 
-        public static RangeInt RI_CoinsSackAmount = new RangeInt(6, 9);
+        public static RangeInt RI_CoinsSackAmount = new RangeInt(6, 4);
         public const int I_EventMedpackPrice = 0;
 
         public const int I_EventWeaponTradePrice = 15;

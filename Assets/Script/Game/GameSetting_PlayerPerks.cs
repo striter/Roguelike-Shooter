@@ -82,7 +82,7 @@ namespace GameSetting_PlayerPerks
     public class P10007 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10007;
-        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 20;
         public override float m_MaxArmorAdditive => Value1 * m_Stack;
         public P10007(PerkSaveData saveData) : base(saveData) { }
@@ -91,8 +91,8 @@ namespace GameSetting_PlayerPerks
     public class P10008 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10008;
-        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
-        public override float Value1 => 10;
+        public override enum_Rarity m_Rarity => enum_Rarity.Epic;
+        public override float Value1 => 200;
         public override float m_MaxHealthAdditive => Value1 * m_Stack;
         public P10008(PerkSaveData saveData) : base(saveData) { }
     }
@@ -174,7 +174,7 @@ namespace GameSetting_PlayerPerks
     public class P10014 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10014;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 100f;
         public override void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info)
         {
@@ -224,7 +224,7 @@ namespace GameSetting_PlayerPerks
         public override int m_Index => 10017;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 3f;
-        public override float Value2 => 1f;
+        public override float Value2 => 5f;
         TimerBase m_HealTimer = new TimerBase(3f,true);
         public override void OnTick(float deltaTime)
         {
@@ -243,7 +243,7 @@ namespace GameSetting_PlayerPerks
     public class P10018 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10018;
-        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override int m_MaxStack => 1;
         public override float Value1 => 3f;
         public override int m_EffectIndex => m_Timer.m_Timing ? 40004 : 0;
@@ -285,7 +285,7 @@ namespace GameSetting_PlayerPerks
         public override int m_Index => 10020;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 20f;
-        public override float Value2 => 20f;
+        public override float Value2 => 10f;
         public override float m_DamageMultiply => Value1 / 100f * m_Stack;
         public override float m_DamageReduction => -Value2 / 100f * m_Stack;
         public P10020(PerkSaveData saveData) : base(saveData) { }
