@@ -26,7 +26,7 @@ public class InteractBloodShrine : InteractGameBase {
         if (TCommon.RandomPercentage() > GameConst.I_BloodShrineCoinsRate)
         {
             for (int i = 0; i < GameConst.I_BloodShrineCoinsAmount; i++)
-                GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, Quaternion.identity).Play(1).PlayDropAnim(NavigationManager.NavMeshPosition(_interactor.transform.position + TCommon.RandomXZCircle() * 4f));
+                GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, Quaternion.identity).Play(1).PlayDropAnim(NavigationManager.NavMeshPosition(_interactor.transform.position + TCommon.RandomXZCircle() * 4f)).PlayMoveAnim(_interactor.transform.position);
             GameObjectManager.PlayMuzzle(-1, _interactor.transform.position, Vector3.up, I_MuzzleSuccess);
         }
         return m_TryCount < GameConst.I_BloodShrineTryCountMax;
