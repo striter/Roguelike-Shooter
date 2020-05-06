@@ -45,7 +45,6 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     public WeaponBase InitWeapon(WeaponSaveData weaponData)
     {
         m_EnhanceLevel = weaponData.m_Enhance;
-        Debug.Log("Spawned Weapon:" + TDataConvert.Convert( weaponData));
         return this;
     }
 
