@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 3164482
+    totalSpriteSurfaceArea: 3166982
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -105,6 +105,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a6031d8c25ddd714593081b17c1de9a9, type: 3}
   - {fileID: 21300000, guid: 501504280dbebe648b70ebd05ea737ab, type: 3}
   - {fileID: 21300000, guid: 72afadcb6539fa44fa265b3681519e99, type: 3}
+  - {fileID: 21300000, guid: dbd1e369018e30f41a100b0a188aadee, type: 3}
   - {fileID: 21300000, guid: 264ebbff55b3fc440b027a93040e6add, type: 3}
   - {fileID: 21300000, guid: fc9516c7cbae83744bdeda41467239b9, type: 3}
   - {fileID: 21300000, guid: ecf5205912130214393bc27cfbe19041, type: 3}
@@ -187,6 +188,7 @@ SpriteAtlas:
   - UI_strip_white60
   - icon_Life
   - icon_Armor
+  - icon_scoreStart
   - icon_BulletNumber
   - control_bottom_bg
   - UI_common_angle_gray

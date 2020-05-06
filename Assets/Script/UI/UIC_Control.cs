@@ -128,11 +128,13 @@ public class UIC_Control : UIControlBase {
     {
         Transform transform;
         Image m_Weapon, m_Interact;
+        Text m_WeaponScore;
         public ControlMainButton(Transform _transform)
         {
             transform = _transform;
             m_Weapon = transform.Find("Weapon").GetComponent<Image>();
             m_Interact = transform.Find("Interact").GetComponent<Image>();
+            m_WeaponScore = m_Weapon.transform.Find("Score").GetComponent<Text>();
         }
 
         public void UpdateInfo(WeaponBase weapon,InteractBase interact)
@@ -140,7 +142,10 @@ public class UIC_Control : UIControlBase {
             bool m_weaponValid = weapon;
             bool m_interactValid = interact;
             if (m_weaponValid)
+            {
                 m_Weapon.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetWeaponMainIcon()];
+                m_WeaponScore.text = UIExpression.GetUIWeaponScore(weapon).ToString();
+            }
             if (m_interactValid)
                 m_Interact.sprite = UIManager.Instance.m_CommonSprites[interact.GetInteractMainIcon()];
             m_Interact.SetActivate(m_interactValid);
