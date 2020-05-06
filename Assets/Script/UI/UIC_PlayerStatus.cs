@@ -103,6 +103,7 @@ public class UIC_PlayerStatus : UIControlBase
     {
         m_ArmorLerp.ChangeValue(_healthManager.F_ArmorMaxScale);
         m_HealthLerp.ChangeValue(_healthManager.F_HealthMaxScale);
+
         m_ArmorAmount.text=string.Format("{0} <color=#FFCB4e>/ {1}</color>", (int)_healthManager.m_CurrentArmor,(int)_healthManager.m_MaxArmor);
         m_HealthAmount.text = string.Format("{0} <color=#FFCB4e>/ {1}</color>", (int)_healthManager.m_CurrentHealth,(int)_healthManager.m_MaxHealth);
     }

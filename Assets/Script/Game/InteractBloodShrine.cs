@@ -15,12 +15,11 @@ public class InteractBloodShrine : InteractGameBase {
         m_damageHealthScale = GameExpression.GetBloodShrineHealthCostMultiple(m_TryCount);
         return this;
     }
-    protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=>_interactor.m_Health.F_HealthMaxScale >m_damageHealthScale&&base.OnTryInteractCheck(_interactor);
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, _interactor.m_Health.m_MaxHealth*m_damageHealthScale, enum_DamageType.HealthPenetrate));
+        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, _interactor.m_Health.m_CurrentHealth*m_damageHealthScale, enum_DamageType.HealthPenetrate));
         m_TryCount++;
         m_damageHealthScale = GameExpression.GetBloodShrineHealthCostMultiple(m_TryCount);
         int amount = GameConst.RI_BloodShrintCoinsAmount.Random();
@@ -32,5 +31,4 @@ public class InteractBloodShrine : InteractGameBase {
         }
         return m_TryCount < GameConst.I_BloodShrineTryCountMax;
     }
-
 }
