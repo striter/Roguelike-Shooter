@@ -55,6 +55,8 @@ namespace GameSetting
         #region Interacts
         public static readonly RangeInt RI_GameEventGenerate = new RangeInt(25, 6);
 
+        public const float F_TradePriceMultiplyAdditivePerMin = .1f;
+
         public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,5);
         public const float F_EnermyKeyGenerate = 2.5f;
 
@@ -85,10 +87,12 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventPerkSelectPrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
+        public const int I_PerkShrineTradePrice = 10;
         public const int I_PerkShrineTryCountMax = 3;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 1;
         public static readonly RangeInt RI_BloodShrintCoinsAmount = new RangeInt(10, 20);
+        public const int I_HealShrineTradePrice = 10;
         public const int I_HealShrineTryCountMax = 5;
         public const float F_HealShrineHealthReceive = 30f;
 
@@ -191,42 +195,9 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(enum_GameDifficulty _difficulty) =>1f+ (int)_difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
         #region Interacts
-
-        public static int GetPerkShrinePrice(int tryCount) =>5+ 5 * tryCount;
-        public static int GetBloodShrinePrice(int tryCount) => 5 + 3 * tryCount;
+        public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+.12f * tryCount;
+        public static float GetHealShrinePriceMultiply(int tryCount) => 1f + .1f * tryCount;
         public static float GetBloodShrineHealthCostMultiple(int count) => .5f + .05f * count;
-        public static int GetHealShrinePrice(int tryCount) => 5 + 2 * tryCount;
-        public static RangeInt GetEventTradePrice(enum_Interaction interactType,enum_Rarity perkRarity= enum_Rarity.Invalid,enum_Rarity weaponRarity= enum_Rarity.Invalid)
-        {
-            switch (interactType)
-            {
-                default: Debug.LogError("No Coins Can Phrase Here!"); return new RangeInt(0, -1);
-                case enum_Interaction.PickupHealthPack:
-                    return new RangeInt(10, 0);
-                case enum_Interaction.PerkPickup:
-                    switch (perkRarity)
-                    {
-                        default: Debug.LogError("Invalid Level!"); return new RangeInt(0, -1);
-                        case enum_Rarity.Ordinary:return new RangeInt( 10,0);
-                        case enum_Rarity.Advanced: return new RangeInt(10, 0);
-                        case enum_Rarity.Rare: return new RangeInt(10, 0);
-                        case enum_Rarity.Epic: return new RangeInt(10, 0);
-                    }
-                case enum_Interaction.PickupWeapon:
-                    switch (weaponRarity)
-                    {
-                        default:Debug.LogError("Invalid Weapon Rarity");return new RangeInt(0, -1);
-                        case enum_Rarity.Ordinary:
-                            return new RangeInt(1, 5);
-                        case enum_Rarity.Advanced:
-                            return new RangeInt(8, 4);
-                        case enum_Rarity.Rare:
-                            return new RangeInt(16, 8);
-                        case enum_Rarity.Epic:
-                            return new RangeInt(24,12);
-                    }
-            }
-        }
         #endregion
         #region Cultivate
         public static int GetEquipmentEnhanceRequirement(enum_Rarity rarity, int level) => (1000 + 500 * (int)rarity) + (500 + (int)rarity * 250) * level;

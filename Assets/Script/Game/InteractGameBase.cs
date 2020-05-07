@@ -8,9 +8,14 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
 
     protected virtual bool B_SelfRecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;
-    public int m_TradePrice { get; protected set; } = -1;
-    public int m_KeyRequire { get; protected set; } = -1;
     public int I_MuzzleOnInteract;
+
+
+    public int m_TradePrice { get; private set; } = -1;
+    public int m_KeyRequire { get; private set; } = -1;
+    protected void SetTradePrice(float tradePrice) => m_TradePrice = Mathf.RoundToInt(tradePrice);
+    protected void SetKeyAcquire(int keyAcquire) => m_KeyRequire = keyAcquire;
+
     public virtual void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
     }
@@ -23,6 +28,7 @@ public class InteractGameBase : InteractBase,IObjectpool<enum_Interaction> {
         if (AC_OnPlay)
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
     }
+
 
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor) =>
         (m_TradePrice <= 0 || _interactor.m_CharacterInfo.CanCostCoins(m_TradePrice)) &&

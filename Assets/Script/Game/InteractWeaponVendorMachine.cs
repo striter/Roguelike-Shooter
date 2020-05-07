@@ -6,10 +6,10 @@ using UnityEngine;
 public class InteractWeaponVendorMachine : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponVendorMachine;
     int m_TryCount = 0;
-    public new InteractWeaponVendorMachine Play()
+    public InteractWeaponVendorMachine Play(float tradePrice)
     {
         base.Play();
-        m_TradePrice = GameConst.I_EventWeaponVendorMachinePrice;
+        SetTradePrice(tradePrice);
         m_TryCount = 0;
         return this;
     }

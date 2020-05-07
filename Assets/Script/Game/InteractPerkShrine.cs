@@ -6,12 +6,14 @@ using UnityEngine;
 public class InteractPerkShrine : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkShrine;
     int m_TryCount;
+    float m_BaseTradePrice;
     public int I_MuzzleSuccess;
-    public new InteractPerkShrine Play()
+    public InteractPerkShrine Play(float tradePrice)
     {
         base.Play();
         m_TryCount = 0;
-        m_TradePrice = GameExpression.GetPerkShrinePrice(m_TryCount);
+        m_BaseTradePrice = tradePrice;
+        SetTradePrice(tradePrice);
         return this;
     }
 
@@ -19,7 +21,7 @@ public class InteractPerkShrine : InteractGameBase {
     {
         base.OnInteractedContinousCheck(_interactor);
         m_TryCount++;
-        m_TradePrice = GameExpression.GetPerkShrinePrice(m_TryCount);
+        SetTradePrice(m_BaseTradePrice*GameExpression.GetPerkShrinePriceMultiply(m_TryCount));
         enum_Rarity rarity = TCommon.RandomPercentage(GameConst.D_PerkShrineRate, enum_Rarity.Invalid);
         if (rarity != enum_Rarity.Invalid)
         {

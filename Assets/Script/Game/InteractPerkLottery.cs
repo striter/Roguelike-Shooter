@@ -6,11 +6,11 @@ using UnityEngine;
 public class InteractPerkLottery : InteractGameBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkLottery;
     int m_perkID;
-    public InteractPerkLottery Play(int price,int perkID)
+    public InteractPerkLottery Play(float price,int perkID)
     {
         base.Play();
         m_perkID = perkID;
-        m_TradePrice =price;
+        SetTradePrice(price);
         return this;
     }
 

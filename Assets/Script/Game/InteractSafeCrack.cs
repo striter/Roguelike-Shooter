@@ -8,7 +8,7 @@ public class InteractSafeCrack : InteractGameBase {
     public new InteractSafeCrack Play()
     {
         base.Play();
-        m_KeyRequire =1;
+        SetKeyAcquire(1);
         return this;
     }
 

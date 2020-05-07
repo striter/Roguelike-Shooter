@@ -14,14 +14,14 @@ public class InteractTradeContainer : InteractGameBase {
         base.OnPoolItemInit(identity, OnRecycle);
         tf_Model = transform.Find("Container/Model");
     }
-    public InteractTradeContainer Play(int _tradePrice, InteractGameBase _interactItem)
+    public InteractTradeContainer Play(float _tradePrice, InteractGameBase _interactItem)
     {
         base.Play();
         m_TradeInteract = _interactItem;
         m_TradeInteract.SetInteractable(false);
         m_TradeInteract.transform.position = tf_Model.position;
         m_TradeInteract.transform.rotation = tf_Model.rotation;
-        m_TradePrice = _tradePrice;
+        SetTradePrice(_tradePrice);
         return this;
     }
 
