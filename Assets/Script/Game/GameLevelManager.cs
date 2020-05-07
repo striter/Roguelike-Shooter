@@ -230,8 +230,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             ChunkQuadrantData quadrantData = _quadrantDatas[i];
             LevelChunkGame chunk = m_ChunkPool.AddItem(quadrantData.m_QuadrantIndex);
             chunk.InitGameChunk(quadrantData, random);
-            if (i % 5 == 0)
-                yield return null;
+            yield return null;
         }
         _quadrantDatas = null;
 
@@ -255,6 +254,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 mapColors[i, j] = LevelConst.C_MapTerrainInvalidColor;
                 fogColors[i, j] = LevelConst.C_MapFogHeavyColor;
             }
+            if (i % 5 == 0)
+                yield return null;
         }
 
         gameChunkGenerate.Traversal((ChunkGenerateData chunkdata) =>
@@ -278,6 +279,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 m_MapTexture.SetPixel(i, j, mapColors[i, j]);
                 m_FogTexture.SetPixel(i, j, fogColors[i, j]);
             }
+            if (i % 5 == 0)
+                yield return null;
         }
         m_MapTexture.Apply();
         m_FogTexture.Apply();
