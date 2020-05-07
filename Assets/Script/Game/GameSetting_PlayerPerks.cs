@@ -46,7 +46,7 @@ namespace GameSetting_PlayerPerks
     public class P10004 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10004;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 10f;
         public override float m_CriticalRateAdditive => Value1 / 100f * m_Stack;
         public P10004(PerkSaveData saveData) : base(saveData) { }
@@ -109,7 +109,7 @@ namespace GameSetting_PlayerPerks
     public class P10010 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10010;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
         public override float Value1 => 2f;
         public override void OnKillEnermy(EntityCharacterBase target)
         {
@@ -136,7 +136,7 @@ namespace GameSetting_PlayerPerks
     public class P10012 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10012;
-        public override enum_Rarity m_Rarity => enum_Rarity.Epic;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override int m_EffectIndex => m_TimerActivate.m_Timing ? 40004 : 0;
         public override int m_MaxStack => 1;
         public override float Value1 => 2f;
@@ -189,7 +189,7 @@ namespace GameSetting_PlayerPerks
     public class P10015:ExpirePlayerPerkWeapon
     {
         public override int m_Index => 10015;
-        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
+        public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 25f;
         protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, Value1*m_Stack / 100f *m_Attacher.m_WeaponCurrent.m_BaseDamage, enum_DamageType.Basic,105,true);
         public override void OnKillEnermy(EntityCharacterBase target)
@@ -222,7 +222,7 @@ namespace GameSetting_PlayerPerks
     public class P10017:ExpirePlayerPerkBase
     {
         public override int m_Index => 10017;
-        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
+        public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 3f;
         public override float Value2 => 5f;
         TimerBase m_HealTimer = new TimerBase(3f,true);
