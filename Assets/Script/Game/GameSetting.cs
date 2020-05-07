@@ -55,7 +55,7 @@ namespace GameSetting
         #region Interacts
         public static readonly RangeInt RI_GameEventGenerate = new RangeInt(25, 6);
 
-        public const float F_TradePriceMultiplyAdditivePerMin = .1f;
+        public const float F_TradePriceMultiplyAdditivePerMin = .05f;
 
         public static readonly RangeInt RI_EnermyCoinsGenerate = new RangeInt(1,5);
         public const float F_EnermyKeyGenerate = 2.5f;
