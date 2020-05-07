@@ -176,14 +176,11 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     
     protected void AttachSceneCamera(Transform attachTo,Transform lookAt=null)
     {
-        TPSCameraController.Instance.Attach(attachTo, false,false);
-        CameraController.Instance.LookAt(lookAt);
+        CameraController.Instance.Attach(attachTo, true) .SetLookAt(lookAt);
     }
     protected void AttachPlayerCamera(Transform playerTo)
     {
-        TPSCameraController.Instance.Attach(playerTo, true,true);
-        CameraController.Instance.LookAt(null);
-        CameraController.Instance.SetCameraRotation(-1, playerTo.rotation.eulerAngles.y);
+        CameraController.Instance.Attach(playerTo, false).SetLookAt(null) .SetCameraRotation(-1, playerTo.rotation.eulerAngles.y).ForceSetCamera();
     }
 }
 

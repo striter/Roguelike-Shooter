@@ -24,7 +24,7 @@ public class UI_Map : UIPage {
             m_EventTrigger.OnDragDelta = OnMapDrag;
             m_EventTrigger.OnWorldClick = OnMapClick;
             DoMapInit();
-            m_MapScaleBase = GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y);
+            m_MapScaleBase = GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw);
             UpdateMapRotation(m_MapScaleBase);
             m_Player.Tick();
 

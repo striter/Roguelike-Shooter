@@ -35,8 +35,7 @@ public class LevelChunkEditor : LevelChunkBase
     }
     private void Start()
     {
-        FPSCameraController.Instance.Attach(tf_CameraPos, true);
-        FPSCameraController.Instance.SetCameraPosition(tf_CameraPos.transform.localPosition);
+        FPSCameraController.Instance.Attach(tf_CameraPos, false);
         LevelObjectManager.Register(TResources.GetChunkEditorTiles());
     }
     public LevelChunkEditor CheckDatas()
@@ -79,7 +78,6 @@ public class LevelChunkEditor : LevelChunkBase
         CameraController.Instance.m_Camera.orthographic = !m_GameViewMode;
         if (m_GameViewMode)
         {
-            CameraController.Instance.SetCameraPosition(Vector3.zero);
             CameraController.Instance.SetCameraRotation(60, 0);
         }
         else

@@ -122,7 +122,7 @@ public class UIC_GameStatus : UIControlBase {
         public override void DoMapInit()
         {
             base.DoMapInit();
-            UpdateMapRotation(GameLevelManager.Instance.GetMapAngle(CameraController.CameraRotation.eulerAngles.y));
+            UpdateMapRotation(GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw));
 
             m_Locations.ClearGrid();
             GameManager.Instance.m_StageInteracts.Traversal((InteractGameBase interactData) =>

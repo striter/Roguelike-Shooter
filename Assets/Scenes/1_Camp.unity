@@ -5783,10 +5783,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5ad01c3df51c540aae148c4af809a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_CameraRotateSmooth: 0.4
+  F_CameraRotateSmooth: 0.08
   F_CameraMoveSmooth: 0.08
   B_InvertCamera: 0
   F_RotateSensitive: 2
+  m_CameraDebug: 1
   TPSOffset: {x: 0, y: 26, z: -15}
   I_PitchMin: 60
   I_PitchMax: 60

@@ -27,18 +27,17 @@ public class FPSCameraController : CameraController
     {
         base.Awake();
         ninstance = this;
-        SetCameraOffset(Vector3.one);
         SetCameraYawClamp(I_PitchMin,I_PitchMax);
-        m_SelfRotation = true;
+        m_BindCamera = true;
 
         f_fovStart = m_Camera.fieldOfView;
         f_fovCurrent = f_fovStart;
     }
-    protected override Quaternion CalculateSelfRotation()
+    protected override Quaternion GetUnbindRotation()
     {
         f_sprintRoll = Mathf.Lerp(f_sprintRoll, 0, f_angleSmoothParam);
         f_damageRoll = Mathf.Lerp(f_damageRoll, 0, f_angleSmoothParam);
-        f_Roll = Mathf.Lerp(f_Roll, f_sprintRoll + f_damageRoll, f_angleSmoothParam);
+        m_Roll = Mathf.Lerp(m_Roll, f_sprintRoll + f_damageRoll, f_angleSmoothParam);
         if (B_SelfSetoffRecoil)
         {
             if (Time.time > f_recoilAutoSetoff)
@@ -48,19 +47,19 @@ public class FPSCameraController : CameraController
             }
             f_damagePitch = Mathf.Lerp(f_damagePitch, 0, f_angleSmoothParam);
             f_damageYaw = Mathf.Lerp(f_damageYaw, 0, f_angleSmoothParam);
-            return Quaternion.Euler(f_Pitch + f_recoilPitch + f_damagePitch, f_Yaw + f_recoilYaw + f_damageYaw, f_Roll);
+            return Quaternion.Euler(m_Pitch + f_recoilPitch + f_damagePitch, m_Yaw + f_recoilYaw + f_damageYaw, m_Roll);
         }
         else
         {
-            f_Pitch += f_recoilPitch;
-            f_Yaw += f_recoilYaw;
+            m_Pitch += f_recoilPitch;
+            m_Yaw += f_recoilYaw;
             f_recoilPitch = 0;
             f_recoilYaw = 0;
-            f_Pitch += f_damagePitch;
-            f_Yaw += f_damageYaw;
+            m_Pitch += f_damagePitch;
+            m_Yaw += f_damageYaw;
             f_damagePitch = 0;
             f_damageYaw = 0;
-            return base.CalculateSelfRotation();
+            return base.GetUnbindRotation();
         }
     }
     public void OnSprintAnimation(float animationRoll)

@@ -189,10 +189,9 @@ public class GameManager : GameManagerBase
         m_StageInteracts.Clear();
         //Spawn Player
         m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_GameProgressData.m_Character, playerSpawn.m_Pos, playerSpawn.m_Rot).OnPlayerActivate(GameDataManager.m_GameProgressData);
-        AttachPlayerCamera(tf_CameraAttach);
         tf_CameraAttach.position = playerSpawn.m_Pos;
-        CameraController.Instance.SetCameraPosition(playerSpawn.m_Pos);
-        CameraController.Instance.SetCameraRotation(-1, playerSpawn.m_Rot.eulerAngles.y);
+        tf_CameraAttach.rotation = playerSpawn.m_Rot;
+        AttachPlayerCamera(tf_CameraAttach);
 
         //Spawn Signal Tower
         InteractSignalTower signalTower= GameObjectManager.SpawnInteract<InteractSignalTower>(signalTowerSpawn.m_Pos, signalTowerSpawn.m_Rot,GameLevelManager.Instance.GetQuadrantChunk(signalTowerSpawn.m_QuadrantIndex).m_InteractParent).Play(OnSignalTowerTransmitStart,OnSignalTowerTransmitCountFinish);
