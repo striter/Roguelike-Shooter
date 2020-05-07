@@ -74,20 +74,20 @@ namespace GameSetting
         public static RangeInt RI_CoinsSackAmount = new RangeInt(6, 4);
         public const int I_EventMedpackPrice = 0;
 
-        public const int I_EventWeaponTradePrice = 15;
+        public const int I_EventWeaponTradePrice = 12;
         public static Dictionary<enum_Rarity, float> D_EventWeaponTradeRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 25 },{ enum_Rarity.Epic, 15 } };
 
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponReforgeRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 25 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 25 } };
         public static readonly Dictionary<enum_Rarity, int> D_EventWeaponRecyclePrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 20 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 50 }, { enum_Rarity.Epic, 75 } };
 
-        public const int I_EventWeaponVendorMachinePrice = 15;
+        public const int I_EventWeaponVendorMachinePrice = 12;
         public static readonly Dictionary<enum_Rarity, float> D_EventWeaponVendorMachineRate = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } };
         public const int I_EventWeaponVendorTryCount = 0;
-        public const int I_EventPerkLotteryPrice = 15;
+        public const int I_EventPerkLotteryPrice = 12;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventPerkSelectPrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
-        public const int I_PerkShrineTradePrice = 10;
+        public const int I_PerkShrineTradePrice = 5;
         public const int I_PerkShrineTryCountMax = 3;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 1;
@@ -195,7 +195,7 @@ namespace GameSetting
         public static float GetResultDifficultyBonus(enum_GameDifficulty _difficulty) =>1f+ (int)_difficulty * .05f;
         public static float GetResultRewardCredits(float _totalScore) => _totalScore;
         #region Interacts
-        public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+.12f * tryCount;
+        public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+1f * tryCount;
         public static float GetHealShrinePriceMultiply(int tryCount) => 1f + .1f * tryCount;
         public static float GetBloodShrineHealthCostMultiple(int count) => .5f + .05f * count;
         #endregion
