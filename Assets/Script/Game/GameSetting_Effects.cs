@@ -19,7 +19,7 @@ namespace GameSetting
     {
         public static readonly Dictionary<enum_Effects, Shader> SD_ExtraEffects = new Dictionary<enum_Effects, Shader>()
     {
-        { enum_Effects.Cloak,Shader.Find("Game/Effect/Cloak")},
+        { enum_Effects.Cloak,Shader.Find("Game/Common/Diffuse_Base_Transparent")},
         { enum_Effects.Death,Shader.Find("Game/Effect/BloomSpecific/Bloom_Dissolve")},
         { enum_Effects.Scan,Shader.Find("Game/Extra/ScanEffect")},
         { enum_Effects.Freeze, Shader.Find("Game/Effect/Ice")}
