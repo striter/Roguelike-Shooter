@@ -11,19 +11,21 @@
 		{
 			Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
 			Cull Back
+			CGINCLUDE
+				#include "Lighting.cginc"
+				float _Opacity;
+			ENDCG
 			Pass
 			{
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
 				#include "UnityCG.cginc"
-				#include "Lighting.cginc"
 				sampler2D _CameraOpaqueTexture;
 				sampler2D _MainTex;
 				sampler2D _DistortTex;
 				float4 _MainTex_ST;
 				float4 _Color;
-				float _Opacity;
 
 			struct appdata
 			{
@@ -56,5 +58,40 @@
 			}
 			ENDCG
 		}
+
+			Pass
+			{
+				NAME "SHADOWCASTER"
+				Tags{"LightMode" = "ShadowCaster"}
+				CGPROGRAM
+
+				#pragma vertex ShadowVertex
+				#pragma fragment ShadowFragment
+				#pragma multi_compile_instancing
+				sampler3D _DitherMaskLOD;
+			struct v2fs
+			{
+				V2F_SHADOW_CASTER;
+				float4 screenPos:TEXCOORD0;
+			};
+
+			v2fs ShadowVertex(appdata_base v)
+			{
+				UNITY_SETUP_INSTANCE_ID(v);
+				v2fs o;
+				o.screenPos = ComputeScreenPos(v.vertex);
+				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+					return o;
+			}
+
+			fixed4 ShadowFragment(v2fs i) :SV_TARGET
+			{
+				float2 vpos = i.screenPos.xy / i.screenPos.w;
+				float dither = tex3D(_DitherMaskLOD, float3(vpos*10,_Opacity * 0.9375)).a;
+				clip(dither - 0.01);
+				SHADOW_CASTER_FRAGMENT(i);
+			}
+				ENDCG
+			}
 	}
 }
