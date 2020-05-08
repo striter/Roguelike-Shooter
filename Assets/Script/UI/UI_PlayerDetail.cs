@@ -63,8 +63,6 @@ public class UI_PlayerDetail : UIPage
         m_ClipSize = m_WeaponInfo.Find("ClipSize").GetComponent<UIT_TextExtend>();
 
         m_WeaponScore = new UIT_GridControllerClass<WeaponScoreItem>(m_WeaponInfo.Find("ScoreGrid"));
-        for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
-            m_WeaponScore.AddItem(i).SetScore(false);
         m_WeaponTag = new UIT_GridControllerClass<WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
             m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
@@ -123,9 +121,14 @@ public class UI_PlayerDetail : UIPage
         m_WeaponBackground.sprite = GameUIManager.Instance.m_InGameSprites[weaponInfo.m_Rarity.GetUIDetailBackground()];
         m_ClipSize.text = weaponInfo.m_ClipAmount.ToString();
 
-        int score = (int)weapon.m_WeaponInfo.m_Rarity + weapon.m_EnhanceLevel;
-        for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
-            m_WeaponScore.GetItem(i).SetScore(i < score);
+        m_WeaponScore.ClearGrid();
+        int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;
+        int enhanceScore = weapon.m_EnhanceLevel;
+        for (int i = 0; i < baseScore; i++)
+            m_WeaponScore.AddItem().SetScore(false);
+        for (int i = 0; i < enhanceScore; i++)
+            m_WeaponScore.AddItem().SetScore(true);
+        m_WeaponScore.Sort((a, b) => a.Key - b.Key);
 
         enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
@@ -152,18 +155,18 @@ public class UI_PlayerDetail : UIPage
     #region Extra Class
     class WeaponScoreItem : UIT_GridItemClass
     {
-        Transform m_Highlight;
-        Transform m_Dehighlight;
+        Transform m_Base;
+        Transform m_Bloom;
         public WeaponScoreItem(Transform _transform) : base(_transform)
         {
-            m_Highlight = transform.Find("Highlight");
-            m_Dehighlight = transform.Find("Dehighlight");
+            m_Base = transform.Find("Base");
+            m_Bloom = transform.Find("Bloom");
         }
 
-        public void SetScore(bool scored)
+        public void SetScore(bool bloom)
         {
-            m_Highlight.SetActivate(scored);
-            m_Dehighlight.SetActivate(!scored);
+            m_Base.SetActivate(!bloom);
+            m_Bloom.SetActivate(bloom);
         }
     }
     class WeaponTagItem : UIT_GridItemClass

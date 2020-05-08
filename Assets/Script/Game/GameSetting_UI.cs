@@ -28,7 +28,6 @@ namespace GameSetting
 
         public static Vector2 V2_UINumericVisualizeOffset = new Vector2(0, 100f);
 
-        public const int I_DetailWeaponScoreMax = 9;
         public const int I_DetailWeaponTagMax = 5;
     }
 
