@@ -25,6 +25,7 @@ public class UIT_GridControllerBase<T> where T:class
     public T GetItem(int xIdentity, int yIdentity) => GetItem(GetIdentity(xIdentity, yIdentity));
     int GetIdentity(int xIdentity, int yIdentity) => xIdentity + yIdentity * 1000;
     public T GetOrAddItem(int identity) => Contains(identity) ? GetItem(identity) : AddItem(identity);
+    public virtual void Sort(Comparison<KeyValuePair<int, T>> comparison) => m_Pool.Sort(comparison);
 }
 
 public class UIT_GridItemClass : CObjectPoolClass<int>
@@ -46,12 +47,6 @@ public class UIT_GridControllerComponent<T> : UIT_GridControllerBase<T> where T 
     {
     }
 
-    public override T AddItem(int identity)
-    {
-        T item = m_Pool.AddItem(identity);
-        item.transform.SetSiblingIndex(identity);
-        return item;
-    }
 }
 
 
@@ -64,7 +59,13 @@ public class UIT_GridControllerGridItem<T>: UIT_GridControllerBase<T> where T:UI
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
 
-    public virtual void Sort(Comparison<KeyValuePair<int, T>> comparison) => m_Pool.Sort(comparison);
+    public override T AddItem(int identity)
+    {
+        T item = m_Pool.AddItem(identity);
+        item.transform.SetSiblingIndex(identity);
+        return item;
+    }
+
 }
 
 public class UIT_GridControllerGridItemScrollView<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem

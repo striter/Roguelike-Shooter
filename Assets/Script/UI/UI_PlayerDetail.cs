@@ -61,7 +61,7 @@ public class UI_PlayerDetail : UIPage
         m_ClipSize = m_WeaponInfo.Find("ClipSize").GetComponent<UIT_TextExtend>();
 
         m_WeaponScore = new UIT_GridControllerClass<WeaponScoreItem>(m_WeaponInfo.Find("ScoreGrid"));
-        for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
+        for (int i = UIConst.I_DetailWeaponScoreMax; i >0 ; i--)
             m_WeaponScore.AddItem(i).SetScore(false);
         m_WeaponTag = new UIT_GridControllerClass<WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
@@ -121,12 +121,12 @@ public class UI_PlayerDetail : UIPage
         m_ClipSize.text = string.Format("{0:D2}", weaponInfo.m_ClipAmount);
 
         int score = (int)weapon.m_WeaponInfo.m_Rarity + weapon.m_EnhanceLevel;
-        for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
+        for (int i = UIConst.I_DetailWeaponScoreMax; i >0; i--)
             m_WeaponScore.GetItem(i).SetScore(i <= score);
 
         enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
-            m_WeaponTag.GetItem(i).SetTag(tags.Length < i ? tags[i]: enum_UIWeaponTag.Invalid );
+            m_WeaponTag.GetItem(i).SetTag(i < tags.Length ? tags[i] : enum_UIWeaponTag.Invalid);
 
         m_DamageAmount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
         m_Damage.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
