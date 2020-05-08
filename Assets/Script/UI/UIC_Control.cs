@@ -58,7 +58,7 @@ public class UIC_Control : UIControlBase {
 
         if (m_AbilityCooldownChecker.Check(!player.m_AbilityAvailable))
         {
-            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[SpriteKeyJoint.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
             m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
         }
     }
@@ -70,7 +70,7 @@ public class UIC_Control : UIControlBase {
         OnMainDown = _OnMainDown;
         OnSubDown = _OnSubDown;
         OnCharacterAbility = _OnCharacterAbility;
-        m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[UIConvertions.GetAbilitySprite(player.m_Character)];
+        m_AbilityImg.sprite = UIManager.Instance.m_CommonSprites[player.m_Character.GetAbilitySprite()];
     }
     public void RemoveBinding()
     {

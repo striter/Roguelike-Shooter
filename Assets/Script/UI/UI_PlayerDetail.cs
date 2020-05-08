@@ -3,32 +3,186 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class UI_PlayerDetail : UIPage {
-    UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem> m_Grid;
-    UIC_EquipmentNameFormatIntro m_Selecting;
+public class UI_PlayerDetail : UIPage
+{
+    EntityCharacterPlayer m_Player;
+
+    Transform m_AbilityInfo;
+    Image m_AbilityImage;
+    UIT_TextExtend m_AbilityTitle;
+    UIT_TextExtend m_AbilityIntro;
+
+    UIT_GridControlledSingleSelect<UIGI_DetailWeaponSelect> m_WeaponSelect;
+    UIT_GridControlledSingleSelect<UIGI_DetailPerkSelect> m_PerkSelect;
+
+    Transform m_WeaponInfo;
+    UIT_TextExtend m_WeaponName;
+    Image m_WeaponImage;
+    Image m_WeaponBackground;
+    UIT_TextExtend m_ClipSize;
+    Transform m_WeaponScoreSliders;
+    UIT_GridControllerClass<WeaponScoreItem> m_WeaponScore;
+    UIT_GridControllerClass<WeaponTagItem> m_WeaponTag;
+    
+    Image m_Damage, m_FireRate, m_Stability, m_ProjectileSpeed;
+    UIT_TextExtend m_DamageAmount, m_FireRateAmount, m_StabilityAmount, m_ProjectileSpeedAmount;
+
+    Transform m_PerkInfo;
+    UIT_TextExtend m_PerkDetail;
+    UIT_TextExtend m_PerkName;
+    UIT_TextExtend m_PerkIntro;
+    Image m_PerkImage;
+
     protected override void Init()
     {
         base.Init();
-        m_Grid = new UIT_GridControlledSingleSelect<UIGI_ActionEquipmentPackItem>(rtf_Container.Find("EquipmentGrid"), OnItemSelect);
-        m_Selecting = new UIC_EquipmentNameFormatIntro(rtf_Container.Find("Selecting"));
-    }
-    PlayerExpireManager m_Info;
-    public void Show()
-    {
-        m_Info = GameManager.Instance.m_LocalPlayer.m_CharacterInfo;
-        m_Grid.ClearGrid();
-        m_Info.m_ExpirePerks.Traversal((int index,ExpirePlayerPerkBase perk) => {
-            m_Grid.AddItem(index).SetInfo(perk);
-        });
-        m_Selecting.transform.SetActivate(false);
-        if (m_Info.m_ExpirePerks.Count > 0)
-            m_Grid.OnItemClick(m_Info.m_ExpirePerks.GetIndexKey(0));
+        m_Player = GameManager.Instance.m_LocalPlayer;
+
+        m_AbilityInfo = rtf_Container.Find("AbilityInfo");
+        m_AbilityImage = m_AbilityInfo.Find("Image").GetComponent<Image>();
+        m_AbilityTitle = m_AbilityInfo.Find("Title").GetComponent<UIT_TextExtend>();
+        m_AbilityIntro = m_AbilityInfo.Find("Intro").GetComponent<UIT_TextExtend>();
+
+        m_WeaponSelect = new UIT_GridControlledSingleSelect<UIGI_DetailWeaponSelect>(rtf_Container.Find("WeaponSelect/Grid"), OnWeaponSelectClick);
+        if (m_Player.m_Weapon1)
+            m_WeaponSelect.AddItem(0).Init(m_Player.m_Weapon1.m_WeaponInfo.m_Weapon);
+        if (m_Player.m_Weapon2)
+            m_WeaponSelect.AddItem(1).Init(m_Player.m_Weapon2.m_WeaponInfo.m_Weapon);
+
+        m_PerkSelect = new UIT_GridControlledSingleSelect<UIGI_DetailPerkSelect>(rtf_Container.Find("PerkSelect/ScrollRect/Viewport/Content"), OnPerkSelectClick);
+        m_Player.m_CharacterInfo.m_ExpirePerks.Traversal((int index, ExpirePlayerPerkBase perk) => { m_PerkSelect.AddItem(index).Init(perk); });
+
+        m_WeaponInfo = rtf_Container.Find("WeaponInfo");
+        m_WeaponBackground = m_WeaponInfo.Find("ImageBG").GetComponent<Image>();
+        m_WeaponName = m_WeaponInfo.Find("Name").GetComponent<UIT_TextExtend>();
+        m_WeaponImage = m_WeaponInfo.Find("Image").GetComponent<Image>();
+        m_ClipSize = m_WeaponInfo.Find("ClipSize").GetComponent<UIT_TextExtend>();
+
+        m_WeaponScore = new UIT_GridControllerClass<WeaponScoreItem>(m_WeaponInfo.Find("ScoreGrid"));
+        for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
+            m_WeaponScore.AddItem(i).SetScore(false);
+        m_WeaponTag = new UIT_GridControllerClass<WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
+        for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+            m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
+
+        m_WeaponScoreSliders = m_WeaponInfo.Find("ScoreSliders");
+        m_Damage = m_WeaponScoreSliders.Find("Damage/Fill").GetComponent<Image>();
+        m_DamageAmount = m_WeaponScoreSliders.Find("Damage/Amount").GetComponent<UIT_TextExtend>();
+        m_FireRate = m_WeaponScoreSliders.Find("FireRate/Fill").GetComponent<Image>();
+        m_FireRateAmount = m_WeaponScoreSliders.Find("FireRate/Amount").GetComponent<UIT_TextExtend>();
+        m_Stability = m_WeaponScoreSliders.Find("Stability/Fill").GetComponent<Image>();
+        m_StabilityAmount = m_WeaponScoreSliders.Find("Stability/Amount").GetComponent<UIT_TextExtend>();
+        m_ProjectileSpeed = m_WeaponScoreSliders.Find("ProjectileSpeed/Fill").GetComponent<Image>();
+        m_ProjectileSpeedAmount = m_WeaponScoreSliders.Find("ProjectileSpeed/Amount").GetComponent<UIT_TextExtend>();
+
+        m_PerkInfo = rtf_Container.Find("PerkInfo");
+        m_PerkImage = m_PerkInfo.Find("Image").GetComponent<Image>();
+        m_PerkName = m_PerkInfo.Find("Name").GetComponent<UIT_TextExtend>();
+        m_PerkIntro = m_PerkInfo.Find("Intro").GetComponent<UIT_TextExtend>();
+        m_PerkDetail = m_PerkInfo.Find("Detail").GetComponent<UIT_TextExtend>();
+
+
+        SetAbilityInfo(m_Player);
+        m_WeaponSelect.OnItemClick(0);
     }
 
-    void OnItemSelect(int index)
+    void OnWeaponSelectClick(int index)
     {
-        m_Selecting.transform.SetActivate(true);
-        m_Selecting.SetInfo(m_Info.m_ExpirePerks[index]);
+        m_PerkSelect.ClearHighlight();
+        SetWeaponInfo(index == 0 ? m_Player.m_Weapon1 : m_Player.m_Weapon2);
+        m_WeaponInfo.SetActivate(true);
+        m_PerkInfo.SetActivate(false);
     }
+
+    void OnPerkSelectClick(int index)
+    {
+        m_WeaponSelect.ClearHighlight();
+        SetPerkInfo(m_Player.m_CharacterInfo.m_ExpirePerks[index]);
+        m_WeaponInfo.SetActivate(false);
+        m_PerkInfo.SetActivate(true);
+    }
+
+    void SetAbilityInfo(EntityCharacterPlayer player)
+    {
+        m_AbilityIntro.formatText(player.m_Character.GetAbilityDetailLocalizeKey(), string.Format("<color=#FE9E00FF>{0}</color>", "?"), string.Format("<color=#FE9E00FF>{0}</color>", "¿"));
+        m_AbilityTitle.text = string.Format("{0} <color=#FE9E00FF>LV{1}</color>", player.m_Character.GetNameLocalizeKey().GetKeyLocalized(),player.m_CharacterInfo.m_RankManager.m_Rank);
+        m_AbilityImage.sprite = UIManager.Instance.m_CommonSprites[player.m_Character.GetAbilitySprite()];
+    }
+
+    void SetWeaponInfo(WeaponBase weapon)
+    {
+        SWeapon weaponInfo = weapon.m_WeaponInfo;
+        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetDetailSprite()];
+        m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetLocalizeNameKey();
+        m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());
+        m_WeaponBackground.sprite = GameUIManager.Instance.m_InGameSprites[weaponInfo.m_Rarity.GetUIDetailBackground()];
+        m_ClipSize.text = string.Format("{0:D2}", weaponInfo.m_ClipAmount);
+
+        int score = (int)weapon.m_WeaponInfo.m_Rarity + weapon.m_EnhanceLevel;
+        for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
+            m_WeaponScore.GetItem(i).SetScore(i <= score);
+
+        enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
+        for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+            m_WeaponTag.GetItem(i).SetTag(tags.Length < i ? tags[i]: enum_UIWeaponTag.Invalid );
+
+        m_DamageAmount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
+        m_Damage.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
+        m_StabilityAmount.text = string.Format("{0:N1}", weaponInfo.m_UIStability);
+        m_Stability.fillAmount = UIExpression.GetUIWeaponStabilityValue(weaponInfo.m_UIStability);
+        m_FireRateAmount.text = string.Format("{0:N1}", weaponInfo.m_UIRPM);
+        m_FireRate.fillAmount = UIExpression.GetUIWeaponRPMValue(weaponInfo.m_UIRPM);
+        m_ProjectileSpeedAmount.text = string.Format("{0:N1}", weaponInfo.m_UISpeed);
+        m_ProjectileSpeed.fillAmount = UIExpression.GetUIWeaponSpeedValue(weaponInfo.m_UISpeed);
+    }
+
+    void SetPerkInfo(ExpirePlayerPerkBase perk)
+    {
+        m_PerkImage.sprite = UIManager.Instance.m_ExpireSprites[perk.GetExpireSprite()];
+        m_PerkName.localizeKey = perk.GetNameLocalizeKey();
+        m_PerkName.color = TCommon.GetHexColor(perk.m_Rarity.GetUIColor());
+        m_PerkDetail.formatText(perk.GetDetailLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", perk.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", perk.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", perk.Value3));
+        m_PerkIntro.localizeKey = perk.GetIntroLocalizeKey();
+    }
+    #region Extra Class
+    class WeaponScoreItem : UIT_GridItemClass
+    {
+        Transform m_Highlight;
+        Transform m_Dehighlight;
+        public WeaponScoreItem(Transform _transform) : base(_transform)
+        {
+            m_Highlight = transform.Find("Highlight");
+            m_Dehighlight = transform.Find("Dehighlight");
+        }
+
+        public void SetScore(bool scored)
+        {
+            m_Highlight.SetActivate(scored);
+            m_Dehighlight.SetActivate(!scored);
+        }
+    }
+    class WeaponTagItem : UIT_GridItemClass
+    {
+        Transform m_Empty;
+        Transform m_Tagged;
+        UIT_TextExtend m_Text;
+        public WeaponTagItem(Transform _transform) : base(_transform)
+        {
+            m_Empty = transform.Find("Empty");
+            m_Tagged = transform.Find("Tagged");
+            m_Text = m_Tagged.Find("Text").GetComponent<UIT_TextExtend>();
+        }
+
+        public void SetTag(enum_UIWeaponTag tag)
+        {
+            bool validTag = tag != enum_UIWeaponTag.Invalid;
+            m_Empty.SetActivate(tag == enum_UIWeaponTag.Invalid);
+            m_Tagged.SetActivate(tag != enum_UIWeaponTag.Invalid);
+            if (validTag)
+                m_Text.localizeKey = tag.GetLocalizeKey();
+        }
+    }
+    #endregion
 }

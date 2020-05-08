@@ -7,6 +7,18 @@ using UnityEngine.UI;
 namespace GameSetting
 {
 
+    public enum enum_UIWeaponTag
+    {
+        Invalid=-1,
+        Projectile,
+        MultiShot,
+        StoreShot,
+
+        Cast,
+        Melee,
+        Duration,
+    }
+
     public static class UIConst
     {
         public const int I_PlayerDyingMinValue = 10;
@@ -15,6 +27,9 @@ namespace GameSetting
         public const int I_GameProgressDifficultyColorRampMaxMinutes = 30;
 
         public static Vector2 V2_UINumericVisualizeOffset = new Vector2(0, 100f);
+
+        public const int I_DetailWeaponScoreMax = 9;
+        public const int I_DetailWeaponTagMax = 5;
     }
 
     public static class UIExpression
@@ -47,13 +62,74 @@ namespace GameSetting
 
     public static class UIConvertions
     {
-        public static string GetInteractMainIcon(this InteractBase interact) =>  "control_main_interact";
+        public static enum_UIWeaponTag[] GetWeaponTags(this enum_PlayerWeaponType type)
+        {
+            switch (type)
+            {
+                default:Debug.LogError("Invalid Convertions Here!");return new enum_UIWeaponTag[0];
+                case enum_PlayerWeaponType.CastDuration: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Duration};
+                case enum_PlayerWeaponType.CastMelee: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Melee};
+                case enum_PlayerWeaponType.ProjectileShot:return new enum_UIWeaponTag[1] { enum_UIWeaponTag.Projectile };
+                case enum_PlayerWeaponType.ProjectileShotMulti: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Projectile, enum_UIWeaponTag.MultiShot};
+                case enum_PlayerWeaponType.ProjectileStore:return new enum_UIWeaponTag[2] { enum_UIWeaponTag.Projectile, enum_UIWeaponTag.StoreShot };
+            }
+
+        }
+
+        public static Color GetVisualizeAmountColor(this enum_Interaction type)
+        {
+            switch (type)
+            {
+                default:
+                    Debug.LogError("Invalid Convertions Here!");
+                    return Color.magenta;
+                case enum_Interaction.PickupKey:
+                    return Color.green;
+                case enum_Interaction.PickupCoin:
+                    return TCommon.GetHexColor("FFCC1FFF");
+                case enum_Interaction.PickupArmor:
+                    return TCommon.GetHexColor("1FF2FFFF");
+                case enum_Interaction.PickupHealth:
+                case enum_Interaction.PickupHealthPack:
+                    return TCommon.GetHexColor("FFA54EFF");
+            }
+        }
+
+
+        public static string GetUIColor(this enum_Rarity rarity)
+        {
+            switch (rarity)
+            {
+                default: return "FFFFFFFF";
+                case enum_Rarity.Ordinary: return "E3E3E3FF";
+                case enum_Rarity.Advanced: return "6F8AFFFF";
+                case enum_Rarity.Rare: return "C26FFFFF";
+                case enum_Rarity.Epic: return "FFCC1FFF";
+            }
+        }
+
+        public static string GetUIGameResultTitleBG(bool win, enum_Option_LanguageRegion language) => "result_title_" + (win ? "win_" : "fail_") + language;
+    }
+
+    public static class SpriteKeyJoint
+    {
+        public static string GetInteractMainIcon(this InteractBase interact) => "control_main_interact";
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
+        public static string GetAbilitySprite(this enum_PlayerCharacter character) => "control_ability_" + character;
+        public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
+        public static string GetIconSprite(this enum_PlayerWeapon weapon) => "icon_" + ((int)weapon);
+        public static string GetDetailSprite(this enum_PlayerWeapon weapon) => "detail_" + ((int)weapon);
+        public static string GetExpireSprite(this EntityExpireBase expire) => expire.m_Index.ToString();
+
+        public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
+        public static string GetUIDetailBackground(this enum_Rarity rarity) => "detail_weapon_" + rarity;
+        public static string GetUIGameControlBackground(this enum_Rarity rarity) => "control_" + rarity;
+
         public static string GetInteractMapIcon(this InteractGameBase interact)
         {
-            switch(interact.m_InteractType)
+            switch (interact.m_InteractType)
             {
-                default:return "Map_Icon_Unknown";
+                default: return "Map_Icon_Unknown";
                 case enum_Interaction.SignalTower:
                     return "Map_Icon_" + interact.m_InteractType;
             }
@@ -77,57 +153,36 @@ namespace GameSetting
                     return "NumericIcon_Health";
             }
         }
-        public static Color GetVisualizeAmountColor(this enum_Interaction type)
-        {
-            switch (type)
-            {
-                default:
-                    Debug.LogError("Invalid Convertions Here!");
-                    return Color.magenta;
-                case enum_Interaction.PickupKey:
-                    return Color.green;
-                case enum_Interaction.PickupCoin:
-                    return TCommon.GetHexColor("FFCC1FFF");
-                case enum_Interaction.PickupArmor:
-                    return TCommon.GetHexColor("1FF2FFFF");
-                case enum_Interaction.PickupHealth:
-                case enum_Interaction.PickupHealthPack:
-                    return TCommon.GetHexColor("FFA54EFF");
-            }
-        }
 
-        public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
-        public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
-        public static string GetIconSprite(this enum_PlayerWeapon weapon) =>"icon_"+ ((int)weapon);
-        public static string GetUIControlDetailSpriteName(this enum_PlayerWeapon weapon) => "detail_"+ ((int)weapon);
-
-        public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
-        public static string GetUIStatusShadowBackground(this enum_Rarity rarity) => "weapon_shadow_" + rarity;
-        public static string GetUIGameControlBackground(this enum_Rarity rarity) => "control_" + rarity;
-
-        public static string GetUITextColor(this enum_Rarity rarity)
-        {
-            switch (rarity)
-            {
-                default: return "FFFFFFFF";
-                case enum_Rarity.Ordinary: return "E3E3E3FF";
-                case enum_Rarity.Advanced: return "6F8AFFFF";
-                case enum_Rarity.Rare: return "C26FFFFF";
-                case enum_Rarity.Epic: return "FFCC1FFF";
-            }
-        }
-
-        public static string GetUIGameResultTitleBG(bool win, enum_Option_LanguageRegion language) => "result_title_" + (win ? "win_" : "fail_") + language;
     }
 
-    public enum enum_UI_ActionUpgradeType
+    public static class LocalizationKeyJoint
     {
-        Invalid = -1,
-        Upgradeable = 1,
-        LackOfCoins = 2,
-        MaxLevel = 3,
+        public static string GetNameLocalizeKey(this EntityExpirePreset buff) => "Buff_Name_" + buff.m_Index;
+        public static string GetNameLocalizeKey(this ExpirePlayerPerkBase perk) => "Perk_Name_" + perk.m_Index;
+        public static string GetDetailLocalizeKey(this ExpirePlayerPerkBase perk) => "Perk_Detail_" + perk.m_Index;
+        public static string GetIntroLocalizeKey(this ExpirePlayerPerkBase perk) => "Perk_Intro_" + perk.m_Index;
+        public static string GetNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Name_" + character;
+        public static string GetIntroLocalizeKey(this enum_PlayerCharacter character) => "Character_Intro_" + character;
+        public static string GetAbilityNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_Name_" + character;
+        public static string GetAbilityDetailLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_Detail_" + character;
+        public static string GetNameLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Name_" + equipment.m_Index;
+        public static string GetPassiveLocalizeKey(this EquipmentSaveData upgrade) => "Equipment_Passive_" + upgrade.m_Index;
+        public static string GetPassiveLocalizeKey(this ExpirePlayerUpgradeCombine upgrade) => "Equipment_Passive_" + upgrade.m_Index;
+        public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
+        public static string GetLocalizeKey(this enum_GameStage stage) => "Game_Stage_" + stage;
+        public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
+        public static string GetLocalizeNameKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Name";
+        public static string GetLocalizeIntroKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Intro";
+        public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
+        public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Title";
+        public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
+        public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
+        public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
+        public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
+        public static string SetActionIntro(this ExpirePlayerPerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
+        public static string GetLocalizeKey(this enum_UIWeaponTag tag) => "UI_Weapon_Tag_" + tag;
     }
-
     public class UIC_RarityLevel
     {
         class RarityLevel
@@ -252,9 +307,9 @@ namespace GameSetting
         public void UpdateInfo(WeaponBase weapon)
         {
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
-            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetUIControlDetailSpriteName()];
+            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetDetailSprite()];
             m_Name.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
-            m_Name.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUITextColor());
+            m_Name.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUIColor());
         }
         public void UpdateAmmoInfo(int ammoLeft, int clipAmount)
         {

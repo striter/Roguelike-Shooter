@@ -27,12 +27,12 @@ public class UIT_GridControllerBase<T> where T:class
     public T GetOrAddItem(int identity) => Contains(identity) ? GetItem(identity) : AddItem(identity);
 }
 
-public class UIT_GridClassItem : CObjectPoolClass<int>
+public class UIT_GridItemClass : CObjectPoolClass<int>
 {
-    public UIT_GridClassItem(Transform transform):base(transform){ }
+    public UIT_GridItemClass(Transform transform):base(transform){ }
 }
 
-public class UIT_GridControllerClass<T> : UIT_GridControllerBase<T> where T: UIT_GridClassItem,new ()
+public class UIT_GridControllerClass<T> : UIT_GridControllerBase<T> where T: UIT_GridItemClass
 {
     public UIT_GridControllerClass(Transform _transform):base(new ObjectPoolListClass<int, T>(_transform, "GridItem"))
     {

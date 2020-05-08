@@ -8,7 +8,7 @@ public class WeaponProjectileBase : WeaponBase
 {
     public float F_AimSpread;
 
-    protected override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.ProjectileShot;
+    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.ProjectileShot;
     public float GetAimSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_AimSpread;
     protected override void OnAutoTriggerSuccessful()
     {

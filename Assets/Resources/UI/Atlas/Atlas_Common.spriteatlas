@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 1875525
+    totalSpriteSurfaceArea: 1966715
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -37,6 +37,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 38f42b51776c9154ba33af7287510e68, type: 3}
   - {fileID: 21300000, guid: 6a4e7777b01b76b44b374c25625a8c8a, type: 3}
   - {fileID: 21300000, guid: 737da97c521ba6b46a7f9ec37123c419, type: 3}
+  - {fileID: 21300000, guid: 861e25883cb242745aa2b0605b1901b8, type: 3}
   - {fileID: 21300000, guid: c27d2c2472714b74d979909501bab0f4, type: 3}
   - {fileID: 21300000, guid: f02ad3b8858f6ff44aafb2fbf4ef83e2, type: 3}
   - {fileID: 21300000, guid: 4ec60bacd1dafa74b8d93d4b1cae4984, type: 3}
@@ -60,6 +61,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 688303c2643cc5c4f8b8e5589e62c0bf, type: 3}
   - {fileID: 21300000, guid: 493c8f27165db8a48a66957e0e7ce49d, type: 3}
   - {fileID: 21300000, guid: df1b52d98d2a82b4dad501bc4177411a, type: 3}
+  - {fileID: 21300000, guid: 618f9e67580367743af89a5deba0b271, type: 3}
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
   - {fileID: 21300000, guid: 389b60b53720261438d8fdcd07fc2234, type: 3}
   - {fileID: 21300000, guid: a386833f607b4ba478930b8dfe4656ee, type: 3}
@@ -92,6 +94,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a3083f2f75bbc6d44836979886b6c10f, type: 3}
   - {fileID: 21300000, guid: 38f81ac9a2b60d84a83738c539b8b202, type: 3}
   - {fileID: 21300000, guid: b80609daef12a534193fe7f373776b4b, type: 3}
+  - {fileID: 21300000, guid: eefdd652272d2684cbfdc70bf20d1d05, type: 3}
   - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   - {fileID: 21300000, guid: 501504280dbebe648b70ebd05ea737ab, type: 3}
@@ -110,6 +113,7 @@ SpriteAtlas:
   - control_rocker_bottom
   - UI_title_orange_long
   - control_main_bottom
+  - UI_title_orange_ML
   - UI_title_orange
   - icon_diamond
   - icon_credit
@@ -133,6 +137,7 @@ SpriteAtlas:
   - status_life
   - status_armor
   - control_rocker_move
+  - UI_title_black
   - control_ability_Beth
   - control_main_interact
   - control_setting_bottom
@@ -165,6 +170,7 @@ SpriteAtlas:
   - icon_Cost
   - icon_bullet_big
   - icon_weapon
+  - icon_scoreStar2
   - icon_close
   - icon_video
   - icon_Life
