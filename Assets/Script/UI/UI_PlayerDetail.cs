@@ -24,8 +24,8 @@ public class UI_PlayerDetail : UIPage
     Image m_WeaponBackground;
     UIT_TextExtend m_ClipSize;
     Transform m_WeaponScoreSliders;
-    UIT_GridControllerClass<WeaponScoreItem> m_WeaponScore;
-    UIT_GridControllerClass<WeaponTagItem> m_WeaponTag;
+    UIT_GridControllerClass<UIGC_WeaponScoreItem> m_WeaponScore;
+    UIT_GridControllerClass<UIGC_WeaponTagItem> m_WeaponTag;
     
     Image m_Damage, m_FireRate, m_Stability, m_ProjectileSpeed;
     UIT_TextExtend m_DamageAmount, m_FireRateAmount, m_StabilityAmount, m_ProjectileSpeedAmount;
@@ -62,8 +62,8 @@ public class UI_PlayerDetail : UIPage
         m_WeaponImage = m_WeaponInfo.Find("Image").GetComponent<Image>();
         m_ClipSize = m_WeaponInfo.Find("ClipSize").GetComponent<UIT_TextExtend>();
 
-        m_WeaponScore = new UIT_GridControllerClass<WeaponScoreItem>(m_WeaponInfo.Find("ScoreGrid"));
-        m_WeaponTag = new UIT_GridControllerClass<WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
+        m_WeaponScore = new UIT_GridControllerClass<UIGC_WeaponScoreItem>(m_WeaponInfo.Find("ScoreGrid"));
+        m_WeaponTag = new UIT_GridControllerClass<UIGC_WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
             m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
 
@@ -125,9 +125,9 @@ public class UI_PlayerDetail : UIPage
         int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;
         int enhanceScore = weapon.m_EnhanceLevel;
         for (int i = 0; i < baseScore; i++)
-            m_WeaponScore.AddItem().SetScore(false);
-        for (int i = 0; i < enhanceScore; i++)
             m_WeaponScore.AddItem().SetScore(true);
+        for (int i = 0; i < enhanceScore; i++)
+            m_WeaponScore.AddItem().SetScore(false);
         m_WeaponScore.Sort((a, b) => a.Key - b.Key);
 
         enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
@@ -152,43 +152,4 @@ public class UI_PlayerDetail : UIPage
         m_PerkDetail.formatText(perk.GetDetailLocalizeKey(), string.Format("<color=#FFDA6BFF>{0}</color>", perk.Value1), string.Format("<color=#FFDA6BFF>{0}</color>", perk.Value2), string.Format("<color=#FFDA6BFF>{0}</color>", perk.Value3));
         m_PerkIntro.localizeKey = perk.GetIntroLocalizeKey();
     }
-    #region Extra Class
-    class WeaponScoreItem : UIT_GridItemClass
-    {
-        Transform m_Base;
-        Transform m_Bloom;
-        public WeaponScoreItem(Transform _transform) : base(_transform)
-        {
-            m_Base = transform.Find("Base");
-            m_Bloom = transform.Find("Bloom");
-        }
-
-        public void SetScore(bool bloom)
-        {
-            m_Base.SetActivate(!bloom);
-            m_Bloom.SetActivate(bloom);
-        }
-    }
-    class WeaponTagItem : UIT_GridItemClass
-    {
-        Transform m_Empty;
-        Transform m_Tagged;
-        UIT_TextExtend m_Text;
-        public WeaponTagItem(Transform _transform) : base(_transform)
-        {
-            m_Empty = transform.Find("Empty");
-            m_Tagged = transform.Find("Tagged");
-            m_Text = m_Tagged.Find("Text").GetComponent<UIT_TextExtend>();
-        }
-
-        public void SetTag(enum_UIWeaponTag tag)
-        {
-            bool validTag = tag != enum_UIWeaponTag.Invalid;
-            m_Empty.SetActivate(tag == enum_UIWeaponTag.Invalid);
-            m_Tagged.SetActivate(tag != enum_UIWeaponTag.Invalid);
-            if (validTag)
-                m_Text.localizeKey = tag.GetLocalizeKey();
-        }
-    }
-    #endregion
 }

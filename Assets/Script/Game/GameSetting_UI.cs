@@ -285,40 +285,6 @@ namespace GameSetting
         }
     }
 
-    public class UIC_WeaponData
-    {
-        public Transform transform { get; private set; }
-        UIT_TextExtend m_Name;
-        Image m_Background;
-        Image m_Image;
-        Transform tf_AmmoStatus;
-        Text m_Clip, m_Total;
-        public UIC_WeaponData(Transform _transform)
-        {
-            transform = _transform;
-            m_Background = transform.Find("Background").GetComponent<Image>();
-            m_Image = transform.Find("Image").GetComponent<Image>();
-            m_Name = transform.Find("NameStatus/Name").GetComponent<UIT_TextExtend>();
-            tf_AmmoStatus = transform.Find("NameStatus/AmmoStatus");
-            m_Clip = tf_AmmoStatus.Find("Clip").GetComponent<Text>();
-            m_Total = tf_AmmoStatus.Find("Total").GetComponent<Text>();
-        }
-
-        public void UpdateInfo(WeaponBase weapon)
-        {
-            m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
-            m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetDetailSprite()];
-            m_Name.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
-            m_Name.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUIColor());
-        }
-        public void UpdateAmmoInfo(int ammoLeft, int clipAmount)
-        {
-            m_Clip.text = ammoLeft.ToString();
-            m_Total.text = clipAmount.ToString();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tf_AmmoStatus as RectTransform);
-        }
-    }
-
     class UIC_MapBase
     {
         protected RectTransform rectTransform { get; private set; }
@@ -360,4 +326,45 @@ namespace GameSetting
             m_Map_Origin_Base.rectTransform.localScale = Vector3.one * m_MapScale;
         }
     }
+
+
+    #region Extra Class
+    class UIGC_WeaponScoreItem : UIT_GridItemClass
+    {
+        Transform m_Base;
+        Transform m_Bloom;
+        public UIGC_WeaponScoreItem(Transform _transform) : base(_transform)
+        {
+            m_Base = transform.Find("Base");
+            m_Bloom = transform.Find("Bloom");
+        }
+
+        public void SetScore(bool bloom)
+        {
+            m_Base.SetActivate(!bloom);
+            m_Bloom.SetActivate(bloom);
+        }
+    }
+    class UIGC_WeaponTagItem : UIT_GridItemClass
+    {
+        Transform m_Empty;
+        Transform m_Tagged;
+        UIT_TextExtend m_Text;
+        public UIGC_WeaponTagItem(Transform _transform) : base(_transform)
+        {
+            m_Empty = transform.Find("Empty");
+            m_Tagged = transform.Find("Tagged");
+            m_Text = m_Tagged.Find("Text").GetComponent<UIT_TextExtend>();
+        }
+
+        public void SetTag(enum_UIWeaponTag tag)
+        {
+            bool validTag = tag != enum_UIWeaponTag.Invalid;
+            m_Empty.SetActivate(tag == enum_UIWeaponTag.Invalid);
+            m_Tagged.SetActivate(tag != enum_UIWeaponTag.Invalid);
+            if (validTag)
+                m_Text.localizeKey = tag.GetLocalizeKey();
+        }
+    }
+    #endregion
 }
