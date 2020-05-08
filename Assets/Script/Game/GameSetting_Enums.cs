@@ -146,6 +146,7 @@ namespace GameSetting
         Invalid=-1,
         ProjectileShot,
         ProjectileShotMulti,
+        ProjectileStore,
         CastMelee,
         CastDuration,
     }

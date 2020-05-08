@@ -68,7 +68,7 @@ public class UIC_GameStatus : UIControlBase {
 
     void OnEquipmentBtnClick()
     {
-        UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f).Show();
+        UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f);
     }
 
     void OnStageStart()

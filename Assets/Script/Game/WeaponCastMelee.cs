@@ -6,7 +6,7 @@ using TSpecialClasses;
 using UnityEngine;
 
 public class WeaponCastMelee : WeaponCastBase {
-    protected override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.CastMelee;
+    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.CastMelee;
     ValueChecker<float> m_ScaleChecker = new ValueChecker<float>(-1);
 
     Vector4 m_BaseSize;

@@ -36,7 +36,7 @@ public static class TLocalization
         IsInit = true;
     }
     public static bool CanLocalize(string key)=>key!=null&&CurLocalization.ContainsKey(key);
-    public static string GetKeyLocalized(string key)
+    public static string GetKeyLocalized(this string key)
     {
         if (CurLocalization.ContainsKey(key))
             return CurLocalization[key.Replace("\\n", "\n")];

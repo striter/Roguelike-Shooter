@@ -9,7 +9,7 @@ public class WeaponBase : CObjectPoolStaticMonoBase<enum_PlayerWeapon>
     public bool B_AttachLeft = false;
     public int I_ExtraBuffApply = -1;
     #endregion
-    protected virtual enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.Invalid;
+    public virtual enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.Invalid;
     protected EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeapon m_WeaponInfo { get; private set; }
     public int m_EnhanceLevel { get; private set; }

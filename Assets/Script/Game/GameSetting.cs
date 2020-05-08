@@ -217,31 +217,6 @@ namespace GameSetting
         #endregion
     }
 
-    public static class LocalizationKeyJoint
-    {
-        public static string GetNameLocalizeKey(this EntityExpirePreset buff) => "Buff_Name_" + buff.m_Index;
-        public static string GetNameLocalizeKey(this ExpirePlayerPerkBase action) => "Perk_Name_" + action.m_Index;
-        public static string GetIntroLocalizeKey(this ExpirePlayerPerkBase action) => "Perk_Intro_" + action.m_Index;
-        public static string GetNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Name_" + character;
-        public static string GetIntroLocalizeKey(this enum_PlayerCharacter character) => "Character_Intro_" + character;
-        public static string GetAbilityLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_" + character;
-        public static string GetNameLocalizeKey(this EquipmentSaveData equipment) => "Equipment_Name_" + equipment.m_Index;
-        public static string GetPassiveLocalizeKey(this EquipmentSaveData upgrade) => "Equipment_Passive_" + upgrade.m_Index;
-        public static string GetPassiveLocalizeKey(this ExpirePlayerUpgradeCombine upgrade) => "Equipment_Passive_" + upgrade.m_Index;
-        public static string GetLocalizeKey(this EquipmentEntrySaveData entry) => "Equipment_Entry_" + entry.m_Type;
-        public static string GetLocalizeKey(this enum_GameStage stage) => "Game_Stage_" + stage;
-        public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
-        public static string GetLocalizeNameKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Name";
-        public static string GetLocalizeIntroKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Intro";
-        public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact+"_Title";
-        public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
-        public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
-        public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
-        public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
-        public static string SetActionIntro(this ExpirePlayerPerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey() , actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
-    }
-
     public static class GameLayer
     {
         public static readonly int I_Static = LayerMask.NameToLayer("static");

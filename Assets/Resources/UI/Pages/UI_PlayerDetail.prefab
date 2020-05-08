@@ -427,7 +427,7 @@ GameObject:
   - component: {fileID: 224732761607682360}
   - component: {fileID: 114490412944151938}
   m_Layer: 5
-  m_Name: PerkView
+  m_Name: ScrollRect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -443,7 +443,7 @@ GameObject:
   - component: {fileID: 224239304026658540}
   - component: {fileID: 114689601112029018}
   m_Layer: 5
-  m_Name: ScoreGird
+  m_Name: ScoreGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -746,7 +746,7 @@ GameObject:
   - component: {fileID: 224034926699142494}
   - component: {fileID: 114664595023210708}
   m_Layer: 5
-  m_Name: WeaponGrid
+  m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -793,7 +793,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224850631071819776}
   m_Layer: 5
-  m_Name: PerkDetail
+  m_Name: PerkInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -900,7 +900,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1665032719751662
 GameObject:
   m_ObjectHideFlags: 1
@@ -978,7 +978,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224286789134867036}
   m_Layer: 5
-  m_Name: WeaponDetail
+  m_Name: WeaponInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1066,7 +1066,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1788026394867796
 GameObject:
   m_ObjectHideFlags: 1
@@ -1177,7 +1177,7 @@ GameObject:
   - component: {fileID: 222017413912362494}
   - component: {fileID: 114487384389214196}
   m_Layer: 5
-  m_Name: AbilityDetail
+  m_Name: AbilityInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3417,7 +3417,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_PlayerDetail_Weapon
+  m_Text: UI_PlayerDetail_Ability
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_PlayerDetail_Ability
   m_characterSpacing: 4
@@ -4322,7 +4322,7 @@ RectTransform:
   m_GameObject: {fileID: 1199119375642880}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 224651476505123272}
   - {fileID: 224573552346838670}
@@ -4371,10 +4371,10 @@ RectTransform:
   m_Father: {fileID: 224437992090738994}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 53, y: -53}
+  m_SizeDelta: {x: 96, y: 96}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224266740265748954
 RectTransform:
@@ -4497,7 +4497,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -249.9, y: 100}
-  m_SizeDelta: {x: 117, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!224 &224315539128598596
 RectTransform:
@@ -4587,10 +4587,10 @@ RectTransform:
   m_Father: {fileID: 224034926699142494}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -50}
+  m_SizeDelta: {x: 200, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224380401322705850
 RectTransform:
@@ -4667,7 +4667,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -680.30664}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224444789500792160
