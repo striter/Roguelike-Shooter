@@ -174,7 +174,8 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Name";
         public static string GetLocalizeIntroKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Intro";
-        public static string GetLocalizeNameKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
+        public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
+        public static string GetIntroLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Intro_" + weapon;
         public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Title";
         public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;
@@ -308,7 +309,7 @@ namespace GameSetting
         {
             m_Background.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Rarity.GetUIGameControlBackground()];
             m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetDetailSprite()];
-            m_Name.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetLocalizeNameKey();
+            m_Name.localizeKey = weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey();
             m_Name.color = TCommon.GetHexColor(weapon.m_WeaponInfo.m_Rarity.GetUIColor());
         }
         public void UpdateAmmoInfo(int ammoLeft, int clipAmount)

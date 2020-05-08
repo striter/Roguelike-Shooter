@@ -19,6 +19,7 @@ public class UI_PlayerDetail : UIPage
 
     Transform m_WeaponInfo;
     UIT_TextExtend m_WeaponName;
+    UIT_TextExtend m_WeaponIntro;
     Image m_WeaponImage;
     Image m_WeaponBackground;
     UIT_TextExtend m_ClipSize;
@@ -57,6 +58,7 @@ public class UI_PlayerDetail : UIPage
         m_WeaponInfo = rtf_Container.Find("WeaponInfo");
         m_WeaponBackground = m_WeaponInfo.Find("ImageBG").GetComponent<Image>();
         m_WeaponName = m_WeaponInfo.Find("Name").GetComponent<UIT_TextExtend>();
+        m_WeaponIntro = m_WeaponInfo.Find("Intro").GetComponent<UIT_TextExtend>();
         m_WeaponImage = m_WeaponInfo.Find("Image").GetComponent<Image>();
         m_ClipSize = m_WeaponInfo.Find("ClipSize").GetComponent<UIT_TextExtend>();
 
@@ -115,18 +117,19 @@ public class UI_PlayerDetail : UIPage
     {
         SWeapon weaponInfo = weapon.m_WeaponInfo;
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetDetailSprite()];
-        m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetLocalizeNameKey();
+        m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetNameLocalizeKey();
         m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());
+        m_WeaponIntro.localizeKey = weaponInfo.m_Weapon.GetIntroLocalizeKey();
         m_WeaponBackground.sprite = GameUIManager.Instance.m_InGameSprites[weaponInfo.m_Rarity.GetUIDetailBackground()];
-        m_ClipSize.text = string.Format("{0:D2}", weaponInfo.m_ClipAmount);
+        m_ClipSize.text = weaponInfo.m_ClipAmount.ToString();
 
         int score = (int)weapon.m_WeaponInfo.m_Rarity + weapon.m_EnhanceLevel;
         for (int i = 0; i < UIConst.I_DetailWeaponScoreMax; i++)
-            m_WeaponScore.GetItem(i).SetScore(i <= score);
+            m_WeaponScore.GetItem(i).SetScore(i < score);
 
         enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
-            m_WeaponTag.GetItem(i).SetTag(tags.Length < i ? tags[i]: enum_UIWeaponTag.Invalid );
+            m_WeaponTag.GetItem(UIConst.I_DetailWeaponTagMax -1- i).SetTag(i < tags.Length ? tags[i] : enum_UIWeaponTag.Invalid);
 
         m_DamageAmount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
         m_Damage.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
