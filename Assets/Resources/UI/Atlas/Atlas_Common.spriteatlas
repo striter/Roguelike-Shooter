@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 1966715
+    totalSpriteSurfaceArea: 2000940
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -47,6 +47,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6ad81d33339312847ac3d99a5b456c92, type: 3}
   - {fileID: 21300000, guid: eb6498b538c432c479fd0ccd174629b6, type: 3}
   - {fileID: 21300000, guid: 75b51447202270e4d9204d6422607ef7, type: 3}
+  - {fileID: 21300000, guid: 05ba41a082cc1a74288fcc4bf6947a85, type: 3}
   - {fileID: 21300000, guid: 8280ce86eddc22949910b22674ac779c, type: 3}
   - {fileID: 21300000, guid: 01ef3718fbcf89c408d0987fff8ff2d5, type: 3}
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
@@ -123,6 +124,7 @@ SpriteAtlas:
   - icon_coins
   - UI_title_orange_small
   - control_weapon_empty
+  - UI_common_circle
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
   - setting_label_selected
