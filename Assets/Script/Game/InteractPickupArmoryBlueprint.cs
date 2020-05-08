@@ -18,7 +18,7 @@ public class InteractPickupArmoryBlueprint : InteractPickup
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
-        UIManager.Instance.m_Indicate.NewTip(enum_UITipsType.Normal).formatKey("UI_Game_Pickup",m_Weapon.GetLocalizeNameKey());
+        UIManager.Instance.m_Indicate.NewTip(enum_UITipsType.Normal).formatKey("UI_Game_Pickup",m_Weapon.GetNameLocalizeKey());
         return base.OnInteractedContinousCheck(_interactor);
     }
 }
