@@ -8,9 +8,9 @@ public class UIGI_TipItem : UIT_GridItem {
     Action<int> OnPlayFinished;
     RectTransform m_Rect;
     float f_timeCheck;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_TipText = rtf_Container.Find("TipText").GetComponent<UIT_TextExtend>();
         m_Rect = GetComponent<RectTransform>();
     }
@@ -34,6 +34,6 @@ public class UIGI_TipItem : UIT_GridItem {
         m_TipText.color = TCommon.ColorAlpha(m_TipText.color, value);
 
         if (f_timeCheck <= 0)
-            OnPlayFinished(m_Index);
+            OnPlayFinished(m_Identity);
     }
 }

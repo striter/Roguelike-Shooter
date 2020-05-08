@@ -33,16 +33,15 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
 #region Console
     public ConsoleCommand AddConsoleBinding() => m_ConsoleCommands.AddItem(m_ConsoleCommands.Count);
     
-    public class ConsoleCommand : CSimplePoolObject<int>
+    public class ConsoleCommand : CObjectPoolClass<int>
     {
         InputField m_ValueInput;
         EnumSelection m_ValueSelection;
         Text m_CommandTitle;
         KeyCode m_KeyCode;
         Button m_CommonButton;
-        public override void OnPoolInit(Transform _transform)
+        public ConsoleCommand(Transform _transform):base(_transform)
         {
-            base.OnPoolInit(_transform);
             m_ValueInput = transform.Find("Input").GetComponent<InputField>();
             m_ValueSelection = new EnumSelection(transform.Find("Select"));
             m_CommonButton = transform.Find("Button").GetComponent<Button>();

@@ -9,9 +9,9 @@ public class UIGI_EquipmentItemOwned : UIGI_EquipmentItemBase {
     Text m_Equipping, m_Locked,m_Selected;
     Action<int> OnButtonClick;
     int m_EquipmentIndex = -1;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         rtf_Container.Find("Button").GetComponent<Button>().onClick.AddListener(() => { OnButtonClick?.Invoke(m_EquipmentIndex); });
         m_Equipping = rtf_Container.Find("Equipping").GetComponent<Text>();
         m_Locked = rtf_Container.Find("Locked").GetComponent<Text>();

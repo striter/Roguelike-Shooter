@@ -98,7 +98,7 @@ namespace GameSetting
 
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
         public static string GetAbilitySprite(enum_PlayerCharacter character) => "control_ability_" + character;
-        public static string GetWeaponMainIcon(this enum_PlayerWeapon weapon) =>"icon_"+ ((int)weapon);
+        public static string GetIconSprite(this enum_PlayerWeapon weapon) =>"icon_"+ ((int)weapon);
         public static string GetUIControlDetailSpriteName(this enum_PlayerWeapon weapon) => "detail_"+ ((int)weapon);
 
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
@@ -280,7 +280,7 @@ namespace GameSetting
             m_Map_Origin_Base = m_Map_Origin.Find("Base").GetComponent<RawImage>();
             m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
             m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
-            m_Player.Init();
+            m_Player.OnInitItem();
             m_Player.Play(GameManager.Instance.m_LocalPlayer);
             ChangeMapScale(mapScale);
         }

@@ -6,15 +6,14 @@ using UnityEngine;
 
 public class SFXCastAreaConnections : SFXCast {
     ObjectPoolListClass<EntityBase, ConnectionsItem> m_Connections;
-    class ConnectionsItem:CSimplePoolObject<EntityBase>
+    class ConnectionsItem:CObjectPoolClass<EntityBase>
     {
         Transform targetTrans;
         LineRenderer m_Renderer;
         TSpecialClasses.ParticleControlBase m_Particles;
         bool m_Play=>targetTrans!=null;
-        public override void OnPoolInit(Transform _transform)
+        public ConnectionsItem(Transform _transform):base(_transform)
         {
-            base.OnPoolInit(_transform);
             m_Particles = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
             m_Renderer = transform.GetComponent<LineRenderer>();
             SetTarget(null);

@@ -8,13 +8,13 @@ public class LevelEditorUIDataView : UIT_GridItem {
     Text m_Name;
     RawImage m_Image;
     Action<int> OnDataEditClick,OnDataDeleteClick;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Name = rtf_Container.Find("Name").GetComponent<Text>();
         m_Image = rtf_Container.Find("Image").GetComponent<RawImage>();
-        rtf_Container.Find("Edit").GetComponent<Button>().onClick.AddListener(()=>OnDataEditClick(m_Index));
-        rtf_Container.Find("Delete").GetComponent<Button>().onClick.AddListener(() => OnDataDeleteClick(m_Index));
+        rtf_Container.Find("Edit").GetComponent<Button>().onClick.AddListener(()=>OnDataEditClick(m_Identity));
+        rtf_Container.Find("Delete").GetComponent<Button>().onClick.AddListener(() => OnDataDeleteClick(m_Identity));
     }
 
 
@@ -27,5 +27,5 @@ public class LevelEditorUIDataView : UIT_GridItem {
         m_Image.SetNativeSize();
     }
 
-    void OnEditClick() => OnDataEditClick(m_Index);
+    void OnEditClick() => OnDataEditClick(m_Identity);
 }

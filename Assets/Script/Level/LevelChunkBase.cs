@@ -5,12 +5,12 @@ using LevelSetting;
 using TTiles;
 using System;
 
-public class LevelChunkBase : MonoBehaviour
+public class LevelChunkBase : CObjectPoolMono<int>
 {
     protected ObjectPoolListComponent<int, LevelTileBase> m_TilePool { get; private set; }
-
-    public virtual void Init()
+    public override void OnInitItem()
     {
+        base.OnInitItem();
         m_TilePool = new ObjectPoolListComponent<int, LevelTileBase>(transform.Find("TilePool"), "TileItem");
     }
     protected void InitData(int width,int height,ChunkTileData[] tileData ,System.Random _random,Func<TileAxis,ChunkTileData,ChunkTileData> DataObjectCheck=null)

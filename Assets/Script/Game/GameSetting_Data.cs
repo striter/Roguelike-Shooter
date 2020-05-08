@@ -871,6 +871,7 @@ namespace GameSetting
         public bool m_Hidden { get; private set; }
         public enum_Rarity m_Rarity { get; private set; }
         public float m_Damage { get; private set; }
+        public float m_DamagePerEnhance { get; private set; }
         public float m_FireRate { get; private set; }
         public int m_ClipAmount { get; private set; }
         public float m_RefillTime { get; private set; }

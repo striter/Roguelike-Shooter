@@ -9,7 +9,6 @@ using UnityEngine;
 
 public class LevelChunkGame : LevelChunkBase
 {
-    public int m_QuadrantIndex { get; private set; }
     public TileAxis m_QuadrantAxis { get; private set; }
     public TileBounds m_ChunkMapBounds { get; private set; }
     public Bounds m_ChunkBaseBounds { get; private set; }
@@ -18,18 +17,18 @@ public class LevelChunkGame : LevelChunkBase
     public List<LevelChunkGame> m_NearbyChunks { get; private set; } = new List<LevelChunkGame>();
 
     public Transform m_InteractParent { get; private set; }
-    public override void Init()
+
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_InteractParent = transform.Find("Interacts");
     }
 
     public void InitGameChunk( ChunkQuadrantData _data, System.Random _random)
     {
         m_NearbyChunks.Clear();
-        m_QuadrantIndex = _data.m_QuadrantIndex;
         m_QuadrantAxis = _data.m_QuadrantAxis;
-        gameObject.name = m_QuadrantIndex+"|"+ m_QuadrantAxis.ToString();
+        gameObject.name = m_Identity+"|"+ m_QuadrantAxis.ToString();
         transform.localPosition = _data.m_QuadrantBounds.m_Origin.ToPosition();
         m_ChunkMapBounds = _data.m_QuadrantBounds;
         Vector3 quadrantSource = m_ChunkMapBounds.m_Origin.ToPosition();

@@ -10,9 +10,9 @@ public class UIGI_VisualizeDamage : UIT_GridItem {
     Animator m_Animator;
     static int m_AnimatorIDPlay = Animator.StringToHash("t_play");
     static int m_AnimatorIDCritical = Animator.StringToHash("b_critical");
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Animator = GetComponent<Animator>();
         rtf_SubContainer = rtf_Container.Find("SubContainer").GetComponent<RectTransform>();
         m_Amount = rtf_SubContainer.Find("Amount").GetComponent<Text>();
@@ -38,7 +38,7 @@ public class UIGI_VisualizeDamage : UIT_GridItem {
     }
     void OnAnimFinish()
     {
-        OnAnimFinished(m_Index);
+        OnAnimFinished(m_Identity);
     }
 
     private void Update()

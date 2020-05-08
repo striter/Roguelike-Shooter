@@ -7,7 +7,7 @@ public class UI_CharacterSelect : UIPage {
 
     Transform m_CharacterStatus;
     UIT_GridControllerGridItem<UIGI_EquipmentItemBase> m_EquipmentsGrid;
-    UIT_GridControllerMono<Text> m_AttributesGrid;
+    UIT_GridControllerComponent<Text> m_AttributesGrid;
     Text m_Passive;
     Transform m_CharacterDetail;
     Text m_CharacterName, m_CharacterIntro,m_CharacterAbility;
@@ -21,7 +21,7 @@ public class UI_CharacterSelect : UIPage {
         base.Init();
         m_CharacterStatus = rtf_Container.Find("CharacterStatus");
         m_Passive = m_CharacterStatus.Find("Passive").GetComponent<Text>();
-        m_AttributesGrid = new UIT_GridControllerMono<Text>(m_CharacterStatus.Find("Attributes"));
+        m_AttributesGrid = new UIT_GridControllerComponent<Text>(m_CharacterStatus.Find("Attributes"));
         m_EquipmentsGrid = new UIT_GridControllerGridItem<UIGI_EquipmentItemBase>(m_CharacterStatus.Find("Equipments"));
 
         m_CharacterDetail = rtf_Container.Find("CharacterDetail");

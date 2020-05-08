@@ -31,7 +31,7 @@ public class LevelChunkEditor : LevelChunkBase
         m_SelectionTiles = new ObjectPoolListComponent<int, LevelTileEditorSelection>(tf_CameraPos.Find("Selections/SelectionPool"), "SelectionItem");
         m_SelectingTile = tf_CameraPos.Find("Selections/SelectingTile").GetComponent<LevelTileEditorSelection>();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
-        Init();
+        OnInitItem();
     }
     private void Start()
     {

@@ -5,13 +5,13 @@ using UnityEngine.UI;
 using GameSetting;
 public class UIGI_EquipmentItemSelected : UIGI_EquipmentItemBase {
 
-    UIT_GridControllerMono<Text> m_EntryGrid;
+    UIT_GridControllerComponent<Text> m_EntryGrid;
     Text m_EnhanceRequirementLeft,m_EnhanceDetail;
 
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
-        m_EntryGrid =new UIT_GridControllerMono<Text>( rtf_Container.Find("EntryGrid"));
+        base.OnInitItem();
+        m_EntryGrid =new UIT_GridControllerComponent<Text>( rtf_Container.Find("EntryGrid"));
         m_EnhanceRequirementLeft = rtf_Container.Find("EnhanceRequirementLeft").GetComponent<Text>();
         m_EnhanceDetail = rtf_Container.Find("EnhanceDetail").GetComponent<Text>();
     }

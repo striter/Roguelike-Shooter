@@ -8,9 +8,9 @@ using LevelSetting;
 public class UIGI_MapLocations : UIT_GridItem {
     Image m_EventIcon;
 
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_EventIcon = rtf_Container.Find("Icon").GetComponent<Image>();
     }
 
@@ -23,6 +23,6 @@ public class UIGI_MapLocations : UIT_GridItem {
     {
         if (Vector2.Distance(localPos, rectTransform.anchoredPosition) > 3.5f)
             return -1;
-        return m_Index;
+        return m_Identity;
     }
 }

@@ -5,7 +5,7 @@ using GameSetting;
 using LevelSetting;
 using UnityEngine;
 
-public class TilePlantsBase : TileItemBase,IObjectpool<enum_TilePlantsType> {
+public class TilePlantsBase : TileItemBase,IObjectPoolStaticBase<enum_TilePlantsType> {
     public override enum_TileSubType m_Type => enum_TileSubType.Plants;
     public enum_TilePlantsType m_PlantsType = enum_TilePlantsType.Invalid;
     Action<enum_TilePlantsType, MonoBehaviour> OnRecycle;

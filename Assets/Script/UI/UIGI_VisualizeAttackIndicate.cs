@@ -9,9 +9,9 @@ public class UIGI_VisualizeAttackIndicate : UIT_GridItem {
     Action<int> OnAnimFinished;
     Transform m_target;
     TSpecialClasses.AnimationClipControl m_Animation;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Animation = new TSpecialClasses.AnimationClipControl(transform.GetComponent<Animation>(), true);
         rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;
     }
@@ -26,7 +26,7 @@ public class UIGI_VisualizeAttackIndicate : UIT_GridItem {
 
     void OnAnimFinish()
     {
-        OnAnimFinished(m_Index);
+        OnAnimFinished(m_Identity);
     }
 
     private void Update()

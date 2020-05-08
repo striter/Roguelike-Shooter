@@ -4,60 +4,66 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-public class UIT_GridControllerMono<T>  where T : Component
+
+public class UIT_GridControllerBase<T> where T:class
 {
-    public Transform transform { get; private set; }
-    public ObjectPoolListComponent<int,T> m_Pool { get; private set; }
-    public int m_Count => m_Pool.m_ActiveItemDic.Count;
-    public UIT_GridControllerMono(Transform _transform) 
+    public Transform transform => m_Pool.transform;
+    public ObjectPoolListBase<int, T> m_Pool { get; private set; }
+    public int m_Count => m_Pool.Count;
+    public UIT_GridControllerBase(ObjectPoolListBase<int, T> pool)
     {
-        transform = _transform;
-        m_Pool = new ObjectPoolListComponent<int,T>(_transform,"GridItem", InitItem);
+        m_Pool = pool;
     }
-    public virtual T AddItem() => AddItem(m_Count);
-    public virtual T AddItem(int identity)
+
+    public T AddItem() => AddItem(m_Count);
+    public virtual T AddItem(int identity)=>m_Pool.AddItem(identity);
+    public void RemoveItem(int identity) => m_Pool.RemoveItem(identity);
+    public virtual void ClearGrid() => m_Pool.Clear();
+    public bool Contains(int identity) => m_Pool.ContainsItem(identity);
+    public T GetItem(int identity) => Contains(identity) ? m_Pool.GetItem(identity) : null;
+    public T AddItem(int xIdentity, int yIdentity) => AddItem(GetIdentity(xIdentity, yIdentity));
+    public T GetItem(int xIdentity, int yIdentity) => GetItem(GetIdentity(xIdentity, yIdentity));
+    int GetIdentity(int xIdentity, int yIdentity) => xIdentity + yIdentity * 1000;
+    public T GetOrAddItem(int identity) => Contains(identity) ? GetItem(identity) : AddItem(identity);
+}
+
+public class UIT_GridClassItem : CObjectPoolClass<int>
+{
+    public UIT_GridClassItem(Transform transform):base(transform){ }
+}
+
+public class UIT_GridControllerClass<T> : UIT_GridControllerBase<T> where T: UIT_GridClassItem,new ()
+{
+    public UIT_GridControllerClass(Transform _transform):base(new ObjectPoolListClass<int, T>(_transform, "GridItem"))
+    {
+    }
+}
+
+
+public class UIT_GridControllerComponent<T> : UIT_GridControllerBase<T> where T : Component
+{
+    public UIT_GridControllerComponent(Transform _transform) : base(new ObjectPoolListComponent<int, T>(_transform, "GridItem"))
+    {
+    }
+
+    public override T AddItem(int identity)
     {
         T item = m_Pool.AddItem(identity);
         item.transform.SetSiblingIndex(identity);
         return item;
     }
-    public void RemoveItem(int identity) => m_Pool.RemoveItem(identity);
-    public virtual void ClearGrid() => m_Pool.Clear();
-    protected virtual void InitItem(T item) { }
-    public bool Contains(int identity) => m_Pool.ContainsItem(identity);
-    public T GetItem(int identity)=> Contains(identity) ? m_Pool.GetItem(identity) : null;
-    public T AddItem(int xIdentity, int yIdentity) => AddItem(GetIdentity(xIdentity, yIdentity));
-    public T GetItem(int xIdentity, int yIdentity) => GetItem(GetIdentity(xIdentity,yIdentity));
-    int GetIdentity(int xIdentity, int yIdentity) => xIdentity + yIdentity * 1000;
-
-    public T GetOrAddItem(int identity)=>  Contains(identity) ? GetItem(identity) : AddItem(identity);
 }
 
-public class UIT_GridControllerGridItem<T>: UIT_GridControllerMono<T> where T:UIT_GridItem
+
+
+public class UIT_GridControllerGridItem<T>: UIT_GridControllerBase<T> where T:UIT_GridItem
 {
     public GridLayoutGroup m_GridLayout { get; private set; }
-    public UIT_GridControllerGridItem(Transform _transform) : base(_transform)
+    public UIT_GridControllerGridItem(Transform _transform) : base(new ObjectPoolListMonobehaviour<int,T>(_transform,"GridItem"))
     {
         m_GridLayout = _transform.GetComponent<GridLayoutGroup>();
     }
-    protected override void InitItem(T item)
-    {
-        base.InitItem(item);
-        item.Init();
-    }
 
-    public override T AddItem(int identity)
-    {
-        T item = base.AddItem(identity);
-        item.OnActivate(identity);
-        return item;
-    }
-    public new void RemoveItem(int identity)
-    {
-        T item = GetItem(identity);
-        item.OnDeactivate();
-        base.RemoveItem(identity);
-    }
     public virtual void Sort(Comparison<KeyValuePair<int, T>> comparison) => m_Pool.Sort(comparison);
 }
 
@@ -102,25 +108,34 @@ public interface IGridHighlight
 
 public class UIT_GridControlledSingleSelect<T> : UIT_GridControllerGridItem<T> where T : UIT_GridItem, IGridHighlight
 {
-    public int m_curSelecting { get; private set; } = -1;
+    public int m_Selecting { get; private set; } = -1;
     Action<int> OnItemSelect;
     public UIT_GridControlledSingleSelect(Transform _transform,Action<int> _OnItemSelect) : base(_transform)
     {
         OnItemSelect = _OnItemSelect;
     }
-    protected override void InitItem(T item)
+    public override T AddItem(int identity)
     {
-        base.InitItem(item);
+        T item= base.AddItem(identity);
         item.AttachSelectButton(OnItemClick);
         item.OnHighlight(false);
+        return item;
     }
 
     public void OnItemClick(int index)
     {
-        if (m_curSelecting != -1)
-            GetItem(m_curSelecting).OnHighlight(false);
-        m_curSelecting = index;
-        GetItem(m_curSelecting).OnHighlight(true);
+        if (m_Selecting != -1)
+            GetItem(m_Selecting).OnHighlight(false);
+        m_Selecting = index;
+        GetItem(m_Selecting).OnHighlight(true);
         OnItemSelect(index);
+    }
+
+    public void ClearHighlight()
+    {
+        if (m_Selecting == -1)
+            return;
+        GetItem(m_Selecting).OnHighlight(false);
+        m_Selecting = -1;
     }
 }

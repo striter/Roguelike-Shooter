@@ -2,7 +2,7 @@
 using GameSetting;
 using System;
 
-public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
+public class WeaponBase : CObjectPoolStaticMonoBase<enum_PlayerWeapon>
 {
     #region PresetData
     public enum_PlayerAnim E_Anim = enum_PlayerAnim.Invalid;
@@ -18,7 +18,7 @@ public class WeaponBase : CObjectPoolMono<enum_PlayerWeapon>
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
     public float m_Recoil => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
-    public float m_BaseDamage => m_WeaponInfo.m_Damage * (1f + GameExpression.GetPlayerWeaponBaseDamageMultiplyAdditive(m_WeaponInfo.m_Rarity,m_EnhanceLevel));
+    public float m_BaseDamage => m_WeaponInfo.m_Damage +m_WeaponInfo.m_DamagePerEnhance*m_EnhanceLevel;
     protected WeaponTrigger m_Trigger { get; private set; }
     protected virtual WeaponTrigger GetTrigger() => new WeaponTriggerAuto(m_WeaponInfo.m_FireRate, OnTriggerCheck,OnAutoTriggerSuccessful);
     Action<float> OnFireRecoil;

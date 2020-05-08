@@ -11,7 +11,8 @@ using System.Linq;
 
 public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelperClass
 {
-    ObjectPoolListComponent<int, LevelChunkGame> m_ChunkPool;
+
+    ObjectPoolListMonobehaviour<int, LevelChunkGame> m_ChunkPool;
     public Vector3 m_LevelCenter { get; private set; }
     public TileAxis m_MapSize { get; private set; }
     public Texture2D m_MapTexture { get; private set; }
@@ -48,7 +49,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     protected override void Awake()
     {
         base.Awake();
-        m_ChunkPool = new ObjectPoolListComponent<int, LevelChunkGame>(transform.Find("GameChunk"),"PoolItem",(LevelChunkGame chunk)=>chunk.Init());
+        m_ChunkPool = new ObjectPoolListMonobehaviour<int, LevelChunkGame>(transform.Find("GameChunk"),"PoolItem");
     }
 
     protected override void OnDestroy()
@@ -387,13 +388,13 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
         {
             int sqrMagnitude = (playerQuadrant - chunk.m_QuadrantAxis).SqrMagnitude;
             if (sqrMagnitude == 0)
-                m_PlayerAtQuadrant = chunk.m_QuadrantIndex;
+                m_PlayerAtQuadrant = chunk.m_Identity;
 
             bool activeCheckQuadrant = sqrMagnitude <= 2;
             chunk.SetActivate(activeCheckQuadrant);
             if (!activeCheckQuadrant)
                 return;
-            m_ActiveCheckQuadrants.Add(chunk.m_QuadrantIndex);
+            m_ActiveCheckQuadrants.Add(chunk.m_Identity);
         });
     }
 
@@ -429,8 +430,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
             m_ChunkPool.m_ActiveItemDic.Traversal((LevelChunkGame chunk) =>
             {
                 bool playerAtQuadrant = m_PlayerQuadrantActivateCheckAxis == chunk.m_QuadrantAxis;
-                bool activateCheckQuadrant = m_ActiveCheckQuadrants.Contains(chunk.m_QuadrantIndex);
-                bool activateQuadrant = m_ActiveQuadrants.Contains(chunk.m_QuadrantIndex);
+                bool activateCheckQuadrant = m_ActiveCheckQuadrants.Contains(chunk.m_Identity);
+                bool activateQuadrant = m_ActiveQuadrants.Contains(chunk.m_Identity);
 
                 Gizmos.color = playerAtQuadrant ? Color.red : (activateCheckQuadrant ? (activateQuadrant ? Color.green : Color.yellow) : Color.white);
                 float height = (playerAtQuadrant ? 3f : (activateCheckQuadrant ? (activateQuadrant ? 2f : 1f) : 0f));

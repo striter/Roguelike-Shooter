@@ -11,9 +11,9 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     protected Image img_HighLight;
     public bool B_HighLight { get; protected set; }
     Action<int> OnItemClick;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         txt_Default = rtf_Container.Find("DefaultText").GetComponent<UIT_TextExtend>();
         img_Default = rtf_Container.Find("DefaultImage").GetComponent<Image>();
         img_HighLight = rtf_Container.Find("DefaultHighLight").GetComponent<Image>();
@@ -49,6 +49,6 @@ public class UIT_GridDefaultItem : UIT_GridItem {
     }
     protected void OnItemTrigger()
     {
-        OnItemClick?.Invoke(m_Index);
+        OnItemClick?.Invoke(m_Identity);
     }
 }

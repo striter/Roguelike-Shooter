@@ -68,7 +68,7 @@ public class UIC_GameStatus : UIControlBase {
 
     void OnEquipmentBtnClick()
     {
-        UIManager.Instance.ShowPage<UI_PlayerPerks>(true, true, 0f).Show();
+        UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f).Show();
     }
 
     void OnStageStart()
@@ -112,12 +112,12 @@ public class UIC_GameStatus : UIControlBase {
 
     class UIC_Minimap : UIC_MapBase
     {
-        UIT_GridControllerMono<UIGI_MapEntityLocation> m_Enermys;
-        UIT_GridControllerMono<Image> m_Locations;
+        UIT_GridControllerGridItem<UIGI_MapEntityLocation> m_Enermys;
+        UIT_GridControllerComponent<Image> m_Locations;
         public UIC_Minimap(Transform transform) : base(transform, LevelConst.I_UIMinimapSize)
         {
             m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
-            m_Locations = new UIT_GridControllerMono<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
+            m_Locations = new UIT_GridControllerComponent<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
         }
         public override void DoMapInit()
         {

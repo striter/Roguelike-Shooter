@@ -14,9 +14,9 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
 
     ValueLerpSeconds m_HealthLerp;
 
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_HealthBar = rtf_Container.Find("HealthBar").GetComponent<Image>();
         m_Graphics = GetComponentsInChildren<Graphic>();
         rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;

@@ -8,13 +8,13 @@ using UnityEngine.UI;
 public class UIGI_CharacterUpgradeItem : UIT_GridItem,IGridHighlight {
     Text m_Title, m_Amount, m_Selected;
     Action<int> OnItemClick;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Title = rtf_Container.Find("Title").GetComponent<Text>();
         m_Amount = rtf_Container.Find("Amount").GetComponent<Text>();
         m_Selected = rtf_Container.Find("Selected").GetComponent<Text>();
-        GetComponentInChildren<Button>().onClick.AddListener(()=> { OnItemClick(m_Index); });
+        GetComponentInChildren<Button>().onClick.AddListener(()=> { OnItemClick(m_Identity); });
     }
     public void Play(enum_CharacterUpgradeType upgrade, int amount)
     {

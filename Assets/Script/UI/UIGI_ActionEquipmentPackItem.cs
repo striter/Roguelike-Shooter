@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class UIGI_ActionEquipmentPackItem : UIGI_ActionEquipmentSelect {
     Transform m_Empty;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Empty = transform.Find("Empty");
     }
     public override void SetInfo(ExpirePlayerPerkBase action)

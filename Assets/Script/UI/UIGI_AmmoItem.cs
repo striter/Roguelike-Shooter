@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIGI_AmmoItem : UIT_GridItem {
     Image image,background;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         image = rtf_Container.Find("Image").GetComponent<Image>();
         background = rtf_Container.Find("Background").GetComponent<Image>();
     }

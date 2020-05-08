@@ -4,7 +4,7 @@ using UnityEngine;
 using LevelSetting;
 using System;
 
-public class LevelTileItemEditorTerrain : TileItemBase, IObjectpool<enum_EditorTerrainType>
+public class LevelTileItemEditorTerrain : TileItemBase, IObjectPoolStaticBase<enum_EditorTerrainType>
 {
     public override enum_TileSubType m_Type => enum_TileSubType.EditorGround;
 

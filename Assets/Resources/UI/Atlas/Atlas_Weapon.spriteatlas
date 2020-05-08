@@ -29,11 +29,10 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 0396c725e26df884a977ed541580352c, type: 3}
-    totalSpriteSurfaceArea: 5648915
+    totalSpriteSurfaceArea: 4440600
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: ab9e4ac5a3f0d904e96a45fd12ef2726, type: 3}
   - {fileID: 21300000, guid: d8d6de2694a861048927ca5c12f35524, type: 3}
   - {fileID: 21300000, guid: 976680939e01a1d489b22f3e128a4f0a, type: 3}
   - {fileID: 21300000, guid: 666471317c37b4e4e93150edfde2867f, type: 3}
@@ -70,10 +69,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7535d62942a4c6246876acd9859348ae, type: 3}
   - {fileID: 21300000, guid: 898b7b8d34ed9ee43ba586dde7a72db7, type: 3}
   - {fileID: 21300000, guid: c0abe4af7c4383347b072aff4689e22e, type: 3}
-  - {fileID: 21300000, guid: 7ec56bd6698759a459b2cb6406ce61ea, type: 3}
-  - {fileID: 21300000, guid: 4e14f959524b95143ab7b7d3fc182a6d, type: 3}
-  - {fileID: 21300000, guid: 40e496ba62ca47142a63d66dd29fd551, type: 3}
-  - {fileID: 21300000, guid: a5fb550d9a4719940b7c08914de1a723, type: 3}
   - {fileID: 21300000, guid: 9d6816b57f5e0cb409739b1ec1dacb18, type: 3}
   - {fileID: 21300000, guid: da697403aea6a7449a1f7ad2c8c6d957, type: 3}
   - {fileID: 21300000, guid: 3afd4d7a0b6936647a21053c7f23de25, type: 3}
@@ -86,15 +81,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 390a2101cb35d404387994c8ed4bca61, type: 3}
   - {fileID: 21300000, guid: 7981ef639d2e2cd4488d242b32f2e407, type: 3}
   - {fileID: 21300000, guid: b60ce2675f154894fb2cb802422e875e, type: 3}
-  - {fileID: 21300000, guid: da6e0cb0cadcc5549a47dc9676754b94, type: 3}
-  - {fileID: 21300000, guid: 97df7a04d4a86c542b40266b8fb4c821, type: 3}
-  - {fileID: 21300000, guid: c99735c579902e44db0bcc383ff6f311, type: 3}
-  - {fileID: 21300000, guid: f64e66b3e548ffa40b6f85e0009a2d93, type: 3}
-  - {fileID: 21300000, guid: c6cd8e1483f387d41b31d3d2ef123818, type: 3}
-  - {fileID: 21300000, guid: 55d02c3ed3650f64baec0287f280f6c6, type: 3}
-  - {fileID: 21300000, guid: 250b08ae5436d07468096a4880b553ef, type: 3}
   m_PackedSpriteNamesToIndex:
-  - weapon_background
   - detail_116
   - detail_201
   - detail_202
@@ -131,10 +118,6 @@ SpriteAtlas:
   - icon_203
   - icon_104
   - icon_115
-  - control_Epic
-  - control_Advanced
-  - control_Ordinary
-  - control_Rare
   - icon_113
   - icon_112
   - icon_102
@@ -147,12 +130,5 @@ SpriteAtlas:
   - icon_404
   - icon_111
   - icon_101
-  - weapon_skilldata
-  - weapon_weaponpower
-  - weapon_progress_weaponpower
-  - weapon_shadow_Epic
-  - weapon_shadow_Ordinary
-  - weapon_shadow_Rare
-  - weapon_shadow_Advanced
   m_Tag: Atlas_Weapon
   m_IsVariant: 0

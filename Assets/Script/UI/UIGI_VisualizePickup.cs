@@ -11,9 +11,9 @@ public class UIGI_VisualizePickup : UIT_GridItem {
     Action<int> OnAnimFinished;
     Vector3 m_pickupPos;
     TSpecialClasses.AnimationClipControl m_Animation;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Animation = new TSpecialClasses.AnimationClipControl(transform.GetComponent<Animation>(), true);
         m_Amount = rtf_Container.Find("Amount").GetComponent<Text>();
         m_Projection = rtf_Container.Find("Projection").GetComponent<Text>();
@@ -37,7 +37,7 @@ public class UIGI_VisualizePickup : UIT_GridItem {
 
     void OnAnimFinish()
     {
-        OnAnimFinished(m_Index);
+        OnAnimFinished(m_Identity);
     }
 
     private void Update()

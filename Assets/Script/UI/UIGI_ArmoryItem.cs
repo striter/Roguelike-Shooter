@@ -9,9 +9,9 @@ public class UIGI_ArmoryItem : UIT_GridItem {
     Text m_Text;
     Button m_Button;
     Action<enum_PlayerWeapon> OnWeaponClick;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Text = GetComponentInChildren<Text>();
         m_Button = GetComponentInChildren<Button>();
         m_Button.onClick.AddListener(OnButtonClick);
@@ -20,8 +20,8 @@ public class UIGI_ArmoryItem : UIT_GridItem {
     public void Play(Action<enum_PlayerWeapon> OnClick)
     {
         OnWeaponClick = OnClick;
-        m_Text.text = ((enum_PlayerWeapon)m_Index).ToString();
+        m_Text.text = ((enum_PlayerWeapon)m_Identity).ToString();
     }
 
-    void OnButtonClick() => OnWeaponClick((enum_PlayerWeapon)m_Index);
+    void OnButtonClick() => OnWeaponClick((enum_PlayerWeapon)m_Identity);
 }

@@ -180,8 +180,6 @@ namespace GameSetting
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
 
-        public static float GetPlayerWeaponBaseDamageMultiplyAdditive(enum_Rarity weaponRarity, int enhanceLevel) => (.10f + .05f * (int)weaponRarity) * enhanceLevel;
-
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 

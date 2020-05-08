@@ -2,7 +2,7 @@
 using GameSetting;
 using System;
 
-public class EntityBase : CObjectPoolMono<int>
+public class EntityBase : CObjectPoolStaticMonoBase<int>
 {
     public int m_EntityID { get; private set; } = -1;
     public virtual enum_EntityType m_ControllType => enum_EntityType.Invalid;

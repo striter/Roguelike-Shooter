@@ -6,10 +6,10 @@ using UnityEngine.UI;
 using GameSetting;
 public class UIGI_EquipmentItemEquipping : UIGI_EquipmentItemBase {
     Action<int> OnButtonClick;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
-        rtf_Container.Find("Button").GetComponent<Button>().onClick.AddListener(() => { OnButtonClick?.Invoke(m_Index); });
+        base.OnInitItem();
+        rtf_Container.Find("Button").GetComponent<Button>().onClick.AddListener(() => { OnButtonClick?.Invoke(m_Identity); });
     }
 
     public void Play(EquipmentSaveData data,Action<int> OnButtonClick)

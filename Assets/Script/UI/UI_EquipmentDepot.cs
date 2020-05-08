@@ -12,7 +12,7 @@ public class UI_EquipmentDepot : UIPage {
     UIT_GridControllerGridItem<UIGI_EquipmentItemEquipping> m_EquippingGrid;
     UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned> m_OwnedGrid;
     UIGI_EquipmentItemSelected m_SelectedEquipment;
-    UIT_GridControllerMono<Text> m_AttributesEntryGrid;
+    UIT_GridControllerComponent<Text> m_AttributesEntryGrid;
     Text m_Passive;
     Transform m_Btns;
     Button m_LeftBtn, m_RightBtn, m_LockBtn;
@@ -29,10 +29,10 @@ public class UI_EquipmentDepot : UIPage {
         base.Init();
         m_EquippingGrid = new UIT_GridControllerGridItem<UIGI_EquipmentItemEquipping>(rtf_Container.Find("EquippingGrid"));
         m_OwnedGrid = new UIT_GridControllerGridItemScrollView<UIGI_EquipmentItemOwned>(rtf_Container.Find("OwnedScrollView"),25);
-        m_AttributesEntryGrid = new UIT_GridControllerMono<Text>(rtf_Container.Find("Attributes/EntryGrid"));
+        m_AttributesEntryGrid = new UIT_GridControllerComponent<Text>(rtf_Container.Find("Attributes/EntryGrid"));
         m_Passive = rtf_Container.Find("Attributes/Passive").GetComponent<Text>();
         m_SelectedEquipment = rtf_Container.Find("Selected").GetComponent<UIGI_EquipmentItemSelected>();
-        m_SelectedEquipment.Init();
+        m_SelectedEquipment.OnInitItem();
         m_Btns = rtf_Container.Find("Btns");
         m_LeftBtn = m_Btns.Find("LeftBtn").GetComponent<Button>();
         m_LeftBtn.onClick.AddListener(OnLeftButtonClick);

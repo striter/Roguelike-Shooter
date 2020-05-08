@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class UIGI_EquipmentItemBase : UIT_GridItem {
     Text m_Name, m_Enhance;
-    public override void Init()
+    public override void OnInitItem()
     {
-        base.Init();
+        base.OnInitItem();
         m_Name = rtf_Container.Find("Name").GetComponent<Text>();
         m_Enhance = rtf_Container.Find("Enhance").GetComponent<Text>();
     }
