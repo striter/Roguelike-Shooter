@@ -122,7 +122,7 @@ namespace GameSetting
         public static string GetExpireSprite(this EntityExpireBase expire) => expire.m_Index.ToString();
 
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
-        public static string GetUIDetailBackground(this enum_Rarity rarity) => "detail_weapon_" + rarity;
+        public static string GetUIDetailBackground(this enum_Rarity rarity) => "detail_weapon_background_" + rarity;
         public static string GetUIGameControlBackground(this enum_Rarity rarity) => "control_" + rarity;
 
         public static string GetInteractMapIcon(this InteractGameBase interact)

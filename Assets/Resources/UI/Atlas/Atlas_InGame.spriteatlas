@@ -73,10 +73,10 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - detail_lowpoly_background2
   - detail_lowpoly_background1
-  - detail_weapon_legend
-  - detail_weapon_rare
-  - detail_weapon_ordinary
-  - detail_weapon_advanced
+  - detail_weapon_Epic
+  - detail_weapon_Rare
+  - detail_weapon_Ordinary
+  - detail_weapon_Advanced
   - result_title_win_EN
   - result_title_fail_EN
   - result_title_fail_CN
