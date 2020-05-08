@@ -1814,7 +1814,7 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 
-  B_AutoLocalize: 1
+  B_AutoLocalize: 0
   S_AutoLocalizeKey: 
   m_characterSpacing: 2
 --- !u!114 &114251557178939758
