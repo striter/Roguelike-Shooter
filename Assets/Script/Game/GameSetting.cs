@@ -104,11 +104,11 @@ namespace GameSetting
 
         public static readonly Dictionary<enum_GameStage, Dictionary<int, float>> m_StageWeaponEnhanceLevel = new Dictionary<enum_GameStage, Dictionary<int, float>>()
         {
-            {enum_GameStage.Rookie,new Dictionary<int, float>(){ {1,15 },{2,5 } } },
-            {enum_GameStage.Militia,new Dictionary<int, float>(){ { 1,20},{2,10 },{3,5 } } },
-            {enum_GameStage.Veteran,new Dictionary<int, float>(){ {1,25 },{2,25 },{3,15 },{4,5 } } },
-            {enum_GameStage.Elite,new Dictionary<int, float>(){ {1,30 },{2,20 },{3,7.5f },{ 4,5},{ 5,2.5f} } },
-            {enum_GameStage.Ranger,new Dictionary<int, float>(){ {1,35 },{2,25 },{3,10 },{ 4,5} ,{ 5,5} } },
+            {enum_GameStage.Rookie,new Dictionary<int, float>(){ {1,20 },{2,5 } } },
+            {enum_GameStage.Militia,new Dictionary<int, float>(){ { 1,30},{2,10 },{3,5 } } },
+            {enum_GameStage.Veteran,new Dictionary<int, float>(){ {1,35 },{2,25 },{3,15 },{4,5 } } },
+            {enum_GameStage.Elite,new Dictionary<int, float>(){ {1,20 },{2,30 },{3,25f },{ 4,10},{ 5,2.5f} } },
+            {enum_GameStage.Ranger,new Dictionary<int, float>(){ {1,15 },{2,35 },{3,25 },{ 4,15} ,{ 5,5} } },
         };
         #endregion        
         public static class AI
