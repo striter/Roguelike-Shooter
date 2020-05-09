@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class ShaderTest : MonoBehaviour
+public class ShaderTestDepthSSAO : MonoBehaviour
 {
     public float m_Stength = 1;
     public int m_SphereRadius = 10;

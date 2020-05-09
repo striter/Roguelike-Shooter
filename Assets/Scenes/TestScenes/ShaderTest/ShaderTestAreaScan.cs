@@ -11,10 +11,15 @@ public class ShaderTestAreaScan : MonoBehaviour {
     public float m_Duration = 1.5f;
     public float m_Range=20f;
     RaycastHit hit;
+
+    private void Start()
+    {
+        CameraController.Instance.m_Effect.SetMainTextureCamera(true);
+    }
     private void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.Mouse0) && CameraController.Instance.InputRayCheck(Input.mousePosition, 0, ref hit))
+        if (Input.GetKeyDown(KeyCode.Mouse0) && CameraController.Instance.InputRayCheck(Input.mousePosition,1<<0, ref hit))
             CameraController.Instance.m_Effect.StartAreaScan(hit.point,m_ScanColor, m_ScanTex, m_ScanScale,m_Opacity,m_Width,m_Range,m_Duration);
     }
 }
