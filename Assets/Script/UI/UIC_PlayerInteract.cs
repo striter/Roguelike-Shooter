@@ -90,9 +90,9 @@ public class UIC_PlayerInteract : UIControlBase
         m_InteractData.SetWorldViewPortAnchor(m_Interact.transform.position, CameraController.Instance.m_Camera);
         
     }
-    bool UpdateInfo(InteractBase interactInfo,int price)
+    bool UpdateInfo(InteractBase targetInteract,int price)
     {
-        if (interactInfo == null)
+        if (targetInteract == null)
         {
             m_InteractData.SetActivate(false);
             return false;
@@ -101,21 +101,22 @@ public class UIC_PlayerInteract : UIControlBase
         bool isCommon = false;
         bool isWeapon = false;
         bool isPerk = false;
-        if (interactInfo != null)
+        if (targetInteract != null)
         {
-            switch (interactInfo.m_InteractType)
+            switch (targetInteract.m_InteractType)
             {
                 case enum_Interaction.PerkPickup:
                     isPerk = true;
-                    SetPerkInfo(GameDataManager.GetPlayerPerkData((interactInfo as InteractPerkPickup).m_PerkID));
+                    SetPerkInfo(GameDataManager.GetPlayerPerkData((targetInteract as InteractPerkPickup).m_PerkID));
                     break;
                 case enum_Interaction.PickupWeapon:
                     isWeapon = true;
-                    InteractPickupWeapon weaponInteract = interactInfo as InteractPickupWeapon;
+                    InteractPickupWeapon weaponInteract = targetInteract as InteractPickupWeapon;
                     SetWeaponInfo(weaponInteract.m_Weapon);
                     break;
                 default:
                     isCommon = true;
+                    SetInteractData(targetInteract);
                     break;
             }
         }
