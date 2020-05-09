@@ -150,9 +150,9 @@ public class UIC_PlayerInteract : UIControlBase
         int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;
         int enhanceScore = weapon.m_EnhanceLevel;
         for (int i = 0; i < enhanceScore; i++)
-            m_WeaponScore.AddItem().SetScore(false);
-        for (int i = 0; i < baseScore; i++)
             m_WeaponScore.AddItem().SetScore(true);
+        for (int i = 0; i < baseScore; i++)
+            m_WeaponScore.AddItem().SetScore(false);
         m_WeaponScore.Sort((a, b) => a.Key - b.Key);
     }
 
