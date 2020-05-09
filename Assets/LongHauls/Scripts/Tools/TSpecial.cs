@@ -989,13 +989,14 @@ public class AtlasLoader
 {
     protected Dictionary<string, Sprite> m_SpriteDic { get; private set; } = new Dictionary<string, Sprite>();
     public bool Contains(string name) => m_SpriteDic.ContainsKey(name);
+    public string m_AtlasName { get; private set; }
     public Sprite this[string name]
     {
         get
         {
             if (!m_SpriteDic.ContainsKey(name))
             {
-                Debug.LogWarning("Null Sprites Found |" + name + "|");
+                Debug.LogWarning("Null Sprites Found |" + name + "|"+m_AtlasName);
                 return m_SpriteDic.Values.First();
             }
             return m_SpriteDic[name];
@@ -1003,6 +1004,7 @@ public class AtlasLoader
     }
     public AtlasLoader(SpriteAtlas atlas)
     {
+        m_AtlasName = atlas.name;
         Sprite[] allsprites=new Sprite[atlas.spriteCount];
         atlas.GetSprites(allsprites);
         allsprites.Traversal((Sprite sprite)=> { string name = sprite.name.Replace("(Clone)", ""); m_SpriteDic.Add(name, sprite); });

@@ -24,6 +24,7 @@ public class UIC_PlayerInteract : UIControlBase
     Image m_PerkImage;
 
     Transform m_CommonData;
+    UIT_TextExtend m_CommonName;
     UIT_TextExtend m_CommonIntro;
     Image m_CommonImage;
 
@@ -52,6 +53,7 @@ public class UIC_PlayerInteract : UIControlBase
         m_TradePrice = tf_TradeBottom.Find("Price").GetComponent<UIT_TextExtend>();
 
         m_CommonData = m_Container.Find("CommonData");
+        m_CommonName = m_CommonData.Find("Name").GetComponent<UIT_TextExtend>();
         m_CommonIntro = m_CommonData.Find("Intro").GetComponent<UIT_TextExtend>();
         m_CommonImage = m_CommonData.Find("Image").GetComponent<Image>();
 
@@ -114,8 +116,6 @@ public class UIC_PlayerInteract : UIControlBase
                     break;
                 default:
                     isCommon = true;
-                    m_CommonIntro.localizeKey = interactInfo.GetUIIntroKey();
-                    m_CommonImage.sprite = UIManager.Instance.m_CommonSprites[interactInfo.m_InteractType.GetInteractIcon()];
                     break;
             }
         }
@@ -137,6 +137,12 @@ public class UIC_PlayerInteract : UIControlBase
         m_InteractData.SetWorldViewPortAnchor(m_Interact.transform.position, CameraController.Instance.m_Camera, Time.deltaTime*10f);
     }
 
+    void SetInteractData(InteractBase interact)
+    {
+        m_CommonName.localizeKey = interact.GetUITitleKey();
+        m_CommonIntro.localizeKey = interact.GetUIIntroKey();
+        m_CommonImage.sprite = UIManager.Instance.m_CommonSprites[interact.m_InteractType.GetInteractIcon()];
+    }
 
     void SetWeaponInfo(WeaponBase weapon)
     {

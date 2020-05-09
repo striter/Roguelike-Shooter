@@ -128,7 +128,7 @@ public class UIC_GameStatus : UIControlBase {
             GameManager.Instance.m_StageInteracts.Traversal((InteractGameBase interactData) =>
             {
                 Image image = m_Locations.AddItem(m_Locations.m_Count);
-                image.sprite = GameUIManager.Instance.m_InGameSprites[interactData.GetInteractMapIcon()];
+                image.sprite = GameUIManager.Instance.m_CommonSprites[interactData.m_InteractType.GetInteractIcon()];
                 image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(interactData.transform.position);
                 image.transform.rotation = Quaternion.identity;
             });

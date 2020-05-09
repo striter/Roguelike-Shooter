@@ -112,7 +112,7 @@ namespace GameSetting
 
     public static class SpriteKeyJoint
     {
-        public static string GetInteractMainIcon(this InteractBase interact) => "control_main_interact";
+        public static string GetInteractMainIcon(this enum_Interaction interact) => "control_main_interact";
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
         public static string GetAbilitySprite(this enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
@@ -123,16 +123,6 @@ namespace GameSetting
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
         public static string GetUIDetailBackground(this enum_Rarity rarity) => "detail_weapon_background_" + rarity;
         public static string GetUIGameControlBackground(this enum_Rarity rarity) => "control_" + rarity;
-
-        public static string GetInteractMapIcon(this InteractGameBase interact)
-        {
-            switch (interact.m_InteractType)
-            {
-                default: return "Map_Icon_Unknown";
-                case enum_Interaction.SignalTower:
-                    return "Map_Icon_" + interact.m_InteractType;
-            }
-        }
 
         public static string GetNumericVisualizeIcon(this enum_Interaction type)
         {

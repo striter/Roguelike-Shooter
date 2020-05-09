@@ -16,7 +16,7 @@ public class UIGI_MapLocations : UIT_GridItem {
 
     public void Play(InteractGameBase gameChunk)
     {
-        m_EventIcon.sprite = GameUIManager.Instance.m_InGameSprites[gameChunk.GetInteractMapIcon()];
+        m_EventIcon.sprite = GameUIManager.Instance.m_CommonSprites[gameChunk.m_InteractType.GetInteractIcon()];
     }
 
     public int MapCastCheck(Vector2 localPos)
