@@ -14,9 +14,6 @@ public class GameManager : GameManagerBase
     protected override void AddConsoleBinding()
     {
         base.AddConsoleBinding();
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test", KeyCode.None, () => {
-           SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2,Quaternion.identity,new Dictionary<enum_Rarity, float>() { {enum_Rarity.Ordinary,50 },{ enum_Rarity.Advanced,30},{ enum_Rarity.Rare,15},{ enum_Rarity.Epic,5} },null,m_GameLevel.m_Random);
-        });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed", KeyCode.None, () => { Debug.LogError(m_GameLevel.m_GameSeed); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextStageGenerate()); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_GamePortalType.GameWin : enum_GamePortalType.StageEnd); });
@@ -46,6 +43,10 @@ public class GameManager : GameManagerBase
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Rank Exp", KeyCode.F10, "10", (string value) => { m_LocalPlayer.m_CharacterInfo.OnExpReceived(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None, () => GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
+
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test", KeyCode.None, () => {
+            SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2, Quaternion.identity, new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 15 }, { enum_Rarity.Epic, 5 } }, null, m_GameLevel.m_Random);
+        });
     }
     #endregion
     protected static GameManager nInstance;
