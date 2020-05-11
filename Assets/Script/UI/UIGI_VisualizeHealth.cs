@@ -44,7 +44,6 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
             return;
 
         rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position,CameraController.MainCamera);
-        //rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 30, 1, 3);
         transform.SetActivate(true);
         b_showItem = true;
     }
@@ -56,7 +55,6 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
 
         m_HealthLerp.ChangeValue(m_AttachEntity.m_Health.F_HealthMaxScale);
         m_HealthLerp.TickDelta(Time.deltaTime);
-        rtf_RectTransform.localScale = Vector3.one * Mathf.Clamp(Vector3.Distance(m_AttachEntity.transform.position, CameraController.MainCamera.transform.position) / 20, 1, 3);
         rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position, CameraController.MainCamera, Time.deltaTime*20f);
 
         f_hideCheck -= Time.deltaTime;
