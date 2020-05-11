@@ -941,7 +941,7 @@ MonoBehaviour:
   I_BuffApplyOnHit: 0
   F_AttackRate: 0.5
   F_AttackDuration:
-    start: 4
+    start: 3
     length: 1
   F_AttackTimes:
     start: 1

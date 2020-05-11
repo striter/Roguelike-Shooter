@@ -45,7 +45,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None, () => GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test", KeyCode.None, () => {
-            SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2, Quaternion.identity, new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 15 }, { enum_Rarity.Epic, 5 } }, null, m_GameLevel.m_Random);
+            SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2, Quaternion.identity, new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } }, null, m_GameLevel.m_Random);
         });
     }
     #endregion

@@ -940,7 +940,7 @@ MonoBehaviour:
   I_BuffApplyOnHit: 0
   F_AttackRate: 0.6
   F_AttackDuration:
-    start: 2
+    start: 1
     length: 1
   F_AttackTimes:
     start: 3
