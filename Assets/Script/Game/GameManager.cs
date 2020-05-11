@@ -15,7 +15,7 @@ public class GameManager : GameManagerBase
     {
         base.AddConsoleBinding();
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test", KeyCode.None, () => {
-            GameObjectManager.SpawnInteract<InteractTradeContainer>(m_LocalPlayer.transform.position+m_LocalPlayer.transform.forward*2, Quaternion.identity, null).Play(0, SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2,Quaternion.identity,new Dictionary<enum_Rarity, float>() { {enum_Rarity.Ordinary,50 },{ enum_Rarity.Advanced,30},{ enum_Rarity.Rare,15},{ enum_Rarity.Epic,5} }, null, m_GameLevel.m_Random));
+           SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2,Quaternion.identity,new Dictionary<enum_Rarity, float>() { {enum_Rarity.Ordinary,50 },{ enum_Rarity.Advanced,30},{ enum_Rarity.Rare,15},{ enum_Rarity.Epic,5} },null,m_GameLevel.m_Random);
         });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Show Seed", KeyCode.None, () => { Debug.LogError(m_GameLevel.m_GameSeed); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextStageGenerate()); });
