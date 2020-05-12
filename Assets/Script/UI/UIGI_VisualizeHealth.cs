@@ -33,7 +33,7 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
         OnHide();
 
         ExpireEnermyPerkBase elitePerk = _attachTo.m_ControllType == enum_EntityType.AIWeaponHelper ? (_attachTo as EntityCharacterAI).m_EnermyPerk : null;
-        bool isElite = elitePerk.IsElitePerk();
+        bool isElite = elitePerk!=null&&elitePerk.IsElitePerk();
         m_EliteExpire.SetActivate(isElite);
         m_Elite.SetActivate(isElite);
         m_Normal.SetActivate(!isElite);

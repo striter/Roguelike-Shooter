@@ -42,12 +42,12 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, ExpireEnermyPerkBase enermyPerk )
     {
+        m_EnermyPerk = enermyPerk;
         base.OnMainCharacterActivate(_flag);
         if (m_Animator != null)  m_Animator.OnActivate(E_AnimatorIndex);
 
         m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
-        m_EnermyPerk = enermyPerk;
         m_CharacterInfo.AddExpire(enermyPerk);
         m_Health.OnHealthMultiplierChange(1f+enermyPerk.m_MaxHealthMultiplierAdditive);
 
