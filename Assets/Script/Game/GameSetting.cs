@@ -405,9 +405,9 @@ namespace GameSetting
             bool changed = false;
             if (maxHealthAdd != m_MaxHealthAdditive)
             {
-                float offset = m_MaxHealthAdditive - maxHealthAdd;
+                float maxHealthDelta = m_MaxHealthAdditive - maxHealthAdd;
+                OnSetHealth(m_CurrentHealth-maxHealthDelta);
                 m_MaxHealthAdditive = maxHealthAdd;
-                DamageHealth(offset);
                 changed = true;
             }
 
