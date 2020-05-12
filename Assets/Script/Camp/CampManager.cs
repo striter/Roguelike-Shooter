@@ -11,7 +11,7 @@ public class CampManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Plus, "100", (string value) => { OnCreditStatus(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Minus, "-50", (string value) => { OnCreditStatus(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Plus,OnStartGameInteract);
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Acquire Equipment", KeyCode.None, enum_Rarity.Ordinary, (enum_Rarity rarity) => { GameDataManager.AcquireEquipment(GameDataManager.RandomRarityEquipment(rarity)); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Unlock Weapon Blueprint", KeyCode.None, enum_Rarity.Ordinary, (enum_Rarity rarity) => { GameDataManager.UnlockArmoryBlueprint(rarity); });
     }
     #endregion
     public static CampManager nInstance;
@@ -70,20 +70,6 @@ public class CampManager : GameManagerBase
 
         AttachSceneCamera(cameraPos);
         CampUIManager.Instance.ShowCoinsPage<UI_Armory>(true,true, ResetPlayerCamera, .1f);
-    }
-
-    public void OnEquipmentDepotInteract()
-    {
-        if (UIManager.Instance.m_PageOpening)
-            return;
-        CampUIManager.Instance.ShowPage<UI_EquipmentDepot>(true,true, 1f);
-    }
-
-    public void OnCharacterUpgradeInteract()
-    {
-        if (UIManager.Instance.m_PageOpening)
-            return;
-        CampUIManager.Instance.ShowPage<UI_CharacterUpgrade>(true,true, 1f);
     }
 
     public bool OnAcquireDailyRewardInteract()=>GameDataManager.OnDailyRewardRequire();

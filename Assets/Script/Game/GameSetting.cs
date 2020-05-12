@@ -125,49 +125,6 @@ namespace GameSetting
         #region Cultivate
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
-        
-        #region Equipment
-        public static readonly Dictionary<enum_Rarity, float> m_EquipmentGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 0f }, { enum_Rarity.Advanced, 0f }, { enum_Rarity.Rare, 0f }, { enum_Rarity.Epic, 0f } };
-        public const int m_EquipmentEnhanceMaxLevel = 15;
-        public const float m_EquipmentEnhanceCoinsCostMultiply = .2f;
-        public static readonly Dictionary<enum_Rarity, Dictionary<int, int>> m_EquipmentGenerateEntryCount = new Dictionary<enum_Rarity, Dictionary<int, int>>()  {{ enum_Rarity.Ordinary, new Dictionary<int, int>(){ { 0,50},{ 1,50} } } ,{ enum_Rarity.Advanced, new Dictionary<int, int>(){ { 1,50},{ 2,50} } } ,{ enum_Rarity.Rare, new Dictionary<int, int>(){ { 1,35},{ 2,35},{ 3,30} } } , { enum_Rarity.Epic, new Dictionary<int, int>(){ { 2,50},{ 3,50} } } ,  };
-
-        public static readonly Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, float>> m_EquipmentEntryStart_Main = new Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, float>>() {
-            { enum_CharacterUpgradeType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,50},{ enum_Rarity.Advanced,70},{ enum_Rarity.Rare,90},{ enum_Rarity.Epic,110} } },
-            { enum_CharacterUpgradeType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,30},{ enum_Rarity.Advanced,50},{ enum_Rarity.Rare, 70},{ enum_Rarity.Epic,90} } },
-            { enum_CharacterUpgradeType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,12},{ enum_Rarity.Rare, 14},{ enum_Rarity.Epic,16} } },
-            { enum_CharacterUpgradeType.CriticalRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,10},{ enum_Rarity.Rare, 15},{ enum_Rarity.Epic,20} } },
-            { enum_CharacterUpgradeType.FireRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,20},{ enum_Rarity.Rare, 30},{ enum_Rarity.Epic,40} } },
-            { enum_CharacterUpgradeType.Damage,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,20},{ enum_Rarity.Rare, 30},{ enum_Rarity.Epic,40} } } };
-
-        public static readonly Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, float>> m_EquipmentEntryUpgrade_Main = new Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, float>>() {
-            { enum_CharacterUpgradeType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,14},{ enum_Rarity.Rare, 18},{ enum_Rarity.Epic,22} } },
-            { enum_CharacterUpgradeType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,10},{ enum_Rarity.Advanced,14},{ enum_Rarity.Rare, 18},{ enum_Rarity.Epic,22} } },
-            { enum_CharacterUpgradeType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,3},{ enum_Rarity.Rare, 4},{ enum_Rarity.Epic,5} } },
-            { enum_CharacterUpgradeType.CriticalRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,2},{ enum_Rarity.Rare, 3},{ enum_Rarity.Epic,4} } },
-            { enum_CharacterUpgradeType.FireRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,1.2f},{ enum_Rarity.Rare, 1.4f},{ enum_Rarity.Epic,1.6f} } },
-            { enum_CharacterUpgradeType.Damage,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,4},{ enum_Rarity.Rare, 5},{ enum_Rarity.Epic,8} } } };
-
-        public static readonly Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, RangeFloat>> m_EquipmentEntryStart_Sub = new Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, RangeFloat>>() {
-            { enum_CharacterUpgradeType.Health,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary,new RangeFloat(25,25)},{ enum_Rarity.Advanced, new RangeFloat(35,35)},{ enum_Rarity.Rare, new RangeFloat(45,45)},{ enum_Rarity.Epic, new RangeFloat(55,55)} } },
-            { enum_CharacterUpgradeType.Armor,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(15,15)},{ enum_Rarity.Advanced, new RangeFloat(25,25)},{ enum_Rarity.Rare, new RangeFloat(35,35)},{ enum_Rarity.Epic, new RangeFloat(45,45)} } },
-            { enum_CharacterUpgradeType.MovementSpeed,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(6,6)},{ enum_Rarity.Rare, new RangeFloat(7,7)},{ enum_Rarity.Epic, new RangeFloat(8,8)} } },
-            { enum_CharacterUpgradeType.CriticalRate,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(2.5f,2.5f)},{ enum_Rarity.Advanced, new RangeFloat(5,5)},{ enum_Rarity.Rare, new RangeFloat(7.5f,7.5f)},{ enum_Rarity.Epic, new RangeFloat(10,10)} } },
-            { enum_CharacterUpgradeType.FireRate,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(10,10)},{ enum_Rarity.Rare, new RangeFloat(15,15)},{ enum_Rarity.Epic, new RangeFloat(20,20)} } },
-            { enum_CharacterUpgradeType.Damage,new Dictionary<enum_Rarity, RangeFloat>(){ { enum_Rarity.Ordinary, new RangeFloat(5,5)},{ enum_Rarity.Advanced, new RangeFloat(10,10)},{ enum_Rarity.Rare, new RangeFloat(15,15)},{ enum_Rarity.Epic, new RangeFloat(20, 20) } } } };
-        
-        public static readonly Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, float>> m_EquipmentEntryUpgrade_Sub = new Dictionary<enum_CharacterUpgradeType, Dictionary<enum_Rarity, float>>() {
-            { enum_CharacterUpgradeType.Health,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,7},{ enum_Rarity.Rare, 9},{ enum_Rarity.Epic,11} } },
-            { enum_CharacterUpgradeType.Armor,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,5},{ enum_Rarity.Advanced,7},{ enum_Rarity.Rare, 9},{ enum_Rarity.Epic,11} } },
-            { enum_CharacterUpgradeType.MovementSpeed,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,3},{ enum_Rarity.Rare, 4},{ enum_Rarity.Epic,5} } },
-            { enum_CharacterUpgradeType.CriticalRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,2},{ enum_Rarity.Rare, 3},{ enum_Rarity.Epic,4} } },
-            { enum_CharacterUpgradeType.FireRate,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,1},{ enum_Rarity.Advanced,1.2f},{ enum_Rarity.Rare, 1.4f},{ enum_Rarity.Epic,1.6f} } },
-            { enum_CharacterUpgradeType.Damage,new Dictionary<enum_Rarity, float>(){ { enum_Rarity.Ordinary,2},{ enum_Rarity.Advanced,4},{ enum_Rarity.Rare, 5},{ enum_Rarity.Epic,8} } } };
-        #endregion
-
-        public const int m_MaxCharacterUpgradeTime = 5;
-
-        public static readonly Dictionary<enum_CharacterUpgradeType, int> m_UpgradeValueEachTime = new Dictionary<enum_CharacterUpgradeType, int>() { { enum_CharacterUpgradeType.Armor, 30 }, { enum_CharacterUpgradeType.Health, 30 }, { enum_CharacterUpgradeType.FireRate, 8 }, { enum_CharacterUpgradeType.MovementSpeed, 5 }, { enum_CharacterUpgradeType.CriticalRate,5 },{ enum_CharacterUpgradeType.Damage,8} };
         #endregion
     }
 
@@ -176,7 +133,7 @@ namespace GameSetting
         public static int GetPlayerRankUpExp(int curRank) => 50 + curRank * 50;
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
         public static int GetPlayerExtraWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
-        public static int GetPlayerPerkSFXWeaponIndex(int equipmentIndex) => 100000 + equipmentIndex * 10;
+        public static int GetPlayerPerkSFXWeaponIndex(int weaponIndex) => 100000 + weaponIndex * 10;
         public static int GetAIWeaponIndex(int entityIndex, int weaponIndex = 0, int subWeaponIndex = 0) => entityIndex * 100 + weaponIndex * 10 + subWeaponIndex;
         public static int GetWeaponSubIndex(int weaponIndex) => weaponIndex + 1;
 
@@ -196,24 +153,6 @@ namespace GameSetting
         public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+1f * tryCount;
         public static float GetHealShrinePriceMultiply(int tryCount) => 1f + .1f * tryCount;
         public static float GetBloodShrineHealthCostMultiple(int count) => .5f + .05f * count;
-        #endregion
-        #region Cultivate
-        public static int GetEquipmentEnhanceRequirement(enum_Rarity rarity, int level) => (1000 + 500 * (int)rarity) + (500 + (int)rarity * 250) * level;
-        public static int GetEquipmentDeconstruct(enum_Rarity rarity, int level) => (500 + 250 * (int)rarity) + (250 + (int)rarity * 125) * level;
-
-        public static int GetCharacterUpgradePrice(enum_CharacterUpgradeType upgrade,int curTime)
-        {
-            switch (upgrade)
-            {
-                default:Debug.LogError("Invlaid Convertions Here!");return 0;
-                case enum_CharacterUpgradeType.Armor:return 500+curTime * 1000;
-                case enum_CharacterUpgradeType.Health: return 500+curTime * 1000;
-                case enum_CharacterUpgradeType.MovementSpeed: return 1000+curTime * 1500;
-                case enum_CharacterUpgradeType.Damage: return 1000+curTime * 500;
-                case enum_CharacterUpgradeType.CriticalRate: return 500+ curTime * 200;
-                case enum_CharacterUpgradeType.FireRate: return 500+curTime * 200;
-            }
-        }
         #endregion
     }
 
@@ -709,7 +648,6 @@ namespace GameSetting
                 {
                     default: Debug.LogError("Invalid Convertions Here!"); return;
                     case enum_ExpireType.Perk:
-                    case enum_ExpireType.Upgrades:
                         break;
                     case enum_ExpireType.PresetBuff:
                     case enum_ExpireType.EnermyElite:
@@ -734,7 +672,6 @@ namespace GameSetting
             switch (expire.m_ExpireType)
             {
                 default:Debug.LogError("Invalid Convertions Here!");break;
-                case enum_ExpireType.Upgrades:
                 case enum_ExpireType.Perk:
                 case enum_ExpireType.EnermyElite:
                     m_Expires.Add(expire.OnActivate(m_Entity));
@@ -877,7 +814,6 @@ namespace GameSetting
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
         public Dictionary<int, ExpirePlayerPerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePlayerPerkBase>();
-        public ExpirePlayerUpgradeCombine m_Upgrade { get; private set; }
         public float m_Coins { get; private set; } = 0;
         public int m_Keys { get; private set; } = 0;
         public ExpRankBase m_RankManager { get; private set; }
@@ -901,7 +837,6 @@ namespace GameSetting
             m_RankManager.OnExpSet(_battleSave.m_TotalExp);
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
 
-            AddExpire(GameDataManager.CreateUpgradeCombination(_battleSave.m_Equipments, _battleSave.m_Upgrade));
             _battleSave.m_Perks.Traversal((PerkSaveData perkData) => { AddExpire(GameDataManager.CreatePlayerPerk(perkData)); });
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
@@ -938,13 +873,6 @@ namespace GameSetting
                         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
                     }
                     break;
-                case enum_ExpireType.Upgrades:
-                    {
-                        if (m_Upgrade != null)
-                            Debug.LogError("Can't Add Extra Equipment Upgrade!");
-                        m_Upgrade = expire as ExpirePlayerUpgradeCombine;
-                    }
-                    break;
             }
         }
 
@@ -961,9 +889,6 @@ namespace GameSetting
                         m_ExpirePerks.Remove(expire.m_Index);
                         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
                     }
-                    break;
-                case enum_ExpireType.Upgrades:
-                    Debug.LogError("Can't Remove Preset Upgrade!");
                     break;
             }
         }
@@ -991,13 +916,6 @@ namespace GameSetting
             {
                 default:  Debug.LogError("Invalid Convertions Here!");  break;
                 case enum_ExpireType.PresetBuff:break;
-                case enum_ExpireType.Upgrades:
-                    {
-                        ExpirePlayerUpgradeCombine equipment = expire as ExpirePlayerUpgradeCombine;
-                        F_MaxHealthAdditive += equipment.m_MaxHealthAdditive;
-                        F_MaxArmorAdditive += equipment.m_MaxArmorAdditive;
-                    }
-                    break;
                 case enum_ExpireType.Perk:
                     {
                         ExpirePlayerPerkBase perk = expire as ExpirePlayerPerkBase;
@@ -1166,38 +1084,6 @@ namespace GameSetting
         public virtual void OnKillEnermy(EntityCharacterBase target) { }
     }
 
-    public class ExpirePlayerUpgradeCombine: ExpirePlayerBase
-    {
-        public override enum_ExpireType m_ExpireType =>  enum_ExpireType.Upgrades;
-        public bool m_HavePassive => m_Index != GameDataManager.m_DefaultEquipmentCombinationIdentity;
-        public List<EquipmentSaveData> m_EquipmentData { get; private set; }
-        public CharacterUpgradeData m_CharacterData { get; private set; }
-        public Dictionary<enum_CharacterUpgradeType, float> m_UpgradeDatas { get; private set; } = new Dictionary<enum_CharacterUpgradeType, float>();
-
-        public override float m_CriticalRateAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.CriticalRate]/100f;
-        public override float m_MovementSpeedMultiply => m_UpgradeDatas[ enum_CharacterUpgradeType.MovementSpeed]/100f;
-        public override float m_FireRateMultiply => m_UpgradeDatas[ enum_CharacterUpgradeType.FireRate]/100f;
-        public override float m_MaxArmorAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Armor];
-        public override float m_MaxHealthAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Health];
-        public override float m_DamageAdditive => m_UpgradeDatas[ enum_CharacterUpgradeType.Damage];
-        public ExpirePlayerUpgradeCombine(List<EquipmentSaveData> equipmentData, CharacterUpgradeData characterUpgrade)
-        {
-            m_CharacterData = characterUpgrade;
-            m_EquipmentData = equipmentData;
-
-            TCommon.TraversalEnum((enum_CharacterUpgradeType upgrade) => { m_UpgradeDatas.Add(upgrade, 0); });
-            m_CharacterData.m_Upgrades.Traversal((enum_CharacterUpgradeType upgrade, int amount) => {
-                m_UpgradeDatas[upgrade] = GameConst.m_UpgradeValueEachTime[upgrade] * amount;
-            });
-            m_EquipmentData.Traversal((EquipmentSaveData data) => {
-                data.m_Entries.Traversal((EquipmentEntrySaveData entry) =>
-                {
-                    m_UpgradeDatas[entry.m_Type] += entry.m_Value;
-                });
-            });
-        }
-    }
-
     public class ExpirePlayerPerkBase: ExpirePlayerBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.Perk;
@@ -1320,9 +1206,9 @@ namespace GameSetting
         protected EntityCharacterBase m_Entity;
         protected Transform attacherHead => m_Entity.tf_Head;
         protected Func<DamageInfo> GetDamageDeliverInfo;
-        public WeaponHelperBase(int equipmentIndex, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo)
+        public WeaponHelperBase(int weaponIndex, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo)
         {
-            I_Index = equipmentIndex;
+            I_Index = weaponIndex;
             m_Entity = _controller;
             GetDamageDeliverInfo = _GetBuffInfo;
         }
@@ -1380,7 +1266,7 @@ namespace GameSetting
     {
         protected enum_CastTarget m_CastAt { get; private set; }
         protected bool m_castForward { get; private set; }
-        public WeaponHelperCaster(int equipmentIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperCaster(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
         {
             m_CastAt = _castInfo.E_CastTarget;
             m_castForward = _castInfo.B_CastForward;
@@ -1409,7 +1295,7 @@ namespace GameSetting
 
     public class WeaponHelperCasterTarget : WeaponHelperCaster
     {
-        public WeaponHelperCasterTarget(int equipmentIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, _castInfo, _controller, _GetBuffInfo)
+        public WeaponHelperCasterTarget(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _castInfo, _controller, _GetBuffInfo)
         {
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
@@ -1429,7 +1315,7 @@ namespace GameSetting
     {
         public override bool B_LoopAnim => true;
         SFXCast m_Cast;
-        public WeaponHelperCasterControlled(int equipmentIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, _castInfo, _controller, _GetBuffInfo)
+        public WeaponHelperCasterControlled(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _castInfo, _controller, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -1462,7 +1348,7 @@ namespace GameSetting
         int i_muzzleIndex;
         AudioClip m_MuzzleClip;
 
-        public WeaponHelperBarrageRange(int equipmentIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperBarrageRange(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             m_MuzzleClip = projectileInfo.AC_MuzzleClip;
@@ -1502,7 +1388,7 @@ namespace GameSetting
     }
     public class WeaponHelperBarrageMultipleLine : WeaponHelperBarrageRange
     {
-        public WeaponHelperBarrageMultipleLine(int equipmentIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, projectileInfo, _controller, _GetBuffInfo)
+        public WeaponHelperBarrageMultipleLine(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, projectileInfo, _controller, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -1520,7 +1406,7 @@ namespace GameSetting
 
     public class WeaponHelperBarrageMultipleFan : WeaponHelperBarrageRange
     {
-        public WeaponHelperBarrageMultipleFan(int equipmentIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, projectileInfo, _controller, _GetBuffInfo)
+        public WeaponHelperBarrageMultipleFan(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, projectileInfo, _controller, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -1544,7 +1430,7 @@ namespace GameSetting
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         SFXBuffApply m_Effect;
-        public WeaponHelperBuffApply(int equipmentIndex, SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperBuffApply(int weaponIndex, SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
         {
             m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
@@ -1559,7 +1445,7 @@ namespace GameSetting
     public class WeaponHelperEntitySpawner : WeaponHelperBase
     {
         bool m_SpawnAtTarget;
-        public WeaponHelperEntitySpawner(int equipmentIndex, SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(equipmentIndex, _controller, _GetBuffInfo)
+        public WeaponHelperEntitySpawner(int weaponIndex, SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
         {
             startHealth = 0;
             m_SpawnAtTarget = spawner.B_SpawnAtTarget;

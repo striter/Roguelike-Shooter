@@ -33,7 +33,6 @@ namespace GameSetting
     {
         public static CGameSave m_GameData => TGameData<CGameSave>.Data;
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
-        public static CEquipmentDepotData m_EquipmentDepotData => TGameData<CEquipmentDepotData>.Data;
         public static CCharacterUpgradeData m_CharacterData => TGameData<CCharacterUpgradeData>.Data;
         public static CGameProgressSave m_GameProgressData => TGameData<CGameProgressSave>.Data;
 
@@ -49,10 +48,8 @@ namespace GameSetting
             InitPlayerPerks();
             InitEnermyPerks();
             InitArmory();
-            InitEquipment();
 
             TGameData<CGameSave>.Init();
-            TGameData<CEquipmentDepotData>.Init();
             TGameData<CCharacterUpgradeData>.Init();
             TGameData<CArmoryData>.Init();
             TGameData<CGameProgressSave>.Init();
@@ -236,240 +233,6 @@ namespace GameSetting
         }
         #endregion
 
-        #region Upgrade Combination
-        public const int m_DefaultEquipmentCombinationIdentity = 20000;
-        static Dictionary<int, ExpirePlayerUpgradeCombine> m_AllEquipments = new Dictionary<int, ExpirePlayerUpgradeCombine>();
-        static List<int> m_AvailableEquipments = new List<int>();
-        public static void InitEquipment()
-        {
-            List<EquipmentSaveData> tempData1 = new List<EquipmentSaveData>();
-            CharacterUpgradeData tempData2 = CharacterUpgradeData.Default();
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpirePlayerUpgradeCombine equipment) => {
-                m_AllEquipments.Add(equipment.m_Index, equipment);
-                if (equipment.m_Index != m_DefaultEquipmentCombinationIdentity)
-                    m_AvailableEquipments.Add(equipment.m_Index);
-            }), tempData1,tempData2);
-        }
-
-        public static ExpirePlayerUpgradeCombine CreateUpgradeCombination(List<EquipmentSaveData> equipmentDatas,CharacterUpgradeData upgradeData)
-        {
-            int equipmentIndex = equipmentDatas.Find(p => equipmentDatas.FindAll(l => l.m_Index == p.m_Index).Count >= 2).m_Index;
-            if (equipmentIndex <= 0)
-            {
-                equipmentIndex = m_DefaultEquipmentCombinationIdentity;
-            }
-            else if (!m_AllEquipments.ContainsKey(equipmentIndex))
-            {
-                Debug.LogError("Error Equipment:" + equipmentIndex + " ,Does not exist");
-                equipmentIndex = m_DefaultEquipmentCombinationIdentity;
-            }
-
-            return TReflection.CreateInstance<ExpirePlayerUpgradeCombine>(m_AllEquipments[equipmentIndex].GetType(), equipmentDatas, upgradeData);
-        }
-        #endregion
-
-        #region Upgrade Equipment Data
-        public static EquipmentSaveData RandomRarityEquipment(enum_Rarity rarity)
-        {
-            EquipmentSaveData data = new EquipmentSaveData(m_AvailableEquipments.RandomItem(), 0, rarity, new List<EquipmentEntrySaveData>());
-            data.AcquireRandomEntry();
-            int subEntryCount = TCommon.RandomPercentage(GameConst.m_EquipmentGenerateEntryCount[rarity]);
-            for (int i = 0; i < subEntryCount; i++)
-                data.AcquireRandomEntry();
-            return data;
-        }
-
-        public static bool CheckEquipmentEquiping(int equipmentIndex) => m_EquipmentDepotData.m_Equipping.Contains(equipmentIndex);
-        public static void DoEquipmentEquip(int equipmentIndex)
-        {
-            if (!CheckEquipmentEquiping(equipmentIndex))
-            {
-                if (m_EquipmentDepotData.m_Equipping.Count >= 3)
-                    m_EquipmentDepotData.m_Equipping.RemoveAt(0);
-                m_EquipmentDepotData.m_Equipping.Add(equipmentIndex);
-            }
-            else
-            {
-                m_EquipmentDepotData.m_Equipping.Remove(equipmentIndex);
-            }
-            TGameData<CEquipmentDepotData>.Save();
-        }
-
-        public static bool CheckEquipmentLocking(int equipmentIndex) => m_EquipmentDepotData.m_Locking.Contains(equipmentIndex);
-        public static void DoEquipmentLock(int equipmentIndex)
-        {
-            if (!CheckEquipmentLocking(equipmentIndex))
-                m_EquipmentDepotData.m_Locking.Add(equipmentIndex);
-            else
-                m_EquipmentDepotData.m_Locking.Remove(equipmentIndex);
-            TGameData<CEquipmentDepotData>.Save();
-        }
-        #region Enhance
-        #region Calculation
-        public static int GetEnhanceLevel(int enhance, enum_Rarity rarity)
-        {
-            int level = 0;
-            for (int i = 0; i < GameConst.m_EquipmentEnhanceMaxLevel; i++, level++)
-            {
-                enhance -= GameExpression.GetEquipmentEnhanceRequirement(rarity, level);
-                if (enhance < 0)
-                    break;
-            }
-            return level;
-        }
-
-        public static int GetNextLevelLeft(int enhance, enum_Rarity rarity)
-        {
-            for (int i = 0, level=0; i < GameConst.m_EquipmentEnhanceMaxLevel; i++, level++)
-            {
-                enhance -= GameExpression.GetEquipmentEnhanceRequirement(rarity, level);
-                if (enhance < 0)
-                    return -enhance;
-            }
-            return 0;
-        }
-
-        public static int GetTotalEnhance(int level,enum_Rarity rarity)
-        {
-            int enhance = 0;
-            for(int i=0;i<level;i++)
-                enhance += GameExpression.GetEquipmentEnhanceRequirement(rarity, i);
-            return enhance;
-        }
-        #endregion
-        #region EnhanceRequipment/DeconstructIncome
-
-        public static int GetEnhanceLevel(this EquipmentSaveData data) => GetEnhanceLevel(data.m_Enhance,data.m_Rarity);
-        public static int GetEnhanceRequireNextLevel(this EquipmentSaveData data) => GetNextLevelLeft(data.m_Enhance,data.m_Rarity);
-        public static int GetEnhanceCurLevel(this EquipmentSaveData data) => data.m_Enhance - GetTotalEnhance(data.GetEnhanceLevel(),data.m_Rarity);
-
-        public static int GetDeconstructIncome(this EquipmentSaveData data) => GameExpression.GetEquipmentDeconstruct(data.m_Rarity,data.GetEnhanceLevel());
-        public static int GetDeconstructIncome(List<int> selections)
-        {
-            int enhanceReceived = 0;
-            for (int i = 0; i < selections.Count; i++)
-                enhanceReceived += m_EquipmentDepotData.m_Equipments[selections[i]].GetDeconstructIncome();
-            return enhanceReceived;
-        }
-        #endregion
-
-        #region Enhance/Deconstruct Equipment
-        public static bool CanDeconstructEquipments(List<int> deconstructSelections, ref float credits)
-        {
-            credits = GetDeconstructIncome(deconstructSelections) * GameConst.m_EquipmentEnhanceCoinsCostMultiply;
-            return CanUseCredit(credits);
-        } 
-        public static bool CanEnhanceEquipment(int targetSelection) => m_EquipmentDepotData.m_Equipments[targetSelection].GetEnhanceLevel() < GameConst.m_EquipmentEnhanceMaxLevel;
-        public static int DoEnhanceEquipment(int targetIndex, List<int> deconstructSelections)
-        {
-            int enhanceReceived = GetDeconstructIncome(deconstructSelections);
-            OnCreditStatus(-enhanceReceived * GameConst.m_EquipmentEnhanceCoinsCostMultiply);
-
-            deconstructSelections.Sort((a, b) => b - a);
-            m_EquipmentDepotData.m_Equipping.Sort((a, b) => b -a);
-            m_EquipmentDepotData.m_Locking.Sort((a, b) => b - a);
-            deconstructSelections.Traversal((int deconstructIndex) =>
-            {
-                m_EquipmentDepotData.m_Equipments.RemoveAt(deconstructIndex);
-                m_EquipmentDepotData.m_Equipping.Traversal((int index,int equipIndex) => {
-                    if (equipIndex == deconstructIndex)
-                        m_EquipmentDepotData.m_Equipping.RemoveAt(index);
-                    else if (equipIndex > deconstructIndex)
-                        m_EquipmentDepotData.m_Equipping[index]--;
-                },true);
-
-                m_EquipmentDepotData.m_Locking.Traversal((int index, int lockIndex) => {
-                    if (lockIndex == deconstructIndex)
-                        m_EquipmentDepotData.m_Locking.RemoveAt(index);
-                    else if (lockIndex > deconstructIndex)
-                        m_EquipmentDepotData.m_Locking[index]--;
-                }, true);
-
-                if (targetIndex > deconstructIndex)
-                    targetIndex--;
-            });
-            EquipmentSaveData equipmentData = m_EquipmentDepotData.m_Equipments[targetIndex];
-            int enhanceStart = equipmentData.GetEnhanceCurLevel() + enhanceReceived;
-            for (int level= equipmentData.GetEnhanceLevel(); level<GameConst.m_EquipmentEnhanceMaxLevel;)
-            {
-                enhanceStart -= GameExpression.GetEquipmentEnhanceRequirement(equipmentData.m_Rarity,level);
-                if (enhanceStart < 0)
-                    break;
-                level++;
-                equipmentData.UpgradeMainEntry();
-
-                if (equipmentData.m_Entries.Count >= 4)
-                    equipmentData.UpgradeRandomSubEntry();
-                else if (level % 5 == 0)
-                    equipmentData.AcquireRandomEntry();
-            }
-            equipmentData.ReceiveEnhance(enhanceReceived);
-            m_EquipmentDepotData.m_Equipments[targetIndex] = equipmentData;
-            TGameData<CEquipmentDepotData>.Save();
-            return targetIndex;
-        }
-        #endregion
-
-        #region Entry
-        static void AcquireRandomEntry(this EquipmentSaveData data)
-        {
-            enum_CharacterUpgradeType entryType = TCommon.RandomEnumValues<enum_CharacterUpgradeType>();
-            float startValue = data.m_Entries.Count < 1 ? GameConst.m_EquipmentEntryStart_Main[entryType][data.m_Rarity] : GameConst.m_EquipmentEntryStart_Sub[entryType][data.m_Rarity].Random();
-            data.m_Entries.Add(new EquipmentEntrySaveData(entryType, startValue));
-        }
-
-        static void UpgradeMainEntry(this EquipmentSaveData data)
-        {
-            if (data.m_Entries.Count < 1)
-                return;
-            EquipmentEntrySaveData mainEntry = data.m_Entries[0];
-            data.m_Entries[0] = mainEntry.Upgrade(GameConst.m_EquipmentEntryUpgrade_Main[mainEntry.m_Type][data.m_Rarity]);
-        }
-
-        static void UpgradeRandomSubEntry(this EquipmentSaveData data)
-        {
-            if (data.m_Entries.Count < 2)
-                return;
-            int randomSubEntry = UnityEngine.Random.Range(1, data.m_Entries.Count);
-            EquipmentEntrySaveData subEntry = data.m_Entries[randomSubEntry];
-            data.m_Entries[randomSubEntry] = subEntry.Upgrade(GameConst.m_EquipmentEntryUpgrade_Sub[subEntry.m_Type][data.m_Rarity]);
-        }
-
-        public static void AcquireEquipment(EquipmentSaveData data)
-        {
-            m_EquipmentDepotData.m_Equipments.Add(data);
-            TGameData<CEquipmentDepotData>.Save();
-        }
-        #endregion
-        #endregion
-        #endregion
-
-        #region Upgrade Character Data
-        public static float GetUpgradeCost(CharacterUpgradeData data, enum_CharacterUpgradeType type) => GameExpression.GetCharacterUpgradePrice(type,data.m_Upgrades[type]);
-        public static bool CanUpgradeItem(CharacterUpgradeData data, enum_CharacterUpgradeType type) => data.m_Upgrades[type] < GameConst.m_MaxCharacterUpgradeTime;
-
-        public static void UpgradeCurrentCharacter(enum_CharacterUpgradeType type)
-        {
-            CharacterUpgradeData upgradeData = m_CharacterData.CurrentUpgrade;
-            if (!CanUpgradeItem(upgradeData, type))
-            {
-                Debug.LogError("Unable To Upgrade!");
-                return;
-            }
-
-            float credit = GetUpgradeCost(upgradeData,type);
-            if (!CanUseCredit(credit))
-            {
-                Debug.LogError("Out Of Credits!");
-                return;
-            }
-
-            OnCreditStatus(-credit);
-            m_CharacterData.UpgradeCurrentData(type);
-            TGameData<CCharacterUpgradeData>.Save();
-        }
-        #endregion
-
         #region Player Perk Data
         static Dictionary<int, ExpirePlayerPerkBase> m_AllPlayerPerks = new Dictionary<int, ExpirePlayerPerkBase>();
         static Dictionary<enum_Rarity, List<int>> m_PlayerPerkRarities = new Dictionary<enum_Rarity, List<int>>();
@@ -636,21 +399,17 @@ namespace GameSetting
         public WeaponSaveData m_Weapon1;
         public WeaponSaveData m_Weapon2;
         public List<PerkSaveData> m_Perks;
-        public List<EquipmentSaveData> m_Equipments;
-        public CharacterUpgradeData m_Upgrade;
-        public CGameProgressSave() : this(GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected, GameDataManager.m_EquipmentDepotData.GetSelectedEquipments(),GameDataManager.m_CharacterData.CurrentUpgrade)
+        public CGameProgressSave() : this(GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected)
         {
         }
 
-        public CGameProgressSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon, List<EquipmentSaveData> equipments,CharacterUpgradeData upgrade)
+        public CGameProgressSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon)
         {
             m_GameTime = 0;
             m_Keys = 0;
             m_TotalExp = 0;
             m_Health = -1;
             m_Character = character;
-            m_Equipments = equipments;
-            m_Upgrade = upgrade;
             m_Perks = new List<PerkSaveData>();
             m_Weapon1 = WeaponSaveData.New(weapon);
             m_Weapon2 = WeaponSaveData.New(enum_PlayerWeapon.Invalid);
@@ -693,64 +452,16 @@ namespace GameSetting
         }
     }
 
-    public class CEquipmentDepotData : ISave
-    {
-        public List<EquipmentSaveData> m_Equipments;
-        public List<int> m_Equipping;
-        public List<int> m_Locking;
-        public CEquipmentDepotData()
-        {
-            m_Equipments = new List<EquipmentSaveData>() { GameDataManager.RandomRarityEquipment( enum_Rarity.Ordinary), GameDataManager.RandomRarityEquipment( enum_Rarity.Ordinary), GameDataManager.RandomRarityEquipment( enum_Rarity.Advanced), GameDataManager.RandomRarityEquipment( enum_Rarity.Rare), GameDataManager.RandomRarityEquipment( enum_Rarity.Epic),
-            };
-            m_Equipping = new List<int>() { 0, 1, 2 };
-            m_Locking = new List<int>() { };
-        }
-
-        public List<EquipmentSaveData> GetSelectedEquipments()
-        {
-            List<EquipmentSaveData> datas = new List<EquipmentSaveData>();
-            for (int i = 0; i < m_Equipping.Count; i++)
-                datas.Add(m_Equipments[m_Equipping[i]]);
-            return datas;
-        }
-
-        public void DataRecorrect()
-        {
-        }
-    }
-
     public class CCharacterUpgradeData:ISave
     {
         public enum_PlayerCharacter m_CharacterSelected;
-        public Dictionary<enum_PlayerCharacter, CharacterUpgradeData> m_CharacterUpgrades;
 
         public CCharacterUpgradeData()
         {
-            m_CharacterUpgrades = new Dictionary<enum_PlayerCharacter, CharacterUpgradeData>();
             m_CharacterSelected = enum_PlayerCharacter.Railer;
         }
 
         public void ChangeSelectedCharacter(enum_PlayerCharacter character) => m_CharacterSelected = character;
-
-        public CharacterUpgradeData CurrentUpgrade => GetUpgradeData(m_CharacterSelected);
-
-        public void UpgradeCurrentData(enum_CharacterUpgradeType type)
-        {
-            CharacterUpgradeData data = m_CharacterUpgrades[m_CharacterSelected];
-            data.m_Upgrades[type] += 1;
-            m_CharacterUpgrades[m_CharacterSelected]=data;
-        }
-
-        public CharacterUpgradeData GetUpgradeData(enum_PlayerCharacter character)
-        {
-            if (m_CharacterUpgrades.ContainsKey(character))
-                return m_CharacterUpgrades[character];
-
-            CharacterUpgradeData newData = CharacterUpgradeData.Default();
-            m_CharacterUpgrades.Add(character, newData);
-            return newData;
-        }
-
 
         public void DataRecorrect()
         {
@@ -820,47 +531,6 @@ namespace GameSetting
             perks.Traversal((ExpirePlayerPerkBase perk) => { data.Add(Create(perk)); });
             return data;
         }
-    }
-
-    public struct EquipmentSaveData : IDataConvert
-    {
-        public int m_Index { get; private set; }
-        public int m_Enhance { get; private set; }
-        public int m_AcquireStamp { get; private set; }
-        public enum_Rarity m_Rarity { get; private set; }
-        public List<EquipmentEntrySaveData> m_Entries { get; private set; }
-        public EquipmentSaveData ReceiveEnhance(int enhance)
-        {
-            m_Enhance += enhance;
-            return this;
-        } 
-        public EquipmentSaveData ReceiveEntry(EquipmentEntrySaveData entry)
-        {
-            m_Entries.Add(entry);
-            return this;
-        }
-        public EquipmentSaveData(int index, int enhance, enum_Rarity rarity, List<EquipmentEntrySaveData> entries) { m_Index = index; m_Enhance = enhance; m_Rarity = rarity; m_AcquireStamp = TTime.TTimeTools.GetTimeStampNow(); m_Entries = entries; }
-    }
-
-    public struct EquipmentEntrySaveData : IDataConvert
-    {
-        public enum_CharacterUpgradeType m_Type { get; private set; }
-        public float m_Value { get; private set; }
-
-        public EquipmentEntrySaveData(enum_CharacterUpgradeType entryType, float value) { m_Type = entryType; m_Value = value; }
-
-        public EquipmentEntrySaveData Upgrade(float value)
-        {
-            m_Value += value;
-            return this;
-        }
-    }
-
-    public struct CharacterUpgradeData:IDataConvert
-    {
-        public Dictionary<enum_CharacterUpgradeType,int> m_Upgrades { get; private set; }
-        public static CharacterUpgradeData Default() => new CharacterUpgradeData() { m_Upgrades = new Dictionary<enum_CharacterUpgradeType, int>() { { enum_CharacterUpgradeType.Armor,0}, { enum_CharacterUpgradeType.CriticalRate, 0 }, { enum_CharacterUpgradeType.Health, 0 }, { enum_CharacterUpgradeType.FireRate, 0 }, { enum_CharacterUpgradeType.MovementSpeed, 0 }, { enum_CharacterUpgradeType.Damage, 0 } } };
-        public CharacterUpgradeData(Dictionary<enum_CharacterUpgradeType,int> upgrades) { m_Upgrades = upgrades; }
     }
     #endregion
 

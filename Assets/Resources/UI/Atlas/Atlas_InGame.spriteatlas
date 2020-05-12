@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2234562
+    totalSpriteSurfaceArea: 2224566
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -52,7 +52,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e632b06f76869104c903d83accb219a4, type: 3}
   - {fileID: 21300000, guid: 3149cb800216b9b42b49823951103c3c, type: 3}
   - {fileID: 21300000, guid: ab90529173c2faa4188d2d7f4a1207c4, type: 3}
-  - {fileID: 21300000, guid: 1dfff60a4d340614f8574902c4683851, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: a7f61c52ae3337c439860ceb040c6801, type: 3}
   - {fileID: 21300000, guid: 4b7d50bff3360bd40bc8f953b8e62a0c, type: 3}
@@ -83,7 +82,6 @@ SpriteAtlas:
   - detail_select_weapon
   - gamestatus_mission_bg
   - detail_select_perk
-  - equipmentPack_empty
   - backpack_shadow
   - detail_weapon_tag_blank
   - detail_weapon_tag

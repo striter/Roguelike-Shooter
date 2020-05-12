@@ -106,11 +106,11 @@ namespace GameSetting
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack,CoinSack, WeaponVendorMachine,
         PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, PickupWeapon,PickupKey,
         TradeContainer, PerkSelect,PerkLottery,PerkShrine,BloodShrine,HealShrine,
-        PickupArmoryBlueprint,PickupEquipment,
+        PickupArmoryBlueprint,
         SignalTower, Portal,
         GameEnd,
 
-        CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampEquipmentDepot,CampCharacterUpgrade,CampCharaceterSelect, CampEnd,
+        CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd,
     }
 
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
@@ -125,7 +125,7 @@ namespace GameSetting
 
     public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,HealthPenetrate=10, }
     
-    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,  Perk = 2,Upgrades=3,EnermyElite=4, }
+    public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,  Perk = 2,EnermyElite=4, }
 
     public enum enum_ExpireRefreshType { Invalid = -1, AddUp = 1, Refresh = 2,  }
 
@@ -138,8 +138,6 @@ namespace GameSetting
     public enum enum_MercenaryCharacter { Invalid = -1, Militia = 3001, Veteran = 3002 }
 
     public enum enum_Rarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Epic = 4 }
-
-    public enum enum_CharacterUpgradeType { Invalid = -1, Health = 1, Armor = 2, MovementSpeed = 3, CriticalRate = 4, FireRate = 5, Damage = 6 }
 
     public enum enum_PlayerWeaponType
     {
@@ -219,7 +217,7 @@ namespace GameSetting
             }
         }
 
-        public static bool IsInteractExpire(this enum_ExpireType type) => type == enum_ExpireType.Upgrades || type == enum_ExpireType.Perk;
+        public static bool IsInteractExpire(this enum_ExpireType type) =>  type == enum_ExpireType.Perk;
 
         public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
 
