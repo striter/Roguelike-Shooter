@@ -21,13 +21,23 @@ public class UIGI_VisualizePickup : UIT_GridItem {
         rtf_RectTransform.anchoredPosition = UIConst.V2_UINumericVisualizeOffset;
     }
 
-    public void Play(Vector3 position,enum_Interaction interaction, int amount, Action<int> _OnAnimFinished)
+    public void Play(InteractPickup pickup , Action<int> _OnAnimFinished)
     {
         m_Animation.Play(true);
-        m_pickupPos = position;
+        m_pickupPos = pickup.transform.position;
         rtf_RectTransform.SetWorldViewPortAnchor(m_pickupPos, CameraController.MainCamera);
-        m_Image.sprite = GameUIManager.Instance.m_InGameSprites[interaction.GetNumericVisualizeIcon()];
-        m_Amount.color = interaction.GetVisualizeAmountColor();
+        m_Image.sprite = GameUIManager.Instance.m_InGameSprites[pickup.m_InteractType.GetNumericVisualizeIcon()];
+        m_Amount.color = pickup.m_InteractType.GetVisualizeAmountColor();
+
+        int amount = 1;
+        switch(pickup.m_InteractType)
+        {
+            case enum_Interaction.PickupArmor:
+            case enum_Interaction.PickupCoin:
+            case enum_Interaction.PickupHealth:
+                amount = (pickup as InteractPickupAmount).m_Amount;
+                break;
+        }
 
         string text =string.Format("+{0}", amount);
         m_Amount.text = text;

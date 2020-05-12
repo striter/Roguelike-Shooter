@@ -27,7 +27,7 @@ public class AudioManager : AudioManagerBase
 
     public void Recycle(bool inGame)
     {
-        base.Recycle();
+        base.Destroy();
         TBroadCaster<enum_BC_UIStatus>.Remove<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
         TBroadCaster<enum_BC_UIStatus>.Remove(enum_BC_UIStatus.UI_PageClose, OnPageClose);
         OptionsDataManager.event_OptionChanged -= OnOptionChanged;

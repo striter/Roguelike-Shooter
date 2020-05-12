@@ -65,22 +65,14 @@ public class TResources
     public static TileItemBase[] GetChunkTiles(enum_GameStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile+_levelStyle);
     public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
 
-    public static SFXWeaponBase GetDamageSource(int index) => Instantiate<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
+    public static SFXWeaponBase GetDamageSource(int index) => Load<SFXWeaponBase>(ConstPath.S_SFXWeapon+index.ToString());
 
-    public static Dictionary<int, SFXBase> GetAllEffectSFX()
-    {
-        Dictionary<int, SFXBase> sfxsDic = new Dictionary<int, SFXBase>();
-        LoadAll<SFXBase>(ConstPath.S_SFXEffects).Traversal((SFXBase sfx) => {
-            sfxsDic.Add(int.Parse(sfx.name.Split('_')[0]), GameObject.Instantiate<SFXBase>(sfx));
-        });
-        return sfxsDic;
-    }
+    public static SFXBase[] GetAllEffectSFX() => LoadAll<SFXBase>(ConstPath.S_SFXEffects);
 
-    public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Instantiate<EntityCharacterPlayer>(ConstPath.S_PlayerEntity+(int)character);
-    public static EntityCharacterBase GetEnermyCharacter(int index) => Instantiate<EntityCharacterBase>(ConstPath.S_EnermyEntity + index);
-    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=>Instantiate<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
-    public static InteractGameBase GetInteractPortal(enum_GameStyle portalStyle) => Instantiate<InteractGameBase>( ConstPath.S_InteractPortal + portalStyle);
-    public static InteractGameBase GetInteract(enum_Interaction type) => Instantiate<InteractGameBase>(ConstPath.S_InteractCommon + type);
+    public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Load<EntityCharacterPlayer>(ConstPath.S_PlayerEntity+(int)character);
+    public static EntityCharacterBase GetEnermyCharacter(int index) => Load<EntityCharacterBase>(ConstPath.S_EnermyEntity + index);
+    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=> Load<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
+    public static InteractGameBase GetInteract(enum_Interaction type) => Load<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
     public static AudioClip GetGameBGM(enum_GameMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM+music);

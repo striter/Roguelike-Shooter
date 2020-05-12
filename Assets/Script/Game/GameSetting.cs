@@ -123,6 +123,7 @@ namespace GameSetting
             public static readonly RangeFloat RF_AIBattleIdleDuration = new RangeFloat(1f, 2f);
         }
         #region Cultivate
+        public static float m_ArmoryPartsGameDropRate = 10f;
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500f }, { enum_Rarity.Rare, 3000f }, { enum_Rarity.Epic, 5000f } };
         #endregion

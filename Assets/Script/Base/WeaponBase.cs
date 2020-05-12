@@ -2,7 +2,7 @@
 using GameSetting;
 using System;
 
-public class WeaponBase : CObjectPoolStaticMonoBase<enum_PlayerWeapon>
+public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeapon>
 {
     #region PresetData
     public enum_PlayerAnim E_Anim = enum_PlayerAnim.Invalid;

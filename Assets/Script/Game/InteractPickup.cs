@@ -26,6 +26,13 @@ public class InteractPickup : InteractGameBase {
         return this;
     }
 
+    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
+    {
+        base.OnInteractedContinousCheck(_interactor);
+        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerInteractPickup, this);
+        return false;
+    }
+
     private void Update()
     {
         if(m_DropTimer.m_Timing)

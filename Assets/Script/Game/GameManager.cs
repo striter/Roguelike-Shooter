@@ -66,7 +66,7 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
-        m_GameLevel =  new GameProgressManager(GameDataManager.m_GameData,GameDataManager.m_GameProgressData);
+        m_GameLevel =  new GameProgressManager(GameDataManager.m_GameProgressData);
         tf_CameraAttach = transform.Find("CameraAttach");
     }
     
@@ -105,15 +105,14 @@ public class GameManager : GameManagerBase
     IEnumerator GenerateStage() 
     {
         m_GameLoading = true;
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_Stage);
         CameraController.MainCamera.enabled = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoadBegin);
         yield return null;
         m_GameLevel.StageInit();
 
         EntityDicReset();
-        GameObjectManager.Clear();
-        GameObjectManager.RegisterGameObjects();
+        GameObjectManager.Recycle();
 
         yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_Random, GenerateStageRelative);
 
@@ -209,7 +208,7 @@ public class GameManager : GameManagerBase
             GenerateStageInteract(eventType,objectData,tradePriceMultiply);
         });
 
-        m_GameLevel.BattleInit(enermySpawns, m_GameLevel.m_GameDifficulty, m_GameLevel.m_GameStage);
+        m_GameLevel.BattleInit(enermySpawns, m_GameLevel.m_GameDifficulty, m_GameLevel.m_Stage);
     }
 
     void GenerateStageInteract(enum_GameEventType eventType,ChunkGameObjectData objectData,float tradePriceMultiply)
@@ -323,6 +322,7 @@ public class GameManager : GameManagerBase
     {
         m_GameLevel.GameFinished(win);
         GameDataManager.OnGameResult(m_GameLevel);
+        Debug.Log(m_GameLevel.m_ArmoryPartsAcquired + " " + TDataConvert.Convert(m_GameLevel.m_ArmoryBlueprintsUnlocked));
         GameUIManager.Instance.OnGameFinished(m_GameLevel, OnGameExit);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
@@ -330,12 +330,12 @@ public class GameManager : GameManagerBase
     public void OnGameExit()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
-        LoadingManager.Instance.ShowLoading(m_GameLevel.m_GameStage);
+        LoadingManager.Instance.ShowLoading(m_GameLevel.m_Stage);
         SwitchScene(enum_Scene.Camp, () => { LoadingManager.Instance.EndLoading(); return true; });
     }
     #endregion
     #region Pickup Management
-    public InteractPickupWeapon SpawnRandomUnlockedWeapon(Vector3 pos,Quaternion rot,Dictionary<enum_Rarity,float> weaponGenerate,Transform trans=null, System.Random random = null)=> GameObjectManager.SpawnInteract<InteractPickupWeapon>(pos, rot,trans).Play(GameDataManager.RandomUnlockedWeaponData(weaponGenerate.RandomPercentage( enum_Rarity.Ordinary,random),m_GameLevel.m_GameStage,random));
+    public InteractPickupWeapon SpawnRandomUnlockedWeapon(Vector3 pos,Quaternion rot,Dictionary<enum_Rarity,float> weaponGenerate,Transform trans=null, System.Random random = null)=> GameObjectManager.SpawnInteract<InteractPickupWeapon>(pos, rot,trans).Play(GameDataManager.RandomUnlockedWeaponData(weaponGenerate.RandomPercentage( enum_Rarity.Ordinary,random),m_GameLevel.m_Stage,random));
 
     void SpawnBattleEnermyDeadDrops(EntityCharacterBase entity)
     {
@@ -344,20 +344,31 @@ public class GameManager : GameManagerBase
 
         Vector3 sourcePosition = entity.transform.position;
 
-        if (TCommon.RandomPercentage() <= GameConst.F_EnermyKeyGenerate)
+        if (TCommon.RandomPercentageInt() <= GameConst.F_EnermyKeyGenerate)
             GameObjectManager.SpawnInteract<InteractPickupKey>(sourcePosition, Quaternion.identity).Play(1).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
 
         int amount=GameConst.RI_EnermyCoinsGenerate.Random();
         for(int i=0;i<amount;i++)
             GameObjectManager.SpawnInteract<InteractPickupCoin>(sourcePosition, Quaternion.identity).Play(1).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
 
-        enum_PlayerWeapon weaponBlueprint = enum_PlayerWeapon.Invalid;
+
         enum_Rarity blueprintRarity = TCommon.RandomPercentage(GameConst.m_ArmoryBlueprintGameDropRarities, enum_Rarity.Invalid);
         if (blueprintRarity != enum_Rarity.Invalid)
-            weaponBlueprint = GameDataManager.UnlockArmoryBlueprint(blueprintRarity);
-        if (weaponBlueprint != enum_PlayerWeapon.Invalid)
-            GameObjectManager.SpawnInteract<InteractPickupArmoryBlueprint>(sourcePosition, Quaternion.identity).Play(weaponBlueprint).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
+        {
+            enum_PlayerWeapon weaponBlueprint = GameDataManager.UnlockArmoryBlueprint(blueprintRarity);
+            if (weaponBlueprint != enum_PlayerWeapon.Invalid)
+            {
+                GameObjectManager.SpawnInteract<InteractPickupArmoryBlueprint>(sourcePosition, Quaternion.identity).Play(weaponBlueprint).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
+                m_GameLevel.OnArmoryBlueprintsUnlocked(weaponBlueprint);
+            }
+        }
 
+        bool generateParts = GameConst.m_ArmoryPartsGameDropRate >= TCommon.RandomPercentageFloat();
+        if(generateParts)
+        {
+            GameDataManager.OnArmoryPartsStatus(1);
+            m_GameLevel.OnArmoryPartsAcquired(1);
+        }
     }
 
     Vector3 GetPickupPosition(EntityCharacterBase dropper) => NavigationManager.NavMeshPosition(dropper.transform.position + TCommon.RandomXZSphere()* 5f);
@@ -547,26 +558,26 @@ public class GameProgressManager
     #region GameData
     public string m_GameSeed { get; private set; }
     public enum_GameDifficulty m_GameDifficulty { get; private set; }
-    public enum_GameStage m_GameStage { get; private set; }
+    public enum_GameStage m_Stage { get; private set; }
     public float m_TimeElapsed { get; private set; }
     public int m_MinutesElapsed { get; private set; }
     Dictionary<enum_GameStage, enum_GameStyle> m_StageStyle = new Dictionary<enum_GameStage, enum_GameStyle>();
-    public enum_GameStyle m_GameStyle => m_StageStyle[m_GameStage];
+    public enum_GameStyle m_GameStyle => m_StageStyle[m_Stage];
+    public bool m_FinalStage => m_Stage == enum_GameStage.Elite;
     public bool m_GameWin { get; private set; }
     #endregion
-    #region LevelData
     public System.Random m_Random { get; private set; }
-    #endregion
-    #region Get
-    public bool m_FinalStage => m_GameStage == enum_GameStage.Elite;
-    #endregion
-    public GameProgressManager(CGameSave _gameSave,CGameProgressSave _battleSave)
+    public GameProgressManager(CGameProgressSave _battleSave)
     {
-        m_GameStage = _battleSave.m_Stage;
-        m_GameDifficulty = _gameSave.m_GameDifficulty;
-        m_GameSeed =_battleSave.m_GameSeed;
-        m_TimeElapsed = _battleSave.m_GameTime;
+        m_GameDifficulty = _battleSave.m_GameDifficulty;
+        m_GameSeed = _battleSave.m_GameSeed;
+
+        m_Stage = _battleSave.m_Stage;
+        m_TimeElapsed = _battleSave.m_TimeElapsed;
         m_MinutesElapsed = (int)(m_TimeElapsed / 60f);
+
+        m_ArmoryBlueprintsUnlocked = _battleSave.m_ArmoryBlueprintsUnlocked;
+        m_ArmoryPartsAcquired = _battleSave.m_ArmoryPartsAcquired;
 
         m_Random = new System.Random(m_GameSeed.GetHashCode());
         List<enum_GameStyle> styleList = TCommon.GetEnumList<enum_GameStyle>();
@@ -578,9 +589,9 @@ public class GameProgressManager
     }
     public void StageInit()
     {
-        m_Random = new System.Random((m_GameSeed + m_GameStage.ToString()).GetHashCode());
+        m_Random = new System.Random((m_GameSeed + m_Stage.ToString()).GetHashCode());
     }
-    public void NextStage() => m_GameStage++;
+    public void NextStage() => m_Stage++;
     public void GameFinished(bool win) => m_GameWin = win;
     public enum_GamePortalType GetNextStageGenerate() => m_FinalStage ? enum_GamePortalType.GameWin : enum_GamePortalType.StageEnd;
     public void Tick(float deltaTime,Vector3 playerPosition)
@@ -590,6 +601,14 @@ public class GameProgressManager
 
         BattleTick(deltaTime,playerPosition);
     }
+
+    #region ResultData
+    public List<enum_PlayerWeapon> m_ArmoryBlueprintsUnlocked { get; private set; } = new List<enum_PlayerWeapon>();
+    public int m_ArmoryPartsAcquired = 0;
+
+    public void OnArmoryBlueprintsUnlocked(enum_PlayerWeapon weapon) => m_ArmoryBlueprintsUnlocked.Add(weapon);
+    public void OnArmoryPartsAcquired(int count) => m_ArmoryPartsAcquired += count;
+    #endregion
 
     #region Battle
     List<Vector3> m_EnermySpawnPoints = new List<Vector3>();
@@ -638,7 +657,7 @@ public class GameProgressManager
         int pointLength = spawnPoint.Count > 5 ? 5 : spawnPoint.Count;
         float eliteGenerateRate = GameConst.F_EnermyEliteGenerateBase + GameConst.F_EnermyEliteGeneratePerMinuteMultiplier * m_MinutesElapsed;
         enermyGenerate.Traversal((int enermyID) => {
-            bool isElite = eliteGenerateRate > 100f ? true : eliteGenerateRate > TCommon.RandomPercentage();
+            bool isElite = eliteGenerateRate > 100f ? true : eliteGenerateRate > TCommon.RandomPercentageInt();
             GameObjectManager.SpawnEntityCharacterAI(enermyID, spawnPoint[TCommon.RandomLength(pointLength)], Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty,isElite );
         });
     }
@@ -658,8 +677,8 @@ public class GameProgressManager
     #endregion
 
     #region CalculateData
-    public float F_Completion => GameExpression.GetResultCompletion(m_GameWin, m_GameStage, 0);
-    public float F_CompletionScore => GameExpression.GetResultLevelScore(m_GameStage, 0);
+    public float F_Completion => GameExpression.GetResultCompletion(m_GameWin, m_Stage, 0);
+    public float F_CompletionScore => GameExpression.GetResultLevelScore(m_Stage, 0);
     public float F_DifficultyBonus => GameExpression.GetResultDifficultyBonus(m_GameDifficulty);
     public float F_FinalScore =>  F_CompletionScore *  F_DifficultyBonus;
     public float F_CreditGain => GameExpression.GetResultRewardCredits(F_FinalScore);

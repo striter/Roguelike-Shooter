@@ -26,12 +26,12 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         GameIdentificationManager.Init();
         GameDataManager.Init();
         OptionsDataManager.Init();
+        GameObjectManager.Init();
         m_DirectionalLight = transform.Find("Directional Light").GetComponent<Light>();
     }
 
     protected virtual void Start()
     {
-        GameObjectManager.Init();
         AudioManagerBase.Instance.Init();
         GameObjectManager.RegisterGameObjects();
         UIManager.Activate(B_InGame);
@@ -52,9 +52,9 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)
     {
-        AudioManagerBase.Instance.Recycle();
-        GameObjectManager.Clear();
-        LevelObjectManager.Clear();
+        AudioManagerBase.Instance.Destroy();
+        GameObjectManager.Destory();
+        LevelObjectManager.Destroy();
         UIManager.Instance.SetActivate(false);
         LoadingManager.BeginLoad(scene,onfinishLoading);
     }
@@ -219,19 +219,11 @@ public static class GameObjectManager
         TF_SFXWeapon = new GameObject("SFX_Weapon").transform;
         ObjectPoolManager.Init();
     }
-    public static void Clear()
-    {
-        ObjectPoolManager<int, SFXBase>.Destroy();
-        ObjectPoolManager<int, SFXWeaponBase>.Destroy();
-        ObjectPoolManager<int, EntityBase>.Destroy();
-        ObjectPoolManager<enum_Interaction, InteractGameBase>.Destroy();
-        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Destroy();
-    }
     #region Register
     static Dictionary<Type, enum_Interaction> m_GameInteractTypes = new Dictionary<Type, enum_Interaction>();
     public static void RegisterGameObjects()
     {
-        TResources.GetAllEffectSFX().Traversal((int index, SFXBase target) => { ObjectPoolManager<int, SFXBase>.Register(index, target, 1); });
+        TResources.GetAllEffectSFX().Traversal((SFXBase sfx) => { ObjectPoolManager<int, SFXBase>.Register(int.Parse(sfx.name.Split('_')[0]), sfx, 1); });
 
         m_GameInteractTypes.Clear();
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
@@ -256,6 +248,24 @@ public static class GameObjectManager
             return;
 
         ObjectPoolManager<int, EntityBase>.Register(characterIndex, TResources.GetEnermyCharacter(characterIndex), 1);
+    }
+
+    public static void Recycle()
+    {
+        ObjectPoolManager<int, SFXBase>.RecycleAll();
+        ObjectPoolManager<int, SFXWeaponBase>.RecycleAll();
+        ObjectPoolManager<int, EntityBase>.RecycleAll();
+        ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
+        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.RecycleAll();
+    }
+
+    public static void Destory()
+    {
+        ObjectPoolManager<int, SFXBase>.Destroy();
+        ObjectPoolManager<int, SFXWeaponBase>.Destroy();
+        ObjectPoolManager<int, EntityBase>.Destroy();
+        ObjectPoolManager<enum_Interaction, InteractGameBase>.Destroy();
+        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Destroy();
     }
     #endregion
     #region Spawn/Recycle

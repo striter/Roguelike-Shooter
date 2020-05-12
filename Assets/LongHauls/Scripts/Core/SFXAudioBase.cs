@@ -12,14 +12,6 @@ public class SFXAudioBase : SFXBase
         m_Audio = GetComponent<AudioSource>();
         m_Audio.playOnAwake = false;
     }
-    private void OnEnable()
-    {
-        AudioManagerBase .OnVolumeChanged += SetVolume;
-    }
-    private void OnDisable()
-    {
-        AudioManagerBase .OnVolumeChanged -= SetVolume;
-    }
 
     public SFXAudioBase Play(int _sourceID,AudioClip _clip,float _volume,bool _loop,Transform _attachTo)
     {
@@ -31,7 +23,7 @@ public class SFXAudioBase : SFXBase
         base.PlaySFX(_sourceID,_loop?0:_clip.length,0,true);
         return this;
     }
-    void SetVolume(float volume) => m_Audio.volume = volume;
+    public void SetVolume(float volume) => m_Audio.volume = volume;
     public void SetPitch(float _pitch)=> m_Audio.pitch = _pitch;
     protected override void OnPlay()
     {

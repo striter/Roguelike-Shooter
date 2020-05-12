@@ -382,12 +382,12 @@ public static class TCommon
     public static T RandomKey<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count, randomSeed)).Key;
     public static Y RandomValue<T, Y>(this Dictionary<T, Y> dic, System.Random randomSeed = null) => dic.ElementAt(RandomLength(dic.Count, randomSeed)).Value;
     public static bool RandomBool(System.Random seed = null) => seed != null ? seed.Next(0, 2) > 0 : UnityEngine.Random.Range(0, 2) > 0;
-    public static int RandomPercentage(System.Random seed=null)=> seed != null ? seed.Next(1, 101)  : UnityEngine.Random.Range(1, 101);
-
+    public static int RandomPercentageInt(System.Random random=null)=> random != null ? random.Next(0, 101)  : UnityEngine.Random.Range(0, 101);
+    public static float RandomPercentageFloat(System.Random random = null) => RandomLength(100, random);
     public static T RandomPercentage<T>(this Dictionary<T, int> percentageRate, System.Random seed) => RandomPercentage(percentageRate,default(T),seed);
     public static T RandomPercentage<T>(this Dictionary<T, int> percentageRate,T invlaid=default(T), System.Random seed = null)
     {
-        float value = RandomPercentage(seed);
+        float value = RandomPercentageInt(seed);
         T targetLevel = invlaid;
         int totalAmount = 0;
         bool marked = false;
@@ -405,7 +405,7 @@ public static class TCommon
     }
     public static T RandomPercentage<T>(this Dictionary<T, float> percentageRate, T invalid = default(T), System.Random seed = null)
     {
-        float value = RandomPercentage(seed);
+        float value = RandomPercentageInt(seed);
         T targetLevel = invalid;
         float totalAmount = 0;
         bool marked = false;

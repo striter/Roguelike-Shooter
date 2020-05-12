@@ -229,7 +229,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_BattleDurationTimer.m_Timing || !m_b_CanStartAttack)
             return;
 
-        StartAttack(F_AttackTimes.Random(), TCommon.RandomPercentage() >= I_AttackPreAimPercentage);
+        StartAttack(F_AttackTimes.Random(), TCommon.RandomPercentageInt() >= I_AttackPreAimPercentage);
     }
 
     int i_playCount = -1;
@@ -311,7 +311,7 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_MoveOrderTimer.m_Timing)
             return;
 
-        if (!m_m_targetOutChaseRange && m_Moving && TCommon.RandomPercentage() > GameConst.AI.I_AIBattleIdlePercentage)
+        if (!m_m_targetOutChaseRange && m_Moving && TCommon.RandomPercentageInt() > GameConst.AI.I_AIBattleIdlePercentage)
         {
             StopMoving();
             m_MoveOrderTimer.SetTimerDuration(GameConst.AI.RF_AIBattleIdleDuration.Random());

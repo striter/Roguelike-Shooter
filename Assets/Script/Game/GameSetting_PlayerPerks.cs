@@ -73,7 +73,7 @@ namespace GameSetting_PlayerPerks
                 return;
 
             float rate = Value1 * m_Stack;
-            if (rate >= 100f || TCommon.RandomPercentage() <= rate)
+            if (rate >= 100f || TCommon.RandomPercentageInt() <= rate)
                 info.AddExtraBuff(GameConst.m_GameDebuffID.RandomItem());
         }
         public P10006(PerkSaveData saveData) : base(saveData) { }
@@ -423,7 +423,7 @@ namespace GameSetting_PlayerPerks
         public override void OnAttackSetDamage(DamageInfo damageInfo)
         {
             base.OnAttackSetDamage(damageInfo);
-            if (TCommon.RandomPercentage() > Value1 * m_Stack)
+            if (TCommon.RandomPercentageInt() > Value1 * m_Stack)
                 return;
 
             m_SFXWeapon.OnPlay(null,m_Attacher.GetAimingPosition());

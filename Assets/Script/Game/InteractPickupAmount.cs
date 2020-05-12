@@ -14,11 +14,4 @@ public class InteractPickupAmount : InteractPickup
         return this;
     }
 
-    protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
-    {
-        base.OnInteractedContinousCheck(_interactor);
-        _interactor.OnInteractPickup(this,m_Amount);
-        return false;
-    }
-
 }

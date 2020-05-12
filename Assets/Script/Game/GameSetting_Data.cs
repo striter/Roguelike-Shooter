@@ -216,6 +216,13 @@ namespace GameSetting
 
             return bluePrint;
         }
+
+        public static bool CanUseArmoryParts(int count) => m_ArmoryData.m_WeaponParts >= count;
+        public static void OnArmoryPartsStatus(int count)
+        {
+            m_ArmoryData.m_WeaponParts += count;
+            TGameData<CArmoryData>.Save();
+        }
         #endregion
 
         #region CharacterData
@@ -391,8 +398,10 @@ namespace GameSetting
     public class CGameProgressSave : ISave
     {
         public string m_GameSeed;
+        public enum_GameDifficulty m_GameDifficulty;
+
         public enum_GameStage m_Stage;
-        public float m_GameTime;
+        public float m_TimeElapsed;
         public float m_Health;
         public int m_Keys;
         public int m_TotalExp;
@@ -400,13 +409,20 @@ namespace GameSetting
         public WeaponSaveData m_Weapon1;
         public WeaponSaveData m_Weapon2;
         public List<PerkSaveData> m_Perks;
-        public CGameProgressSave() : this(GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected)
+
+        public List<enum_PlayerWeapon> m_ArmoryBlueprintsUnlocked;
+        public int m_ArmoryPartsAcquired;
+
+        public CGameProgressSave() : this(GameDataManager.m_GameData.m_GameDifficulty,GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected)
         {
         }
 
-        public CGameProgressSave(enum_PlayerCharacter character, enum_PlayerWeapon weapon)
+        public CGameProgressSave(enum_GameDifficulty difficulty, enum_PlayerCharacter character, enum_PlayerWeapon weapon)
         {
-            m_GameTime = 0;
+            m_GameSeed = DateTime.Now.ToLongTimeString();
+            m_GameDifficulty = difficulty;
+
+            m_TimeElapsed = 0;
             m_Keys = 0;
             m_TotalExp = 0;
             m_Health = -1;
@@ -415,20 +431,22 @@ namespace GameSetting
             m_Weapon1 = WeaponSaveData.New(weapon);
             m_Weapon2 = WeaponSaveData.New(enum_PlayerWeapon.Invalid);
             m_Stage = enum_GameStage.Rookie;
-            m_GameSeed = DateTime.Now.ToLongTimeString();
+            m_ArmoryBlueprintsUnlocked = new List<enum_PlayerWeapon>();
+            m_ArmoryPartsAcquired = 0;
         }
 
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
         {
-            m_GameSeed = _level.m_GameSeed;
-            m_GameTime = _level.m_TimeElapsed;
-            m_Stage = _level.m_GameStage;
+            m_TimeElapsed = _level.m_TimeElapsed;
+            m_Stage = _level.m_Stage;
             m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
             m_Health = _player.m_Health.m_CurrentHealth;
             m_Weapon1 = WeaponSaveData.Save(_player.m_Weapon1);
             m_Weapon2 = WeaponSaveData.Save(_player.m_Weapon2);
             m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
+            m_ArmoryBlueprintsUnlocked = _level.m_ArmoryBlueprintsUnlocked;
+            m_ArmoryPartsAcquired = _level.m_ArmoryPartsAcquired;
         }
 
         void ISave.DataRecorrect()
@@ -441,11 +459,13 @@ namespace GameSetting
         public List<enum_PlayerWeapon> m_WeaponsUnlocked;
         public List<enum_PlayerWeapon> m_WeaponBlueprints;
         public enum_PlayerWeapon m_WeaponSelected;
+        public int m_WeaponParts;
         public CArmoryData()
         {
             m_WeaponsUnlocked = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.P92, enum_PlayerWeapon.UMP45, enum_PlayerWeapon.Kar98, enum_PlayerWeapon.AKM, enum_PlayerWeapon.S686, enum_PlayerWeapon.Minigun, enum_PlayerWeapon.RocketLauncher, enum_PlayerWeapon.FrostWand };
             m_WeaponBlueprints = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.HeavySword, enum_PlayerWeapon.Flamer };
             m_WeaponSelected = enum_PlayerWeapon.P92;
+            m_WeaponParts = 5;
         }
 
         public void DataRecorrect()
@@ -501,7 +521,7 @@ namespace GameSetting
     {
         public enum_PlayerWeapon m_Weapon { get; private set; }
         public int m_Enhance { get; private set; }
-        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:-1 };
+        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:0 };
         public static WeaponSaveData New(enum_PlayerWeapon weapon,int enhanceLevel=0) => new WeaponSaveData() { m_Weapon = weapon,m_Enhance=enhanceLevel };
     }
 

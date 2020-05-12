@@ -7,7 +7,7 @@ using UnityEngine;
 public interface IObjectPoolStaticBase<T>{
     void OnPoolItemInit(T identity,Action<T,MonoBehaviour> OnRecycle);
 }
-public class CObjectPoolStaticMonoBase<T> :MonoBehaviour,IObjectPoolStaticBase<T>
+public class CObjectPoolStaticPrefabBase<T> :MonoBehaviour,IObjectPoolStaticBase<T>
 {
     public bool m_PoolItemInited { get; private set; }
     public T m_Identity { get; private set; }
@@ -34,11 +34,9 @@ public class CObjectPoolStaticMonoBase<T> :MonoBehaviour,IObjectPoolStaticBase<T
 public class ObjectPoolManager
 {
     protected static Transform tf_PoolSpawn { get; private set; }
-    protected static Transform tf_PoolRegist { get; private set; }
     public static void Init()
     {
         tf_PoolSpawn= new GameObject("PoolSpawn").transform;
-        tf_PoolRegist = new GameObject("PoolRegist").transform;
     }
 }
 public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour, IObjectPoolStaticBase<T>
@@ -51,18 +49,14 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
 
         public Y NewItem(T identity, Action<T, MonoBehaviour> OnRecycle)
         {
-            Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); ;
+            Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); 
+            item.SetActivate(false);
             item.name = m_spawnItem.name + "_" + (m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
             item.OnPoolItemInit(identity, OnRecycle);
             return item;
         }
 
         public void Destroy()
-        {
-            GameObject.Destroy(m_spawnItem.gameObject);
-            DestroyPoolItem();
-        }
-        public void DestroyPoolItem()
         {
             for (; m_DeactiveQueue.Count > 0;)
                 GameObject.Destroy(m_DeactiveQueue.Dequeue().gameObject);
@@ -94,15 +88,10 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
             return;
         }
         d_ItemInfos.Add(identity, new ItemPoolInfo());
-        registerItem.transform.SetParent(tf_PoolRegist);
-        registerItem.SetActivate(false);
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_spawnItem = registerItem;
         for (int i = 0; i < poolStartAmount; i++)
-        {
-            Y spawnItem = info.NewItem(identity, SelfRecycle);
-            info.m_DeactiveQueue.Enqueue(spawnItem);
-        }
+            info.m_DeactiveQueue.Enqueue(info.NewItem(identity, SelfRecycle));
     }
     public static Y Spawn(T identity, Transform toTrans, Vector3 toPos, Quaternion rot)
     {
@@ -117,6 +106,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
             item = info.m_DeactiveQueue.Dequeue();
         else
             item = info.NewItem(identity, SelfRecycle);
+
         info.m_ActiveList.Add(item);
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.transform.position = toPos;
@@ -160,13 +150,12 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
     public static void DestroyPoolItem()
     {
         RecycleAll();
-        d_ItemInfos.Traversal((ItemPoolInfo info) => { info.DestroyPoolItem(); });
+        d_ItemInfos.Traversal((ItemPoolInfo info) => { info.Destroy(); });
     }
 
     public static void Destroy()
     {
-        RecycleAll();
-        d_ItemInfos.Traversal(( ItemPoolInfo info) => { info.Destroy(); });
+        DestroyPoolItem();
         d_ItemInfos.Clear();
     }
 }
@@ -212,8 +201,9 @@ public class ObjectPoolListBase<T, Y>
         }
         if (m_ActiveItemDic.ContainsKey(identity)) Debug.LogError(identity + "Already Exists In Grid Dic");
         else m_ActiveItemDic.Add(identity, targetItem);
-        GetItemTransform(targetItem).name = identity.ToString();
-        GetItemTransform(targetItem).SetActivate(true);
+        Transform trans = GetItemTransform(targetItem);
+        trans.name = identity.ToString();
+        trans.SetActivate(true);
         return targetItem;
     }
 

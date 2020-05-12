@@ -108,7 +108,7 @@ public class UI_Map : UIPage {
         m_LocationName = m_LocationInfo.Find("Name").GetComponent<UIT_TextExtend>();
         m_LocationIntro = m_LocationInfo.Find("Intro").GetComponent<UIT_TextExtend>();
 
-        m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_GameStage.GetLocalizeKey();
+        m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_Stage.GetLocalizeKey();
         m_Style.localizeKey = GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey();
         m_LocationInfo.SetActivate(false);
     }

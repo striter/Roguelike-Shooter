@@ -229,7 +229,7 @@ public static class TDataConvert
         int fieldLength = m_XmlConvertFieldInfos[type].Length;
         string[] splitString = data.Split(dataBreak);
         if (splitString.Length != fieldLength)
-            throw new Exception("Field Not Match!");
+            throw new Exception("Field Not Match:"+data+"|"+type);
         for (int i = 0; i < fieldLength; i++)
         {
             FieldInfo field = m_XmlConvertFieldInfos[type][i];

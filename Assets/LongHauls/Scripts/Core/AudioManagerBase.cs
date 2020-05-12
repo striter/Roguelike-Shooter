@@ -2,7 +2,6 @@
 using UnityEngine;
 public class AudioManagerBase : SingletonMono <AudioManagerBase>
 {
-    public static event Action<float> OnVolumeChanged;
     AudioSource m_AudioBG;
     AudioClip m_Clip;
     float m_baseVolume = 1f;
@@ -18,22 +17,19 @@ public class AudioManagerBase : SingletonMono <AudioManagerBase>
     }
     public virtual void Init()
     {
-        GameObject obj = new GameObject("AudioObj_3D");
+        GameObject obj = new GameObject("Prefab 3D");
+        obj.transform.SetParent(transform);
         AudioSource source= obj.AddComponent<AudioSource>();
         source.spatialBlend = 1;
-        SFXAudioBase audioObj = obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(0, audioObj, 20);
+        ObjectPoolManager<int, SFXAudioBase>.Register(0, obj.AddComponent<SFXAudioBase>(), 20);
 
-        obj = new GameObject("AudioObj_2D");
+        obj = new GameObject("Prefab 2D");
+        obj.transform.SetParent(transform);
         source = obj.AddComponent<AudioSource>();
         source.spatialBlend = 0;
-        audioObj = obj.AddComponent<SFXAudioBase>();
-        ObjectPoolManager<int, SFXAudioBase>.Register(1, audioObj, 20);
+        ObjectPoolManager<int, SFXAudioBase>.Register(1, obj.AddComponent<SFXAudioBase>(), 20);
     }
-    public virtual void Recycle()
-    {
-        ObjectPoolManager<int, SFXAudioBase>.Destroy();
-    }
+    public virtual void Destroy()=> ObjectPoolManager<int, SFXAudioBase>.Destroy();
     protected void SwitchBackground(AudioClip _Clip,bool loop)
     {
         if (m_Clip == _Clip)
@@ -42,7 +38,7 @@ public class AudioManagerBase : SingletonMono <AudioManagerBase>
         m_AudioBG.loop = loop;
     }
     protected void StopBackground() => m_Clip = null;
-    protected void SetSFXVolume(float volume) => OnVolumeChanged?.Invoke(volume);
+    protected void SetSFXVolume(float volume) => ObjectPoolManager<int, SFXAudioBase>.TraversalAllActive((SFXAudioBase audio) => audio.SetVolume(volume));
     protected void SetBGPitch(float pitch) => m_AudioBG.pitch = pitch;
     protected virtual void Update()
     {

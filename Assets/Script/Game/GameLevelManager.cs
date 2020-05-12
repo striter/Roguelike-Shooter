@@ -530,15 +530,15 @@ public static class LevelObjectManager
 {
     public static void Register(TileItemBase[] chunkTileItems)
     {
-        Clear();
-        Dictionary<enum_TileSubType, List<TileItemBase>> itemDic = new Dictionary<enum_TileSubType, List<TileItemBase>>();
+        Destroy();
+        Dictionary<enum_TileSubType, List<TileItemBase>> itemPrefabDic = new Dictionary<enum_TileSubType, List<TileItemBase>>();
         chunkTileItems.Traversal((TileItemBase item) => {
-            if (!itemDic.ContainsKey(item.m_Type))
-                itemDic.Add(item.m_Type, new List<TileItemBase>());
-            itemDic[item.m_Type].Add(GameObject.Instantiate(item));
+            if (!itemPrefabDic.ContainsKey(item.m_Type))
+                itemPrefabDic.Add(item.m_Type, new List<TileItemBase>());
+            itemPrefabDic[item.m_Type].Add(item);
         });
 
-        itemDic.Traversal((enum_TileSubType type, List<TileItemBase> items) => {
+        itemPrefabDic.Traversal((enum_TileSubType type, List<TileItemBase> items) => {
             switch (type)
             {
                 default: Debug.LogError("Invalid Pharse Here!"); break;
@@ -590,7 +590,7 @@ public static class LevelObjectManager
         ObjectPoolManager<enum_EditorTerrainType, LevelTileItemEditorTerrain>.DestroyPoolItem();
     }
 
-    public static void Clear()
+    public static void Destroy()
     {
         ObjectPoolManager<enum_TileTerrainType, TileTerrainBase>.Destroy();
         ObjectPoolManager<enum_TileObjectType, TileObjectBase>.Destroy();

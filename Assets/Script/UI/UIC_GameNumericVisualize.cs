@@ -26,7 +26,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameExit, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterAI>(enum_BC_UIStatus.UI_OnWillAIAttack,OnWillAIAttack);
-        TBroadCaster<enum_BC_UIStatus>.Add<Vector3, enum_Interaction,int>(enum_BC_UIStatus.UI_PlayerInteractPickup,OnPlayerPickupAmount);
+        TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup,OnPlayerPickupAmount);
     }
     protected override void OnDestroy()
     {
@@ -37,7 +37,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameExit, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterAI>(enum_BC_UIStatus.UI_OnWillAIAttack, OnWillAIAttack);
-        TBroadCaster<enum_BC_UIStatus>.Add<Vector3, enum_Interaction, int>(enum_BC_UIStatus.UI_PlayerInteractPickup, OnPlayerPickupAmount);
+        TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup, OnPlayerPickupAmount);
     }
 
     bool b_showEntityHealthInfo(EntityBase entity)
@@ -79,15 +79,9 @@ public class UIC_GameNumericVisualize : UIControlBase
         m_HealthGrid.GetItem(damageEntity.m_EntityID).OnShow();
     }
     
-    void OnPlayerPickupAmount(Vector3 position,enum_Interaction interaction,int amount)
-    {
-        m_PickupGrid.AddItem(visualize++).Play(position,interaction,amount,m_PickupGrid.RemoveItem);
-    }
+    void OnPlayerPickupAmount(InteractPickup pickup)=> m_PickupGrid.AddItem(visualize++).Play(pickup,m_PickupGrid.RemoveItem);
     
-    void OnWillAIAttack(EntityCharacterAI ai)
-    {
-        m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
-    }
+    void OnWillAIAttack(EntityCharacterAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
 
     void ClearAll()
     {
