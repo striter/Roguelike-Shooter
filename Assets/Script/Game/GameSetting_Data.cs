@@ -289,7 +289,7 @@ namespace GameSetting
         #endregion
 
         #region Enermy Perk Data
-       public const int m_DefaultEnermyPerkIdentity= 30000;
+       public const int m_DefaultEnermyPerkIdentity= 20000;
         static Dictionary<int, ExpireEnermyPerkBase> m_AllEnermyPerks = new Dictionary<int, ExpireEnermyPerkBase>();
         static List<int> m_AvailableEnermyPerks = new List<int>();
         public static void InitEnermyPerks()
@@ -305,6 +305,7 @@ namespace GameSetting
         }
 
         public static ExpireEnermyPerkBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireEnermyPerkBase>(m_AllEnermyPerks[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity].GetType(), GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
+        public static bool IsElitePerk(this ExpireEnermyPerkBase perk) => perk.m_Index != m_DefaultEnermyPerkIdentity;
         #endregion
 
         #region ExcelData

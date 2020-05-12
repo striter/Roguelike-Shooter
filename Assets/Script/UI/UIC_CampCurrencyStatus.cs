@@ -28,7 +28,7 @@ public class UIC_CampCurrencyStatus : UIControlBase {
     }
     void OnCampStatus()
     {
-        m_CreditLerp.ChangeValue(GameDataManager.m_GameData.f_Credits);
+        m_CreditLerp.SetLerpValue(GameDataManager.m_GameData.f_Credits);
     }
 
 }

@@ -820,7 +820,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             OnValueChanged(m_value);
         }
 
-        protected virtual void ChangeValue(float value,float duration)
+        protected void SetLerpValue(float value,float duration)
         {
             if (value == m_targetValue)
                 return;
@@ -829,6 +829,17 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             m_previousValue = m_value;
             m_targetValue = value;
         }
+
+        public void SetFinalValue(float value)
+        {
+            if (value == m_value)
+                return;
+            m_value = value;
+            m_previousValue = m_value;
+            m_targetValue = m_value;
+            OnValueChanged(m_value);
+        }
+
         public void TickDelta(float deltaTime)
         {
             if (m_check <= 0)
@@ -856,7 +867,7 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
             m_maxDurationValue = m_perSecondValue * maxDuration;
         }
 
-        public void ChangeValue(float value)=> base.ChangeValue(value,Mathf.Abs(value-m_value)> m_maxDurationValue? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
+        public void SetLerpValue(float value)=> SetLerpValue(value,Mathf.Abs(value-m_value)> m_maxDurationValue? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
         
         protected override float GetValue(float checkLeftParam) => Mathf.Lerp(m_previousValue, m_targetValue, 1 - checkLeftParam);
     }

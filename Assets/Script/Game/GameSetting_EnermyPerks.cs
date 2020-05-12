@@ -5,15 +5,15 @@ using GameSetting;
 
 namespace GameSetting_EnermyPerks
 {
-    public class EB30000_Default:ExpireEnermyPerkBase
+    public class EB20000_Default:ExpireEnermyPerkBase
     {
         public override int m_Index => GameDataManager.m_DefaultEnermyPerkIdentity;
-        public EB30000_Default(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+        public EB20000_Default(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 
-    public class EB30001:ExpireEnermyPerkBase
+    public class EB20001:ExpireEnermyPerkBase
     {
-        public override int m_Index => 30001;
+        public override int m_Index => 20001;
         public override int m_EffectIndex => 40014;
         public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive + 3f;
         public override void OnAttackSetDamage(DamageInfo info)
@@ -21,21 +21,21 @@ namespace GameSetting_EnermyPerks
             base.OnAttackSetDamage(info);
             info.AddExtraBuff(105);
         }
-        public EB30001(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+        public EB20001(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 
-    public class EB30002 : ExpireEnermyPerkBase
+    public class EB20002 : ExpireEnermyPerkBase
     {
-        public override int m_Index => 30002;
+        public override int m_Index => 20002;
         public override int m_EffectIndex => 40002;
         public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+3f;
-        public EB30002(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+        public EB20002(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 
-    public class EB30003 : ExpireEnermyPerkBase
+    public class EB20003 : ExpireEnermyPerkBase
     {
-        public override int m_Index => 30003;
-        public override int m_EffectIndex => 40002;
+        public override int m_Index => 20003;
+        public override int m_EffectIndex => 40001;
         public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+3f;
         TimerBase m_CooldownTimer = new TimerBase(5f,true);
         TimerBase m_HealTimer = new TimerBase(1f,true);
@@ -58,6 +58,6 @@ namespace GameSetting_EnermyPerks
             m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth/20f, enum_DamageType.Health));
             m_HealTimer.Replay();
         }
-        public EB30003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+        public EB20003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 }

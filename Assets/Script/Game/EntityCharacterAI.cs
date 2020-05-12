@@ -28,6 +28,7 @@ public class EntityCharacterAI : EntityCharacterBase {
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_IsDead;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
+    public ExpireEnermyPerkBase m_EnermyPerk { get; private set; }
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
@@ -42,10 +43,11 @@ public class EntityCharacterAI : EntityCharacterBase {
     public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, ExpireEnermyPerkBase enermyPerk )
     {
         base.OnMainCharacterActivate(_flag);
-        if (m_Animator != null)
-            m_Animator.OnActivate(E_AnimatorIndex);
+        if (m_Animator != null)  m_Animator.OnActivate(E_AnimatorIndex);
+
         m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
+        m_EnermyPerk = enermyPerk;
         m_CharacterInfo.AddExpire(enermyPerk);
         m_Health.OnHealthMultiplierChange(1f+enermyPerk.m_MaxHealthMultiplierAdditive);
 
@@ -62,23 +64,20 @@ public class EntityCharacterAI : EntityCharacterBase {
     protected override void OnRevive()
     {
         base.OnRevive();
-        if (m_Animator != null)
-            m_Animator.OnRevive();
+        if (m_Animator != null) m_Animator.OnRevive();
     }
     protected override void OnDead()
     {
         base.OnDead();
         AIDeactivate();
-        if (m_Animator != null)
-            m_Animator.OnDead();
+        if (m_Animator != null)  m_Animator.OnDead();
         m_Agent.enabled = false;
     }
 
     protected override void OnExpireChange()
     {
         base.OnExpireChange();
-        if (m_Animator != null)
-            m_Animator.SetMovementFireSpeed(m_CharacterInfo.m_MovementSpeedMultiply, m_CharacterInfo.m_FireRateMultiply);
+        if (m_Animator != null)  m_Animator.SetMovementFireSpeed(m_CharacterInfo.m_MovementSpeedMultiply, m_CharacterInfo.m_FireRateMultiply);
         m_Agent.speed = m_CharacterInfo.GetMovementSpeed;
     }
 

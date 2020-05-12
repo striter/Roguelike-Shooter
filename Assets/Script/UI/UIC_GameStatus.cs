@@ -78,7 +78,7 @@ public class UIC_GameStatus : UIControlBase {
 
     void OnCurrencyUpdate(PlayerExpireManager _playerInfo)
     {
-        m_CoinLerp.ChangeValue(_playerInfo.m_Coins);
+        m_CoinLerp.SetLerpValue(_playerInfo.m_Coins);
         m_Keys.text = _playerInfo.m_Keys.ToString();
         m_Ranks.text = _playerInfo.m_RankManager.m_ExpCurRank + "|" + _playerInfo.m_RankManager.m_ExpToNextRank + "," + _playerInfo.m_RankManager.m_Rank;
     }
