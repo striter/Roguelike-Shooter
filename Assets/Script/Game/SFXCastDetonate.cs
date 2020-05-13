@@ -17,7 +17,7 @@ public class SFXCastDetonate : SFXCastOverlapSphere
     {
         base.Play(damageInfo);
         m_Model.SetActivate(true);
-        GameObjectManager.PlayMuzzle(damageInfo.m_SourceID,transform.position,Vector3.up,I_MuzzleIndex);
+        GameObjectManager.PlayMuzzle(damageInfo.m_EntityID,transform.position,Vector3.up,I_MuzzleIndex);
     }
     protected override void OnPlay()
     {

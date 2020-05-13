@@ -32,7 +32,6 @@ public class WeaponCastAnim : WeaponCastBase {
         cast.V4_CastInfo = m_BaseSize* castScale;
         cast.Play(GetWeaponDamageInfo(m_BaseDamage));
 
-        OnAttacherRecoil();
         OnAmmoCost();
     }
 

@@ -32,7 +32,7 @@ public class SFXCast : SFXWeaponBase {
     public virtual void Play(DamageInfo buffInfo)
     {
         m_DamageInfo = buffInfo;
-        base.PlayUncontrolled(m_DamageInfo.m_SourceID, F_PlayDuration, F_DelayDuration);
+        base.PlayUncontrolled(m_DamageInfo.m_EntityID, F_PlayDuration, F_DelayDuration);
         if (I_DelayIndicatorIndex > 0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID, F_DelayDuration, 0);
     }

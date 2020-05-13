@@ -85,7 +85,7 @@ public class EntityCharacterBase : EntityBase
         if (damageInfo.m_AmountApply <= 0)
             return;
 
-        if (damageInfo.m_SourceID == m_EntityID)
+        if (damageInfo.m_EntityID == m_EntityID)
             m_CharacterInfo.OnWillDealtDamage(damageInfo, damageEntity);
         else if (damageEntity.m_EntityID == m_EntityID)
             m_CharacterInfo.OnWillReceiveDamage(damageInfo, damageEntity);
@@ -93,7 +93,7 @@ public class EntityCharacterBase : EntityBase
 
     protected virtual void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
     {
-        if (damageInfo.m_SourceID == m_EntityID)
+        if (damageInfo.m_EntityID == m_EntityID)
         {
             m_CharacterInfo.OnDealtDamage(damageInfo, damageEntity, amountApply);
         }
@@ -149,7 +149,7 @@ public class EntityCharacterBase : EntityBase
             return 0;
 
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthWillChange, damageInfo, this);
-        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_SourceID, buffInfo)); });
+        damageInfo.m_BaseBuffApply.Traversal((SBuff buffInfo) => { m_CharacterInfo.AddExpire(new EntityExpirePreset(damageInfo.m_EntityID, buffInfo)); });
         float amount = base.OnReceiveDamageAmount(damageInfo, direction);
         if (amount != 0)
             TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterHealthChange, damageInfo, this,amount);

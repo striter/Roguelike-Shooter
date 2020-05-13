@@ -21,7 +21,6 @@ public class WeaponProjectileBase : WeaponBase
     {
         FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
         OnAttacherAnim();
-        OnAttacherRecoil();
         OnAmmoCost();
     }
     RaycastHit hit;

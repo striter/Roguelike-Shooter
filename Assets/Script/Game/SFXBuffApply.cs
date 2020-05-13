@@ -10,6 +10,6 @@ public class SFXBuffApply : SFXWeaponBase {
         transform.SetParent(attachTo);
         transform.position = attachTo.position;
         transform.localRotation = Quaternion.identity;
-        applyTarget.m_HitCheck.TryHit(new DamageInfo(0, GameDataManager.GetPresetBuff(I_BuffIndex)));
+        applyTarget.m_HitCheck.TryHit(new DamageInfo(I_SourceID, GameDataManager.GetPresetBuff(I_BuffIndex)));
     }
 }

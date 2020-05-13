@@ -11,13 +11,17 @@ namespace GameSetting
     public enum enum_PlayerAnim
     {
         Invalid = -1,
+        //Without Anim Trigger
         Rifle_1001 = 1001,
         Pistol_1002 = 1002,
         Crossbow_1003 = 1003,
         Heavy_1004 = 1004,
+
+        //With Anim Trigger
         HeavySword_2001 = 2001,
         Katana_2002=2002,
         HammerOfDawn_2003=2003,
+        Drink_2004=2004,
     }
 
     public enum enum_EnermyAnim

@@ -86,7 +86,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         m_Trigger.OnTriggerStop();
     }
 
-    public DamageInfo GetWeaponDamageInfo(float damage) => m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damage, I_ExtraBuffApply, enum_DamageType.Basic);
+    public DamageInfo GetWeaponDamageInfo(float damage,enum_DamageType type= enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damage, I_ExtraBuffApply, enum_DamageType.Basic);
     #region PlayerInteract
     public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
 
@@ -98,13 +98,14 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     protected virtual void OnAutoTrigger() => Debug.LogError("Override This Please!");
     protected virtual void OnStoreTrigger(bool success) => Debug.LogError("Override This Please!"); 
 
-    protected void OnAmmoCost()
+    protected virtual void OnAmmoCost()
     {
         m_AmmoLeft--;
         m_RefillPauseTimer.Replay();
         m_BulletRefillTimer.Replay();
+        m_Attacher.PlayRecoil(m_Recoil);
     }
-    public void OnAttacherRecoil() => m_Attacher.PlayRecoil(m_Recoil);
+
     public void OnAttacherAnim(int index=0)=> m_Attacher.PlayAnim(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply,index);
 
     public virtual void Tick(bool firePausing, float deltaTime)

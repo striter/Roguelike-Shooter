@@ -186,7 +186,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         if (damageEntity.m_EntityID == m_EntityID && amountApply > 0)
             m_ArmorRegenTimer.Replay();
 
-        if (damageInfo.m_SourceID == m_EntityID)
+        if (damageInfo.m_EntityID == m_EntityID)
         {
             if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
                 m_CharacterInfo.OnKilledEnermy(damageEntity);

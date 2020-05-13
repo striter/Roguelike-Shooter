@@ -18,7 +18,6 @@ public class WeaponProjectileRailgun : WeaponProjectileBase
     {
         FireProjectile(success ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
         OnAttacherAnim();
-        OnAttacherRecoil();
         OnAmmoCost();
     }
 }

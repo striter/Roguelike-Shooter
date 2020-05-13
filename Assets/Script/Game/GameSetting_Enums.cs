@@ -113,6 +113,8 @@ namespace GameSetting
         CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd,
     }
 
+    public enum enum_DamageIdentity { Invalid=-1,Default,Expire, }
+
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
     public enum enum_CastControllType { Invalid = -1, CastFromOrigin = 1, CastControlledForward = 2, CastAtTarget = 3, }
@@ -154,7 +156,7 @@ namespace GameSetting
 
         LavaWand = 401,PoisonWand = 402,FrostWand = 403,
 
-        Grenade=501,
+        Grenade=501,HealPotion=502,
     }
 
 

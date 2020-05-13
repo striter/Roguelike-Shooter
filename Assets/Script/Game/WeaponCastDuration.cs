@@ -11,7 +11,6 @@ public class WeaponCastDuration : WeaponCastBase {
         SetCastAvailable(true);
         m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage));
         OnAttacherAnim();
-        OnAttacherRecoil();
         OnAmmoCost();
     }
 

@@ -39,7 +39,7 @@ public class SFXProjectile : SFXWeaponBase
     protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
     public virtual void Play(DamageInfo damageInfo ,Vector3 direction, Vector3 targetPosition )
     {
-        base.PlayUncontrolled(damageInfo.m_SourceID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
+        base.PlayUncontrolled(damageInfo.m_EntityID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
         m_DamageInfo= damageInfo;
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
         SpawnProjectileEffects(targetPosition, F_PlayDelay);
