@@ -38,7 +38,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Coins", KeyCode.F5, "20", (string coins) => { GameObjectManager.SpawnInteract<InteractPickupCoin>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(coins)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Health", KeyCode.F6, "20", (string health) => { GameObjectManager.SpawnInteract<InteractPickupHealth>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(health)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Armor", KeyCode.F7, "20", (string armor) => { GameObjectManager.SpawnInteract<InteractPickupArmor>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(int.Parse(armor)); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, enum_PlayerWeapon.Railgun, (enum_PlayerWeapon weapon) => {  GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(weapon,5));  });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Weapon", KeyCode.F8, enum_PlayerWeaponIdentity.Railgun, (enum_PlayerWeaponIdentity weapon) => {  GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(weapon,5));  });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Interact", KeyCode.F9, enum_GameEventType.CoinsSack, (enum_GameEventType eventType) => { GenerateStageInteract(eventType, new ChunkGameObjectData(GameLevelManager.Instance.GetPlayerAtQuadrant().m_Identity, enum_TileObjectType.Invalid, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + Vector3.forward * 2), Quaternion.identity),0f); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Rank Exp", KeyCode.F10, "10", (string value) => { m_LocalPlayer.m_CharacterInfo.OnExpReceived(int.Parse(value)); });
@@ -355,8 +355,8 @@ public class GameManager : GameManagerBase
         enum_Rarity blueprintRarity = TCommon.RandomPercentage(GameConst.m_ArmoryBlueprintGameDropRarities, enum_Rarity.Invalid);
         if (blueprintRarity != enum_Rarity.Invalid)
         {
-            enum_PlayerWeapon weaponBlueprint = GameDataManager.UnlockArmoryBlueprint(blueprintRarity);
-            if (weaponBlueprint != enum_PlayerWeapon.Invalid)
+            enum_PlayerWeaponIdentity weaponBlueprint = GameDataManager.UnlockArmoryBlueprint(blueprintRarity);
+            if (weaponBlueprint != enum_PlayerWeaponIdentity.Invalid)
             {
                 GameObjectManager.SpawnInteract<InteractPickupArmoryBlueprint>(sourcePosition, Quaternion.identity).Play(weaponBlueprint).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
                 m_GameLevel.OnArmoryBlueprintsUnlocked(weaponBlueprint);
@@ -603,10 +603,10 @@ public class GameProgressManager
     }
 
     #region ResultData
-    public List<enum_PlayerWeapon> m_ArmoryBlueprintsUnlocked { get; private set; } = new List<enum_PlayerWeapon>();
+    public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked { get; private set; } = new List<enum_PlayerWeaponIdentity>();
     public int m_ArmoryPartsAcquired = 0;
 
-    public void OnArmoryBlueprintsUnlocked(enum_PlayerWeapon weapon) => m_ArmoryBlueprintsUnlocked.Add(weapon);
+    public void OnArmoryBlueprintsUnlocked(enum_PlayerWeaponIdentity weapon) => m_ArmoryBlueprintsUnlocked.Add(weapon);
     public void OnArmoryPartsAcquired(int count) => m_ArmoryPartsAcquired += count;
     #endregion
 

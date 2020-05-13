@@ -71,7 +71,7 @@ public class TResources
 
     public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Load<EntityCharacterPlayer>(ConstPath.S_PlayerEntity+(int)character);
     public static EntityCharacterBase GetEnermyCharacter(int index) => Load<EntityCharacterBase>(ConstPath.S_EnermyEntity + index);
-    public static WeaponBase GetPlayerWeapon(enum_PlayerWeapon weapon)=> Load<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
+    public static WeaponBase GetPlayerWeapon(enum_PlayerWeaponIdentity weapon)=> Load<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
     public static InteractGameBase GetInteract(enum_Interaction type) => Load<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio

@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4868770037055374}
   - component: {fileID: 114583434124906460}
+  - component: {fileID: 114861909216486152}
   m_Layer: 0
   m_Name: 102
   m_TagString: Untagged
@@ -186,5 +187,19 @@ MonoBehaviour:
   B_AttachLeft: 0
   I_ExtraBuffApply: -1
   F_AimSpread: 3
-  I_ChargeIndicatorIndex: 39002
-  F_ChargeDuration: 2
+  B_MultiShotAvailable: 0
+  I_PelletsPerShot: 1
+  F_PelletSpreadAngle: 1
+--- !u!114 &114861909216486152
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1154901823972654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fba0ff36396b5c48b0e6a7bb39a7415, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  I_StoreIndicatorIndex: 39002
+  F_StoreDuration: 2

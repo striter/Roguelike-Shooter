@@ -6,8 +6,8 @@ using UnityEngine;
 public class InteractWeaponReforge : InteractGameBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponReforge;
-    public enum_PlayerWeapon m_Weapon { get; private set; }
-    public InteractWeaponReforge Play(enum_PlayerWeapon weapon)
+    public enum_PlayerWeaponIdentity m_Weapon { get; private set; }
+    public InteractWeaponReforge Play(enum_PlayerWeaponIdentity weapon)
     {
         base.Play();
         m_Weapon = weapon;

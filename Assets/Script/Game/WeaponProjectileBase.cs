@@ -12,18 +12,18 @@ public class WeaponProjectileBase : WeaponBase
     public int I_PelletsPerShot = 1;
     public float F_PelletSpreadAngle = 1;
 
-    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.Projectile;
+    public override enum_PlayerWeaponBaseType m_WeaponType => enum_PlayerWeaponBaseType.Projectile;
     public float GetAimSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_AimSpread;
     public float GetPelletSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_PelletSpreadAngle;
     public int GetPelletPerShot() => m_Attacher.m_CharacterInfo.I_Projectile_Multi_PelletsAdditive + I_PelletsPerShot;
 
     protected override void OnAutoTrigger()
     {
-        base.OnAutoTrigger();
-        OnTriggerOnce(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
+        FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
+        OnTriggerOnce();
     }
     RaycastHit hit;
-    protected void OnTriggerOnce(int projectileIndex,DamageInfo damageInfo)
+    protected void FireProjectile(int projectileIndex,DamageInfo damageInfo)
     {
         Vector3 baseSpreadDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Attacher.tf_WeaponAim.position);
         baseSpreadDirection.y = 0;

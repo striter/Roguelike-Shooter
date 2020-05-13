@@ -76,7 +76,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.enabled = true;
 
         ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
-        if (_battleSave.m_Weapon2.m_Weapon != enum_PlayerWeapon.Invalid)
+        if (_battleSave.m_Weapon2.m_Weapon != enum_PlayerWeaponIdentity.Invalid)
             ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon2));
         OnSwapWeapon(true);
         return this;
@@ -233,15 +233,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         m_weaponFirePause = !CheckWeaponFiring();
         m_AimAssist.SetEnable(!m_weaponFirePause  && m_AimingTarget != null);
-        float reloadDelta = m_CharacterInfo.DoReloadRateTick(deltaTime);
-        float fireDelta = m_CharacterInfo.DoFireRateTick(deltaTime);
-        if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause,  fireDelta, reloadDelta);
-        if (m_Weapon2) m_Weapon2.Tick(m_weaponFirePause, fireDelta, reloadDelta);
+        if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause, deltaTime);
+        if (m_Weapon2) m_Weapon2.Tick(m_weaponFirePause, deltaTime);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)
     {
-        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
+        _weapon.OnAttach(this, _weapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight);
         WeaponBase exchangeWeapon = null;
         if (m_Weapon1 != null && m_Weapon2 != null)
         {
@@ -301,7 +299,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
     public void GameWeaponReforge(WeaponBase _reforgeWeapon)
     {
-        _reforgeWeapon.OnAttach(this, _reforgeWeapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight, OnFireAddRecoil);
+        _reforgeWeapon.OnAttach(this, _reforgeWeapon.B_AttachLeft ? tf_WeaponHoldLeft : tf_WeaponHoldRight);
         RecycleWeapon(m_WeaponCurrent);
         if (m_weaponEquipingFirst)
         {
@@ -326,10 +324,10 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_MoveAxisInput = moveDelta;
     }
     
-    public void OnFireAddRecoil(float recoil)
+    public void OnFireAddRecoil(float recoil,float animSpeed)
     {
         TPSCameraController.Instance.AddRecoil(recoil);
-        m_Animator.Attack(m_WeaponCurrent.m_WeaponInfo.m_FireRate/m_CharacterInfo.m_FireRateMultiply);
+        m_Animator.Attack(animSpeed);
     }
 
     void OnMoveTick(float deltaTime)

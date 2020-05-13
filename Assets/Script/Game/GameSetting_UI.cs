@@ -61,16 +61,16 @@ namespace GameSetting
 
     public static class UIConvertions
     {
-        public static enum_UIWeaponTag[] GetWeaponTags(this enum_PlayerWeaponType type)
+        public static enum_UIWeaponTag[] GetWeaponTags(this enum_PlayerWeaponBaseType type)
         {
             switch (type)
             {
                 default:Debug.LogError("Invalid Convertions Here!");return new enum_UIWeaponTag[0];
-                case enum_PlayerWeaponType.Projectile: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Duration};
-                case enum_PlayerWeaponType.Paracurve: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Melee};
-                case enum_PlayerWeaponType.Cast:return new enum_UIWeaponTag[1] { enum_UIWeaponTag.Projectile };
-                case enum_PlayerWeaponType.Shield: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Projectile, enum_UIWeaponTag.MultiShot};
-                case enum_PlayerWeaponType.Item:return new enum_UIWeaponTag[2] { enum_UIWeaponTag.Projectile, enum_UIWeaponTag.StoreShot };
+                case enum_PlayerWeaponBaseType.Projectile: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Duration};
+                case enum_PlayerWeaponBaseType.Paracurve: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Melee};
+                case enum_PlayerWeaponBaseType.Cast:return new enum_UIWeaponTag[1] { enum_UIWeaponTag.Projectile };
+                case enum_PlayerWeaponBaseType.Shield: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Projectile, enum_UIWeaponTag.MultiShot};
+                case enum_PlayerWeaponBaseType.Item:return new enum_UIWeaponTag[2] { enum_UIWeaponTag.Projectile, enum_UIWeaponTag.StoreShot };
             }
 
         }
@@ -116,8 +116,8 @@ namespace GameSetting
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
         public static string GetAbilitySprite(this enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
-        public static string GetIconSprite(this enum_PlayerWeapon weapon) => "icon_" + ((int)weapon);
-        public static string GetDetailSprite(this enum_PlayerWeapon weapon) => "detail_" + ((int)weapon);
+        public static string GetIconSprite(this enum_PlayerWeaponIdentity weapon) => "icon_" + ((int)weapon);
+        public static string GetDetailSprite(this enum_PlayerWeaponIdentity weapon) => "detail_" + ((int)weapon);
         public static string GetExpireSprite(this EntityExpireBase expire) => expire.m_Index.ToString();
 
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
@@ -159,8 +159,8 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
         public static string GetLocalizeNameKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Name";
         public static string GetLocalizeIntroKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Intro";
-        public static string GetNameLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Name_" + weapon;
-        public static string GetIntroLocalizeKey(this enum_PlayerWeapon weapon) => "Weapon_Intro_" + weapon;
+        public static string GetNameLocalizeKey(this enum_PlayerWeaponIdentity weapon) => "Weapon_Name_" + weapon;
+        public static string GetIntroLocalizeKey(this enum_PlayerWeaponIdentity weapon) => "Weapon_Intro_" + weapon;
         public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Title";
         public static string GetIntroLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Intro";
         public static string GetLocalizeKey(this enum_Option_FrameRate frameRate) => "UI_Option_" + frameRate;

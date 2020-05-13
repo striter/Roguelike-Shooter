@@ -8,10 +8,9 @@ public class WeaponCastDuration : WeaponCastBase {
     public bool m_Casting => m_Cast;
     protected override void OnAutoTrigger()
     {
-        base.OnAutoTrigger();
         SetCastAvailable(true);
-        if (m_Cast)
-            m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage) );
+        m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage));
+        OnTriggerOnce();
     }
 
     public override void OnShow(bool play)
@@ -21,9 +20,9 @@ public class WeaponCastDuration : WeaponCastBase {
             SetCastAvailable(false);
     }
 
-    public override void Tick(bool firePausing, float triggerTick, float reloadTick)
+    public override void Tick(bool firePausing, float deltaTime)
     {
-        base.Tick(firePausing, triggerTick, reloadTick);
+        base.Tick(firePausing, deltaTime);
         SetCastAvailable(m_Trigger.m_TriggerDown && m_HaveAmmoLeft && !m_Attacher.m_IsDead && !m_Attacher.m_weaponFirePause);
     }
 

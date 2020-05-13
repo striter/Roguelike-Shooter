@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UIGI_ArmoryItem : UIT_GridItem {
     Text m_Text;
     Button m_Button;
-    Action<enum_PlayerWeapon> OnWeaponClick;
+    Action<enum_PlayerWeaponIdentity> OnWeaponClick;
     public override void OnInitItem()
     {
         base.OnInitItem();
@@ -17,11 +17,11 @@ public class UIGI_ArmoryItem : UIT_GridItem {
         m_Button.onClick.AddListener(OnButtonClick);
     }
 
-    public void Play(Action<enum_PlayerWeapon> OnClick)
+    public void Play(Action<enum_PlayerWeaponIdentity> OnClick)
     {
         OnWeaponClick = OnClick;
-        m_Text.text = ((enum_PlayerWeapon)m_Identity).ToString();
+        m_Text.text = ((enum_PlayerWeaponIdentity)m_Identity).ToString();
     }
 
-    void OnButtonClick() => OnWeaponClick((enum_PlayerWeapon)m_Identity);
+    void OnButtonClick() => OnWeaponClick((enum_PlayerWeaponIdentity)m_Identity);
 }

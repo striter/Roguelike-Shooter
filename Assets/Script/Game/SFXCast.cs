@@ -24,8 +24,11 @@ public class SFXCast : SFXWeaponBase {
     protected float F_PlayDuration => I_TickCount * F_Tick;
     Transform tf_ControlledCast;
     TimerBase m_CastTickTimer = new TimerBase();
-    public bool m_ControlledCast => tf_ControlledCast != null;
     SFXIndicator m_ControlledParticles;
+
+    public bool m_OnceCast => F_Tick <= 0;
+    public bool m_ControlledCast => tf_ControlledCast != null;
+
     public virtual void Play(DamageInfo buffInfo)
     {
         m_DamageInfo = buffInfo;
@@ -77,7 +80,7 @@ public class SFXCast : SFXWeaponBase {
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);
 
-        if (F_Tick <= 0)
+        if (m_OnceCast)
         {
             DoCastDealtDamage();
         }
@@ -91,11 +94,9 @@ public class SFXCast : SFXWeaponBase {
     protected override void Update()
     {
         base.Update();
-        if (!B_Playing)
+        if (!B_Playing|| m_ControlledCast|| m_OnceCast)
             return;
 
-        if (F_Tick <= 0)
-            return;
 
         m_CastTickTimer.Tick(Time.deltaTime);
         if (!m_CastTickTimer.m_Timing)

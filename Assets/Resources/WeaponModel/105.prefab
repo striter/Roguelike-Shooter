@@ -101,6 +101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4686228784262542}
   - component: {fileID: 114384584830715192}
+  - component: {fileID: 114128491951439376}
   m_Layer: 0
   m_Name: 105
   m_TagString: Untagged
@@ -317,6 +318,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1366021090462204}
   m_Mesh: {fileID: 4300010, guid: 649c8216550368440a8cf7e03cc34f0b, type: 3}
+--- !u!114 &114128491951439376
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1821775965164760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  F_FireRate: 0.1
 --- !u!114 &114384584830715192
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -332,3 +345,6 @@ MonoBehaviour:
   B_AttachLeft: 0
   I_ExtraBuffApply: -1
   F_AimSpread: 4
+  B_MultiShotAvailable: 0
+  I_PelletsPerShot: 1
+  F_PelletSpreadAngle: 1

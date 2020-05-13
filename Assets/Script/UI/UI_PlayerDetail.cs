@@ -119,7 +119,7 @@ public class UI_PlayerDetail : UIPage
         m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());
         m_WeaponIntro.localizeKey = weaponInfo.m_Weapon.GetIntroLocalizeKey();
         m_WeaponBackground.sprite = GameUIManager.Instance.m_InGameSprites[weaponInfo.m_Rarity.GetUIDetailBackground()];
-        m_ClipSize.text = weaponInfo.m_ClipAmount.ToString();
+        m_ClipSize.text =weapon.I_ClipAmount.ToString();
 
         m_WeaponScore.ClearGrid();
         int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;

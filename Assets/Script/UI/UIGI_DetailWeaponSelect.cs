@@ -18,7 +18,7 @@ public class UIGI_DetailWeaponSelect : UIT_GridItem,IGridHighlight {
         GetComponent<Button>().onClick.AddListener(()=> { OnButtonClick(m_Identity); });
     }
 
-    public void Init(enum_PlayerWeapon weapon)
+    public void Init(enum_PlayerWeaponIdentity weapon)
     {
         m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.GetIconSprite()];
     }

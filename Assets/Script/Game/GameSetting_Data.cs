@@ -111,8 +111,8 @@ namespace GameSetting
         #endregion
 
         #region ArmoryData
-        public static Dictionary<enum_PlayerWeapon, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeapon, SWeapon>();
-        public static Dictionary<enum_Rarity, List<enum_PlayerWeapon>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
+        public static Dictionary<enum_PlayerWeaponIdentity, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeaponIdentity, SWeapon>();
+        public static Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>>();
 
         static void InitArmory()
         {
@@ -134,7 +134,7 @@ namespace GameSetting
                 if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon.m_Weapon))
                     return;
                 if (!m_GameWeaponUnlocked.ContainsKey(weapon.m_Rarity))
-                    m_GameWeaponUnlocked.Add(weapon.m_Rarity, new List<enum_PlayerWeapon>());
+                    m_GameWeaponUnlocked.Add(weapon.m_Rarity, new List<enum_PlayerWeaponIdentity>());
                 m_GameWeaponUnlocked[weapon.m_Rarity].Add(weapon.m_Weapon);
             });
         }
@@ -146,9 +146,9 @@ namespace GameSetting
             return WeaponSaveData.New(m_GameWeaponUnlocked[rarity].RandomItem(random), GameConst.m_StageWeaponEnhanceLevel[stage].RandomPercentage(0,random));
         }
 
-        public static float GetArmoryUnlockPrice(enum_PlayerWeapon weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
-        public static bool CanArmoryUnlock(enum_PlayerWeapon weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
-        public static void OnArmoryUnlock(enum_PlayerWeapon weapon)
+        public static float GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
+        public static bool CanArmoryUnlock(enum_PlayerWeaponIdentity weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
+        public static void OnArmoryUnlock(enum_PlayerWeaponIdentity weapon)
         {
             if (!m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
             {
@@ -173,7 +173,7 @@ namespace GameSetting
             InitArmoryGameWeaponUnlocked();
         }
 
-        public static void OnArmorySelect(enum_PlayerWeapon weapon)
+        public static void OnArmorySelect(enum_PlayerWeaponIdentity weapon)
         {
             if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
             {
@@ -189,25 +189,25 @@ namespace GameSetting
             TGameData<CArmoryData>.Save();
         }
 
-        public static enum_PlayerWeapon UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
+        public static enum_PlayerWeaponIdentity UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
         {
-            Dictionary<enum_Rarity, List<enum_PlayerWeapon>> _blueprintAvailable = new Dictionary<enum_Rarity, List<enum_PlayerWeapon>>();
-            m_AvailableWeapons.Traversal((enum_PlayerWeapon weapon, SWeapon weaponData) =>
+            Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>> _blueprintAvailable = new Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>>();
+            m_AvailableWeapons.Traversal((enum_PlayerWeaponIdentity weapon, SWeapon weaponData) =>
             {
                 if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon) || m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
                     return;
                 if (!_blueprintAvailable.ContainsKey(weaponData.m_Rarity))
-                    _blueprintAvailable.Add(weaponData.m_Rarity, new List<enum_PlayerWeapon>());
+                    _blueprintAvailable.Add(weaponData.m_Rarity, new List<enum_PlayerWeaponIdentity>());
                 _blueprintAvailable[weaponData.m_Rarity].Add(weapon);
             });
 
-            enum_PlayerWeapon bluePrint = enum_PlayerWeapon.Invalid;
+            enum_PlayerWeaponIdentity bluePrint = enum_PlayerWeaponIdentity.Invalid;
             if (_blueprintAvailable.ContainsKey(_spawnRarity))
                 bluePrint = _blueprintAvailable[_spawnRarity].RandomItem();
             else if (_blueprintAvailable.ContainsKey(enum_Rarity.Ordinary))
                 bluePrint = _blueprintAvailable[enum_Rarity.Ordinary].RandomItem();
 
-            if (bluePrint != enum_PlayerWeapon.Invalid)
+            if (bluePrint != enum_PlayerWeaponIdentity.Invalid)
             {
                 m_ArmoryData.m_WeaponBlueprints.Add(bluePrint);
                 TGameData<CArmoryData>.Save();
@@ -316,13 +316,13 @@ namespace GameSetting
         #endregion
 
         #region ExcelData
-        public static enum_PlayerWeapon TryGetWeaponEnum(string weaponIdentity)
+        public static enum_PlayerWeaponIdentity TryGetWeaponEnum(string weaponIdentity)
         {
             int idTry = -1;
-            if (int.TryParse(weaponIdentity, out idTry) && Enum.IsDefined(typeof(enum_PlayerWeapon), idTry))
-                return (enum_PlayerWeapon)idTry;
+            if (int.TryParse(weaponIdentity, out idTry) && Enum.IsDefined(typeof(enum_PlayerWeaponIdentity), idTry))
+                return (enum_PlayerWeaponIdentity)idTry;
 
-            enum_PlayerWeapon targetWeapon = enum_PlayerWeapon.Invalid;
+            enum_PlayerWeaponIdentity targetWeapon = enum_PlayerWeaponIdentity.Invalid;
             if (Enum.TryParse(weaponIdentity, out targetWeapon))
                 return targetWeapon;
 
@@ -330,10 +330,10 @@ namespace GameSetting
                 return Properties<SWeapon>.PropertiesList.Find(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetNameLocalizeKey()) == weaponIdentity).m_Weapon;
 
             Debug.LogError("Invalid Player Weapon Found!");
-            return enum_PlayerWeapon.Invalid;
+            return enum_PlayerWeaponIdentity.Invalid;
         }
 
-        public static SWeapon GetWeaponProperties(enum_PlayerWeapon type)
+        public static SWeapon GetWeaponProperties(enum_PlayerWeaponIdentity type)
         {
             SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
             if (weapon.m_Weapon == 0)
@@ -410,14 +410,14 @@ namespace GameSetting
         public WeaponSaveData m_Weapon2;
         public List<PerkSaveData> m_Perks;
 
-        public List<enum_PlayerWeapon> m_ArmoryBlueprintsUnlocked;
+        public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked;
         public int m_ArmoryPartsAcquired;
 
         public CGameProgressSave() : this(GameDataManager.m_GameData.m_GameDifficulty,GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected)
         {
         }
 
-        public CGameProgressSave(enum_GameDifficulty difficulty, enum_PlayerCharacter character, enum_PlayerWeapon weapon)
+        public CGameProgressSave(enum_GameDifficulty difficulty, enum_PlayerCharacter character, enum_PlayerWeaponIdentity weapon)
         {
             m_GameSeed = DateTime.Now.ToLongTimeString();
             m_GameDifficulty = difficulty;
@@ -429,9 +429,9 @@ namespace GameSetting
             m_Character = character;
             m_Perks = new List<PerkSaveData>();
             m_Weapon1 = WeaponSaveData.New(weapon);
-            m_Weapon2 = WeaponSaveData.New(enum_PlayerWeapon.Invalid);
+            m_Weapon2 = WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid);
             m_Stage = enum_GameStage.Rookie;
-            m_ArmoryBlueprintsUnlocked = new List<enum_PlayerWeapon>();
+            m_ArmoryBlueprintsUnlocked = new List<enum_PlayerWeaponIdentity>();
             m_ArmoryPartsAcquired = 0;
         }
 
@@ -456,15 +456,15 @@ namespace GameSetting
 
     public class CArmoryData : ISave
     {
-        public List<enum_PlayerWeapon> m_WeaponsUnlocked;
-        public List<enum_PlayerWeapon> m_WeaponBlueprints;
-        public enum_PlayerWeapon m_WeaponSelected;
+        public List<enum_PlayerWeaponIdentity> m_WeaponsUnlocked;
+        public List<enum_PlayerWeaponIdentity> m_WeaponBlueprints;
+        public enum_PlayerWeaponIdentity m_WeaponSelected;
         public int m_WeaponParts;
         public CArmoryData()
         {
-            m_WeaponsUnlocked = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.P92, enum_PlayerWeapon.UMP45, enum_PlayerWeapon.Kar98, enum_PlayerWeapon.AKM, enum_PlayerWeapon.S686, enum_PlayerWeapon.Minigun, enum_PlayerWeapon.RocketLauncher, enum_PlayerWeapon.FrostWand };
-            m_WeaponBlueprints = new List<enum_PlayerWeapon>() { enum_PlayerWeapon.HeavySword, enum_PlayerWeapon.Flamer };
-            m_WeaponSelected = enum_PlayerWeapon.P92;
+            m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.UMP45, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.AKM, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.FrostWand };
+            m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Flamer };
+            m_WeaponSelected = enum_PlayerWeaponIdentity.P92;
             m_WeaponParts = 5;
         }
 
@@ -519,10 +519,10 @@ namespace GameSetting
 
     public struct WeaponSaveData : IDataConvert
     {
-        public enum_PlayerWeapon m_Weapon { get; private set; }
+        public enum_PlayerWeaponIdentity m_Weapon { get; private set; }
         public int m_Enhance { get; private set; }
-        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeapon.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:0 };
-        public static WeaponSaveData New(enum_PlayerWeapon weapon,int enhanceLevel=0) => new WeaponSaveData() { m_Weapon = weapon,m_Enhance=enhanceLevel };
+        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeaponIdentity.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:0 };
+        public static WeaponSaveData New(enum_PlayerWeaponIdentity weapon,int enhanceLevel=0) => new WeaponSaveData() { m_Weapon = weapon,m_Enhance=enhanceLevel };
     }
 
     public struct MercenarySaveData : IDataConvert
@@ -561,18 +561,12 @@ namespace GameSetting
         public int m_Index { get; private set; }
         public bool m_Hidden { get; private set; }
         public enum_Rarity m_Rarity { get; private set; }
-        public float m_Damage { get; private set; }
-        public float m_DamagePerEnhance { get; private set; }
-        public float m_FireRate { get; private set; }
-        public int m_ClipAmount { get; private set; }
-        public float m_RefillTime { get; private set; }
-        public float m_RecoilPerShot { get; private set; }
 
         public float m_UIDamage { get; private set; }
         public float m_UIRPM { get; private set; }
         public float m_UIStability { get; private set; }
         public float m_UISpeed { get; private set; }
-        public enum_PlayerWeapon m_Weapon => (enum_PlayerWeapon)m_Index;
+        public enum_PlayerWeaponIdentity m_Weapon => (enum_PlayerWeaponIdentity)m_Index;
 
         public void InitAfterSet()
         {

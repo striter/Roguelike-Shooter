@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4892897361463616}
   - component: {fileID: 114359286173425756}
+  - component: {fileID: 114636300185665960}
   m_Layer: 0
   m_Name: 203
   m_TagString: Untagged
@@ -186,3 +187,18 @@ MonoBehaviour:
   B_AttachLeft: 1
   I_ExtraBuffApply: -1
   F_AimSpread: 4
+  B_MultiShotAvailable: 0
+  I_PelletsPerShot: 1
+  F_PelletSpreadAngle: 1
+--- !u!114 &114636300185665960
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1305394874654766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  F_FireRate: 0.1

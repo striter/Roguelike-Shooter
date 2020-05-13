@@ -6,10 +6,10 @@ using UnityEngine;
 public class InteractPickupArmoryBlueprint : InteractPickup
 {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupArmoryBlueprint;
-    public enum_PlayerWeapon m_Weapon { get; private set; }
+    public enum_PlayerWeaponIdentity m_Weapon { get; private set; }
     public override bool B_InteractOnTrigger => true;
 
-    public InteractPickupArmoryBlueprint Play(enum_PlayerWeapon weapon)
+    public InteractPickupArmoryBlueprint Play(enum_PlayerWeaponIdentity weapon)
     {
         base.Play();
         m_Weapon = weapon;

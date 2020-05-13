@@ -139,16 +139,11 @@ namespace GameSetting
 
     public enum enum_Rarity { Invalid = -1, Ordinary = 1, Advanced = 2, Rare = 3, Epic = 4 }
 
-    public enum enum_PlayerWeaponType
-    {
-        Invalid=-1,
-        Projectile,
-        Paracurve,
-        Cast,
-        Item,
-        Shield,
-    }
-    public enum enum_PlayerWeapon
+    public enum enum_PlayerWeaponBaseType { Invalid = -1, Projectile, Paracurve, Cast, Item, Shield, }
+
+    public enum enum_PlayerWeaponTriggerType  {  Invalid = -1,  Auto = 1,  Store = 2,  }
+
+    public enum enum_PlayerWeaponIdentity
     {
         Invalid = -1,
         RailPistol = 101,
@@ -172,7 +167,6 @@ namespace GameSetting
         Driller = 202,
         Bouncer = 203,
         Tesla = 204,
-
         HeavySword = 301,
 
         LavaWand = 401,
@@ -181,6 +175,7 @@ namespace GameSetting
 
         Grenade=501,
     }
+
 
 
     public enum enum_GameVFX

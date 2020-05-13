@@ -8,7 +8,7 @@ public class UI_Armory : UIPage {
     UIT_GridControllerGridItem<UIGI_ArmoryItem> m_UnlockedGrid, m_BlueprintGrid;
     Button m_UnlockButton;
     Text m_Title,m_ButtonTitle;
-    enum_PlayerWeapon m_SelectingWeapon;
+    enum_PlayerWeaponIdentity m_SelectingWeapon;
     protected override void Init()
     {
         base.Init();
@@ -19,18 +19,18 @@ public class UI_Armory : UIPage {
         m_Title = rtf_Container.Find("Title").GetComponent<Text>();
         m_UnlockButton.onClick.AddListener(OnUnlockButtonClick);
         InitArmory();
-        OnWeaponClick(enum_PlayerWeapon.Invalid);
+        OnWeaponClick(enum_PlayerWeaponIdentity.Invalid);
     }
 
     void InitArmory()
     {
         m_UnlockedGrid.ClearGrid();
         m_BlueprintGrid.ClearGrid();
-        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeapon weapon) =>
+        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) =>
         {
             m_BlueprintGrid.AddItem((int)weapon).Play(OnWeaponClick);
         });
-        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeapon weapon) =>
+        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) =>
         {
             m_UnlockedGrid.AddItem((int)weapon).Play(OnWeaponClick);
         });
@@ -41,7 +41,7 @@ public class UI_Armory : UIPage {
     bool m_Unlocked=false;
     bool m_Equipping=false;
 
-    void OnWeaponClick(enum_PlayerWeapon weapon)
+    void OnWeaponClick(enum_PlayerWeaponIdentity weapon)
     {
         m_SelectingWeapon = weapon;
          m_Blueprint = GameDataManager.m_ArmoryData.m_WeaponBlueprints.Contains(m_SelectingWeapon);

@@ -256,7 +256,7 @@ public static class GameObjectManager
         ObjectPoolManager<int, SFXWeaponBase>.RecycleAll();
         ObjectPoolManager<int, EntityBase>.RecycleAll();
         ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
-        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.RecycleAll();
+        ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.RecycleAll();
     }
 
     public static void Destory()
@@ -265,7 +265,7 @@ public static class GameObjectManager
         ObjectPoolManager<int, SFXWeaponBase>.Destroy();
         ObjectPoolManager<int, EntityBase>.Destroy();
         ObjectPoolManager<enum_Interaction, InteractGameBase>.Destroy();
-        ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Destroy();
+        ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Destroy();
     }
     #endregion
     #region Spawn/Recycle
@@ -305,14 +305,14 @@ public static class GameObjectManager
     #region Model Weapon
     public static WeaponBase SpawnWeapon(WeaponSaveData weaponData, Transform toTrans = null)
     {
-        if (!ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Registed(weaponData.m_Weapon))
+        if (!ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Registed(weaponData.m_Weapon))
         {
             WeaponBase preset = TResources.GetPlayerWeapon(weaponData.m_Weapon);
-            ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
+            ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
         }
-        return ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity, Vector3.zero, Quaternion.identity).InitWeapon(weaponData);
+        return ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity, Vector3.zero, Quaternion.identity).InitWeapon(weaponData);
     }
-    public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeapon, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
+    public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
     #endregion
     #region SFXWeapon
     public static T SpawnSFXWeapon<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXWeaponBase

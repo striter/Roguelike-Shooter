@@ -151,7 +151,7 @@ public class UIC_PlayerInteract : UIControlBase
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetIconSprite()];
         m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetNameLocalizeKey();
         m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());
-        m_ClipSize.text = weaponInfo.m_ClipAmount.ToString();
+        m_ClipSize.text = weapon.I_ClipAmount.ToString();
 
         m_WeaponScore.ClearGrid();
         int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;
