@@ -7,9 +7,9 @@ public class WeaponCastDuration : WeaponCastBase {
     public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.CastDuration;
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
-    protected override void OnAutoTriggerSuccessful()
+    protected override void OnAutoTrigger()
     {
-        base.OnAutoTriggerSuccessful();
+        base.OnAutoTrigger();
         SetCastAvailable(true);
         if (m_Cast)
             m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage) );

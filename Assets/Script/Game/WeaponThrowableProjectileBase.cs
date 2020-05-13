@@ -12,9 +12,9 @@ public class WeaponThrowableProjectileBase : WeaponBase {
         base.OnPoolItemInit(_identity, _OnRecycle);
         projectileData = GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_BaseSFXWeaponIndex);
     }
-    protected override void OnAutoTriggerSuccessful()
+    protected override void OnAutoTrigger()
     {
-        base.OnAutoTriggerSuccessful();
+        base.OnAutoTrigger();
         Vector3 direction = m_Muzzle.forward;
         SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(m_BaseSFXWeaponIndex, m_Muzzle.position, m_Muzzle.forward);
         projectile.Play(GetWeaponDamageInfo(m_BaseDamage),  direction, m_Attacher.GetAimingPosition(false));

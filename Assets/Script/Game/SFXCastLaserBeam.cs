@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class SFXCastLaserBeam : SFXCast {
     #region Preset
-    public int I_ImpactIndex;
+    public int I_IndicatorIndex;
     #endregion
-    SFXIndicator m_Impact;
+    SFXIndicator m_HitIndicator;
     LineRenderer m_Beam;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
@@ -79,20 +79,20 @@ public class SFXCastLaserBeam : SFXCast {
     {
         if(play)
         {
-            if (!m_Impact)
+            if (!m_HitIndicator)
             {
-                m_Impact = GameObjectManager.SpawnIndicator(I_ImpactIndex, transform.position, transform.forward);
-                m_Impact.PlayControlled(m_SourceID);
+                m_HitIndicator = GameObjectManager.SpawnIndicator(I_IndicatorIndex, transform.position, transform.forward);
+                m_HitIndicator.PlayControlled(m_SourceID);
             }
-            m_Impact.transform.position = position;
-            m_Impact.transform.rotation = Quaternion.LookRotation(normal);
+            m_HitIndicator.transform.position = position;
+            m_HitIndicator.transform.rotation = Quaternion.LookRotation(normal);
         }
         else
         {
-            if(m_Impact)
+            if(m_HitIndicator)
             {
-                m_Impact.Stop();
-                m_Impact = null;
+                m_HitIndicator.Stop();
+                m_HitIndicator = null;
             }
         }
 

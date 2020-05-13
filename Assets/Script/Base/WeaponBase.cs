@@ -20,7 +20,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeapon>
     public float m_Recoil => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * m_WeaponInfo.m_RecoilPerShot;
     public float m_BaseDamage => m_WeaponInfo.m_Damage +m_WeaponInfo.m_DamagePerEnhance*m_EnhanceLevel;
     protected WeaponTrigger m_Trigger { get; private set; }
-    protected virtual WeaponTrigger GetTrigger() => new WeaponTriggerAuto(m_WeaponInfo.m_FireRate, OnTriggerCheck,OnAutoTriggerSuccessful);
+    protected virtual WeaponTrigger GetTrigger() => new WeaponTriggerAuto(m_WeaponInfo.m_FireRate, OnTriggerCheck,OnAutoTrigger);
     Action<float> OnFireRecoil;
     
     TimerBase m_BulletRefillTimer=new TimerBase(),m_RefillPauseTimer=new TimerBase(GameConst.F_PlayerWeaponFireReloadPause);
@@ -79,7 +79,8 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeapon>
     {
     }
     protected bool OnTriggerCheck() => m_HaveAmmoLeft;
-    protected virtual void OnAutoTriggerSuccessful() => OnTriggerSuccessful();
+    protected virtual void OnAutoTrigger() => OnTriggerSuccessful();
+    protected virtual void OnStoreTrigger(bool success) => OnTriggerSuccessful();
 
     protected void OnTriggerSuccessful()
     {

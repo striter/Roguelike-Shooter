@@ -71,8 +71,8 @@ public class SFXProjectile : SFXWeaponBase
     {
         bool hitSource = hitInfo.point == Vector3.zero;
         Vector3 hitPoint = hitSource ? transform.position : hitInfo.point;
-        Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
-        SpawnImpact(hitPoint, -transform.forward);
+        Vector3 hitNormal =  -transform.forward;
+        SpawnImpact(hitPoint, hitNormal);
         OnHitTarget(hitInfo, hitCheck);
         if (OnHitTargetPenetrate(hitCheck))
             return false;
