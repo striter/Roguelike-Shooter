@@ -10,7 +10,9 @@ public class WeaponCastDuration : WeaponCastBase {
     {
         SetCastAvailable(true);
         m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage));
-        OnTriggerOnce();
+        OnAttacherAnim();
+        OnAttacherRecoil();
+        OnAmmoCost();
     }
 
     public override void OnShow(bool play)

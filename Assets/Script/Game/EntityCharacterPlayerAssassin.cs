@@ -71,7 +71,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
     void OnAssassinBlow()
     {
         m_CharacterSkinEffect.SetCloak(false, 0f, F_AssassinAttackDuration);
-        Teleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
+        PlayTeleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         if (!m_AssassinTarget.m_IsDead)
         {
             m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.m_BaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack));

@@ -16,6 +16,19 @@ public class WeaponCastMelee : WeaponCastBase {
         m_BaseSize = cast.V4_CastInfo;
     }
 
+    protected override void OnAutoTrigger() => OnAttacherAnim();
+    public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
+    {
+        base.OnAnimEvent(eventType);
+        if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
+            return;
+        SFXCast cast = ShowCast(m_Attacher.tf_Head.position);
+        cast.V4_CastInfo = m_BaseSize * m_ScaleChecker.check1;
+        cast.Play(GetWeaponDamageInfo(m_BaseDamage));
+        OnAttacherRecoil();
+        OnAmmoCost();
+    }
+
     public override void OnAttach(EntityCharacterPlayer _attacher, Transform _attachTo)
     {
         base.OnAttach(_attacher, _attachTo);
@@ -29,21 +42,12 @@ public class WeaponCastMelee : WeaponCastBase {
         m_ScaleChecker.Check(1);
         transform.localScale = Vector3.one;
     }
+
     public override void Tick(bool firePausing, float deltaTime)
     {
         base.Tick(firePausing, deltaTime);
         if (m_ScaleChecker.Check(m_Attacher.m_CharacterInfo.F_Cast_Melee_SizeMultiply))
             transform.localScale = Vector3.one * m_ScaleChecker.check1;
-    }
-
-    public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
-    {
-        base.OnAnimEvent(eventType);
-        if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
-            return;
-        SFXCast cast= ShowCast(m_Attacher.tf_Head.position);
-        cast.V4_CastInfo = m_BaseSize * m_ScaleChecker.check1;
-        cast.Play(GetWeaponDamageInfo(m_BaseDamage));
     }
 
 }

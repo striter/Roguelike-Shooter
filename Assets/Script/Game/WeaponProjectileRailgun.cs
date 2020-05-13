@@ -17,6 +17,8 @@ public class WeaponProjectileRailgun : WeaponProjectileBase
     protected override void OnStoreTrigger(bool success)
     {
         FireProjectile(success ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
-        OnTriggerOnce();
+        OnAttacherAnim();
+        OnAttacherRecoil();
+        OnAmmoCost();
     }
 }

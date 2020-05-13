@@ -82,8 +82,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         return this;
     }
 
-
-    public void Teleport(Vector3 position,Quaternion rotation)
+    public void PlayAnim(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
+    public void PlayRecoil(float recoil) => TPSCameraController.Instance.AddRecoil(recoil);
+    public void PlayTeleport(Vector3 position,Quaternion rotation)
     {
         m_Controller.enabled = false;           //Magic Spell 1
         m_Agent.enabled = false;
@@ -92,7 +93,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Controller.enabled = true;        //Magic Spell 2
         m_Agent.enabled = true;
     }
-    
+
     protected override void OnDead()
     {
         f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
@@ -323,12 +324,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         m_MoveAxisInput = moveDelta;
     }
-    
-    public void OnFireAddRecoil(float recoil,float animSpeed)
-    {
-        TPSCameraController.Instance.AddRecoil(recoil);
-        m_Animator.Attack(animSpeed);
-    }
+
 
     void OnMoveTick(float deltaTime)
     {
