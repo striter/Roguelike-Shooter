@@ -401,6 +401,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 2001
   B_AttachLeft: 0
+  F_Damage: 195
+  F_DamagePerEnhance: 7.7
+  I_ClipAmount: 5
+  F_RefillTime: 0.2
+  F_RecoilPerShot: 5.6
   I_ExtraBuffApply: -1
 --- !u!114 &114765667925628486
 MonoBehaviour:
@@ -413,4 +418,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 0.1
+  F_FireRate: 0.5
