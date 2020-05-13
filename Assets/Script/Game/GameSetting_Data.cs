@@ -41,7 +41,7 @@ namespace GameSetting
         {
             if (m_Inited) return;
             m_Inited = true;
-            Properties<SWeapon>.Init();
+            Properties<SWeaponInfos>.Init();
             Properties<SBuff>.Init();
             SheetProperties<SEnermyGenerate>.Init();
 
@@ -111,14 +111,14 @@ namespace GameSetting
         #endregion
 
         #region ArmoryData
-        public static Dictionary<enum_PlayerWeaponIdentity, SWeapon> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeaponIdentity, SWeapon>();
+        public static Dictionary<enum_PlayerWeaponIdentity, SWeaponInfos> m_AvailableWeapons { get; private set; } = new Dictionary<enum_PlayerWeaponIdentity, SWeaponInfos>();
         public static Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>> m_GameWeaponUnlocked { get; private set; } = new Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>>();
 
         static void InitArmory()
         {
             m_AvailableWeapons.Clear();
 
-            Properties<SWeapon>.PropertiesList.Traversal((SWeapon weapon) =>
+            Properties<SWeaponInfos>.PropertiesList.Traversal((SWeaponInfos weapon) =>
             {
                 if (weapon.m_Hidden)
                     return;
@@ -129,7 +129,7 @@ namespace GameSetting
         static void InitArmoryGameWeaponUnlocked()
         {
             m_GameWeaponUnlocked.Clear();
-            m_AvailableWeapons.Traversal((SWeapon weapon) =>
+            m_AvailableWeapons.Traversal((SWeaponInfos weapon) =>
             {
                 if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon.m_Weapon))
                     return;
@@ -192,7 +192,7 @@ namespace GameSetting
         public static enum_PlayerWeaponIdentity UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
         {
             Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>> _blueprintAvailable = new Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>>();
-            m_AvailableWeapons.Traversal((enum_PlayerWeaponIdentity weapon, SWeapon weaponData) =>
+            m_AvailableWeapons.Traversal((enum_PlayerWeaponIdentity weapon, SWeaponInfos weaponData) =>
             {
                 if (m_ArmoryData.m_WeaponBlueprints.Contains(weapon) || m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
                     return;
@@ -326,16 +326,16 @@ namespace GameSetting
             if (Enum.TryParse(weaponIdentity, out targetWeapon))
                 return targetWeapon;
 
-            if (Properties<SWeapon>.PropertiesList.Any(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetNameLocalizeKey()) == weaponIdentity))
-                return Properties<SWeapon>.PropertiesList.Find(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetNameLocalizeKey()) == weaponIdentity).m_Weapon;
+            if (Properties<SWeaponInfos>.PropertiesList.Any(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetNameLocalizeKey()) == weaponIdentity))
+                return Properties<SWeaponInfos>.PropertiesList.Find(p => TLocalization.GetKeyLocalized(p.m_Weapon.GetNameLocalizeKey()) == weaponIdentity).m_Weapon;
 
             Debug.LogError("Invalid Player Weapon Found!");
             return enum_PlayerWeaponIdentity.Invalid;
         }
 
-        public static SWeapon GetWeaponProperties(enum_PlayerWeaponIdentity type)
+        public static SWeaponInfos GetWeaponProperties(enum_PlayerWeaponIdentity type)
         {
-            SWeapon weapon = Properties<SWeapon>.PropertiesList.Find(p => p.m_Weapon == type);
+            SWeaponInfos weapon = Properties<SWeaponInfos>.PropertiesList.Find(p => p.m_Weapon == type);
             if (weapon.m_Weapon == 0)
                 Debug.LogError("Error Properties Found Of Index:" + type.ToString() + "|" + ((int)type));
             else if (weapon.m_Hidden)
@@ -556,7 +556,7 @@ namespace GameSetting
     #endregion
 
     #region ExcelData
-    public struct SWeapon : ISExcel
+    public struct SWeaponInfos : ISExcel
     {
         public int m_Index { get; private set; }
         public bool m_Hidden { get; private set; }

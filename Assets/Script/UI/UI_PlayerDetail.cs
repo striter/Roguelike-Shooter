@@ -113,7 +113,7 @@ public class UI_PlayerDetail : UIPage
 
     void SetWeaponInfo(WeaponBase weapon)
     {
-        SWeapon weaponInfo = weapon.m_WeaponInfo;
+        SWeaponInfos weaponInfo = weapon.m_WeaponInfo;
         m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetDetailSprite()];
         m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetNameLocalizeKey();
         m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());

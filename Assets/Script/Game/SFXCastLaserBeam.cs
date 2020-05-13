@@ -69,6 +69,7 @@ public class SFXCastLaserBeam : SFXCast {
             f_castLength = lengthOffset;
             hitPoint = CastTransform.position + CastTransform.forward * f_castLength;
         }
+
         bool hitted = hitPoint != Vector3.zero;
         SetImpact(hitted,hitPoint,hitNormal);
         m_Beam.SetPosition(0, transform.position);

@@ -490,116 +490,6 @@ namespace GameSetting
     }
     #endregion
 
-    #region WeaponTriggers
-    public class WeaponTrigger
-    {
-        public bool m_TriggerDown { get; protected set; }
-        public virtual void OnSetTrigger(bool down)
-        {
-            m_TriggerDown = down;
-        }
-
-        public virtual void OnTriggerStop()
-        {
-            m_TriggerDown = false;
-        }
-
-        public virtual void Tick(bool paused,float deltaTime)
-        {
-
-        }
-    }
-    public class WeaponTriggerAuto : WeaponTrigger
-    {
-        protected Func<bool> OnTriggerCheck;
-        Action OnTriggerSuccessful;
-        TimerBase m_TriggerTimer = new TimerBase();
-        public WeaponTriggerAuto(float _fireRate, Func<bool> _OnTriggerCheck,Action _OnTriggerSuccessful)
-        {
-            OnTriggerCheck = _OnTriggerCheck;
-            OnTriggerSuccessful = _OnTriggerSuccessful;
-            m_TriggerTimer.SetTimerDuration(_fireRate);
-        }
-        public override void Tick(bool paused,float deltaTime)
-        {
-            base.Tick(paused,deltaTime);
-            m_TriggerTimer.Tick(deltaTime);
-            if (paused|| m_TriggerTimer.m_Timing)
-                return;
-
-            if (!m_TriggerDown)
-                return;
-
-            if (!OnTriggerCheck())
-                return;
-            OnTriggerSuccessful();
-                m_TriggerTimer.Replay();
-        }
-    }
-
-    public class WeaponTriggerStoring:WeaponTrigger
-    {
-         Func<bool> OnStoreBeginCheck;
-        Action<bool> OnStoreFinish;
-        TimerBase m_StoreTimer = new TimerBase();
-        public bool m_Storing { get; private set; } = false;
-        public WeaponTriggerStoring(float _storeDuration, Func<bool> _OnStoreBeginCheck, Action<bool> _OnStoreFinish)
-        {
-            OnStoreBeginCheck = _OnStoreBeginCheck;
-            OnStoreFinish = _OnStoreFinish;
-            m_StoreTimer.SetTimerDuration(_storeDuration);
-            m_Storing = false;
-        }
-
-        public override void OnSetTrigger(bool down)
-        {
-            base.OnSetTrigger(down);
-            if (!down || !OnStoreBeginCheck())
-                return;
-
-            SetStore(true);
-        }
-
-        public override void OnTriggerStop()
-        {
-            base.OnTriggerStop();
-            SetStore(false);
-        }
-
-        void SetStore(bool store)
-        {
-            if (m_Storing == store)
-                return;
-
-            m_Storing = store;
-            if (m_Storing)
-                m_StoreTimer.Replay();
-            else
-                OnStoreFinish(!m_StoreTimer.m_Timing);
-        }
-
-        public override void Tick(bool paused, float deltaTime)
-        {
-            base.Tick(paused,deltaTime);
-
-            if (!m_Storing)
-                return;
-
-            if ( m_TriggerDown)
-            {
-                m_StoreTimer.Tick(deltaTime);
-                return;
-            }
-
-
-            if (paused)
-                return;
-            SetStore(false);
-        }
-
-    }
-    #endregion
-
     #region Entity Expire Manager
     public class CharacterExpireManager
     {
@@ -811,6 +701,7 @@ namespace GameSetting
         public float F_Projectile_Store_TickMultiply { get; private set; } = 1f;
         public float F_Cast_Melee_SizeMultiply { get; private set; } = 1f;
         public int CheckClipAmount(int baseClipAmount) => baseClipAmount == 0 ? 0 : (int)((baseClipAmount + I_ClipAdditive) * F_ClipMultiply);
+        public float DoStoreRateTick(float deltaTime) => deltaTime * F_Projectile_Store_TickMultiply;
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
         public Dictionary<int, ExpirePlayerPerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePlayerPerkBase>();
