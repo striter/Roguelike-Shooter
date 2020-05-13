@@ -32,11 +32,4 @@ public class SFXCastDetect : SFXCastDetonate {
         PlaySFX(m_SourceID, F_PlayDuration, F_DelayDuration,true);
         m_detector.SetPlay(false);
     }
-
-    protected override void EDITOR_DEBUG()
-    {
-        base.EDITOR_DEBUG();
-        if (F_DelayDuration <= 0)
-            Debug.LogError("Cast Detect Delay Duration Cannot Less Or Equals 0!");
-    }
 }

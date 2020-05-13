@@ -27,11 +27,4 @@ public class SFXProjectileSplit : SFXProjectile {
         }
         GameObjectManager.PlayMuzzle(m_SourceID,transform.position,transform.forward, projectileInfo.I_MuzzleIndex, projectileInfo.AC_MuzzleClip);
     }
-
-    protected override void EDITOR_DEBUG()
-    {
-        base.EDITOR_DEBUG();
-        if (I_SplitCount <= 0)
-            Debug.LogError("Fan Count Less Of Equals 0");
-    }
 }

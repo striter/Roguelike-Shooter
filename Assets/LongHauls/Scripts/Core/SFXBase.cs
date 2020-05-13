@@ -18,13 +18,7 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
     public float f_delayLeftScale => f_delayTimeLeft>0? (f_delayTimeLeft / f_delayDuration):0;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
-    {
-        base.OnPoolItemInit(_identity, _OnRecycle);
-#if UNITY_EDITOR
-        EDITOR_DEBUG();
-#endif
-    }
+
     protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool tickPlayDuration)
     {
         B_Activating = true;
@@ -116,7 +110,6 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
         OnRecycle();
     }
 
-    protected virtual void EDITOR_DEBUG(){}
 #if UNITY_EDITOR
     protected Color EDITOR_GizmosColor()
     {
@@ -129,6 +122,5 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
             color = Color.white;
         return color;
     }
-
 #endif
 }

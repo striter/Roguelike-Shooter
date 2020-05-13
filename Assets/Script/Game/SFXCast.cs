@@ -13,6 +13,7 @@ public class SFXCast : SFXWeaponBase {
     public float F_Tick = .5f;
     public enum_CastAreaType E_AreaType = enum_CastAreaType.Invalid;
     public Vector4 V4_CastInfo;
+    public int I_ImpactIndex;
     public int F_DelayDuration;
     public int I_DelayIndicatorIndex;
     public bool B_CameraShake = false;
@@ -111,7 +112,11 @@ public class SFXCast : SFXWeaponBase {
         for (int i = 0; i < hits.Length; i++)
         {
             HitCheckBase hitCheck = hits[i].collider.Detect();
-            switch(hitCheck.m_HitCheckType)
+            bool hitSource = hits[i].point == Vector3.zero;
+            Vector3 hitPoint = hitSource ? transform.position : hits[i].point;
+            Vector3 hitNormal = Vector3.Normalize(  transform.position- hitCheck.transform.position);
+            SpawnImpact(hitPoint, hitNormal);
+            switch (hitCheck.m_HitCheckType)
             {
                 case enum_HitCheck.Dynamic:
                 case enum_HitCheck.Static:
@@ -123,7 +128,7 @@ public class SFXCast : SFXWeaponBase {
                     entityHitted.Add(entity.m_Attacher);
                     break;
             }
-            OnDealtDamage(hitCheck);
+            hitCheck.TryHit(m_DamageInfo, -hitNormal);
         }
         return entityHitted;
     }
@@ -159,23 +164,16 @@ public class SFXCast : SFXWeaponBase {
         }
         return hits;
     }   
-    protected virtual void OnDealtDamage(HitCheckBase hitCheck)=> hitCheck.TryHit(m_DamageInfo, Vector3.Normalize(hitCheck.transform.position - transform.position));
 
-    protected override void EDITOR_DEBUG()
+
+    protected void SpawnImpact(Vector3 hitPoint,Vector3 hitNormal)
     {
-        if (E_CastType == enum_CastControllType.Invalid)
-            Debug.LogError("Weapon Type Invalid Detected+" + gameObject.name);
-        if (E_AreaType == enum_CastAreaType.Invalid)
-            Debug.LogError("Cast Type Invalid Detected:" + gameObject.name);
-        if (V4_CastInfo == Vector4.zero)
-            Debug.LogError("Cast Size Zero Detected:" + gameObject.name);
-        if (I_TickCount <= 0)
-            Debug.LogError("Tick Count Less Or Equals Zero:" + gameObject.name);
-        if (I_TickCount > 1 && F_Tick <= 0)
-            Debug.LogError("Tick Duration Less Or Equals Zero:" + gameObject.name);
-        if (F_DelayDuration > 0 && I_DelayIndicatorIndex < 0)
-            Debug.LogError("Delay Indicator Less Than Zero:" + gameObject.name);
+        if (I_ImpactIndex <= 0)
+            return;
+
+        GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
     }
+
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

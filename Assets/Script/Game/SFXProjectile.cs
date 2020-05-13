@@ -14,7 +14,6 @@ public class SFXProjectile : SFXWeaponBase
     public int I_MuzzleIndex;
     public int I_ImpactIndex;
     public int I_IndicatorIndex;
-    public int I_HitMarkIndex;
     [Tooltip("Physics Size")]
     public float F_Radius = .5f, F_Height = 1f;
     [Tooltip("Projectile Type:(Single|Unused) (Multiline/MultiFan| Projectile Count Each Count)")]
@@ -74,7 +73,6 @@ public class SFXProjectile : SFXWeaponBase
         Vector3 hitPoint = hitSource ? transform.position : hitInfo.point;
         Vector3 hitNormal = hitSource ? -transform.forward : hitInfo.normal;
         SpawnImpact(hitPoint, -transform.forward);
-        SpawnHitMark(hitPoint,hitNormal,hitCheck);
         OnHitTarget(hitInfo, hitCheck);
         if (OnHitTargetPenetrate(hitCheck))
             return false;
@@ -102,11 +100,13 @@ public class SFXProjectile : SFXWeaponBase
                 break;
         }
     }
+
     protected virtual void OnHitEntityDealtDamage(HitCheckEntity _entity)
     {
         if (CanDamageEntity(_entity))
             _entity.TryHit(m_DamageInfo, transform.forward);
     }
+
     protected virtual bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {
         switch (hitCheck.m_HitCheckType)
@@ -139,6 +139,12 @@ public class SFXProjectile : SFXWeaponBase
         }
     }
 
+    protected void SpawnImpact(Vector3 hitPoint, Vector3 hitNormal)
+    {
+        if (I_ImpactIndex > 0)
+            GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
+    }
+
     protected void RemoveProjectileEffects()
     {
         if(m_Trail)
@@ -155,38 +161,8 @@ public class SFXProjectile : SFXWeaponBase
         }
     }
 
-    protected void SpawnImpact(Vector3 hitPoint,Vector3 hitNormal)
-    {
-        if (I_ImpactIndex <= 0)
-            return;
-
-        GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex,hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
-    }
-    protected void SpawnHitMark(Vector3 hitPoint,Vector3 hitNormal,HitCheckBase hitParent)
-    {
-        if (I_HitMarkIndex <= 0)
-            return;
-
-        bool showhitMark = GameExpression.B_ShowHitMark(hitParent.m_HitCheckType);
-        if (showhitMark)
-        {
-            SFXHitMark hitMark = GameObjectManager.SpawnSFX<SFXHitMark>(I_HitMarkIndex, hitPoint, hitNormal);
-            hitMark.PlayUncontrolled(m_SourceID);
-            hitMark.AttachTo(hitParent.transform);
-        }
-    }
     
 #if UNITY_EDITOR
-    protected override void EDITOR_DEBUG()
-    {
-        base.EDITOR_DEBUG();
-        if (E_ProjectileType == enum_ProjectileFireType.Invalid)
-            Debug.LogError("Error Projectile Type Invalid:" + gameObject.name);
-        if (F_Speed <= 0)
-            Debug.LogError("Error Speed Less Or Equals 0:" + gameObject.name);
-        if (I_ImpactIndex < 0)
-            Debug.LogError("Error Impact Index Less 0:" + gameObject.name);
-    }
     private void OnDrawGizmos()
     {
         if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)

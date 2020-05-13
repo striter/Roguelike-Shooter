@@ -18,12 +18,4 @@ public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
         GameObjectManager.SpawnSFXWeapon<SFXCast>(GameExpression.GetWeaponSubIndex(m_Identity), transform.position + F_Height * transform.forward, Vector3.up).Play(m_DamageInfo);
         OnRecycle();
     }
-
-
-    protected override void EDITOR_DEBUG()
-    {
-        base.EDITOR_DEBUG();
-        if (F_DelayDuration < 0)
-            Debug.LogError("Delay Duration Less Than 0");
-    }
 }

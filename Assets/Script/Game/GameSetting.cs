@@ -142,8 +142,6 @@ namespace GameSetting
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 
-        public static bool B_ShowHitMark(enum_HitCheck check) => check != enum_HitCheck.Invalid;
-
         public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_GameDifficulty difficulty) => minutePassed * GameConst.F_EnermyMaxHealthMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyMaxHealthMultiplierPerDifficultyAboveNormal;
         public static float GetEnermyDamageMultilier(int minutesPassed, enum_GameDifficulty difficulty) => minutesPassed * GameConst.F_EnermyDamageMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyDamageMultiplierPerDifficultyAboveNormal;
 

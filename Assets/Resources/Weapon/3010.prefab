@@ -60,6 +60,7 @@ MonoBehaviour:
   F_Tick: 0.5
   E_AreaType: 2
   V4_CastInfo: {x: 3, y: 2, z: 6, w: 0}
+  I_ImpactIndex: 29011
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0
