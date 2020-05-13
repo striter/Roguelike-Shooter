@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4626560930977606}
-  - component: {fileID: 114355834701018856}
+  - component: {fileID: 114811623856208252}
   - component: {fileID: 114847754842817916}
   m_Layer: 0
   m_Name: 403
@@ -463,7 +463,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1456708751270642}
   m_Mesh: {fileID: 4300010, guid: c40ff62f0cb84a44b9bce81448dc3dab, type: 3}
---- !u!114 &114355834701018856
+--- !u!114 &114811623856208252
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -471,15 +471,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1729818770330804}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bfc23f0dab69114ca47fd29ee529b82, type: 3}
+  m_Script: {fileID: 11500000, guid: babca4e37b9eb89488c8f789a0a06c3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Anim: 1003
+  E_Anim: 1004
   B_AttachLeft: 0
-  I_ExtraBuffApply: 105
-  F_AimSpread: 2
-  I_PelletsPerShot: 3
-  F_PelletSpreadAngle: 5
+  F_Damage: 10
+  F_DamagePerEnhance: 10
+  I_ClipAmount: 10
+  F_RefillTime: 0.1
+  F_RecoilPerShot: 2
+  I_ExtraBuffApply: -1
+  F_AimSpread: 0
+  B_MultiShotAvailable: 0
+  I_PelletsPerShot: 1
+  F_PelletSpreadAngle: 1
 --- !u!114 &114847754842817916
 MonoBehaviour:
   m_ObjectHideFlags: 1

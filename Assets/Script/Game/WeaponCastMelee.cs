@@ -22,9 +22,10 @@ public class WeaponCastMelee : WeaponCastBase {
         base.OnAnimEvent(eventType);
         if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
             return;
-        SFXCast cast = ShowCast(m_Attacher.tf_Head.position);
+        SFXCast cast = ShowCast(m_BaseSFXWeaponIndex, m_Attacher.tf_WeaponAim.position);
         cast.V4_CastInfo = m_BaseSize * m_ScaleChecker.check1;
         cast.Play(GetWeaponDamageInfo(m_BaseDamage));
+
         OnAttacherRecoil();
         OnAmmoCost();
     }

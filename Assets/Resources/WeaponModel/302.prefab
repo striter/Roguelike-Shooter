@@ -85,10 +85,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4013817647996756}
-  - component: {fileID: 114637620076019142}
-  - component: {fileID: 114765667925628486}
+  - component: {fileID: 114192011893745440}
+  - component: {fileID: 114222530214297898}
   m_Layer: 0
-  m_Name: 301
+  m_Name: 302
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -388,7 +388,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1011709612679620}
   m_Mesh: {fileID: 4300016, guid: 06eeaf9195ed97c4aa6965c3c24eaf9d, type: 3}
---- !u!114 &114637620076019142
+--- !u!114 &114192011893745440
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -396,13 +396,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1810406463339842}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cec143dcad8ff7e4aa5a527a28616f29, type: 3}
+  m_Script: {fileID: 11500000, guid: 50946bd45e536c84db51db633495c3b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_Anim: 2001
   B_AttachLeft: 0
+  F_Damage: 10
+  F_DamagePerEnhance: 10
+  I_ClipAmount: 10
+  F_RefillTime: 0.1
+  F_RecoilPerShot: 2
   I_ExtraBuffApply: -1
---- !u!114 &114765667925628486
+--- !u!114 &114222530214297898
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -410,7 +415,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1810406463339842}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
+  m_Script: {fileID: 11500000, guid: 3fba0ff36396b5c48b0e6a7bb39a7415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   F_FireRate: 0.1
+  I_StoreIndicatorIndex: 39002
+  F_StoreDuration: 2

@@ -343,7 +343,6 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         float finalMovementSpeed = m_CharacterInfo.GetMovementSpeed;
         m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
-
         m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.m_MovementSpeedMultiply,m_Aiming);
     }
 

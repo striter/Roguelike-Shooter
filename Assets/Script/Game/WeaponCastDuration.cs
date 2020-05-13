@@ -35,7 +35,7 @@ public class WeaponCastDuration : WeaponCastBase {
 
         if (showCast)
         {
-            m_Cast = ShowCast(m_Muzzle.position);
+            m_Cast = ShowCast(m_BaseSFXWeaponIndex, m_Muzzle.position);
             m_Cast.PlayControlled(m_Attacher.m_EntityID, m_Attacher, m_Attacher.tf_WeaponAim);
         }
         else
