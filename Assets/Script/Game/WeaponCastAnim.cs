@@ -5,9 +5,10 @@ using GameSetting;
 using TSpecialClasses;
 using UnityEngine;
 
-public class WeaponCastMelee : WeaponCastBase {
+public class WeaponCastAnim : WeaponCastBase {
     ValueChecker<float> m_ScaleChecker = new ValueChecker<float>(-1);
 
+    protected float GetMeleeSize() => m_Attacher.m_CharacterInfo.F_Cast_Melee_SizeMultiply;
     Vector4 m_BaseSize;
     public override void OnPoolItemInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
     {
@@ -22,7 +23,7 @@ public class WeaponCastMelee : WeaponCastBase {
         base.OnAnimEvent(eventType);
         if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
             return;
-        DoMeleeCast(m_BaseSFXWeaponIndex, m_ScaleChecker.check1);
+        DoMeleeCast(m_BaseSFXWeaponIndex, GetMeleeSize());
     }
 
     protected void DoMeleeCast(int castIndex,float castScale=1)
@@ -52,8 +53,7 @@ public class WeaponCastMelee : WeaponCastBase {
     public override void Tick(bool firePausing, float deltaTime)
     {
         base.Tick(firePausing, deltaTime);
-        if (m_ScaleChecker.Check(m_Attacher.m_CharacterInfo.F_Cast_Melee_SizeMultiply))
+        if (m_ScaleChecker.Check(GetMeleeSize()))
             transform.localScale = Vector3.one * m_ScaleChecker.check1;
     }
-
 }

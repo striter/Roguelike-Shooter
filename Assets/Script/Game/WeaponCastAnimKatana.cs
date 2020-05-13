@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponCastMeleeKatana : WeaponCastMelee
+public class WeaponCastAnimKatana : WeaponCastAnim
 {
     public float F_DashDistance = 6;
     protected int m_DashCastIndex { get; private set; }
@@ -27,16 +27,12 @@ public class WeaponCastMeleeKatana : WeaponCastMelee
 
     public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
     {
-        if(!m_Dashing)
-        {
-            base.OnAnimEvent(eventType);
-            return;
-        }
-
         if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
             return;
-        DoMeleeCast(m_DashCastIndex);
-        m_Attacher.PlayTeleport(NavigationManager.NavMeshPosition(m_Attacher.transform.position + m_Attacher.transform.forward * F_DashDistance), m_Attacher.transform.rotation);
+        DoMeleeCast(m_Dashing? m_DashCastIndex:m_BaseSFXWeaponIndex,GetMeleeSize());
+
+        if (m_Dashing)
+            m_Attacher.PlayTeleport(NavigationManager.NavMeshPosition(m_Attacher.transform.position + m_Attacher.transform.forward * F_DashDistance * GetMeleeSize()), m_Attacher.transform.rotation);
     }
 
 }

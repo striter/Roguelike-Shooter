@@ -150,7 +150,7 @@ namespace GameSetting
 
         Flamer = 201,Driller = 202,Bouncer = 203,Tesla = 204,
 
-        HeavySword = 301,Katana=302,
+        HeavySword = 301,Katana=302,HammerOfDawn=303,
 
         LavaWand = 401,PoisonWand = 402,FrostWand = 403,
 

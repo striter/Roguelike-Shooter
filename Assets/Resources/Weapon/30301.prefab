@@ -150,7 +150,6 @@ MonoBehaviour:
   I_MuzzleIndex: 0
   I_ImpactIndex: 20301
   I_IndicatorIndex: 0
-  I_HitMarkIndex: 0
   F_Radius: 0.3
   F_Height: 0
   RI_CountExtension:

@@ -1165,7 +1165,7 @@ namespace GameSetting
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Transform castAt = GetCastAt(m_Entity);
-            GameObjectManager.SpawnSFXWeapon<SFXCast>(I_Index, NavigationManager.NavMeshPosition(castAt.position), m_castForward ? castAt.forward : Vector3.up).Play(GetDamageDeliverInfo());
+            GameObjectManager.SpawnSFXWeapon<SFXCast>(I_Index, castAt.position, m_castForward ? castAt.forward : Vector3.up).Play(GetDamageDeliverInfo());
         }
         protected Transform GetCastAt(EntityCharacterBase character)
         {
@@ -1183,6 +1183,7 @@ namespace GameSetting
             }
         }
     }
+
 
     public class WeaponHelperCasterTarget : WeaponHelperCaster
     {

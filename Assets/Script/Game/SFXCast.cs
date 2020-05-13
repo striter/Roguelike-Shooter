@@ -26,7 +26,7 @@ public class SFXCast : SFXWeaponBase {
     TimerBase m_CastTickTimer = new TimerBase();
     SFXIndicator m_ControlledParticles;
 
-    public bool m_OnceCast => F_Tick <= 0;
+    public bool m_OnceCast => F_Tick <= 0||I_TickCount<=1;
     public bool m_ControlledCast => tf_ControlledCast != null;
 
     public virtual void Play(DamageInfo buffInfo)
@@ -34,7 +34,7 @@ public class SFXCast : SFXWeaponBase {
         m_DamageInfo = buffInfo;
         base.PlayUncontrolled(m_DamageInfo.m_SourceID, F_PlayDuration, F_DelayDuration);
         if (I_DelayIndicatorIndex > 0)
-            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID,0 ,F_DelayDuration);
+            GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID, F_DelayDuration, 0);
     }
 
     public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans)
@@ -109,33 +109,40 @@ public class SFXCast : SFXWeaponBase {
     protected virtual List<EntityBase> DoCastDealtDamage()
     {
         List<EntityBase> entityHitted = new List<EntityBase>();
-        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_All);
+        RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_Entity);
         for (int i = 0; i < hits.Length; i++)
         {
             HitCheckBase hitCheck = hits[i].collider.Detect();
-            Vector3 hitNormal = Vector3.Normalize(transform.position - hitCheck.transform.position);
             switch (hitCheck.m_HitCheckType)
             {
-                case enum_HitCheck.Dynamic:
-                case enum_HitCheck.Static:
-                    break;
+                default:
+                    continue;
                 case enum_HitCheck.Entity:
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
                     if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, m_SourceID))
                         continue;
+                    OnHitEntityDealtDamage(entity, hits[i].point, Vector3.Normalize(transform.position - hitCheck.transform.position));
                     entityHitted.Add(entity.m_Attacher);
-                    SpawnImpact(hits[i].point, hitNormal);
                     break;
             }
-            hitCheck.TryHit(m_DamageInfo, -hitNormal);
         }
         return entityHitted;
     }
+
+    public virtual void OnHitEntityDealtDamage(HitCheckEntity entity,Vector3 hitPoint,Vector3 hitNormal)
+    {
+        entity.TryHit(m_DamageInfo, -hitNormal);
+        SpawnImpact(hitPoint, hitNormal);
+    }
+
     protected RaycastHit[] OnCastCheck(int layerMask)
     {
         RaycastHit[] hits=null;
         switch (E_AreaType)
         {
+            default:
+                Debug.LogError("Invalid Convertions Here!");
+                break;
             case enum_CastAreaType.OverlapSphere:
                 {
                     float radius = V4_CastInfo.x;
