@@ -20,7 +20,8 @@ public class WeaponProjectileBase : WeaponBase
     RaycastHit hit;
     protected void OnTriggerOnce(int projectileIndex,DamageInfo damageInfo)
     {
-        Vector3 targetDirection =  m_Attacher.tf_WeaponAim.forward;
+        Vector3 targetDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Attacher.tf_WeaponAim.position);
+        targetDirection.y = 0;
         float aimSpread = GetAimSpread();
 
         SFXProjectile targetProjectile = GameObjectManager.GetSFXWeaponData<SFXProjectile>(projectileIndex);
