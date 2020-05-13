@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponCastDuration : WeaponCastBase {
-    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.CastDuration;
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
     protected override void OnAutoTrigger()

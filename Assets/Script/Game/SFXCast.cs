@@ -112,10 +112,7 @@ public class SFXCast : SFXWeaponBase {
         for (int i = 0; i < hits.Length; i++)
         {
             HitCheckBase hitCheck = hits[i].collider.Detect();
-            bool hitSource = hits[i].point == Vector3.zero;
-            Vector3 hitPoint = hitSource ? transform.position : hits[i].point;
-            Vector3 hitNormal = Vector3.Normalize(  transform.position- hitCheck.transform.position);
-            SpawnImpact(hitPoint, hitNormal);
+            Vector3 hitNormal = Vector3.Normalize(transform.position - hitCheck.transform.position);
             switch (hitCheck.m_HitCheckType)
             {
                 case enum_HitCheck.Dynamic:
@@ -126,6 +123,7 @@ public class SFXCast : SFXWeaponBase {
                     if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, m_SourceID))
                         continue;
                     entityHitted.Add(entity.m_Attacher);
+                    SpawnImpact(hits[i].point, hitNormal);
                     break;
             }
             hitCheck.TryHit(m_DamageInfo, -hitNormal);

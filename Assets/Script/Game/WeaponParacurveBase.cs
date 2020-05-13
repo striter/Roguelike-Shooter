@@ -2,10 +2,10 @@
 using GameSetting;
 using UnityEngine;
 
-public class WeaponThrowableProjectileBase : WeaponBase {
+public class WeaponParacurveBase : WeaponBase {
 
     SFXProjectile projectileData;
-    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.ThrowableProjectle;
+    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.Paracurve;
 
     public override void OnPoolItemInit(enum_PlayerWeapon _identity, Action<enum_PlayerWeapon, MonoBehaviour> _OnRecycle)
     {
