@@ -399,7 +399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cec143dcad8ff7e4aa5a527a28616f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Anim: 2001
+  E_Anim: 2003
   B_AttachLeft: 0
   F_Damage: 100
   F_DamagePerEnhance: 20

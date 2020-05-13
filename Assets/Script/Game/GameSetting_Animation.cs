@@ -17,6 +17,7 @@ namespace GameSetting
         Heavy_1004 = 1004,
         HeavySword_2001 = 2001,
         Katana_2002=2002,
+        HammerOfDawn_2003=2003,
     }
 
     public enum enum_EnermyAnim
