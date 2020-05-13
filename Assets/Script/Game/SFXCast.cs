@@ -75,7 +75,7 @@ public class SFXCast : SFXWeaponBase {
             return;
 
         if (I_CastParticleIndex > 0)
-            GameObjectManager.SpawnParticles(I_CastParticleIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID);
+            GameObjectManager.SpawnParticles(I_CastParticleIndex, transform.position, transform.forward).PlayUncontrolled(m_SourceID);
 
         if (B_CameraShake)
             GameManagerBase.Instance.SetEffect_Shake(V4_CastInfo.magnitude);

@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 06e24acb759a2ac4c965d56b0101f8ba
+guid: dce280ced5e006c4cb0eb0fab2f51b75
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     100002: B_Prop1
@@ -107,10 +107,8 @@ ModelImporter:
     100202: B_Spine2
     100204: Motion
     100206: RPG-Character-Mesh
-    100208: Box001
-    100210: Spear
-    100212: 2Hand-Sword
-    100214: Exporter
+    100208: 2Hand-Sword
+    100210: Exporter
     400000: //RootNode
     400002: B_Prop1
     400004: B_L_Hand
@@ -215,26 +213,20 @@ ModelImporter:
     400202: B_Spine2
     400204: Motion
     400206: RPG-Character-Mesh
-    400208: Box001
-    400210: Spear
-    400212: 2Hand-Sword
-    400214: Exporter
+    400208: 2Hand-Sword
+    400210: Exporter
     2300000: Mesh_Soldier_A
     2300002: AK47
     2300004: Chaingun
     2300006: MissileLauncher
     2300008: USP
-    2300010: Box001
-    2300012: Spear
-    2300014: 2Hand-Sword
+    2300010: 2Hand-Sword
     3300000: Mesh_Soldier_A
     3300002: AK47
     3300004: Chaingun
     3300006: MissileLauncher
     3300008: USP
-    3300010: Box001
-    3300012: Spear
-    3300014: 2Hand-Sword
+    3300010: 2Hand-Sword
     4300000: Mesh_Soldier_A
     4300002: AK47
     4300004: MissileLauncher
@@ -242,19 +234,18 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    4300014: Box001
-    4300016: Spear
-    4300018: 2Hand-Sword
-    7400000: 2Hand-Sword-Attack9
+    4300014: 2Hand-Sword
+    7400000: Sword_Attakc0
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
-    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -265,23 +256,24 @@ ModelImporter:
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
-      might lower retargeting quality:\n\t'B_Spine2' has translation animation that
-      will be discarded.\n\t'B_Spine2' is inbetween humanoid transforms and has rotation
-      animation that will be discarded.\n"
+      might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: 2Hand-Sword-Attack9
+      name: Sword_Attakc0
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 36
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -301,9 +293,9 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.4103092
-        functionName: Hit
-        data: 
+      - time: 0.4217231
+        functionName: OnEvent
+        data: Fire
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
@@ -318,13 +310,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
     keepQuads: 0
     weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -334,6 +331,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

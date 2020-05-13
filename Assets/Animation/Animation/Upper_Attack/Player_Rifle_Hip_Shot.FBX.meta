@@ -276,7 +276,7 @@ ModelImporter:
       name: Player_Rifle_Hip_Shot
       takeName: Take 001
       firstFrame: 2
-      lastFrame: 10.2
+      lastFrame: 10
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
