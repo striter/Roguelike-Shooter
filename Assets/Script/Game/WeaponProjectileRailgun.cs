@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class WeaponProjectileRailgun : WeaponProjectileBase
 {
-    public override enum_PlayerWeaponType m_WeaponType => enum_PlayerWeaponType.ProjectileStore;
     public int I_ChargeIndicatorIndex;
     public float F_ChargeDuration;
     protected int m_StoreProjectileDataIndex { get; private set; }

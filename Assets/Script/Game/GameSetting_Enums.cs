@@ -142,14 +142,11 @@ namespace GameSetting
     public enum enum_PlayerWeaponType
     {
         Invalid=-1,
-        ProjectileShot,
-        ProjectileShotMulti,
-        ProjectileStore,
-
-        ThrowableProjectle,
-
-        CastMelee,
-        CastDuration,
+        Projectile,
+        Paracurve,
+        Cast,
+        Item,
+        Shield,
     }
     public enum enum_PlayerWeapon
     {

@@ -66,11 +66,11 @@ namespace GameSetting
             switch (type)
             {
                 default:Debug.LogError("Invalid Convertions Here!");return new enum_UIWeaponTag[0];
-                case enum_PlayerWeaponType.CastDuration: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Duration};
-                case enum_PlayerWeaponType.CastMelee: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Melee};
-                case enum_PlayerWeaponType.ProjectileShot:return new enum_UIWeaponTag[1] { enum_UIWeaponTag.Projectile };
-                case enum_PlayerWeaponType.ProjectileShotMulti: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Projectile, enum_UIWeaponTag.MultiShot};
-                case enum_PlayerWeaponType.ProjectileStore:return new enum_UIWeaponTag[2] { enum_UIWeaponTag.Projectile, enum_UIWeaponTag.StoreShot };
+                case enum_PlayerWeaponType.Projectile: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Duration};
+                case enum_PlayerWeaponType.Paracurve: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Melee};
+                case enum_PlayerWeaponType.Cast:return new enum_UIWeaponTag[1] { enum_UIWeaponTag.Projectile };
+                case enum_PlayerWeaponType.Shield: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Projectile, enum_UIWeaponTag.MultiShot};
+                case enum_PlayerWeaponType.Item:return new enum_UIWeaponTag[2] { enum_UIWeaponTag.Projectile, enum_UIWeaponTag.StoreShot };
             }
 
         }
