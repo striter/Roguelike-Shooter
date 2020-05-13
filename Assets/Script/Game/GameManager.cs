@@ -18,7 +18,7 @@ public class GameManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Level", KeyCode.Minus, () => { OnChunkPortalEnter(m_GameLevel.GetNextStageGenerate()); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Next Stage", KeyCode.Equals, () => { OnChunkPortalEnter(m_GameLevel.m_FinalStage ? enum_GamePortalType.GameWin : enum_GamePortalType.StageEnd); });
 
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Signal Tower", KeyCode.None, () => { GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => { if (interact.m_InteractType == enum_Interaction.SignalTower) m_LocalPlayer.Teleport(NavigationManager.NavMeshPosition( interact.transform.position),interact.transform.rotation); }); });
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Signal Tower", KeyCode.None, () => { GameObjectManager.TraversalAllInteracts((InteractGameBase interact) => { if (interact.m_InteractType == enum_Interaction.SignalTower) m_LocalPlayer.PlayTeleport(NavigationManager.NavMeshPosition( interact.transform.position),interact.transform.rotation); }); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Fog", KeyCode.None, () => { GameLevelManager.Instance.ClearAllFog();});
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Pass One Minutes", KeyCode.None, () => { m_GameLevel.Tick(60f,m_LocalPlayer.transform.position); });
 

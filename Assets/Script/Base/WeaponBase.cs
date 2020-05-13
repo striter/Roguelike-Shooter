@@ -98,13 +98,14 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     protected virtual void OnAutoTrigger() => Debug.LogError("Override This Please!");
     protected virtual void OnStoreTrigger(bool success) => Debug.LogError("Override This Please!"); 
 
-    protected void OnTriggerOnce()
+    protected void OnAmmoCost()
     {
         m_AmmoLeft--;
         m_RefillPauseTimer.Replay();
         m_BulletRefillTimer.Replay();
-        m_Attacher.OnFireAddRecoil(m_Recoil, m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply);
     }
+    public void OnAttacherRecoil() => m_Attacher.PlayRecoil(m_Recoil);
+    public void OnAttacherAnim(int index=0)=> m_Attacher.PlayAnim(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply,index);
 
     public virtual void Tick(bool firePausing, float deltaTime)
     {

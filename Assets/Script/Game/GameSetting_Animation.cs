@@ -114,6 +114,7 @@ namespace GameSetting
 
     public class WeaponModelAnimator : CharacterAnimator
     {
+        static readonly int HS_I_Attack = Animator.StringToHash("i_attack");
         static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_B_Aim = Animator.StringToHash("b_aim");
@@ -131,9 +132,10 @@ namespace GameSetting
             base.SetForward(v2_movement.y);
             base.SetMovementSpeed(movementParam);
         }
-        public void Attack(float fireRate)
+        public void Attack(float fireRate,int animIndex)
         {
             SetFireSpeed(1 / fireRate);
+            m_Animator.SetInteger(HS_I_Attack,animIndex);
             m_Animator.SetTrigger(HS_T_Attack);
         }
     }

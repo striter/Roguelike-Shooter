@@ -20,7 +20,9 @@ public class WeaponProjectileBase : WeaponBase
     protected override void OnAutoTrigger()
     {
         FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
-        OnTriggerOnce();
+        OnAttacherAnim();
+        OnAttacherRecoil();
+        OnAmmoCost();
     }
     RaycastHit hit;
     protected void FireProjectile(int projectileIndex,DamageInfo damageInfo)
