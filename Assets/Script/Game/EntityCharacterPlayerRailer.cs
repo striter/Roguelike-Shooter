@@ -42,7 +42,7 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
         if (m_IsDead || !down||!m_AbilityAvailable)
             return;
 
-        m_CharacterWeaponHelper.OnPlay(null, GetAimingPosition());
+        m_CharacterWeaponHelper.OnPlay(null, GetAimingPosition(true));
         if (m_ShotStorage == m_MaxShotStorage)
             m_ShotRestoreTimer.Replay();
         m_ShotStorage -=1;

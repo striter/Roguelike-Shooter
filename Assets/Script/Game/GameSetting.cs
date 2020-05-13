@@ -33,7 +33,8 @@ namespace GameSetting
 
         public const float F_AimMovementReduction = .6f;
         public const float F_MovementReductionDuration = .1f;
-        public const int I_ProjectileMaxDistance = 100;
+        public const int I_ProjectileInvalidDistance = 100;
+        public const int I_ProjectileParacurveInvalidDistance = 15;
         public const int I_ProjectileBlinkWhenTimeLeftLessThan = 3;
         public const float F_AimAssistDistance = 100f;
         public const short I_BoltLastTimeAfterHit = 5;

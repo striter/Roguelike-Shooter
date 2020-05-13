@@ -426,7 +426,7 @@ namespace GameSetting_PlayerPerks
             if (TCommon.RandomPercentageInt() > Value1 * m_Stack)
                 return;
 
-            m_SFXWeapon.OnPlay(null,m_Attacher.GetAimingPosition());
+            m_SFXWeapon.OnPlay(null,m_Attacher.GetAimingPosition(true));
         }
         public P10030(PerkSaveData saveData) : base(saveData) { }
     }

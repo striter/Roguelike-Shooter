@@ -8,7 +8,6 @@
 		SubShader
 		{
 			Tags{ "RenderType" = "Opaque" "IgnoreProjector" = "True" "Queue" = "Geometry" "PreviewType" = "Sphere"}
-			Blend SrcAlpha OneMinusSrcAlpha
 			Cull Back Lighting Off ZWrite On ZTest On Fog { Color(0,0,0,0) }
 
 			Pass
@@ -17,10 +16,10 @@
 				CGPROGRAM
 				#pragma vertex vert
 				#pragma fragment frag
-			#include "../../CommonLightingInclude.cginc"
+				#include "../../CommonLightingInclude.cginc"
 				#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "AutoLight.cginc"
+				#include "Lighting.cginc"
+				#include "AutoLight.cginc"
 				#pragma multi_compile_instancing
 				struct appdata
 				{

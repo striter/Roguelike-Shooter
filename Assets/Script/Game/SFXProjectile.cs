@@ -27,7 +27,7 @@ public class SFXProjectile : SFXWeaponBase
     protected SFXParticles m_Indicator;
     protected SFXTrail m_Trail;
     public bool B_PhysicsSimulating { get; private set; }
-    protected virtual float F_PlayDuration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileMaxDistance / F_Speed;
+    protected virtual float F_PlayDuration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileInvalidDistance / F_Speed;
     protected virtual float F_PlayDelay => 0f;
     protected virtual bool B_StopParticlesOnHit => true;
     protected virtual bool B_StopPhysicsOnHit => true;

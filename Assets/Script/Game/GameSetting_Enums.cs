@@ -145,6 +145,9 @@ namespace GameSetting
         ProjectileShot,
         ProjectileShotMulti,
         ProjectileStore,
+
+        ThrowableProjectle,
+
         CastMelee,
         CastDuration,
     }
@@ -178,6 +181,8 @@ namespace GameSetting
         LavaWand = 401,
         PoisonWand = 402,
         FrostWand = 403,
+
+        Grenade=501,
     }
 
 

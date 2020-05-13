@@ -363,7 +363,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         }
     }
 
-    public Vector3 GetAimingPosition() => m_AimingTarget ? m_AimingTarget.transform.position : (tf_Head.transform.position + tf_Head.forward * 50f);
+    public Vector3 GetAimingPosition(bool projectile) => m_AimingTarget ? m_AimingTarget.transform.position : (tf_WeaponAim.position + tf_WeaponAim.forward * (projectile?GameConst.I_ProjectileInvalidDistance:GameConst.I_ProjectileParacurveInvalidDistance));
     #endregion
     #region Character Ability
     public virtual float m_AbilityCooldownScale => 0f;
