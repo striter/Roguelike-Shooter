@@ -22,10 +22,11 @@ public class SFXParticles : SFXBase
         PlaySFX(sourceID,duration==0? 5f:duration,delayDuration,true);
     }
 
-    public void PlayControlled(int sourceID, float delayDuration = 0)
+    public SFXParticles PlayControlled(int sourceID, float delayDuration = 0)
     {
         Play();
         PlaySFX(sourceID, 0, delayDuration, false);
+        return this;
     }
 
     protected virtual  void Play()

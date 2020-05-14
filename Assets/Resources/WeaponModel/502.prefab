@@ -494,3 +494,4 @@ MonoBehaviour:
   F_RefillTime: 20
   F_RecoilPerShot: 0
   I_ExtraBuffApply: -1
+  I_ParticleIndex: 19102
