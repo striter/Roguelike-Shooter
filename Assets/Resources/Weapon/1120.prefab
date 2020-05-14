@@ -59,10 +59,9 @@ MonoBehaviour:
   I_MuzzleIndex: 19002
   I_ImpactIndex: 29002
   I_IndicatorIndex: 0
-  I_HitMarkIndex: 0
   F_Radius: 0.1
   F_Height: 0.2
   RI_CountExtension:
-    start: 1
+    start: 4
     length: 0
   F_OffsetExtension: 0
