@@ -8,7 +8,6 @@ public class WeaponTriggerAuto : WeaponTriggerBase {
     public override enum_PlayerWeaponTriggerType m_Type => enum_PlayerWeaponTriggerType.Auto;
     protected Func<bool> OnTriggerCheck;
     Action OnTriggerSuccessful;
-
     public void Init(WeaponBase _weapon, Func<bool> _OnTriggerCheck, Action _OnTriggerSuccessful)
     {
         base.Init(_weapon);

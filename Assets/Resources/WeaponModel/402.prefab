@@ -481,7 +481,7 @@ MonoBehaviour:
   I_ClipAmount: 10
   F_RefillTime: 0.2
   F_RecoilPerShot: 0.48
-  I_ExtraBuffApply: -1
+  I_ExtraBuffApply: 104
   F_AimSpread: 0
   B_MultiShotAvailable: 1
   I_PelletsPerShot: 3

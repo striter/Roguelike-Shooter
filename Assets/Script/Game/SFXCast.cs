@@ -177,7 +177,7 @@ public class SFXCast : SFXWeaponBase {
         if (I_ImpactIndex <= 0)
             return;
 
-        GameObjectManager.SpawnSFX<SFXImpact>(I_ImpactIndex, hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
+        GameObjectManager.SpawnSFX<SFXParticles>(I_ImpactIndex, hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
     }
 
 #if UNITY_EDITOR

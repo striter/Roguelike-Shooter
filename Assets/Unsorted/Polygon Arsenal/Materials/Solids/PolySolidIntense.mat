@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: PolySolidIntense
-  m_Shader: {fileID: 4800000, guid: 94a9aa8a94e5b1b4d8c777819f86eb44, type: 3}
+  m_Shader: {fileID: 4800000, guid: b687ec3c46774764ba097482cb08eb5d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -32,6 +32,7 @@ Material:
     - _RimPower: 1.22
     - _Shininess: 1
     m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _InnerColor: {r: 0, g: 1, b: 0.006896496, a: 1}
     - _RimColor: {r: 0.2827586, g: 1, b: 0, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}

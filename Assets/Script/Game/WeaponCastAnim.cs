@@ -17,21 +17,20 @@ public class WeaponCastAnim : WeaponCastBase {
         m_BaseSize = cast.V4_CastInfo;
     }
 
-    protected override void OnAutoTrigger() => OnAttacherAnim();
-    public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
+    protected override void OnAutoTrigger()
     {
-        base.OnAnimEvent(eventType);
-        if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
-            return;
+        OnAttacherAnim();
+    }
+    protected override void OnKeyAnim()
+    {
         DoMeleeCast(m_BaseSFXWeaponIndex, GetMeleeSize());
     }
 
     protected void DoMeleeCast(int castIndex,float castScale=1)
     {
-        SFXCast cast = ShowCast(m_BaseSFXWeaponIndex, m_Attacher.tf_WeaponAim.position);
+        SFXCast cast = ShowCast(castIndex, m_Attacher.tf_WeaponAim.position);
         cast.V4_CastInfo = m_BaseSize* castScale;
         cast.Play(GetWeaponDamageInfo(m_BaseDamage));
-
         OnAmmoCost();
     }
 

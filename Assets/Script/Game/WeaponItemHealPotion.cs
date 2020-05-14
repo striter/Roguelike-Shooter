@@ -4,9 +4,9 @@ using UnityEngine;
 using GameSetting;
 public class WeaponItemHealPotion : WeaponItemBase {
 
-    protected override void OnAmmoCost()
+    protected override void OnKeyAnim()
     {
-        base.OnAmmoCost();
+        base.OnKeyAnim();
         m_Attacher.m_HitCheck.TryHit(GetWeaponDamageInfo(-m_BaseDamage, enum_DamageType.Health));
     }
 }

@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 114811623856208252}
   - component: {fileID: 114847754842817916}
   m_Layer: 0
-  m_Name: 403
+  m_Name: 405
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -481,7 +481,7 @@ MonoBehaviour:
   I_ClipAmount: 10
   F_RefillTime: 0.2
   F_RecoilPerShot: 0.48
-  I_ExtraBuffApply: 105
+  I_ExtraBuffApply: -1
   F_AimSpread: 0
   B_MultiShotAvailable: 1
   I_PelletsPerShot: 3

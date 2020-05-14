@@ -17,16 +17,10 @@ public class WeaponProjectileBase : WeaponBase
     public float GetPelletSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_PelletSpreadAngle;
     public int GetPelletPerShot() => m_Attacher.m_CharacterInfo.I_Projectile_Multi_PelletsAdditive + I_PelletsPerShot;
 
-    protected override void OnAutoTrigger()
-    {
-        FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
-        OnAttacherAnim();
-        OnAmmoCost();
-    }
-    RaycastHit hit;
+    protected override void OnAutoTrigger()=> FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
     protected void FireProjectile(int projectileIndex,DamageInfo damageInfo)
     {
-        Vector3 baseSpreadDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Attacher.tf_WeaponAim.position);
+        Vector3 baseSpreadDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Muzzle.position);
         baseSpreadDirection.y = 0;
 
         SFXProjectile targetProjectile = GameObjectManager.GetSFXWeaponData<SFXProjectile>(projectileIndex);
@@ -47,8 +41,9 @@ public class WeaponProjectileBase : WeaponBase
         {
             FireOneProjectile(projectileIndex, targetProjectile, damageInfo, baseSpreadDirection);
         }
+        OnAttacherAnim();
+        OnAmmoCost();
     }
-
 
 
     protected void FireOneProjectile(int projectilIndex, SFXProjectile projectileData,DamageInfo damageInfo, Vector3 direction)

@@ -8,15 +8,11 @@ public class WeaponItemBase : WeaponBase {
 
     protected override void OnAutoTrigger()
     {
-        OnAttacherAnim(0);
+        OnAttacherAnim();
     }
 
-    public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
+    protected override void OnKeyAnim()
     {
-        base.OnAnimEvent(eventType);
-        if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
-            return;
-
         OnAmmoCost();
     }
 

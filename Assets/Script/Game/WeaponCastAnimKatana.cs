@@ -24,12 +24,9 @@ public class WeaponCastAnimKatana : WeaponCastAnim
             OnAttacherAnim(0);
     }
 
-
-    public override void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
+    protected override void OnKeyAnim()
     {
-        if (eventType != TAnimatorEvent.enum_AnimEvent.Fire)
-            return;
-        DoMeleeCast(m_Dashing? m_DashCastIndex:m_BaseSFXWeaponIndex,GetMeleeSize());
+        DoMeleeCast(m_Dashing ? m_DashCastIndex : m_BaseSFXWeaponIndex, GetMeleeSize());
 
         if (m_Dashing)
             m_Attacher.PlayTeleport(NavigationManager.NavMeshPosition(m_Attacher.transform.position + m_Attacher.transform.forward * F_DashDistance * GetMeleeSize()), m_Attacher.transform.rotation);

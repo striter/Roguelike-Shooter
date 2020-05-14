@@ -28,6 +28,7 @@ public class WeaponTriggerStore : WeaponTriggerBase {
             return;
 
         SetStore(true);
+        m_TriggerTimer.Replay();
     }
 
     public override void OnTriggerStop()
@@ -41,7 +42,6 @@ public class WeaponTriggerStore : WeaponTriggerBase {
         if (m_Storing == store)
             return;
 
-        PlayIndicator(store);
         m_Storing = store;
         if (m_Storing)
             m_StoreTimer.Replay();
@@ -52,6 +52,7 @@ public class WeaponTriggerStore : WeaponTriggerBase {
     public override void Tick(bool paused, float deltaTime)
     {
         base.Tick(paused, deltaTime);
+        PlayIndicator(m_Storing&&m_StoreTimer.m_TimeLeftScale<.9f);
         if (!m_Storing)
             return;
 
