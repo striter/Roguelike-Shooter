@@ -14,7 +14,7 @@ public class UI_Map : UIPage {
         UIT_GridControllerGridItem<UIGI_MapLocations> m_LocationsGrid;
         UIT_EventTriggerListener m_EventTrigger;
         Vector2 m_MapOffsetBase,m_PreValidOffset;
-        float m_MapScaleBase;
+        float m_MapRotationBase;
         Action<int> OnLocationClick;
         public UIC_Map(Transform transform, Action<int> OnLocationClick) : base(transform, LevelConst.I_UIMapScale)
         {
@@ -23,10 +23,13 @@ public class UI_Map : UIPage {
             m_EventTrigger = transform.GetComponent<UIT_EventTriggerListener>();
             m_EventTrigger.OnDragDelta = OnMapDrag;
             m_EventTrigger.OnWorldClick = OnMapClick;
-            DoMapInit();
-            m_MapScaleBase = GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw);
-            UpdateMapRotation(m_MapScaleBase);
-            m_Player.Tick();
+        }
+        public override void OnPlay()
+        {
+            base.OnPlay();
+
+            m_MapRotationBase = GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw);
+            UpdateMapRotation(m_MapRotationBase);
 
             m_LocationsGrid.ClearGrid();
             GameManager.Instance.m_StageInteracts.Traversal((int interactIndex, InteractGameBase interactData) =>
@@ -112,14 +115,17 @@ public class UI_Map : UIPage {
     public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
     {
         base.OnPlay(doAnim, OnPageExit);
+        m_Map.OnPlay();
         m_LocationInfo.SetActivate(false);
         m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_Stage.GetLocalizeKey();
         m_Style.localizeKey = GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey();
     }
+
     private void Update()
     {
         m_Map.Tick(Time.deltaTime);
     }
+
     void OnChunkSelect(int chunkIndex)
     {
         m_LocationInfo.SetActivate(chunkIndex != -1);

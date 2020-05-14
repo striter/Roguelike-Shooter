@@ -289,11 +289,10 @@ namespace GameSetting
             m_Map_Origin_Base_Fog = m_Map_Origin_Base.transform.Find("Fog").GetComponent<RawImage>();
             m_Player = m_Map_Origin_Base.transform.Find("Player").GetComponent<UIGI_MapEntityLocation>();
             m_Player.OnInitItem();
-            m_Player.Play(GameManager.Instance.m_LocalPlayer);
             ChangeMapScale(mapScale);
         }
 
-        public virtual void DoMapInit()
+        public virtual void OnPlay()
         {
             m_Player.Play(GameManager.Instance.m_LocalPlayer);
             m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;

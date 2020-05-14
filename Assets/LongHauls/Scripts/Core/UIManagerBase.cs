@@ -16,7 +16,7 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
     public int I_PageCount => m_Pages.Count;
     public bool m_PageOpening => I_PageCount > 0;
     public bool CheckPageOpening<T>() where T : UIPageBase => m_Pages.Count > 0 && m_Pages.Find(p => p.GetType() == typeof(T));
-    public Dictionary<UIControlBase, int> m_Controls { get; private set; } = new Dictionary<UIControlBase, int>();
+    public Dictionary<UIControlBase, int> m_ControlSiblings { get; private set; } = new Dictionary<UIControlBase, int>();
 
     protected virtual void Init()
     {
@@ -49,8 +49,27 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         for (int i = 0; i < m_Pages.Count; i++)
         {
             bool pageOverlay = pageShow && m_Pages.Count - 1 == i;
-            SetPageViewMode(m_Pages[i], pageOverlay);
+            TCommonUI.ReparentRestretchUI(m_Pages[i].rectTransform, pageOverlay ? tf_OverlayPage : tf_CameraPage);
         }
+    }
+
+    #region Page
+    protected void PreloadPage<T>() where T:UIPageBase
+    {
+        if (!CheckPageStorage(typeof(T)))
+            Debug.LogError("Page:" + typeof(T) + " Already Preloaded!");
+    }
+
+    bool CheckPageStorage(Type type)
+    {
+        if (!m_PageStored.ContainsKey(type))
+        {
+            UIPageBase page = UIPageBase.Generate(type, m_PageStorage);
+            page.SetActivate(false);
+            m_PageStored.Add(type, page);
+            return true;
+        }
+        return false;
     }
 
     protected T ShowPage<T>(bool useAnim) where T : UIPageBase
@@ -60,8 +79,8 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
 
         T page=null;
         Type type = typeof(T);
-        if (!m_PageStored.ContainsKey(typeof(T)))
-          m_PageStored.Add(type, UIPageBase.Generate<T>(m_PageStorage));
+        if (CheckPageStorage(type))
+            Debug.LogWarning("Page:" + type + " Not Preloaded!");
 
         page = m_PageStored[type] as T;
         page.SetActivate(true);
@@ -79,7 +98,8 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         m_Pages.Remove(page);
         OnAdjustPageSibling();
     }
-
+    #endregion
+    #region MessageBox
     protected virtual void OnMessageBoxExit() => OnAdjustPageSibling();
     protected T ShowMessageBox<T>() where T : UIMessageBoxBase
     {
@@ -87,25 +107,27 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         OnAdjustPageSibling();
         return messageBox;
     }
+    #endregion
 
+    #region Controls
     protected T ShowControls<T>(bool overlayView=false)where T: UIControlBase
     {
         T control = UIControlBase.Show<T>(overlayView ? tf_OverlayControl : tf_CameraControl);
-        m_Controls.Add(control,m_Controls.Count -1);
+        m_ControlSiblings.Add(control,m_ControlSiblings.Count -1);
         return control;
     }
 
     protected void SetControlViewMode(UIControlBase control, bool overlay)
     {
-        if (!m_Controls.ContainsKey(control))
+        if (!m_ControlSiblings.ContainsKey(control))
         {
             Debug.LogError("?");
             return;
         }
 
         TCommonUI.ReparentRestretchUI(control.rectTransform, overlay ? tf_OverlayControl : tf_CameraControl);
-        control.transform.SetSiblingIndex(m_Controls[control]);
+        control.transform.SetSiblingIndex(m_ControlSiblings[control]);
     }
-    protected void SetPageViewMode(UIPageBase page, bool overlay) => TCommonUI.ReparentRestretchUI(page.rectTransform, overlay ? tf_OverlayPage : tf_CameraPage);
+    #endregion
 }
 

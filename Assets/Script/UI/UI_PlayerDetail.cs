@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class UI_PlayerDetail : UIPage
 {
-    EntityCharacterPlayer m_Player;
-
     Transform m_AbilityInfo;
     Image m_AbilityImage;
     UIT_TextExtend m_AbilityTitle;
@@ -39,7 +37,6 @@ public class UI_PlayerDetail : UIPage
     protected override void Init()
     {
         base.Init();
-        m_Player = GameManager.Instance.m_LocalPlayer;
 
         m_AbilityInfo = rtf_Container.Find("AbilityInfo");
         m_AbilityImage = m_AbilityInfo.Find("Image").GetComponent<Image>();
@@ -47,13 +44,7 @@ public class UI_PlayerDetail : UIPage
         m_AbilityIntro = m_AbilityInfo.Find("Intro").GetComponent<UIT_TextExtend>();
 
         m_WeaponSelect = new UIT_GridControlledSingleSelect<UIGI_DetailWeaponSelect>(rtf_Container.Find("WeaponSelect/Grid"), OnWeaponSelectClick);
-        if (m_Player.m_Weapon1)
-            m_WeaponSelect.AddItem(0).Init(m_Player.m_Weapon1.m_WeaponInfo.m_Weapon);
-        if (m_Player.m_Weapon2)
-            m_WeaponSelect.AddItem(1).Init(m_Player.m_Weapon2.m_WeaponInfo.m_Weapon);
-
         m_PerkSelect = new UIT_GridControlledSingleSelect<UIGI_DetailPerkSelect>(rtf_Container.Find("PerkSelect/ScrollRect/Viewport/Content"), OnPerkSelectClick);
-        m_Player.m_CharacterInfo.m_ExpirePerks.Traversal((int index, ExpirePlayerPerkBase perk) => { m_PerkSelect.AddItem(index).Init(perk); });
 
         m_WeaponInfo = rtf_Container.Find("WeaponInfo");
         m_WeaponBackground = m_WeaponInfo.Find("ImageBG").GetComponent<Image>();
@@ -64,8 +55,6 @@ public class UI_PlayerDetail : UIPage
 
         m_WeaponScore = new UIT_GridControllerClass<UIGC_WeaponScoreItem>(m_WeaponInfo.Find("ScoreGrid"));
         m_WeaponTag = new UIT_GridControllerClass<UIGC_WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
-        for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
-            m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
 
         m_WeaponScoreSliders = m_WeaponInfo.Find("ScoreSliders");
         m_Damage = m_WeaponScoreSliders.Find("Damage/Fill").GetComponent<Image>();
@@ -84,9 +73,25 @@ public class UI_PlayerDetail : UIPage
         m_PerkDetail = m_PerkInfo.Find("Detail").GetComponent<UIT_TextExtend>();
     }
 
+    EntityCharacterPlayer m_Player;
+
     public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
     {
         base.OnPlay(doAnim, OnPageExit);
+        m_Player = GameManager.Instance.m_LocalPlayer;
+        m_WeaponSelect.ClearGrid();
+        if (m_Player.m_Weapon1)
+            m_WeaponSelect.AddItem(0).Init(m_Player.m_Weapon1.m_WeaponInfo.m_Weapon);
+        if (m_Player.m_Weapon2)
+            m_WeaponSelect.AddItem(1).Init(m_Player.m_Weapon2.m_WeaponInfo.m_Weapon);
+
+        m_WeaponTag.ClearGrid();
+        for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+            m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
+
+        m_PerkSelect.ClearGrid();
+        m_Player.m_CharacterInfo.m_ExpirePerks.Traversal((int index, ExpirePlayerPerkBase perk) => { m_PerkSelect.AddItem(index).Init(perk); });
+
         SetAbilityInfo(m_Player);
         m_WeaponSelect.OnItemClick(0);
     }

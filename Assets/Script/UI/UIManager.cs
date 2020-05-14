@@ -47,6 +47,8 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_UIControl = ShowControls<UIC_Control>();
         m_Interact = ShowControls<UIC_PlayerInteract>();
         m_Indicate = ShowControls<UIC_Indicates>();
+
+        PreloadPage<UI_Options>();
     }
 
     protected override void OnDestroy()

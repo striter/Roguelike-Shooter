@@ -18,7 +18,7 @@ public class CampUIManager : UIManager {
     {
         m_OverlayControl = m_Coins;
         SetControlViewMode(m_OverlayControl, true);
-        m_Controls.Traversal((UIControlBase control) => { if (control != m_OverlayControl) control.SetActivate(false); });
+        m_ControlSiblings.Traversal((UIControlBase control) => { if (control != m_OverlayControl) control.SetActivate(false); });
         OnCampPageExit = OnPageExit;
         return ShowPage<T>(animate,blurBG, bulletTime);
     }
@@ -29,7 +29,7 @@ public class CampUIManager : UIManager {
         if (!m_OverlayControl || m_PageOpening)
             return;
         SetControlViewMode(m_OverlayControl, false);
-        m_Controls.Traversal((UIControlBase control) => { if (control != m_OverlayControl) control.SetActivate(true); });
+        m_ControlSiblings.Traversal((UIControlBase control) => { if (control != m_OverlayControl) control.SetActivate(true); });
         m_OverlayControl = null;
         OnCampPageExit?.Invoke();
         OnCampPageExit = null;

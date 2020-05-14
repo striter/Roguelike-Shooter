@@ -90,7 +90,7 @@ public class UIC_GameStatus : UIControlBase {
 
     void OnStageStart()
     {
-        m_Map.DoMapInit();
+        m_Map.OnPlay();
         m_MissionData.text = "UI_GAMESTATUS_MISSION".GetKeyLocalized() + "UI_MISSION_SEARCHSIGNAL".GetKeyLocalized();
         m_EliteHealth.SetActivate(false);
     }
@@ -160,9 +160,10 @@ public class UIC_GameStatus : UIControlBase {
             m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
             m_Locations = new UIT_GridControllerComponent<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
         }
-        public override void DoMapInit()
+
+        public override void OnPlay()
         {
-            base.DoMapInit();
+            base.OnPlay();
             UpdateMapRotation(GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw));
 
             m_Locations.ClearGrid();

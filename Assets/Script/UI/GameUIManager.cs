@@ -14,6 +14,11 @@ public class GameUIManager : UIManager {
         m_InGameSprites = TResources.GetUIAtlas_InGame();
         ShowControls<UIC_GameNumericVisualize>();
         ShowControls<UIC_GameStatus>();
+
+        PreloadPage<UI_PlayerDetail>();
+        PreloadPage<UI_Map>();
+        PreloadPage<UI_Revive>();
+        PreloadPage<UI_GameResult>();
     }
 
     public void OnGameFinished(GameProgressManager level, Action _OnButtonClick)

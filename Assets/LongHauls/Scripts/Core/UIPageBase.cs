@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class UIPageBase : UIComponentBase,ICoroutineHelperClass
 {
-    public static T Generate<T>(Transform parentTransform) where T : UIPageBase
+    public static UIPageBase Generate(Type type,Transform parentTransform)
     {
-        T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
+        UIPageBase page = TResources.Instantiate<UIPageBase>("UI/Pages/" + type.ToString(), parentTransform);
         page.Init();
         return page;
     }
