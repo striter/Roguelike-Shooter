@@ -112,7 +112,7 @@ public class UIC_GameStatus : UIControlBase {
             m_EliteName.localizeKey = m_Elite.GetNameLocalizeKey();
             m_EliteHealthLerp.SetFinalValue(1f);
             m_EliteHealthCheck.Check(m_Elite.m_Health.m_MaxHealth);
-            m_EliteHealthAmount.text = string.Format("{0} / {1}", m_Elite.m_Health.m_CurrentHealth, m_Elite.m_Health.m_MaxHealth);
+            m_EliteHealthAmount.text = string.Format("{0} / {1}", (int)m_Elite.m_Health.m_CurrentHealth, (int)m_Elite.m_Health.m_MaxHealth);
         }
         m_EliteHealth.SetActivate(m_Elite);
     }

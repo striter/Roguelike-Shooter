@@ -1476,7 +1476,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u7532\u58F3\u866B\u5973\u738B"
+  m_Text: XXXXXXX
   B_AutoLocalize: 0
   S_AutoLocalizeKey: 
   m_characterSpacing: 0
@@ -1628,7 +1628,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u76EE\u6807\uFF1A\u627E\u5230\u4FE1\u53F7\u5854"
+  m_Text: XXXXXXXXXXXX
   B_AutoLocalize: 0
   S_AutoLocalizeKey: 
   m_characterSpacing: 3
@@ -2172,8 +2172,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 21, y: 13}
-  m_SizeDelta: {x: 58, y: 30}
+  m_AnchoredPosition: {x: 13.5, y: 13}
+  m_SizeDelta: {x: 43, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224339957333122808
 RectTransform:
