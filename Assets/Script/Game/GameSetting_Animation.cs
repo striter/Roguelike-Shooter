@@ -22,6 +22,7 @@ namespace GameSetting
         Katana_2002=2002,
         HammerOfDawn_2003=2003,
         Drink_2004=2004,
+        LightSword_2005=2005,
     }
 
     public enum enum_EnermyAnim

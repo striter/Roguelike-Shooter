@@ -22,7 +22,7 @@ public class InteractHealShrine : InteractGameBase {
         base.OnInteractedContinousCheck(_interactor);
         m_TryCount++;
         SetTradePrice(m_BaseTradePrice*(1f+ GameExpression.GetHealShrinePriceMultiply(m_TryCount)));
-        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, -GameConst.F_HealShrineHealthReceive, enum_DamageType.HealthPenetrate));
+        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(-GameConst.F_HealShrineHealthReceive, enum_DamageType.HealthPenetrate));
         return m_TryCount < GameConst.I_HealShrineTryCountMax;
     }
 }

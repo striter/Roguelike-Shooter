@@ -172,7 +172,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         base.OnAliveTick(deltaTime);
         m_ArmorRegenTimer.Tick(deltaTime);
         if(!m_ArmorRegenTimer.m_Timing&&!m_Health.m_ArmorFull)
-            OnReceiveDamage(new DamageInfo(-1,-GameConst.F_PlayerArmorRegenPerSec*deltaTime, enum_DamageType.Armor),Vector3.zero);
+            OnReceiveDamage(new DamageInfo(-1).SetDamage(-GameConst.F_PlayerArmorRegenPerSec*deltaTime, enum_DamageType.Armor),Vector3.zero);
 
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
@@ -188,8 +188,15 @@ public class EntityCharacterPlayer : EntityCharacterBase {
 
         if (damageInfo.m_EntityID == m_EntityID)
         {
-            if (damageEntity.m_IsDead && GameManager.Instance.EntityOpposite(this, damageEntity))
-                m_CharacterInfo.OnKilledEnermy(damageEntity);
+            if(amountApply<0&& GameManager.Instance.EntityOpposite(this, damageEntity))
+            {
+                if (damageInfo.m_IdentityType == enum_DamageIdentity.PlayerWeapon && damageInfo.m_IdentityID == m_WeaponCurrent.m_WeaponID)
+                    m_WeaponCurrent.OnDealtDamage(amountApply);
+
+                if (damageEntity.m_IsDead)
+                    m_CharacterInfo.OnKilledEnermy(damageEntity);
+            }
+
         }
     }
 
@@ -451,7 +458,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     void RevivePlayer()
     {
         ReviveCharacter();
-        m_HitCheck.TryHit(new DamageInfo(-1, 101));
+        m_HitCheck.TryHit(new DamageInfo(-1).AddPresetBuff(101));
     }
     #endregion
     void OnAnimationEvent(TAnimatorEvent.enum_AnimEvent animEvent)

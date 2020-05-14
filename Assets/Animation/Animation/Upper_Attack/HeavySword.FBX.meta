@@ -240,7 +240,7 @@ ModelImporter:
     4300012: RPG-Character-Mesh
     4300014: Spear
     4300016: 2Hand-Sword
-    7400000: HeavySword_Attack
+    7400000: HeavySword
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
@@ -275,7 +275,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: HeavySword_Attack
+      name: HeavySword
       takeName: Take 001
       firstFrame: 6
       lastFrame: 36

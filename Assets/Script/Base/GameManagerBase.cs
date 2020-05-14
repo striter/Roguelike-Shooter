@@ -187,19 +187,23 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 public class GameIdentificationManager
 {
     static int i_entityIndex = 0;
+    static int i_playerWeaponIndex = 0;
 
     public static void Init()
     {
         i_entityIndex = 0;
+        i_playerWeaponIndex = 0;
     }
 
-    public static int I_EntityID(enum_EntityFlag flag)
+    public static int GetEntityID(enum_EntityFlag flag)
     {
         i_entityIndex++;
         if (i_entityIndex == int.MaxValue)
             i_entityIndex = 0;
         return i_entityIndex + (int)flag * 100000;
     }
+
+    public static int GetWeaponID() => i_playerWeaponIndex++;
 }
 
 

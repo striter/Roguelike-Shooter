@@ -76,7 +76,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         {
             m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.m_BaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack));
             if (m_AssassinTarget.m_Health.F_HealthMaxScale <= F_FinishBlowRate)
-                m_AssassinTarget.m_HitCheck.TryHit(new DamageInfo(m_EntityID, m_AssassinTarget.m_Health.m_MaxHealth, enum_DamageType.HealthPenetrate));
+                m_AssassinTarget.m_HitCheck.TryHit(new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(m_AssassinTarget.m_Health.m_MaxHealth, enum_DamageType.HealthPenetrate));
         }
 
         if (!m_AssassinTarget.m_IsDead)

@@ -113,7 +113,7 @@ namespace GameSetting
         CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd,
     }
 
-    public enum enum_DamageIdentity { Invalid=-1,Default,Expire, }
+    public enum enum_DamageIdentity { Invalid=-1,Default,Environment,Expire,PlayerWeapon,PlayerAbility, }
 
     public enum enum_ProjectileFireType { Invalid = -1, Single = 1, MultipleFan = 2, MultipleLine = 3, };
 
@@ -152,7 +152,7 @@ namespace GameSetting
 
         Flamer = 201,Driller = 202,Bouncer = 203,Tesla = 204,
 
-        HeavySword = 301,Katana=302,HammerOfDawn=303,
+        HeavySword = 301,Katana=302,HammerOfDawn=303,BloodThirster=304,
 
         LavaWand = 401,PoisonWand = 402,FrostWand = 403,
 

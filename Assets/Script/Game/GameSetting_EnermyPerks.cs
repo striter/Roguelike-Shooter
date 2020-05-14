@@ -19,7 +19,7 @@ namespace GameSetting_EnermyPerks
         public override void OnAttackSetDamage(DamageInfo info)
         {
             base.OnAttackSetDamage(info);
-            info.AddExtraBuff(105);
+            info.AddPresetBuff(105);
         }
         public EB20001(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
@@ -55,7 +55,7 @@ namespace GameSetting_EnermyPerks
             m_HealTimer.Tick(Time.deltaTime);
             if (m_HealTimer.m_Timing)
                 return;
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,-m_Attacher.m_Health.m_MaxHealth/20f, enum_DamageType.Health));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,  enum_DamageIdentity.Expire).SetDamage(-m_Attacher.m_Health.m_MaxHealth/20f, enum_DamageType.Health));
             m_HealTimer.Replay();
         }
         public EB20003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }

@@ -18,7 +18,7 @@ public class EntityCharacterForestExtra : EntityCharacterBase {
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
-        m_Weapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this, () => m_CharacterInfo.GetDamageBuffInfo(F_Damage) );
+        m_Weapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this, () => m_CharacterInfo.GetDamageInfo(F_Damage) );
     }
     protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {

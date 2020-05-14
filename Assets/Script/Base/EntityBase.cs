@@ -32,7 +32,7 @@ public class EntityBase : CObjectPoolStaticPrefabBase<int>
         }
         m_Activating = true;
         m_Flag = flag;
-        m_EntityID = GameIdentificationManager.I_EntityID(m_Flag);
+        m_EntityID = GameIdentificationManager.GetEntityID(m_Flag);
         ActivateHealthManager(startHealth);
         m_HitChecks.Traversal((HitCheckEntity check) => { check.Attach(this, OnReceiveDamage); });
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityActivate, this);

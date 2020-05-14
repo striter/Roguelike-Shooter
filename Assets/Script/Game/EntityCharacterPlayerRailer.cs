@@ -28,7 +28,7 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_ShotRestoreTimer = new TimerBase(F_ShotRestoreCoolDown,false);
     }
-    DamageInfo GetAbilityDamageInfo() => new DamageInfo(m_EntityID, F_AbilityDamageBase + F_AbilityDamageExtraMultiply * m_CharacterInfo.m_DamageAdditive + m_CharacterInfo.m_RankManager.m_Rank * F_AbilityDamageRankMultiply, 0f, m_CharacterInfo.m_CriticalRate * F_AbilityCriticalRateMultiply, m_CharacterInfo.m_CriticalDamageMultiply, enum_DamageType.Basic, -1);
+    DamageInfo GetAbilityDamageInfo() => new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(F_AbilityDamageBase + F_AbilityDamageExtraMultiply * m_CharacterInfo.m_DamageAdditive + m_CharacterInfo.m_RankManager.m_Rank * F_AbilityDamageRankMultiply).SetDamageCritical( m_CharacterInfo.m_CriticalRate * F_AbilityCriticalRateMultiply, m_CharacterInfo.m_CriticalDamageMultiply);
     protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
     {
         base.OnEntityActivate(flag, startHealth);

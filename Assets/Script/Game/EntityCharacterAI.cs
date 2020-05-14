@@ -38,7 +38,7 @@ public class EntityCharacterAI : EntityCharacterBase {
             m_Animator = new WeaponHelperAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
     }
 
-    public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageBuffInfo(F_BaseDamage,I_BuffApplyOnHit, enum_DamageType.Basic);
+    public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageInfo(F_BaseDamage,I_BuffApplyOnHit, enum_DamageType.Basic);
 
     public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, ExpireEnermyPerkBase enermyPerk )
     {

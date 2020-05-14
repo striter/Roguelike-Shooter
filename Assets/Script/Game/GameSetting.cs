@@ -427,7 +427,8 @@ namespace GameSetting
     public class DamageInfo
     {
         public int m_EntityID { get; private set; } = -1;
-        public enum_DamageIdentity m_Identity { get; private set; } = enum_DamageIdentity.Invalid;
+        public enum_DamageIdentity m_IdentityType { get; private set; } = enum_DamageIdentity.Invalid;
+        public int m_IdentityID { get; private set; } = -1;
 
         public float m_DamageBase { get; private set; } = 0;
         public float m_DamageMultiply { get; private set; } = 0;
@@ -435,54 +436,44 @@ namespace GameSetting
         public enum_DamageType m_DamageType { get; private set; } = enum_DamageType.Invalid;
 
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
-        public void AddExtraBuff(int presetBuffID) => m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(presetBuffID));
 
-        public void AddExtraDamage(float damageMultiply, float damageAdditive)
+
+        public DamageInfo(int entityID, enum_DamageIdentity identity= enum_DamageIdentity.Default, int identityID=-1)
+        {
+            m_EntityID = entityID;
+            m_IdentityType = identity;
+            m_IdentityID = identityID;
+        }
+
+        public DamageInfo SetDamage(float damage,enum_DamageType type= enum_DamageType.Invalid)
+        {
+            m_DamageBase = damage;
+            m_DamageType = type;
+            return this;
+        }
+
+        public DamageInfo SetDamageCritical(float _criticalHitRate, float _criticalHitMultiply)
+        {
+            m_DamageCriticalMultipy = _criticalHitRate > TCommon.RandomLength(1f) ? _criticalHitMultiply : 0;
+            return this;
+        }
+
+        public DamageInfo AddPresetBuff(int presetBuffID)
+        {
+            m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(presetBuffID));
+            return this;
+        }
+        public DamageInfo AddBuffInfo(SBuff buff)
+        {
+            m_BaseBuffApply.Add(buff);
+            return this;
+        }
+
+        public DamageInfo AddExtraDamage(float damageMultiply, float damageAdditive)
         {
             m_DamageMultiply += damageMultiply;
             damageAdditive += damageAdditive;
-        }
-
-        public DamageInfo(int sourceID, float damage,float _damageMultiply,float _criticalHitRate, float _critcalHitMultiply, enum_DamageType type,int extraBuffID, enum_DamageIdentity identity= enum_DamageIdentity.Default)
-        {
-            m_EntityID = sourceID;
-            m_Identity = identity;
-            m_DamageBase = damage;
-            m_DamageMultiply = _damageMultiply;
-            m_DamageCriticalMultipy =   _criticalHitRate> TCommon.RandomLength(1f) ? _critcalHitMultiply:0;
-            m_DamageType = type;
-            if(extraBuffID>0)
-                AddExtraBuff(extraBuffID);
-        }
-
-        public DamageInfo(int sourceID, float damage,enum_DamageType type, enum_DamageIdentity identity = enum_DamageIdentity.Default)
-        {
-            m_EntityID = sourceID;
-            m_Identity = identity;
-            m_DamageBase = damage;
-            m_DamageType = type;
-        }
-
-        public DamageInfo(int sourceID, int buffInfo, enum_DamageIdentity identity = enum_DamageIdentity.Default)
-        {
-            m_EntityID = sourceID;
-            m_Identity = identity;
-            AddExtraBuff(buffInfo);
-        }
-        public DamageInfo(int sourceID, SBuff buffInfo, enum_DamageIdentity identity = enum_DamageIdentity.Default)
-        {
-            m_EntityID = sourceID;
-            m_Identity = identity;
-            m_BaseBuffApply.Add(buffInfo);
-        }
-
-        public DamageInfo(int sourceID, float damage,enum_DamageType type,  int buffInfo, enum_DamageIdentity identity = enum_DamageIdentity.Default)
-        {
-            m_EntityID = sourceID;
-            m_Identity = identity;
-            m_DamageBase = damage;
-            m_DamageType = type;
-            AddExtraBuff(buffInfo);
+            return this;
         }
 
         public float m_AmountApply => m_DamageBase * m_BaseDamageMultiply;
@@ -514,9 +505,9 @@ namespace GameSetting
         public float m_ExtraCriticalHitMultiply => m_CriticalDamageMultiply - 1;
         public float m_ExtraMovemendSpeedMultiply => m_MovementSpeedMultiply-1f;
 
-        public DamageInfo GetDamageBuffInfo(float baseDamage, int buff = 0, enum_DamageType type = enum_DamageType.Basic)
+        public DamageInfo GetDamageInfo(float baseDamage, int buff = -1, enum_DamageType damageType = enum_DamageType.Basic,enum_DamageIdentity identityType= enum_DamageIdentity.Default,int identityID=-1)
         {
-            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, baseDamage + m_DamageAdditive, m_DamageMultiply, m_CriticalRate, m_CriticalDamageMultiply, type, buff);
+            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).AddPresetBuff(buff);
             m_Expires.Traversal((EntityExpireBase interact) => { interact.OnAttackSetDamage(info); });
             return info;
         } 
@@ -948,7 +939,7 @@ namespace GameSetting
             if (f_dotCheck > m_buffInfo.m_DamageTickTime)
             {
                 f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID, m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType, enum_DamageIdentity.Expire));
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID, enum_DamageIdentity.Expire).SetDamage(m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType));
             }
         }
     }

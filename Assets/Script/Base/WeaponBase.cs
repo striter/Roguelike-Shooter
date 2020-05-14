@@ -33,6 +33,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public float F_AmmoStatus => m_AmmoLeft / (float)m_ClipAmount;
     public bool m_HaveAmmoLeft => I_ClipAmount == -1 || m_AmmoLeft > 0;
     public bool B_AmmoFull => I_ClipAmount == -1||m_ClipAmount == m_AmmoLeft;
+    public int m_WeaponID { get; private set; } = -1;
 
     protected int m_BaseSFXWeaponIndex { get; private set; }
     public override void OnPoolItemInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
@@ -60,11 +61,12 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     public WeaponBase InitWeapon(WeaponSaveData weaponData)
     {
+        m_WeaponID = GameIdentificationManager.GetWeaponID();
         m_EnhanceLevel = weaponData.m_Enhance;
         return this;
     }
 
-    public virtual void OnAttach(EntityCharacterPlayer _attacher,Transform _attachTo)
+    public virtual void OnAttach( EntityCharacterPlayer _attacher,Transform _attachTo)
     {
         m_Attacher = _attacher;
         transform.SetParentResetTransform(_attachTo);
@@ -86,18 +88,14 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         m_Trigger.OnTriggerStop();
     }
 
-    public DamageInfo GetWeaponDamageInfo(float damage,enum_DamageType type= enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageBuffInfo(damage, I_ExtraBuffApply, enum_DamageType.Basic);
-    #region PlayerInteract
-    public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
-
-    public virtual void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType)
-    {
-    }
     protected bool OnTriggerCheck() => m_HaveAmmoLeft;
 
     protected virtual void OnAutoTrigger() => Debug.LogError("Override This Please!");
-    protected virtual void OnStoreTrigger(bool success) => Debug.LogError("Override This Please!"); 
+    protected virtual void OnStoreTrigger(bool success) => Debug.LogError("Override This Please!");
 
+    public DamageInfo GetWeaponDamageInfo(float damage, enum_DamageType type = enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageInfo(damage, I_ExtraBuffApply, type, enum_DamageIdentity.PlayerWeapon,m_WeaponID);
+
+    protected void OnAttacherAnim(int index = 0) => m_Attacher.PlayAnim(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
     protected virtual void OnAmmoCost()
     {
         m_AmmoLeft--;
@@ -106,7 +104,11 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         m_Attacher.PlayRecoil(m_Recoil);
     }
 
-    public void OnAttacherAnim(int index=0)=> m_Attacher.PlayAnim(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply,index);
+    #region PlayerInteract
+    public void Trigger(bool down)=>m_Trigger.OnSetTrigger(down);
+
+    public virtual void OnDealtDamage(float amountApply) { }
+    public virtual void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { }
 
     public virtual void Tick(bool firePausing, float deltaTime)
     {
@@ -148,6 +150,8 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         m_AmmoLeft++;
         m_BulletRefillTimer.Replay();
     }
-    
+
     #endregion
+
+
 }
