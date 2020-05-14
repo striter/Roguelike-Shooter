@@ -9,7 +9,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public bool B_AttachLeft = false;
 
     public float F_Damage=10;
-    public float F_DamagePerEnhance=10;
+    public float F_DamageMultiplyPerEnhance = .1f;
     public int I_ClipAmount=10;
     public float F_RefillTime=.1f;
     public float F_RecoilPerShot=2;
@@ -25,7 +25,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
     public float m_Recoil => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_RecoilPerShot;
-    public float m_BaseDamage => F_Damage + F_DamagePerEnhance * m_EnhanceLevel;
+    public float m_BaseDamage => F_Damage *(1+ F_DamageMultiplyPerEnhance * m_EnhanceLevel);
     protected WeaponTriggerBase m_Trigger { get; private set; }
     Action<float> OnFireRecoil;
     
