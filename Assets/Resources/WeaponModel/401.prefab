@@ -477,7 +477,7 @@ MonoBehaviour:
   E_Anim: 1004
   B_AttachLeft: 0
   F_Damage: 37.8
-  F_DamagePerEnhance: 7.7
+  F_DamageMultiplyPerEnhance: 7.7
   I_ClipAmount: 10
   F_RefillTime: 0.2
   F_RecoilPerShot: 5
