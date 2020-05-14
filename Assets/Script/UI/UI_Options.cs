@@ -20,6 +20,7 @@ public class UI_Options : UIPage {
         {
             m_ToggleImages.Traversal((T value, Image image) => { image.SetActivate(value.Equals(showState)); });
         }
+
         protected virtual void OnButtonClick()
         {
             SetShowState(OnToggle());

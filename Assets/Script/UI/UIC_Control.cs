@@ -38,6 +38,7 @@ public class UIC_Control : UIControlBase {
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnMainButtonStatus);
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();

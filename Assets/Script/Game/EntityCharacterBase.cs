@@ -8,7 +8,6 @@ using UnityEngine;
 public class EntityCharacterBase : EntityBase
 {
     public int I_MaxHealth;
-    public int I_DefaultArmor;
     public float F_MovementSpeed;
     public float F_AttackSpread;
     public Transform tf_Model { get; private set; }

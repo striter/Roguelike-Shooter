@@ -6,7 +6,9 @@ using TSpecialClasses;
 using System;
 using UnityEngine.AI;
 
-public class EntityCharacterPlayer : EntityCharacterBase {
+public class EntityCharacterPlayer : EntityCharacterBase
+{
+    public int I_DefaultArmor;
     public override enum_EntityType m_ControllType => enum_EntityType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
     protected virtual PlayerCharacterAnimator m_Animator { get; private set; }

@@ -25,7 +25,7 @@ public class InteractCampCharacterSelect : InteractCampBase {
         return true;
     }
 
-    public EntityCharacterBase ShowCharacter(enum_PlayerCharacter character)
+    public EntityCharacterPlayer ShowCharacter(enum_PlayerCharacter character)
     {
         rotation = m_CameraPos.rotation.eulerAngles.y;
         RecycleUnusedCharacter();

@@ -107,10 +107,14 @@ public class UI_Map : UIPage {
         m_LocationInfo = m_MapContainer.Find("LocationInfo");
         m_LocationName = m_LocationInfo.Find("Name").GetComponent<UIT_TextExtend>();
         m_LocationIntro = m_LocationInfo.Find("Intro").GetComponent<UIT_TextExtend>();
+    }
 
+    public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
+    {
+        base.OnPlay(doAnim, OnPageExit);
+        m_LocationInfo.SetActivate(false);
         m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_Stage.GetLocalizeKey();
         m_Style.localizeKey = GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey();
-        m_LocationInfo.SetActivate(false);
     }
     private void Update()
     {

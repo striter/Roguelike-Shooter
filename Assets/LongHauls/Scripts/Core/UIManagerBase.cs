@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,8 +8,11 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
     public float m_fittedScale { get; private set; }
     protected Canvas cvs_Overlay, cvs_Camera;
     private RectTransform tf_OverlayPage, tf_CameraPage, tf_OverlayControl, tf_CameraControl, tf_MessageBox;
-
+    Transform m_PageStorage;
     public List<UIPageBase> m_Pages = new List<UIPageBase>();
+
+    Dictionary<Type, UIPageBase> m_PageStored = new Dictionary<Type, UIPageBase>();
+
     public int I_PageCount => m_Pages.Count;
     public bool m_PageOpening => I_PageCount > 0;
     public bool CheckPageOpening<T>() where T : UIPageBase => m_Pages.Count > 0 && m_Pages.Find(p => p.GetType() == typeof(T));
@@ -23,20 +27,19 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         
         tf_MessageBox = cvs_Overlay.transform.Find("MessageBox").GetComponent<RectTransform>();
 
-
         tf_OverlayControl = cvs_Overlay.transform.Find("Control").GetComponent<RectTransform>();
         tf_CameraControl = cvs_Camera.transform.Find("Control").GetComponent<RectTransform>();
+
+        m_PageStorage = transform.Find("PageStorage");
 
         CanvasScaler scaler = cvs_Overlay.GetComponent<CanvasScaler>();
         m_fittedScale = ((float)Screen.height / Screen.width)/(scaler.referenceResolution.y/scaler.referenceResolution.x);
 
-        UIPageBase.OnPageExit = OnPageExit;
         UIMessageBoxBase.OnMessageBoxExit = OnMessageBoxExit;
     }
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        UIPageBase.OnPageExit = null;
         UIMessageBoxBase.OnMessageBoxExit = null;
     }
 
@@ -55,13 +58,24 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         if (CheckPageOpening<T>())
             return null;
 
-        T page = UIPageBase.Show<T>(tf_OverlayPage, useAnim);
+        T page=null;
+        Type type = typeof(T);
+        if (!m_PageStored.ContainsKey(typeof(T)))
+          m_PageStored.Add(type, UIPageBase.Generate<T>(m_PageStorage));
+
+        page = m_PageStored[type] as T;
+        page.SetActivate(true);
+
+        page.OnPlay(useAnim,OnPageExit);
         m_Pages.Add(page);
         OnAdjustPageSibling();
         return page ;
     }
     protected virtual void OnPageExit(UIPageBase page)
     {
+        page.SetActivate(false);
+        page.transform.SetParent(m_PageStorage);
+
         m_Pages.Remove(page);
         OnAdjustPageSibling();
     }

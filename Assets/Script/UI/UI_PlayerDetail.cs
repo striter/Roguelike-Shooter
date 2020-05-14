@@ -82,8 +82,11 @@ public class UI_PlayerDetail : UIPage
         m_PerkName = m_PerkInfo.Find("Name").GetComponent<UIT_TextExtend>();
         m_PerkIntro = m_PerkInfo.Find("Intro").GetComponent<UIT_TextExtend>();
         m_PerkDetail = m_PerkInfo.Find("Detail").GetComponent<UIT_TextExtend>();
+    }
 
-
+    public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
+    {
+        base.OnPlay(doAnim, OnPageExit);
         SetAbilityInfo(m_Player);
         m_WeaponSelect.OnItemClick(0);
     }

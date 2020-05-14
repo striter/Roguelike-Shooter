@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameSetting;
+using System;
+
 public class UI_CharacterSelect : UIPage {
 
     Transform m_CharacterStatus;
@@ -63,7 +65,7 @@ public class UI_CharacterSelect : UIPage {
         m_CharacterIntro.text = character.GetIntroLocalizeKey();
         m_CharacterAbility.text = character.GetAbilityNameLocalizeKey();
         m_CharacterConfirm.interactable = GameDataManager.CanChangeCharacter(character);
-        EntityCharacterBase characterModel = m_SelectModel.ShowCharacter(character);
+        EntityCharacterPlayer characterModel = m_SelectModel.ShowCharacter(character);
         m_AttributesGrid.ClearGrid();
         m_AttributesGrid.AddItem().text = "Armor:" + characterModel.I_DefaultArmor;
         m_AttributesGrid.AddItem().text = "Move Speed:" + characterModel.F_MovementSpeed;

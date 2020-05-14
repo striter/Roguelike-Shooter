@@ -1,4 +1,5 @@
 ﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,11 @@ public class UI_Armory : UIPage {
         m_ButtonTitle = m_UnlockButton.GetComponentInChildren<Text>();
         m_Title = rtf_Container.Find("Title").GetComponent<Text>();
         m_UnlockButton.onClick.AddListener(OnUnlockButtonClick);
+    }
+
+    public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
+    {
+        base.OnPlay(doAnim, OnPageExit);
         InitArmory();
         OnWeaponClick(enum_PlayerWeaponIdentity.Invalid);
     }

@@ -5,35 +5,21 @@ using UnityEngine.UI;
 
 public class UIPageBase : UIComponentBase,ICoroutineHelperClass
 {
-    public static Action<UIPageBase> OnPageExit;
+    public static T Generate<T>(Transform parentTransform) where T : UIPageBase
+    {
+        T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
+        page.Init();
+        return page;
+    }
+
+    Action<UIPageBase> OnPageExit;
     protected Image img_Background;
     protected Action<bool> OnInteractFinished;
     bool m_Animating;
     public const float F_AnimDuration = .25f;
-    public static T Show<T>(Transform parentTransform,bool useAnim) where T:UIPageBase
-    {
-        T page = TResources.Instantiate<T>("UI/Pages/" + typeof(T).ToString(), parentTransform);
-       
-        page.Init();
-        page.Play(useAnim);
-        return page;
-    }
     protected Button btn_ContainerCancel,btn_WholeCancel;
     protected RectTransform rtf_Container;
     Vector2 m_AnimateStartPos, m_AnimateEndPos;
-    protected void Play(bool useAnim)
-    {
-        m_Animating = useAnim;
-        if (!useAnim)
-            return;
-
-        m_AnimateStartPos = rtf_Container.anchoredPosition + Vector2.up * Screen.height;
-        m_AnimateEndPos = rtf_Container.anchoredPosition;
-        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
-            rtf_Container.anchoredPosition = Vector2.Lerp(m_AnimateStartPos, m_AnimateEndPos, value); 
-        }
-        , 0f, 1f, F_AnimDuration, null, false));
-    }
 
     protected override void Init()
     {
@@ -45,17 +31,26 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
         Transform containerCancel = rtf_Container.Find("BtnCancel");
         if (containerCancel) btn_ContainerCancel = containerCancel.GetComponent<Button>();
 
-        if (btn_WholeCancel)
-        {
-            btn_WholeCancel.onClick.AddListener(OnCancelBtnClick);
-            btn_WholeCancel.enabled = true;
-        }
-        if (btn_ContainerCancel)
-        {
-            btn_ContainerCancel.onClick.AddListener(OnCancelBtnClick);
-            btn_ContainerCancel.enabled = true;
-        }
+        if (btn_WholeCancel)  btn_WholeCancel.onClick.AddListener(OnCancelBtnClick);
+        if (btn_ContainerCancel) btn_ContainerCancel.onClick.AddListener(OnCancelBtnClick);
 
+        m_AnimateStartPos = rtf_Container.anchoredPosition + Vector2.up * Screen.height;
+        m_AnimateEndPos = rtf_Container.anchoredPosition;
+    }
+
+    public virtual void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
+    {
+        m_Animating = doAnim;
+        this.OnPageExit = OnPageExit;
+        if (btn_ContainerCancel) btn_ContainerCancel.enabled = true;
+        if (btn_WholeCancel) btn_WholeCancel.enabled = true;
+
+        if (!doAnim)
+            return;
+        this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
+            rtf_Container.anchoredPosition = Vector2.Lerp(m_AnimateStartPos, m_AnimateEndPos, value);
+        }
+        , 0f, 1f, F_AnimDuration, null, false));
     }
 
     protected virtual void OnCancelBtnClick()
@@ -75,12 +70,7 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
     void OnHideFinished()
     {
         OnInteractFinished?.Invoke(false);
-        Destroy(this.gameObject);
+        OnPageExit(this);
     }
 
-    protected virtual void OnDestroy()
-    {
-        this.StopAllSingleCoroutines();
-        OnPageExit?.Invoke(this);
-    }
 }
