@@ -26,6 +26,7 @@ public class WeaponCastAnimKatana : WeaponCastAnim
 
     protected override void OnKeyAnim()
     {
+        base.OnKeyAnim();
         DoMeleeCast(m_Dashing ? m_DashCastIndex : m_BaseSFXWeaponIndex, GetMeleeSize());
 
         if (m_Dashing)

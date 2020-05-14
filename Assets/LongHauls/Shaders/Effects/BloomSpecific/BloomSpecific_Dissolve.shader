@@ -16,8 +16,8 @@
 	SubShader
 	{
 		Tags{"RenderType" = "BloomDissolveEdge"  "Queue" = "Geometry"}
-			Cull Off
-			Blend SrcAlpha OneMinusSrcAlpha
+		Cull Off
+
 		CGINCLUDE
 		#include "../../CommonLightingInclude.cginc"
 		#include "UnityCG.cginc"

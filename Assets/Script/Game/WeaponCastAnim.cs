@@ -23,6 +23,7 @@ public class WeaponCastAnim : WeaponCastBase {
     }
     protected override void OnKeyAnim()
     {
+        base.OnKeyAnim();
         DoMeleeCast(m_BaseSFXWeaponIndex, GetMeleeSize());
     }
 

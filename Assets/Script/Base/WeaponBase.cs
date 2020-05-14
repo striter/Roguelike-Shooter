@@ -108,7 +108,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     public virtual void OnDealtDamage(float amountApply) { }
     public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { if (eventType == TAnimatorEvent.enum_AnimEvent.Fire) OnKeyAnim(); }
-    protected virtual void OnKeyAnim() {Debug.LogError("Override This Please"); }
+    protected virtual void OnKeyAnim() { }
 
     public virtual void Tick(bool firePausing, float deltaTime)
     {

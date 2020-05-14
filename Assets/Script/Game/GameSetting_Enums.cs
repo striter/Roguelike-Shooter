@@ -155,7 +155,7 @@ namespace GameSetting
 
         HeavySword = 301,Katana=302,HammerOfDawn=303,BloodThirster=304,
 
-        LavaWand = 401,PoisonWand = 402,FrostWand = 403,
+        LavaWand = 401,PoisonWand = 402,FrostWand = 403,BlastWand=404,DestroyerWand=405,
 
         Grenade=501,HealPotion=502,
     }

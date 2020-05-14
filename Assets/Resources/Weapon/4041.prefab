@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114973347317709960}
   - component: {fileID: 114301506324175386}
   m_Layer: 9
-  m_Name: 5011
+  m_Name: 4041
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,13 +70,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_CastType: 1
   E_CastTarget: -1
-  I_CastParticleIndex: 29013
+  I_CastParticleIndex: 29014
   B_CastForward: 0
   I_TickCount: 1
   F_Tick: 0.5
   E_AreaType: 1
-  V4_CastInfo: {x: 3, y: 0, z: 0, w: 0}
+  V4_CastInfo: {x: 2, y: 0, z: 0, w: 0}
   I_ImpactIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
-  B_CameraShake: 1
+  B_CameraShake: 0

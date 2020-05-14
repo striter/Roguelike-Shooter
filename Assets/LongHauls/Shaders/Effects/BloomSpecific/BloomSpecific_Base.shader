@@ -8,9 +8,8 @@
 
 	SubShader
 	{ 
-		Tags {"RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Transparent" }
+		Tags {"RenderType" = "BloomColor" "IgnoreProjector" = "True" "Queue" = "Geometry" }
 		Cull Back Lighting Off Fog { Color(0,0,0,0) }
-		Blend SrcAlpha OneMinusSrcAlpha
 		Pass
 		{
 			name "MAIN"

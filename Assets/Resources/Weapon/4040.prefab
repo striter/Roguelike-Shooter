@@ -19,9 +19,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4550938155433920}
-  - component: {fileID: 114813438346508476}
+  - component: {fileID: 114103837500363580}
   m_Layer: 9
-  m_Name: 5010
+  m_Name: 4040
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114813438346508476
+--- !u!114 &114103837500363580
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -48,25 +48,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1032428382501042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5d83f0e5c561fe4fa5e265313ef8721, type: 3}
+  m_Script: {fileID: 11500000, guid: 140ce9382ecb98f44b5a78a6247bf2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: 1
-  F_Speed: 10
+  E_ProjectileType: -1
+  F_Speed: 15
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 0}
-  I_TrailIndex: 70013
-  I_MuzzleIndex: 10013
+  I_TrailIndex: 70014
+  I_MuzzleIndex: 19014
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
-  F_Radius: 0.2
-  F_Height: 0.6
+  F_Radius: 0.5
+  F_Height: 1
   RI_CountExtension:
     start: 0
     length: 0
   F_OffsetExtension: 0
-  F_DirectionPitchAngle: 30
-  B_RandomRotation: 1
-  B_Bounce: 1
-  F_BounceSpeedMultiply: 0.5
-  F_CastTimeAfterHit: 0.5
