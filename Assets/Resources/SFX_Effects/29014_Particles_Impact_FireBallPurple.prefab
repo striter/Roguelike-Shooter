@@ -87,7 +87,6 @@ GameObject:
   - component: {fileID: 4065476607211068}
   - component: {fileID: 198934267849071704}
   - component: {fileID: 199564875650063134}
-  - component: {fileID: 114969599191930062}
   m_Layer: 0
   m_Name: FireballExplosionPurple
   m_TagString: Untagged
@@ -205,22 +204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4323f6332e1c1a8449d1e3ebaa1d1335, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114969599191930062
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1561725697285412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aa5c1e37409a9344a344c0468db383d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabSound: {fileID: 1297775994297274, guid: 4dd3b5129e9b7704f9d8e1cfaf7ba718,
-    type: 2}
-  destroyWhenDone: 1
-  soundPrefabIsChild: 0
-  pitchRandomMultiplier: 1.4
 --- !u!198 &198037882206513630
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -10505,7 +10488,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 0
-  randomSeed: 299461421
+  randomSeed: 324026449
   InitialModule:
     serializedVersion: 3
     enabled: 1
