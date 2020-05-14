@@ -16,7 +16,7 @@ public class SFXCastHammerOfDawn : SFXCast {
     {
         List<EntityBase> entities= base.DoCastDealtDamage();
 
-        entities.Traversal((EntityBase entity) => { GameObjectManager.SpawnSFXWeapon<SFXCast>(m_DawnSFXIndex, entity.transform.position, Vector3.up).Play(m_DamageInfo); });
+        entities.Traversal((EntityBase entity) => { GameObjectManager.SpawnSFXWeapon<SFXCast>(m_DawnSFXIndex, entity.transform.position+Vector3.up, Vector3.up).Play(m_DamageInfo); });
 
         return entities;
     }
