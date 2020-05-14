@@ -69,7 +69,7 @@ GameObject:
   - component: {fileID: 114099882450065170}
   - component: {fileID: 114402748123247416}
   m_Layer: 0
-  m_Name: 30002_Turret_Minigun
+  m_Name: 602
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -326,20 +326,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 0
-  E_SpawnType: -1
   I_DefaultArmor: 0
   F_MovementSpeed: 0
   F_AttackSpread: 0
   E_AnimatorIndex: -1
   F_AIChaseRange: 30
   F_AIAttackRange: 30
+  F_BaseDamage: 0
+  I_BuffApplyOnHit: 0
+  F_AttackRate: 1
   F_AttackDuration:
     start: 0
     length: 0
   F_AttackTimes:
     start: 1
     length: 0
-  F_AttackRate: 1
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 50
   B_AttackMove: 1

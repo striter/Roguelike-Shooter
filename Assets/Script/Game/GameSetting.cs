@@ -740,6 +740,12 @@ namespace GameSetting
                 AddExpire(GameDataManager.CreatePlayerPerk(PerkSaveData.New(perkID)));
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerPerkStatus, this);
         }
+        public override void OnRecycle()
+        {
+            base.OnRecycle();
+            m_ExpirePerks.Clear();
+            m_ExpireInteracts.Clear();
+        }
         #endregion
         #region Expire Update
         public override void AddExpire(EntityExpireBase expire)
