@@ -16,4 +16,8 @@ public class TileEdgeObjectBase : TileItemBase,IObjectPoolStaticBase<enum_TileEd
         Init();
         this.OnRecycle = OnRecycle;
     }
+
+    public void OnPoolItemRecycle()
+    {
+    }
 }

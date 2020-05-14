@@ -44,6 +44,12 @@ public class EntityCharacterBase : EntityBase
         m_CharacterInfo = GetEntityInfo();
     }
 
+    public override void OnPoolItemRecycle()
+    {
+        base.OnPoolItemRecycle();
+        m_CharacterInfo.OnRecycle();
+    }
+
     protected override void OnPoolItemEnable()
     {
         base.OnPoolItemEnable();
@@ -163,12 +169,6 @@ public class EntityCharacterBase : EntityBase
         m_DeadCounter.Replay();
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCharacterDead, this);
     }
-    public override void DoRecycle()
-    {
-        base.DoRecycle();
-        m_CharacterInfo.OnRecycle();
-    }
-
     protected override void OnUIHealthChanged(enum_HealthChangeMessage type)
     {
         base.OnUIHealthChanged(type);

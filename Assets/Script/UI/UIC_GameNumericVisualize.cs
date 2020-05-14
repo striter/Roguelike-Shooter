@@ -22,8 +22,6 @@ public class UIC_GameNumericVisualize : UIControlBase
     {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageFinished, ClearAll);
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnGameExit, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterAI>(enum_BC_UIStatus.UI_OnWillAIAttack,OnWillAIAttack);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup,OnPlayerPickupAmount);
@@ -33,8 +31,6 @@ public class UIC_GameNumericVisualize : UIControlBase
         base.OnDestroy();
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageFinished, ClearAll);
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnGameExit, ClearAll);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterAI>(enum_BC_UIStatus.UI_OnWillAIAttack, OnWillAIAttack);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup, OnPlayerPickupAmount);
@@ -83,11 +79,4 @@ public class UIC_GameNumericVisualize : UIControlBase
     
     void OnWillAIAttack(EntityCharacterAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
 
-    void ClearAll()
-    {
-        m_HealthGrid.ClearGrid();
-        m_DamageGrid.ClearGrid();
-        m_PickupGrid.ClearGrid();
-        m_AttackIndicateGrid.ClearGrid();
-    }
 }

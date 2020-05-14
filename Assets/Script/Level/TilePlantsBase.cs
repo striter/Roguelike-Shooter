@@ -17,6 +17,9 @@ public class TilePlantsBase : TileItemBase,IObjectPoolStaticBase<enum_TilePlants
         GetComponentsInChildren<HitCheckDynamic>().Traversal((HitCheckDynamic hitCheck) => { hitCheck.Attach(OnObjectHit); });
         this.OnRecycle = OnRecycle;
     }
+    public void OnPoolItemRecycle()
+    {
+    }
 
     public override void OnGenerateItem(ChunkTileData _data, System.Random random)
     {
@@ -29,4 +32,5 @@ public class TilePlantsBase : TileItemBase,IObjectPoolStaticBase<enum_TilePlants
         DoRecycle();
         return true;
     }
+
 }

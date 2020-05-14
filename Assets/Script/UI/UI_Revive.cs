@@ -2,25 +2,30 @@
 using UnityEngine.UI;
 public class UI_Revive : UIPage
 {
-    Action OnRevive;
+    Action OnRevive,OnCancel;
     Button btn_Revive;
     protected override void Init()
     {
         base.Init();
         btn_Revive = rtf_Container.Find("BtnRevive").GetComponent<Button>();
-        btn_Revive.onClick.AddListener(OnVideoBtnClick);
+        btn_Revive.onClick.AddListener(OnReviveBtnClick);
     }
 
-    public void Play(Action _OnVideoFinished)
+    public void Play(Action _OnRevive,Action _OnCancel)
     {
-        OnRevive = _OnVideoFinished;
+        OnRevive = _OnRevive;
+        OnCancel = _OnCancel;
     }
 
-    void OnVideoBtnClick()
+    void OnReviveBtnClick()
     {
         OnRevive();
-        OnCancelBtnClick();
+        base.OnCancelBtnClick();
     }
-    
-    
+
+    protected override void OnCancelBtnClick()
+    {
+        OnCancel();
+        base.OnCancelBtnClick();
+    }
 }

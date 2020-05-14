@@ -40,7 +40,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     public override float m_baseMovementSpeed => m_BaseMovementSpeed;
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
-    protected float f_reviveCheck = 0f;
+    protected TimerBase m_ReviveTimer=new TimerBase(GameConst.F_PlayerReviveCheckAfterDead);
 
     protected override CharacterExpireManager GetEntityInfo()
     {
@@ -63,7 +63,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         m_Agent.updateRotation = false;
         m_Controller = GetComponent<CharacterController>();
     }
-    
+
     public  EntityCharacterPlayer OnPlayerActivate(CGameProgressSave _battleSave)
     {
         OnMainCharacterActivate(enum_EntityFlag.Player);
@@ -81,42 +81,9 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnSwapWeapon(true);
         return this;
     }
-
-    public void PlayAnim(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
-    public void PlayRecoil(float recoil) => TPSCameraController.Instance.AddRecoil(recoil);
-    public void PlayTeleport(Vector3 position,Quaternion rotation)
+    public override void OnPoolItemRecycle()
     {
-        m_Controller.enabled = false;           //Magic Spell 1
-        m_Agent.enabled = false;
-        transform.position = position;
-        transform.rotation = rotation;
-        m_Controller.enabled = true;        //Magic Spell 2
-        m_Agent.enabled = true;
-    }
-
-    protected override void OnDead()
-    {
-        f_reviveCheck = GameConst.F_PlayerReviveCheckAfterDead;
-        m_Animator.OnDead();
-        if (m_WeaponCurrent) m_WeaponCurrent.OnShow(false);
-        m_MoveAxisInput = Vector2.zero;
-        m_AimAssist.SetEnable(false);
-        base.OnDead();
-    }
-
-    protected override void OnRevive()
-    {
-        base.OnRevive();
-        if (m_WeaponCurrent) m_WeaponCurrent.OnShow(true);
-        m_AimAssist.SetEnable(true);
-        m_Animator.OnRevive();
-
-        AudioManager.Instance.Play2DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_ReviveClip));
-    }
-
-    public override void DoRecycle()
-    {
-        base.DoRecycle();
+        base.OnPoolItemRecycle();
         if (m_AimAssist)
         {
             m_AimAssist.Recycle();
@@ -139,6 +106,39 @@ public class EntityCharacterPlayer : EntityCharacterBase {
         OnUIInteractStatus();
 
         UIManager.Instance.RemoveBindings();
+    }
+
+    public void PlayAnim(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
+    public void PlayRecoil(float recoil) => TPSCameraController.Instance.AddRecoil(recoil);
+    public void PlayTeleport(Vector3 position,Quaternion rotation)
+    {
+        m_Controller.enabled = false;           //Magic Spell 1
+        m_Agent.enabled = false;
+        transform.position = position;
+        transform.rotation = rotation;
+        m_Controller.enabled = true;        //Magic Spell 2
+        m_Agent.enabled = true;
+    }
+
+    protected override void OnDead()
+    {
+        m_ReviveTimer.Replay();
+
+        m_Animator.OnDead();
+        if (m_WeaponCurrent) m_WeaponCurrent.OnShow(false);
+        m_MoveAxisInput = Vector2.zero;
+        m_AimAssist.SetEnable(false);
+        base.OnDead();
+    }
+
+    protected override void OnRevive()
+    {
+        base.OnRevive();
+        if (m_WeaponCurrent) m_WeaponCurrent.OnShow(true);
+        m_AimAssist.SetEnable(true);
+        m_Animator.OnRevive();
+
+        AudioManager.Instance.Play2DClip(m_EntityID, AudioManager.Instance.GetGameSFXClip(m_ReviveClip));
     }
 
     void OnMainDown(bool down)
@@ -277,7 +277,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     {
         recycleWeapon.OnShow(false);
         recycleWeapon.OnDetach();
-        recycleWeapon.DoItemRecycle();
+        recycleWeapon.DoRecycle();
     }
 
     void OnSwapWeapon(bool isFirst)
@@ -439,12 +439,13 @@ public class EntityCharacterPlayer : EntityCharacterBase {
     protected override void OnDeadTick(float deltaTime)
     {
         base.OnDeadTick(deltaTime);
-        if (f_reviveCheck < 0)
-            return;
 
-        f_reviveCheck -= Time.deltaTime;
-        if (f_reviveCheck < 0)
-            OnCheckRevive();
+        if (m_ReviveTimer.m_Timing)
+        {
+            m_ReviveTimer.Tick(deltaTime);
+            if(!m_ReviveTimer.m_Timing)
+                OnCheckRevive();
+        }
     }
     void OnCheckRevive()
     {
@@ -453,7 +454,7 @@ public class EntityCharacterPlayer : EntityCharacterBase {
             RevivePlayer();
             return;
         }
-        GameManager.Instance.CheckRevive(RevivePlayer);
+        GameManager.Instance.CheckPlayerRevive(RevivePlayer);
     }
     void RevivePlayer()
     {

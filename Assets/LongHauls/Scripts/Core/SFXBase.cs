@@ -57,7 +57,7 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
     {
         B_Activating = false;
         m_AttachTo = null;
-        DoItemRecycle();
+        DoRecycle();
     }
 
     public void AttachTo(Transform _attachTo)

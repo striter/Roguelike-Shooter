@@ -15,5 +15,9 @@ public class LevelTileItemEditorTerrain : TileItemBase, IObjectPoolStaticBase<en
         Init();
         this.OnRecycle = OnRecycle;
     }
+    public void OnPoolItemRecycle()
+    {
+    }
     public override void DoRecycle() => OnRecycle(m_EditorTerrainType, this);
+
 }

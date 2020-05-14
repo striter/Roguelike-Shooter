@@ -6,6 +6,7 @@ using UnityEngine;
 #region Static Pool
 public interface IObjectPoolStaticBase<T>{
     void OnPoolItemInit(T identity,Action<T,MonoBehaviour> OnRecycle);
+    void OnPoolItemRecycle();
 }
 public class CObjectPoolStaticPrefabBase<T> :MonoBehaviour,IObjectPoolStaticBase<T>
 {
@@ -18,7 +19,9 @@ public class CObjectPoolStaticPrefabBase<T> :MonoBehaviour,IObjectPoolStaticBase
         m_PoolItemInited = true;
         OnSelfRecycle = _OnSelfRecycle;
     }
-    public void DoItemRecycle() => OnSelfRecycle?.Invoke(m_Identity, this);
+    public void DoRecycle() =>  OnSelfRecycle?.Invoke(m_Identity, this);
+
+    public virtual void OnPoolItemRecycle() { }
     private void OnEnable() { if (m_PoolItemInited) OnPoolItemEnable(); }
     private void OnDisable() { if (m_PoolItemInited) OnPoolItemDisable(); }
     protected virtual void OnPoolItemEnable() { }
@@ -124,6 +127,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         }
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_ActiveList.Remove(obj);
+        obj.OnPoolItemRecycle();
         obj.SetActivate(false);
         obj.transform.SetParent(tf_PoolSpawn);
         info.m_DeactiveQueue.Enqueue(obj);

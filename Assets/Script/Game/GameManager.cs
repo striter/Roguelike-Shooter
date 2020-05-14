@@ -101,18 +101,23 @@ public class GameManager : GameManagerBase
     }
 
     #region GenerateLevel
-    void LoadStage() => this.StartSingleCoroutine(999, GenerateStage());
+    void LoadStage()
+    {
+        SetBulletTime(false);
+
+        m_GameLevel.StageInit();
+        GameObjectManager.Recycle();
+        EntityDicReset();
+
+        this.StartSingleCoroutine(999, GenerateStage());
+    }
+
     IEnumerator GenerateStage() 
     {
         m_GameLoading = true;
         LoadingManager.Instance.ShowLoading(m_GameLevel.m_Stage);
         CameraController.MainCamera.enabled = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameLoadBegin);
-        yield return null;
-        m_GameLevel.StageInit();
-
-        EntityDicReset();
-        GameObjectManager.Recycle();
 
         yield return GameLevelManager.Instance.Generate(m_GameLevel.m_GameStyle, m_GameLevel.m_Random, GenerateStageRelative);
 
@@ -305,6 +310,7 @@ public class GameManager : GameManagerBase
             case enum_GamePortalType.StageEnd:
                 m_GameLevel.NextStage();
                 GameDataManager.StageFinishSaveData(m_LocalPlayer, m_GameLevel);
+                SetBulletTime(true,.1f);
                 OnPortalEnter(1f, tf_CameraAttach, LoadStage);
                 break;
             case enum_GamePortalType.GameWin:
@@ -313,18 +319,19 @@ public class GameManager : GameManagerBase
           }
     }
 
-
-    #region Revive Management
-    bool m_revived = false;
-    public void CheckRevive(Action _OnRevivePlayer)
+    bool m_FreeRevived = false;
+    public void CheckPlayerRevive(Action _OnRevivePlayer)
     {
-        if (m_revived)
+        if (!m_FreeRevived)
+        {
+            m_FreeRevived = true;
+            GameUIManager.Instance.ShowPage<UI_Revive>(true, true, 0f).Play(_OnRevivePlayer,OnGameFail);
             return;
-        m_revived = true;
-        GameUIManager.Instance.ShowPage<UI_Revive>(true, true, 0f).Play(_OnRevivePlayer);
+        }
+        OnGameFail();
     }
-    #endregion
-
+    void OnGameFail()=> OnGameFinished(false);
+    
     void OnGameFinished(bool win)
     {
         m_GameLevel.GameFinished(win);
@@ -455,11 +462,7 @@ public class GameManager : GameManagerBase
             if (entity.m_Flag != enum_EntityFlag.Neutal && flag != entity.m_Flag)
                 m_OppositeEntities[flag].Remove(character);
         });
-
-        if (entity.m_ControllType == enum_EntityType.Player)
-            OnGameFinished(false);
     }
-
 
     void OnCharacterRevive(EntityCharacterBase character)
     {

@@ -25,11 +25,6 @@ public class EntityBase : CObjectPoolStaticPrefabBase<int>
     }
     protected virtual void OnEntityActivate(enum_EntityFlag flag,float startHealth =0)
     {
-        if (m_Activating)
-        {
-            Debug.LogWarning("Activated entity can't be activate again");
-            return;
-        }
         m_Activating = true;
         m_Flag = flag;
         m_EntityID = GameIdentificationManager.GetEntityID(m_Flag);
@@ -64,18 +59,13 @@ public class EntityBase : CObjectPoolStaticPrefabBase<int>
         EnableHitbox(true);
     }
 
-    public virtual void DoRecycle()
+    public override void OnPoolItemRecycle()
     {
-        if (!m_Activating)
-        {
-            Debug.LogError("Recycled entity can't be recycle again!");
-            return;
-        }
+        base.OnPoolItemRecycle();
         m_Activating = false;
-
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
-        DoItemRecycle();
     }
+
     protected virtual void EnableHitbox(bool setHitable)
     {
         if (m_HitCheckEnabled == setHitable)

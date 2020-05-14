@@ -17,7 +17,11 @@ public class TileObjectBase : TileItemBase,IObjectPoolStaticBase<enum_TileObject
         m_ObjectType = identity;
         this.OnRecycle = OnRecycle;
     }
-    
+    public void OnPoolItemRecycle()
+    {
+    }
+
+
     public override void DoRecycle()=> OnRecycle(m_ObjectType, this);
 
 }

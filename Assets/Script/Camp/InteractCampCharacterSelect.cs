@@ -39,7 +39,7 @@ public class InteractCampCharacterSelect : InteractCampBase {
     {
         if (!m_Character)
             return;
-        m_Character.DoItemRecycle();
+        m_Character.DoRecycle();
         m_Character = null;
     }
 

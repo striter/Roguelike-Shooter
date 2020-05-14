@@ -65,17 +65,9 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         Application.targetFrameRate = (int)OptionsDataManager.m_OptionsData.m_FrameRate;
     }
 
-    protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)
-    {
-        SetBulletTime(true, .1f);
-        SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
-    }
+    protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)=>SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
 
-    protected void OnPortalExit(float duration,Transform vortexTarget)
-    {
-        SetBulletTime(false);
-        SetPostEffect_Vortex(false, vortexTarget, 1f);
-    }
+    protected void OnPortalExit(float duration,Transform vortexTarget)=> SetPostEffect_Vortex(false, vortexTarget, 1f);
     #region Game Effect
     protected static float m_BulletTime = 1f;
     public static bool m_BulletTiming => m_BulletTime != 1f;

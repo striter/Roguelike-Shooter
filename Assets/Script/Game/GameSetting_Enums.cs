@@ -15,7 +15,7 @@ namespace GameSetting
         OnCharacterHealthChange,
         OnCharacterDead,
         OnCharacterRevive,
-        
+
         OnStageStart,
         OnStageFinished,
 

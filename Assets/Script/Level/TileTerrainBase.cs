@@ -16,8 +16,13 @@ public class TileTerrainBase : TileItemBase,IObjectPoolStaticBase<enum_TileTerra
         this.OnRecycle = OnRecycle;
     }
 
+    public void OnPoolItemRecycle()
+    {
+    }
+
     public override void DoRecycle()
     {
         OnRecycle(m_GroundType,this);
     }
+
 }
