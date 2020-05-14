@@ -200,5 +200,5 @@ MonoBehaviour:
   F_DamageMultiplyPerEnhance: 0.069
   I_ClipAmount: 60
   F_RefillTime: 0.11
-  F_RecoilPerShot: 0.35
+  F_RecoilPerShot: 0.48
   I_ExtraBuffApply: -1
