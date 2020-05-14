@@ -1072,7 +1072,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 6
     m_ConditionEvent: i_weaponType
-    m_EventTreshold: 20005
+    m_EventTreshold: 2005
   - m_ConditionMode: 1
     m_ConditionEvent: t_activate
     m_EventTreshold: 0
@@ -1705,7 +1705,7 @@ AnimatorState:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Attack
-  m_Speed: 0.8333333
+  m_Speed: 0.8
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 1101906499100852390}
@@ -1718,7 +1718,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: a4f7fde0b86a9bd419535ee2de9c4d96, type: 3}
+  m_Motion: {fileID: 7400000, guid: 841b2c438c95c83479a59db0d737063d, type: 3}
   m_Tag: 
   m_SpeedParameter: fm_attack
   m_MirrorParameter: 
