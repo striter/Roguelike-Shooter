@@ -151,6 +151,7 @@ namespace GameSetting
         public static string GetNameLocalizeKey(this ExpirePlayerPerkBase perk) => "Perk_Name_" + perk.m_Index;
         public static string GetDetailLocalizeKey(this ExpirePlayerPerkBase perk) => "Perk_Detail_" + perk.m_Index;
         public static string GetIntroLocalizeKey(this ExpirePlayerPerkBase perk) => "Perk_Intro_" + perk.m_Index;
+        public static string GetNameLocalizeKey(this EntityCharacterBase character) => "Character_Name_" + character.m_Identity;
         public static string GetNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Name_" + character;
         public static string GetIntroLocalizeKey(this enum_PlayerCharacter character) => "Character_Intro_" + character;
         public static string GetAbilityNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_Name_" + character;

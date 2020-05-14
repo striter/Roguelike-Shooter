@@ -445,7 +445,7 @@ namespace GameSetting
             m_IdentityID = identityID;
         }
 
-        public DamageInfo SetDamage(float damage,enum_DamageType type= enum_DamageType.Invalid)
+        public DamageInfo SetDamage(float damage,enum_DamageType type= enum_DamageType.Basic)
         {
             m_DamageBase = damage;
             m_DamageType = type;

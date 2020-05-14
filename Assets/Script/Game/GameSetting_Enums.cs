@@ -19,6 +19,9 @@ namespace GameSetting
         OnStageStart,
         OnStageFinished,
 
+        OnGameTransmitStatus,
+        OnGameTransmitEliteStatus,
+
         OnGameLoadBegin,
         OnGameFinish,
         OnGameExit,
@@ -37,8 +40,6 @@ namespace GameSetting
         UI_PlayerHealthUpdate,
         UI_PlayerPerkStatus,
         UI_PlayerWeaponUpdate,
-
-        UI_GameMissionUpdate,
 
         UI_OnWillAIAttack,
 

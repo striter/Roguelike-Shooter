@@ -264,22 +264,29 @@ public class GameManager : GameManagerBase
     void OnStageStart()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageStart);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameMissionUpdate, "UI_MISSION_SEARCHSIGNAL");
     }
 
     void OnSignalTowerTransmitStart(InteractSignalTower signalTower)
     {
         SetPostEffect_AreaScan(signalTower.m_Canvas.position, Color.red);
         m_GameLevel.OnTransmitTrigger(m_LocalPlayer.transform.position);
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameMissionUpdate, "UI_MISSION_SURVIVE");
+        TBroadCaster<enum_BC_GameStatus>.Trigger( enum_BC_GameStatus.OnGameTransmitStatus,m_GameLevel.m_BattleTransmiting);
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameTransmitEliteStatus, GetCharacter(m_GameLevel.m_TransmitEliteID));
+    }
+
+    void CheckTransmitCharacterKilled(int characterID)
+    {
+        if (!m_GameLevel.CheckTransmitEliteKilled(characterID))
+            return;
+        TBroadCaster<enum_BC_GameStatus>.Trigger<EntityCharacterBase>(enum_BC_GameStatus.OnGameTransmitEliteStatus, null);
     }
 
     bool OnSignalTowerTransmitCountFinish(InteractSignalTower signalTower)
     {
-        if (!m_GameLevel.CheckTransmitFinish())
+        if (!m_GameLevel.CheckTransmitEliteAlive())
             return false;
-
-        TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_GameMissionUpdate, "UI_MISSION_ENTERPORTAL");
+        
+        TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameTransmitStatus, m_GameLevel.m_BattleTransmiting);
         SetPostEffect_AreaScan(signalTower.m_PortalPos.position,Color.green);
         enum_GamePortalType portal = m_GameLevel.GetNextStageGenerate();
         GameObjectManager.SpawnInteract<InteractPortal>(signalTower.m_PortalPos.position, signalTower.m_PortalPos.rotation).Play(portal, OnChunkPortalEnter);
@@ -337,7 +344,7 @@ public class GameManager : GameManagerBase
     #region Pickup Management
     public InteractPickupWeapon SpawnRandomUnlockedWeapon(Vector3 pos,Quaternion rot,Dictionary<enum_Rarity,float> weaponGenerate,Transform trans=null, System.Random random = null)=> GameObjectManager.SpawnInteract<InteractPickupWeapon>(pos, rot,trans).Play(GameDataManager.RandomUnlockedWeaponData(weaponGenerate.RandomPercentage( enum_Rarity.Ordinary,random),m_GameLevel.m_Stage,random));
 
-    void SpawnBattleEnermyDeadDrops(EntityCharacterBase entity)
+    void SpawnCharacterDeadDrops(EntityCharacterBase entity)
     {
         if (entity.m_Flag != enum_EntityFlag.Enermy||entity.b_isSubEntity)
             return;
@@ -381,6 +388,7 @@ public class GameManager : GameManagerBase
     public int m_FlagEntityCount(enum_EntityFlag flag) => m_AllyEntities[flag].Count;
     public List<EntityCharacterBase> GetCharacters(enum_EntityFlag sourceFlag, bool getAlly) => getAlly ? m_AllyEntities[sourceFlag] : m_OppositeEntities[sourceFlag];
     public bool EntityExists(int entityID) => m_Entities.ContainsKey(entityID);
+
     public EntityBase GetEntity(int entityID)
     {
         if (!EntityExists(entityID))
@@ -394,7 +402,7 @@ public class GameManager : GameManagerBase
             Debug.LogError("Character Not Exist in ID:" + entityID.ToString());
         return m_Characters[entityID];
     }
-    void InitEntityDic()
+    protected void InitEntityDic()
     {
         TCommon.TraversalEnum((enum_EntityFlag flag) => {
             m_AllyEntities.Add(flag, new List<EntityCharacterBase>());
@@ -402,7 +410,7 @@ public class GameManager : GameManagerBase
         });
     }
 
-    void EntityDicReset()
+    protected void EntityDicReset()
     {
         m_Entities.Clear();
         m_Characters.Clear();
@@ -431,8 +439,8 @@ public class GameManager : GameManagerBase
         if (character.m_ControllType == enum_EntityType.Player)
             SetPostEffect_Dead();
 
-        SpawnBattleEnermyDeadDrops(character);
-        m_GameLevel.OnCharacterDead(character.m_EntityID);
+        SpawnCharacterDeadDrops(character);
+        CheckTransmitCharacterKilled(character.m_EntityID);
     }
 
     void OnEntityRecycle(EntityBase entity)
@@ -614,7 +622,7 @@ public class GameProgressManager
     List<Vector3> m_EnermySpawnPoints = new List<Vector3>();
     TimerBase m_BattleCheckTimer = new TimerBase();
     public bool m_BattleTransmiting =>m_TransmitEliteID>0;
-    int m_TransmitEliteID;
+    public int m_TransmitEliteID { get; private set; } = -1;
     List<SEnermyGenerate> m_EnermyGenerate;
 
     public void BattleInit(List<Vector3> _spawnPoints, enum_GameDifficulty difficulty, enum_GameStage stage)
@@ -640,16 +648,19 @@ public class GameProgressManager
     public void OnTransmitTrigger(Vector3 playerPos)
     {
         m_TransmitEliteID = GameObjectManager.SpawnEntityCharacterAI(GameConst.L_GameEliteIndexes.RandomItem(), GetSpawnList(playerPos)[0], Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty, false).m_EntityID;
-    } 
-
-    public void OnCharacterDead(int enermyID)
-    {
-        if (enermyID != m_TransmitEliteID)
-            return;
-        m_TransmitEliteID = -1;
     }
 
-    public bool CheckTransmitFinish() => !m_BattleTransmiting;
+    public bool CheckTransmitEliteKilled(int enermyID)
+    {
+        if (enermyID!=m_TransmitEliteID)
+            return false;
+        
+        m_TransmitEliteID = -1;
+        return true;
+    } 
+
+    public bool CheckTransmitEliteAlive() => !m_BattleTransmiting;
+    
 
     void GenerateCommonEnermies(List<int> enermyGenerate, Vector3 targetPoint)
     {
