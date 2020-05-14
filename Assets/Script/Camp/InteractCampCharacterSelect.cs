@@ -27,20 +27,12 @@ public class InteractCampCharacterSelect : InteractCampBase {
 
     public EntityCharacterPlayer ShowCharacter(enum_PlayerCharacter character)
     {
+        if (m_Character)
+            m_Character.DoRecycle();
+
         rotation = m_CameraPos.rotation.eulerAngles.y;
-        RecycleUnusedCharacter();
         m_Character = GameObjectManager.SpawnPlayerCharacter(character,m_CharacterPos.position,m_CharacterPos.rotation);
         return m_Character;
-    }
-
-    public void OnCharacterSwitch()=>  m_Character = null;
-
-    public void RecycleUnusedCharacter()
-    {
-        if (!m_Character)
-            return;
-        m_Character.DoRecycle();
-        m_Character = null;
     }
 
     public void RotateCharacter(Vector2 delta)

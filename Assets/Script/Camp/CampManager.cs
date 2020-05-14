@@ -40,13 +40,18 @@ public class CampManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
     }
 
+    public void RecycleLocalCharacter()
+    {
+        m_LocalPlayer.DoRecycle();
+    }
+
     public void OnSwitchCharacter(EntityCharacterPlayer character)
     {
-        if (m_LocalPlayer)
-            m_LocalPlayer.DoRecycle();
-
         m_LocalPlayer = character.OnPlayerActivate(new CGameProgressSave());
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
+
+        if (GameDataManager.CanChangeCharacter(character.m_Character))
+            GameDataManager.SwitchCharacter(character.m_Character);
     }
 
     private void Update()

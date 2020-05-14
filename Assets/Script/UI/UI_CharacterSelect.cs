@@ -30,29 +30,24 @@ public class UI_CharacterSelect : UIPage {
         m_AttributesGrid = new UIT_GridControllerComponent<Text>(m_CharacterStatus.Find("Attributes"));
         m_CharacterSelect = new UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem>(rtf_Container.Find("CharacterSelectGrid"),OnCharacterSelect);
         TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelect.AddItem((int)character); });
-        m_SelectingCharacter = enum_PlayerCharacter.Invalid;
     }
 
     public void Play(InteractCampCharacterSelect characterSelect)
     {
+        m_SelectingCharacter = enum_PlayerCharacter.Invalid;
+        CampManager.Instance.RecycleLocalCharacter();
         m_SelectModel = characterSelect;
         m_CharacterSelect.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
     }
 
     void OnCharacterSelect(int index)=> UpdateCharacter((enum_PlayerCharacter)index);
 
-    void OnConfirmBtnClick()
-    {
-        GameDataManager.SwitchCharacter(m_SelectingCharacter);
-        CampManager.Instance.OnSwitchCharacter(m_SelectModel.m_Character);
-        m_SelectModel.OnCharacterSwitch();
-        OnCancelBtnClick();
-    }
+    void OnConfirmBtnClick()=>OnCancelBtnClick();
 
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
-        m_SelectModel.RecycleUnusedCharacter();
+        CampManager.Instance.OnSwitchCharacter(m_SelectModel.m_Character);
     }
 
     void UpdateCharacter(enum_PlayerCharacter character)

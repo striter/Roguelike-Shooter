@@ -106,7 +106,6 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
         m_Interact = null;
         OnUIInteractStatus();
-
         UIManager.Instance.RemoveBindings();
     }
 
