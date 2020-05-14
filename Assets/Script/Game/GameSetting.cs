@@ -460,6 +460,7 @@ namespace GameSetting
 
         public DamageInfo AddPresetBuff(int presetBuffID)
         {
+            if(presetBuffID>0)
             m_BaseBuffApply.Add(GameDataManager.GetPresetBuff(presetBuffID));
             return this;
         }
