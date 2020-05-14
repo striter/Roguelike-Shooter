@@ -401,7 +401,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         if (!m_Interact.TryInteract(this))
             return false;
 
-        if (!m_Interact.m_InteractEnable)
+        if (m_Interact!=null&&!m_Interact.m_InteractEnable)
             m_Interact = null;
 
         OnUIInteractStatus();
