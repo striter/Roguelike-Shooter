@@ -483,7 +483,7 @@ MonoBehaviour:
   F_RecoilPerShot: 5
   I_ExtraBuffApply: -1
   F_AimSpread: 0
-  B_MultiShotAvailable: 0
+  B_MultiShotAvailable: 1
   I_PelletsPerShot: 1
   F_PelletSpreadAngle: 1
 --- !u!114 &114989075749281366
