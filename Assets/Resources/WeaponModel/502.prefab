@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 1
+  F_FireRate: 5
 --- !u!114 &114815661555332962
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -488,10 +488,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 2004
   B_AttachLeft: 0
-  F_Damage: 2
+  F_Damage: 46
   F_DamageMultiplyPerEnhance: 0.1
   I_ClipAmount: 2
-  F_RefillTime: 20
+  F_RefillTime: 10
   F_RecoilPerShot: 0
   I_ExtraBuffApply: -1
   I_ParticleIndex: 19102

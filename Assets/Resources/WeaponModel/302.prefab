@@ -421,4 +421,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   F_FireRate: 0.3
   I_StoreIndicatorIndex: 39002
-  F_StoreDuration: 1
+  F_StoreDuration: 0.6
