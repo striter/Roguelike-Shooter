@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponCastAnimKatana : WeaponCastAnim
+public class WeaponDamageCastAnimKatana : WeaponDamageCastAnim
 {
     public float F_DashDistance = 6;
     protected int m_DashCastIndex { get; private set; }
@@ -19,15 +19,15 @@ public class WeaponCastAnimKatana : WeaponCastAnim
     {
         m_Dashing = success;
         if(success)
-            OnAttacherAnim(1);
+            OnAttackAnim(1);
         else
-            OnAttacherAnim(0);
+            OnAttackAnim(0);
     }
 
     protected override void OnKeyAnim()
     {
         DoMeleeCast(m_Dashing ? m_DashCastIndex : m_BaseSFXWeaponIndex, GetMeleeSize());
-
+        OnAmmoCost();
         if (m_Dashing)
             m_Attacher.PlayTeleport(NavigationManager.NavMeshPosition(m_Attacher.transform.position + m_Attacher.transform.forward * F_DashDistance * GetMeleeSize()), m_Attacher.transform.rotation);
     }

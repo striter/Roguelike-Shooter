@@ -476,13 +476,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 2004
   B_AttachLeft: 1
-  F_Damage: 10
-  F_DamageMultiplyPerEnhance: 0.1
-  I_ClipAmount: 10
-  F_RefillTime: 0.1
-  F_RecoilPerShot: 2
-  I_ExtraBuffApply: -1
+  I_ClipAmount: 2
+  F_RefillTime: 1
   m_SpawnIndex: 101
+  m_HealthMultiplierPerEnhance: 0.5
+  m_DamageMultiplierPerEnhance: 0.5
 --- !u!114 &114195839973500648
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -494,4 +492,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 2
+  F_FireRate: 1

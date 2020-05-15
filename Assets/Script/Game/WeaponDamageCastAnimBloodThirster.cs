@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class WeaponCastAnimBloodThirster : WeaponCastAnim {
+public class WeaponDamageCastAnimBloodThirster : WeaponDamageCastAnim {
     public float F_HealthDrainMultiply = .1f;
     
     public override void OnDealtDamage(float amountApply)

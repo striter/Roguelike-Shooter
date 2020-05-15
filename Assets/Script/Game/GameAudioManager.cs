@@ -36,7 +36,7 @@ public class GameAudioManager : AudioManager
             if (m_GameMusic.ContainsKey(music))
                 m_GameMusic.Remove(music);
 
-            AudioClip clip = TResources.GetGameBGM_Styled(music,GameManager.Instance.m_GameLevel.m_GameStyle);
+            AudioClip clip = TResources.GetGameBGM_Styled(music,GameManager.Instance.m_GameProgress.m_GameStyle);
             if (!clip)
                 return;
             m_GameMusic.Add(music, clip);

@@ -178,7 +178,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
         {
             base.OnBeforeDealtDamage(receiver, info);
             if (receiver.m_Health.m_HealthFull)
-                info.AddExtraDamage(Value1 / 100f * m_Stack, 0);
+                info.AddExtraDamage(Value1 / 100f * m_Stack);
         }
 
         public P10014(PerkSaveData saveData) : base(saveData) { }
@@ -341,7 +341,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
         {
             base.OnBeforeDealtDamage(receiver, info);
             if (receiver.m_CharacterInfo.m_Expires.Any(p => GameConst.m_GameDebuffID.Contains(p.m_Index)))
-                info.AddExtraDamage(Value1 * m_Stack / 100f, 0);
+                info.AddExtraDamage(Value1 * m_Stack / 100f);
         }
         public P10023(PerkSaveData saveData) : base(saveData) { }
     }

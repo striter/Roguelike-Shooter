@@ -5,7 +5,7 @@ using GameSetting;
 using TSpecialClasses;
 using UnityEngine;
 
-public class WeaponCastAnim : WeaponCastBase {
+public class WeaponDamageCastAnim : WeaponDamageCast {
     ValueChecker<float> m_ScaleChecker = new ValueChecker<float>(-1);
 
     protected float GetMeleeSize() => m_Attacher.m_CharacterInfo.F_Cast_Melee_SizeMultiply;
@@ -19,8 +19,9 @@ public class WeaponCastAnim : WeaponCastBase {
 
     protected override void OnAutoTrigger()
     {
-        OnAttacherAnim();
+        OnAttackAnim();
     }
+
     protected override void OnKeyAnim()
     {
         base.OnKeyAnim();
@@ -32,7 +33,6 @@ public class WeaponCastAnim : WeaponCastBase {
         SFXCast cast = ShowCast(castIndex, m_Attacher.tf_WeaponAim.position);
         cast.V4_CastInfo = m_BaseSize* castScale;
         cast.Play(GetWeaponDamageInfo(m_BaseDamage));
-        OnAmmoCost();
     }
 
     public override void OnAttach(EntityCharacterPlayer _attacher, Transform _attachTo)

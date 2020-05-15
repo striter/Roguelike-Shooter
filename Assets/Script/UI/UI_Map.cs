@@ -117,8 +117,8 @@ public class UI_Map : UIPage {
         base.OnPlay(doAnim, OnPageExit);
         m_Map.OnPlay();
         m_LocationInfo.SetActivate(false);
-        m_Stage.localizeKey = GameManager.Instance.m_GameLevel.m_Stage.GetLocalizeKey();
-        m_Style.localizeKey = GameManager.Instance.m_GameLevel.m_GameStyle.GetLocalizeKey();
+        m_Stage.localizeKey = GameManager.Instance.m_GameProgress.m_Stage.GetLocalizeKey();
+        m_Style.localizeKey = GameManager.Instance.m_GameProgress.m_GameStyle.GetLocalizeKey();
     }
 
     private void Update()

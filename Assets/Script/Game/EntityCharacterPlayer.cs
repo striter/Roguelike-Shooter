@@ -11,7 +11,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
     public int I_DefaultArmor;
     public override enum_EntityType m_ControllType => enum_EntityType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
-    protected virtual PlayerCharacterAnimator m_Animator { get; private set; }
+    protected virtual PlayerCharacterBethAnimator m_Animator { get; private set; }
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_AimAssist = null;
@@ -57,7 +57,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         tf_WeaponHoldRight = transform.FindInAllChild("WeaponHold_R");
         tf_WeaponHoldLeft = transform.FindInAllChild("WeaponHold_L");
         tf_UIStatus = transform.FindInAllChild("UIStatus");
-        m_Animator = new PlayerCharacterAnimator(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
+        m_Animator = new PlayerCharacterBethAnimator(tf_Model.GetComponent<Animator>(),OnAnimationEvent);
         transform.Find("InteractDetector").GetComponent<InteractDetector>().Init(OnInteractCheck);
         gameObject.layer = GameLayer.I_MovementDetect;
         m_Agent = GetComponent<NavMeshAgent>();
@@ -109,7 +109,8 @@ public class EntityCharacterPlayer : EntityCharacterBase
         UIManager.Instance.RemoveBindings();
     }
 
-    public void PlayAnim(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
+    public void AttackingAnimSet(bool attacking) => m_Animator.Attacking(attacking);
+    public void AttackAnimPlay(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
     public void PlayRecoil(float recoil) => TPSCameraController.Instance.AddRecoil(recoil);
     public void PlayTeleport(Vector3 position,Quaternion rotation)
     {

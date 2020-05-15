@@ -24,7 +24,7 @@ public class GameUIManager : UIManager {
     public void OnGameFinished(GameProgressManager level, Action _OnButtonClick)
     {
         cvs_Camera.gameObject.SetActivate(false);
-        ShowPage<UI_GameResult>(true).Play(level, _OnButtonClick);
+        ShowPage<UI_GameResult>(true).Play(level.m_GameWin,_OnButtonClick);
     }
     
 }

@@ -127,11 +127,11 @@ public class UIC_GameStatus : UIControlBase {
         m_CoinLerp.TickDelta(deltaTime);
         m_Map.MinimapUpdate(GameManager.Instance.m_LocalPlayer);
 
-        int secondPassed= (int)GameManager.Instance.m_GameLevel.m_TimeElapsed;
+        int secondPassed= (int)GameManager.Instance.m_GameBattle.m_TimeElapsed;
         if (m_TimeValueChecker.Check(secondPassed))
             m_Time.text = TTime.TTimeTools.GetMinuteSecond(m_TimeValueChecker.check1);
 
-        int minutePassed = GameManager.Instance.m_GameLevel.m_MinutesElapsed;
+        int minutePassed = GameManager.Instance.m_GameBattle.m_MinutesElapsed;
         if (m_MinuteValueCheck.Check(minutePassed))
         {
             Color color = m_ProgressRampSample.GetPixel((int)(m_ProgressRampSample.width * ((float)minutePassed / UIConst.I_GameProgressDifficultyColorRampMaxMinutes)), 1);

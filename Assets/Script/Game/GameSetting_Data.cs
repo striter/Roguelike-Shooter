@@ -63,17 +63,17 @@ namespace GameSetting
             TGameData<CGameProgressSave>.Save();
         }
 
-        public static void StageFinishSaveData(EntityCharacterPlayer data, GameProgressManager level)
+        public static void StageFinishSaveData(GameManager game )
         {
-            m_GameProgressData.Adjust(data, level);
+            m_GameProgressData.Adjust(game.m_LocalPlayer, game.m_GameProgress, game.m_GameBattle);
             TGameData<CGameProgressSave>.Save();
         }
 
-        public static void OnGameResult(GameProgressManager progress)
+        public static void OnGameResult(bool win, int credit)
         {
-            if (progress.m_GameWin)
+            if (win)
                 m_GameData.UnlockDifficulty();
-            OnCreditStatus(progress.F_CreditGain);
+            OnCreditStatus(credit);
 
             TGameData<CGameProgressSave>.Reset();
             TGameData<CGameProgressSave>.Save();
@@ -298,20 +298,24 @@ namespace GameSetting
         #region Enermy Perk Data
        public const int m_DefaultEnermyPerkIdentity= 20000;
         static Dictionary<int, ExpireGameCharacterBase> m_AllEnermyPerks = new Dictionary<int, ExpireGameCharacterBase>();
+        static Dictionary<int, Type> m_AllGameCharcterPerkTypes = new Dictionary<int, Type>();
         static List<int> m_AvailableEnermyPerks = new List<int>();
         public static void InitEnermyPerks()
         {
             m_AllEnermyPerks.Clear();
+            m_AllGameCharcterPerkTypes.Clear();
             m_AvailableEnermyPerks.Clear();
             TReflection.TraversalAllInheritedClasses(((Type type, ExpireGameCharacterBase perk) => {
                 m_AllEnermyPerks.Add(perk.m_Index, perk);
+                m_AllGameCharcterPerkTypes.Add(perk.m_Index, perk.GetType());
                 if (perk.m_Index == m_DefaultEnermyPerkIdentity)
                     return;
                 m_AvailableEnermyPerks.Add(perk.m_Index);
             }),0,0);
         }
 
-        public static ExpireGameCharacterBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireGameCharacterBase>(m_AllEnermyPerks[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity].GetType(), GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
+        public static ExpireGameCharacterBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireGameCharacterBase>(m_AllGameCharcterPerkTypes[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity], GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
+        public static ExpireGameCharacterBase DefaultGameCharacterPerk(float healthMultiplier,float damageMultiplier) => TReflection.CreateInstance<ExpireGameCharacterBase>(m_AllGameCharcterPerkTypes[m_DefaultEnermyPerkIdentity], healthMultiplier, damageMultiplier);
         public static bool IsElitePerk(this ExpireGameCharacterBase perk) => perk.m_Index != m_DefaultEnermyPerkIdentity;
         #endregion
 
@@ -435,9 +439,9 @@ namespace GameSetting
             m_ArmoryPartsAcquired = 0;
         }
 
-        public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level)
+        public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level,GameBattleManager _battle)
         {
-            m_TimeElapsed = _level.m_TimeElapsed;
+            m_TimeElapsed = _battle.m_TimeElapsed;
             m_Stage = _level.m_Stage;
             m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;

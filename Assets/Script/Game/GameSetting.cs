@@ -145,10 +145,6 @@ namespace GameSetting
         public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_GameDifficulty difficulty) => minutePassed * GameConst.F_EnermyMaxHealthMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyMaxHealthMultiplierPerDifficultyAboveNormal;
         public static float GetEnermyDamageMultilier(int minutesPassed, enum_GameDifficulty difficulty) => minutesPassed * GameConst.F_EnermyDamageMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyDamageMultiplierPerDifficultyAboveNormal;
 
-        public static float GetResultCompletion(bool win, enum_GameStage _stage, int _battleLevelEntered) => win ? 1f : (.33f * ((int)_stage - 1) +.066f*_battleLevelEntered);
-        public static float GetResultLevelScore(enum_GameStage _stage, int _levelPassed) => 200 * ((int)_stage - 1) + 20 * (_levelPassed - 1);
-        public static float GetResultDifficultyBonus(enum_GameDifficulty _difficulty) =>1f+ (int)_difficulty * .05f;
-        public static float GetResultRewardCredits(float _totalScore) => _totalScore;
         #region Interacts
         public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+1f * tryCount;
         public static float GetHealShrinePriceMultiply(int tryCount) => 1f + .1f * tryCount;
@@ -453,6 +449,12 @@ namespace GameSetting
             return this;
         }
 
+        public DamageInfo SetDamageMultiply(float _damageMultiply)
+        {
+            m_DamageMultiply = _damageMultiply;
+            return this;
+        }
+
         public DamageInfo SetDamageCritical(float _criticalHitRate, float _criticalHitMultiply)
         {
             m_DamageCriticalMultipy = _criticalHitRate > TCommon.RandomLength(1f) ? _criticalHitMultiply : 0;
@@ -471,10 +473,9 @@ namespace GameSetting
             return this;
         }
 
-        public DamageInfo AddExtraDamage(float damageMultiply, float damageAdditive)
+        public DamageInfo AddExtraDamage(float damageMultiply)
         {
             m_DamageMultiply += damageMultiply;
-            damageAdditive += damageAdditive;
             return this;
         }
 
@@ -509,7 +510,7 @@ namespace GameSetting
 
         public DamageInfo GetDamageInfo(float baseDamage, int buff = -1, enum_DamageType damageType = enum_DamageType.Basic,enum_DamageIdentity identityType= enum_DamageIdentity.Default,int identityID=-1)
         {
-            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).SetDamageCritical(m_CriticalRate, m_CriticalRate).AddPresetBuff(buff);
+            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).SetDamageMultiply(m_DamageMultiply).SetDamageCritical(m_CriticalRate, m_CriticalRate).AddPresetBuff(buff);
             m_Expires.Traversal((EntityExpireBase interact) => { interact.OnAttackSetDamage(info); });
             return info;
         } 
@@ -584,22 +585,20 @@ namespace GameSetting
             }
             UpdateEntityInfo();
         }
+
         protected virtual void RemoveExpire(EntityExpireBase expire)
         {
             m_Expires.Remove(expire);
             UpdateEntityInfo();
-
         }
 
-        public virtual void Tick(float deltaTime) {
+        public virtual void Tick(float deltaTime)
+        {
             m_Expires.Traversal((EntityExpireBase expire) => {
-                if (expire.m_Expired)
-                {
-                    RemoveExpire(expire);
-                    return;
-                }
                 expire.OnTick(deltaTime);
-            },true);
+                if (expire.m_Expired)
+                    RemoveExpire(expire);
+            }, true);
 
             if (b_expireUpdated)
                 return;
@@ -615,7 +614,6 @@ namespace GameSetting
         public void OnWillReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnBeforeReceiveDamage(damageInfo); });
         public void OnAfterReceiveDamage(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnReceiveDamage(damageInfo, amountApply); });
         public void OnReceiveHealing(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply) => m_Expires.Traversal((EntityExpireBase interact) => { interact.OnReceiveHealing(damageInfo, amountApply); });
-        
         #region ExpireInfo
         void UpdateExpireInfo()
         {

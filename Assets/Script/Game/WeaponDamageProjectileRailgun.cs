@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class WeaponProjectileRailgun : WeaponProjectileBase
+public class WeaponDamageProjectileRailgun : WeaponDamageProjectile
 {
     protected int m_StoreProjectileDataIndex { get; private set; }
 

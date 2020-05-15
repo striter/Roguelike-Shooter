@@ -62,6 +62,8 @@ namespace GameSetting
         static readonly int HS_FM_Movement = Animator.StringToHash("fm_movement");
         static readonly int HS_FM_Attack = Animator.StringToHash("fm_attack");
         static readonly int HS_I_WeaponType = Animator.StringToHash("i_weaponType");
+        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
+        static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
         public CharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator)
         {
             _animator.fireEvents = true;
@@ -77,56 +79,45 @@ namespace GameSetting
             m_Animator.SetTrigger(HS_T_Activate);
             m_Animator.Update(1f);
         }
-        public void SetPause(bool stun)
-        {
-            m_Animator.speed = stun ? 0 : 1;
-        }
-        public void SetForward(float forward)
-        {
-            m_Animator.SetFloat(HS_F_Forward, forward);
-        }
-        public void SetMovementSpeed(float movementSpeed)
-        {
-            m_Animator.SetFloat(HS_FM_Movement, movementSpeed);
-        }
-        public void SetFireSpeed(float fireSpeed) => m_Animator.SetFloat(HS_FM_Attack, fireSpeed);
-        public void OnDead()
-        {
-            m_Animator.SetTrigger(HS_T_Dead);
-        }
+        public void SetPause(bool stun)=>m_Animator.speed = stun ? 0 : 1;
+        public void SetForward(float forward)=> m_Animator.SetFloat(HS_F_Forward, forward);
+        public void SetMovementSpeed(float movementSpeed)=> m_Animator.SetFloat(HS_FM_Movement, movementSpeed);
+
+        public void OnDead()=> m_Animator.SetTrigger(HS_T_Dead);
+
+        protected void SetAttackSpeed(float fireSpeed) => m_Animator.SetFloat(HS_FM_Attack, fireSpeed);
+        protected void PlayAttack()=> m_Animator.SetTrigger(HS_T_Attack);
+        protected void SetAttacking(bool attacking)=> m_Animator.SetBool(HS_B_Attack, attacking);
     }
 
-    public class WeaponHelperAnimator : CharacterAnimator
+    public class GameCharacterAnimator : CharacterAnimator
     {
-        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
-        static readonly int HS_B_Attack = Animator.StringToHash("b_attack");
-        public WeaponHelperAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
+        public GameCharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
         {
             m_Animator.fireEvents = true;
         }
         public void OnActivate(enum_EnermyAnim _animIndex) => OnActivate((int)_animIndex);
-        public void OnAttack(bool attack)
+        public void OnAttack(bool attacking)
         {
-            if (attack)
-                m_Animator.SetTrigger(HS_T_Attack);
-            m_Animator.SetBool(HS_B_Attack, attack);
+            SetAttacking(attacking);
+            if (attacking)
+                PlayAttack();
         }
 
         public void SetMovementFireSpeed(float movementSpeed, float fireSpeed)
         {
             SetMovementSpeed(movementSpeed);
-            SetFireSpeed(fireSpeed);
+            SetAttackSpeed(fireSpeed);
         }
     }
 
-    public class WeaponModelAnimator : CharacterAnimator
+    public class PlayerCharacterAnimator : CharacterAnimator
     {
         static readonly int HS_I_Attack = Animator.StringToHash("i_attack");
-        static readonly int HS_T_Attack = Animator.StringToHash("t_attack");
         static readonly int HS_F_Strafe = Animator.StringToHash("f_strafe");
         static readonly int HS_B_Aim = Animator.StringToHash("b_aim");
         Vector2 v2_movement;
-        public WeaponModelAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
+        public PlayerCharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
         {
             v2_movement = Vector2.zero;
         }
@@ -139,19 +130,20 @@ namespace GameSetting
             base.SetForward(v2_movement.y);
             base.SetMovementSpeed(movementParam);
         }
+        public void Attacking(bool attacking) => SetAttacking(attacking);
         public void Attack(float fireRate,int animIndex)
         {
-            SetFireSpeed(1 / fireRate);
-            m_Animator.SetInteger(HS_I_Attack,animIndex);
-            m_Animator.SetTrigger(HS_T_Attack);
+            m_Animator.SetInteger(HS_I_Attack, animIndex);
+            SetAttackSpeed(1 / fireRate);
+            PlayAttack();
         }
     }
 
-    public class PlayerCharacterAnimator : WeaponModelAnimator
+    public class PlayerCharacterBethAnimator : PlayerCharacterAnimator
     {
         static readonly int HS_T_Roll = Animator.StringToHash("t_roll");
         static readonly int HS_F_RollSpeed = Animator.StringToHash("fm_roll");
-        public PlayerCharacterAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
+        public PlayerCharacterBethAnimator(Animator _animator, Action<TAnimatorEvent.enum_AnimEvent> _OnAnimEvent) : base(_animator, _OnAnimEvent)
         {
         }
         public void BeginRoll(float rollDuration)

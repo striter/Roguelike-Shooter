@@ -22,7 +22,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     public bool B_AttackMove = true;
     public float F_AttackFrontCheck = 2f;
     #endregion
-    WeaponHelperAnimator m_Animator;
+    GameCharacterAnimator m_Animator;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_IsDead;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
@@ -32,7 +32,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
         tf_Barrel = transform.FindInAllChild("Barrel");
         InitAI(CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,F_Spread,GetAIDamageInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
-            m_Animator = new WeaponHelperAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
+            m_Animator = new GameCharacterAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
         m_Agent.enabled = false;
     }
 

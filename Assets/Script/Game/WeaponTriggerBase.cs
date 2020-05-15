@@ -20,13 +20,7 @@ public class WeaponTriggerBase : MonoBehaviour
         m_TriggerDown = down;
     }
 
-    public virtual void OnTriggerStop()
-    {
-        m_TriggerDown = false;
-    }
+    public virtual void OnTriggerStop()=>  m_TriggerDown = false;
 
-    public virtual void Tick(bool paused, float deltaTime)
-    {
-        m_TriggerTimer.Tick(deltaTime);
-    }
+    public virtual void Tick(bool paused, float deltaTime)=>m_TriggerTimer.Tick(deltaTime);
 }

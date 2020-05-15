@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponCastDuration : WeaponCastBase {
+public class WeaponDamageCastDuration : WeaponDamageCast {
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
     protected override void OnAutoTrigger()

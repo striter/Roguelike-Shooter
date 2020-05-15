@@ -12,21 +12,14 @@ public class EntityCharacterGameBase : EntityCharacterBase {
     public bool m_IsSubEntity => m_SpawnerEntityID != -1;
     public ExpireGameCharacterBase m_Perk { get; private set; }
 
-    public EntityCharacterGameBase OnMainActivate(enum_EntityFlag _flag, ExpireGameCharacterBase perk)
+    public EntityCharacterGameBase OnCharacterGameActivate(enum_EntityFlag _flag, ExpireGameCharacterBase perk, int _spawnerID = -1)
     {
         m_Perk = perk;
-        m_SpawnerEntityID = -1;
-        OnEntityActivate(_flag);
-        m_CharacterInfo.AddExpire(perk);
-        m_Health.OnHealthMultiplierChange(1f + perk.m_MaxHealthMultiplierAdditive);
-        return this;
-    }
-
-    public EntityCharacterGameBase OnSubActivate(enum_EntityFlag _flag, int _spawnerID)
-    {
         m_SpawnerEntityID = _spawnerID;
         OnEntityActivate(_flag);
-        m_Perk = null;
+
+        m_CharacterInfo.AddExpire(perk);
+        m_Health.OnHealthMultiplierChange(1f + perk.m_MaxHealthMultiplierAdditive);
         return this;
     }
 

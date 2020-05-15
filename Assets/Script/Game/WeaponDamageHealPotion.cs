@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
-public class WeaponItemHealPotion : WeaponItemBase {
+public class WeaponDamageHealPotion : WeaponDamageBase {
     public int I_ParticleIndex;
     protected override void OnKeyAnim()
     {

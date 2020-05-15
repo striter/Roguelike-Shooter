@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponProjectileBase : WeaponBase
+public class WeaponDamageProjectile : WeaponDamageBase
 {
     public float F_AimSpread;
 
@@ -17,7 +17,8 @@ public class WeaponProjectileBase : WeaponBase
     public float GetPelletSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_PelletSpreadAngle;
     public int GetPelletPerShot() => m_Attacher.m_CharacterInfo.I_Projectile_Multi_PelletsAdditive + I_PelletsPerShot;
 
-    protected override void OnAutoTrigger()=> FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
+    protected override void OnAutoTrigger()=>FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
+
     protected void FireProjectile(int projectileIndex,DamageInfo damageInfo)
     {
         Vector3 baseSpreadDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Muzzle.position);
@@ -41,10 +42,14 @@ public class WeaponProjectileBase : WeaponBase
         {
             FireOneProjectile(projectileIndex, targetProjectile, damageInfo, baseSpreadDirection);
         }
-        OnAttacherAnim();
+        OnAttackAnim();
         OnAmmoCost();
     }
 
+    protected override void OnKeyAnim()
+    {
+        //Do Nothing
+    }
 
     protected void FireOneProjectile(int projectilIndex, SFXProjectile projectileData,DamageInfo damageInfo, Vector3 direction)
     {

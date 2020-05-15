@@ -8,13 +8,9 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public enum_PlayerAnim E_Anim = enum_PlayerAnim.Invalid;
     public bool B_AttachLeft = false;
 
-    public float F_Damage = 10;
-    public float F_DamageMultiplyPerEnhance = .1f;
     public int I_ClipAmount = 10;
     public float F_RefillTime = .1f;
-    public float F_RecoilPerShot = 2;
 
-    public int I_ExtraBuffApply = -1;
     #endregion
     public virtual enum_PlayerWeaponBaseType m_WeaponType => enum_PlayerWeaponBaseType.Invalid;
     public EntityCharacterPlayer m_Attacher { get; private set; }
@@ -24,8 +20,10 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public int m_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
-    public float m_Recoil => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_RecoilPerShot;
-    public float m_BaseDamage => F_Damage * (1 + F_DamageMultiplyPerEnhance * m_EnhanceLevel);
+    public virtual float m_BaseDamage => 0;
+    public virtual int m_BuffApply => 0;
+    public DamageInfo GetWeaponDamageInfo(float damage, enum_DamageType type = enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageInfo(damage, m_BuffApply, type, enum_DamageIdentity.PlayerWeapon, m_WeaponID);
+
     protected WeaponTriggerBase m_Trigger { get; private set; }
 
     TimerBase m_BulletRefillTimer = new TimerBase(), m_RefillPauseTimer = new TimerBase(GameConst.F_PlayerWeaponFireReloadPause);
@@ -50,10 +48,10 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         switch (m_Trigger.m_Type)
         {
             case enum_PlayerWeaponTriggerType.Auto:
-                (m_Trigger as WeaponTriggerAuto).Init(this, OnTriggerCheck, OnAutoTrigger);
+                (m_Trigger as WeaponTriggerAuto).Init(this, OnTriggerTickCheck, OnAutoTrigger);
                 break;
             case enum_PlayerWeaponTriggerType.Store:
-                (m_Trigger as WeaponTriggerStore).Init(this, OnTriggerCheck, OnStoreTrigger);
+                (m_Trigger as WeaponTriggerStore).Init(this, OnTriggerTickCheck, OnStoreTrigger);
                 break;
         }
     }
@@ -87,31 +85,29 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         m_Trigger.OnTriggerStop();
     }
 
-    protected bool OnTriggerCheck() => m_HaveAmmoLeft;
+    protected bool OnTriggerTickCheck() => m_HaveAmmoLeft;
 
-    protected virtual void OnAutoTrigger() => Debug.LogError("Override This Please!");
-    protected virtual void OnStoreTrigger(bool success) => Debug.LogError("Override This Please!");
+    protected virtual void OnAutoTrigger() => OnAttackAnim();
+    protected virtual void OnStoreTrigger(bool success) => OnAttackAnim();
 
-    public DamageInfo GetWeaponDamageInfo(float damage, enum_DamageType type = enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageInfo(damage, I_ExtraBuffApply, type, enum_DamageIdentity.PlayerWeapon, m_WeaponID);
+    protected void OnAttackAnim(int index = 0) => m_Attacher.AttackAnimPlay(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
+    public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { if (eventType == TAnimatorEvent.enum_AnimEvent.Fire) OnKeyAnim(); }
+    protected virtual void OnKeyAnim() { OnAmmoCost(); }
 
-    protected void OnAmmoCost()
+    protected virtual void OnAmmoCost()
     {
         m_AmmoLeft--;
         m_RefillPauseTimer.Replay();
         m_BulletRefillTimer.Replay();
-        m_Attacher.PlayRecoil(m_Recoil);
     }
-    protected void OnAttacherAnim(int index = 0) => m_Attacher.PlayAnim(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
-
     #region PlayerInteract
     public void Trigger(bool down) => m_Trigger.OnSetTrigger(down);
 
     public virtual void OnDealtDamage(float amountApply) { }
-    public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { if (eventType == TAnimatorEvent.enum_AnimEvent.Fire) OnKeyAnim(); }
-    protected virtual void OnKeyAnim() { }
 
     public virtual void Tick(bool firePausing, float deltaTime)
     {
+        m_Attacher.AttackingAnimSet(m_Trigger.m_TriggerDown&&OnTriggerTickCheck());
         int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(I_ClipAmount);
         if (m_ClipAmount != clipAmount)
         {
