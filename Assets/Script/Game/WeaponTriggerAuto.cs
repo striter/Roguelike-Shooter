@@ -8,6 +8,7 @@ public class WeaponTriggerAuto : WeaponTriggerBase
 {
     public float F_FireRate = .1f;
     public override enum_PlayerWeaponTriggerType m_Type => enum_PlayerWeaponTriggerType.Auto;
+    public override bool m_Triggering => m_TriggerTimer.m_Timing;
     protected TimerBase m_TriggerTimer { get; private set; }
     Func<bool> OnTriggerCheck;
     Action<float> OnTriggerSuccessful;

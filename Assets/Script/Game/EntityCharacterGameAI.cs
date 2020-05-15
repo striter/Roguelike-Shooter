@@ -181,6 +181,9 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     bool BattleTargetCheck(float deltaTime)
     {
         m_TargetingTimer.Tick(deltaTime);
+        if (m_Target && !m_Target.m_TargetAvailable)
+            m_TargetingTimer.Stop();
+
         if (m_TargetingTimer.m_Timing)
             return m_Target;
 

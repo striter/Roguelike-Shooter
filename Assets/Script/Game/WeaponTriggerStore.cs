@@ -12,6 +12,7 @@ public class WeaponTriggerStore : WeaponTriggerBase {
     Action<float,bool> OnStoreFinish;
     TimerBase m_StoreTimer = new TimerBase();
     TimerBase m_TriggerTimer;
+    public override bool m_Triggering => m_Storing;
     public bool m_Storing { get; private set; } = false;
     SFXIndicator m_Indicator;
     public void Init(WeaponBase weapon, Func<bool> _OnStoreBeginCheck, Action<float,bool> _OnStoreFinish)

@@ -33,6 +33,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public bool m_HaveAmmoLeft => I_ClipAmount == -1 || m_AmmoLeft > 0;
     public bool B_AmmoFull => I_ClipAmount == -1 || m_ClipAmount == m_AmmoLeft;
     public int m_WeaponID { get; private set; } = -1;
+    public bool m_Attacking { get; private set; }
 
     protected int m_BaseSFXWeaponIndex { get; private set; }
     public override void OnPoolItemInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
@@ -107,11 +108,13 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     #region PlayerInteract
     public void Trigger(bool down) => m_Trigger.OnSetTrigger(down);
 
+    public virtual bool OnReceiveDamage(DamageInfo info) { return false; }
+
     public virtual void OnDealtDamage(float amountApply) { }
 
     public virtual void Tick(bool firePausing, float deltaTime)
     {
-        m_Attacher.AttackingAnimSet(m_Trigger.m_TriggerDown&&OnTriggerTickCheck());
+        m_Attacher.AttackingAnimSet(m_Trigger.m_Triggering);
         int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(I_ClipAmount);
         if (m_ClipAmount != clipAmount)
         {

@@ -410,15 +410,18 @@ public class EntityCharacterPlayer : EntityCharacterBase
         OnUIInteractStatus();
         return true;
     }
-    
-    #endregion
-    #region UI Indicator
+
     protected override float OnReceiveDamageAmount(DamageInfo damageInfo, Vector3 direction)
     {
-        float amount= base.OnReceiveDamageAmount(damageInfo, direction);
+        if (m_WeaponCurrent.OnReceiveDamage(damageInfo))
+            return 0;
+
+        float amount = base.OnReceiveDamageAmount(damageInfo, direction);
         GameManagerBase.Instance.SetEffect_Impact(transform.InverseTransformDirection(direction));
         return amount;
     }
+    #endregion
+    #region UI Indicator
 
     protected void OnUICommonStatus()
     {
