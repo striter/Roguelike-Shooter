@@ -25,6 +25,8 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public DamageInfo GetWeaponDamageInfo(float damage, enum_DamageType type = enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageInfo(damage, m_BuffApply, type, enum_DamageIdentity.PlayerWeapon, m_WeaponID);
 
     protected WeaponTriggerBase m_Trigger { get; private set; }
+    WeaponTriggerAuto m_AutoTrigger;
+    WeaponTriggerStore m_StoreTrigger;
 
     TimerBase m_BulletRefillTimer = new TimerBase(), m_RefillPauseTimer = new TimerBase(GameConst.F_PlayerWeaponFireReloadPause);
     public float F_AmmoStatus => m_AmmoLeft / (float)m_ClipAmount;
@@ -48,10 +50,12 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
         switch (m_Trigger.m_Type)
         {
             case enum_PlayerWeaponTriggerType.Auto:
-                (m_Trigger as WeaponTriggerAuto).Init(this, OnTriggerTickCheck, OnAutoTrigger);
+                m_AutoTrigger = m_Trigger as WeaponTriggerAuto;
+                m_AutoTrigger.Init(this, OnTriggerTickCheck, OnAutoTrigger);
                 break;
             case enum_PlayerWeaponTriggerType.Store:
-                (m_Trigger as WeaponTriggerStore).Init(this, OnTriggerTickCheck, OnStoreTrigger);
+                m_StoreTrigger = m_Trigger as WeaponTriggerStore;
+                m_StoreTrigger.Init(this, OnTriggerTickCheck, OnStoreTrigger);
                 break;
         }
     }
@@ -87,10 +91,10 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     protected bool OnTriggerTickCheck() => m_HaveAmmoLeft;
 
-    protected virtual void OnAutoTrigger() => OnAttackAnim();
-    protected virtual void OnStoreTrigger(bool success) => OnAttackAnim();
+    protected virtual void OnAutoTrigger(float animDuration) => OnAttackAnim(animDuration);
+    protected virtual void OnStoreTrigger(float animDuration, bool success) => OnAttackAnim(animDuration);
 
-    protected void OnAttackAnim(int index = 0) => m_Attacher.AttackAnimPlay(m_Trigger.F_FireRate / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
+    protected void OnAttackAnim(float animDuration,int index = 0) => m_Attacher.AttackAnimPlay(animDuration / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
     public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { if (eventType == TAnimatorEvent.enum_AnimEvent.Fire) OnKeyAnim(); }
     protected virtual void OnKeyAnim() { OnAmmoCost(); }
 
@@ -116,16 +120,11 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
                 m_AmmoLeft = m_ClipAmount;
         }
 
-        switch (m_Trigger.m_Type)
-        {
-            default:Debug.LogError("Invalid Convertions Here!");break;
-            case enum_PlayerWeaponTriggerType.Auto:
-                m_Trigger.Tick(firePausing, m_Attacher.m_CharacterInfo.DoFireRateTick(deltaTime));
-                break;
-            case enum_PlayerWeaponTriggerType.Store:
-                m_Trigger.Tick(firePausing, m_Attacher.m_CharacterInfo.DoStoreRateTick(deltaTime));
-                break;
-        }
+        if (m_AutoTrigger != null)
+            m_AutoTrigger.Tick(firePausing, m_Attacher.m_CharacterInfo.DoFireRateTick(deltaTime));
+        if(m_StoreTrigger)
+            m_StoreTrigger.Tick(firePausing, m_Attacher.m_CharacterInfo.DoFireRateTick(deltaTime), m_Attacher.m_CharacterInfo.DoStoreRateTick(deltaTime));
+
         ReloadTick(m_Attacher.m_CharacterInfo.DoReloadRateTick(deltaTime));
     }
 

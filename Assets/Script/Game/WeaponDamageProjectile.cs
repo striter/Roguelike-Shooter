@@ -17,9 +17,8 @@ public class WeaponDamageProjectile : WeaponDamageBase
     public float GetPelletSpread() => m_Attacher.m_CharacterInfo.F_AimSpreadMultiply * F_PelletSpreadAngle;
     public int GetPelletPerShot() => m_Attacher.m_CharacterInfo.I_Projectile_Multi_PelletsAdditive + I_PelletsPerShot;
 
-    protected override void OnAutoTrigger()=>FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage));
-
-    protected void FireProjectile(int projectileIndex,DamageInfo damageInfo)
+    protected override void OnAutoTrigger(float animDuration)=> FireProjectile(m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage),animDuration);
+    protected void FireProjectile( int projectileIndex,DamageInfo damageInfo,float animDuration)
     {
         Vector3 baseSpreadDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Muzzle.position);
         baseSpreadDirection.y = 0;
@@ -42,14 +41,14 @@ public class WeaponDamageProjectile : WeaponDamageBase
         {
             FireOneProjectile(projectileIndex, targetProjectile, damageInfo, baseSpreadDirection);
         }
-        OnAttackAnim();
+        OnAttackAnim(animDuration);
         OnAmmoCost();
     }
-
     protected override void OnKeyAnim()
     {
-        //Do Nothing
+        //Do Nothing;
     }
+
 
     protected void FireOneProjectile(int projectilIndex, SFXProjectile projectileData,DamageInfo damageInfo, Vector3 direction)
     {

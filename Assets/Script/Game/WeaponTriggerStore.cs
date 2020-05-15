@@ -3,21 +3,24 @@ using GameSetting;
 
 public class WeaponTriggerStore : WeaponTriggerBase {
 
+    public float F_FireRate = .1f;
     public int I_StoreIndicatorIndex;
     public float F_StoreDuration;
 
     public override enum_PlayerWeaponTriggerType m_Type => enum_PlayerWeaponTriggerType.Store;
     Func<bool> OnStoreBeginCheck;
-    Action<bool> OnStoreFinish;
+    Action<float,bool> OnStoreFinish;
     TimerBase m_StoreTimer = new TimerBase();
+    TimerBase m_TriggerTimer;
     public bool m_Storing { get; private set; } = false;
     SFXIndicator m_Indicator;
-    public void Init(WeaponBase weapon, Func<bool> _OnStoreBeginCheck, Action<bool> _OnStoreFinish)
+    public void Init(WeaponBase weapon, Func<bool> _OnStoreBeginCheck, Action<float,bool> _OnStoreFinish)
     {
         base.Init(weapon);
         OnStoreBeginCheck = _OnStoreBeginCheck;
         OnStoreFinish = _OnStoreFinish;
-        m_StoreTimer.SetTimerDuration(F_StoreDuration);
+        m_StoreTimer = new TimerBase(F_StoreDuration);
+        m_TriggerTimer = new TimerBase(F_FireRate);
         m_Storing = false;
     }
 
@@ -28,7 +31,6 @@ public class WeaponTriggerStore : WeaponTriggerBase {
             return;
 
         SetStore(true);
-        m_TriggerTimer.Replay();
     }
 
     public override void OnTriggerStop()
@@ -44,21 +46,27 @@ public class WeaponTriggerStore : WeaponTriggerBase {
 
         m_Storing = store;
         if (m_Storing)
+        {
             m_StoreTimer.Replay();
+        }
         else
-            OnStoreFinish(!m_StoreTimer.m_Timing);
+        {
+            OnStoreFinish(m_TriggerTimer.m_TimerDuration, !m_StoreTimer.m_Timing);
+            m_TriggerTimer.Replay();
+        }
+
     }
 
-    public override void Tick(bool paused, float deltaTime)
+    public void Tick(bool paused,float fireRateDelta,  float storeDelta)
     {
-        base.Tick(paused, deltaTime);
+        m_TriggerTimer.Tick(fireRateDelta);
         PlayIndicator(m_Storing&&m_StoreTimer.m_TimeLeftScale<.9f);
         if (!m_Storing)
             return;
 
         if (m_TriggerDown)
         {
-            m_StoreTimer.Tick(deltaTime);
+            m_StoreTimer.Tick(storeDelta);
             return;
         }
 

@@ -4,19 +4,23 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class WeaponTriggerAuto : WeaponTriggerBase {
+public class WeaponTriggerAuto : WeaponTriggerBase
+{
+    public float F_FireRate = .1f;
     public override enum_PlayerWeaponTriggerType m_Type => enum_PlayerWeaponTriggerType.Auto;
-    protected Func<bool> OnTriggerCheck;
-    Action OnTriggerSuccessful;
-    public void Init(WeaponBase _weapon, Func<bool> _OnTriggerCheck, Action _OnTriggerSuccessful)
+    protected TimerBase m_TriggerTimer { get; private set; }
+    Func<bool> OnTriggerCheck;
+    Action<float> OnTriggerSuccessful;
+    public void Init(WeaponBase _weapon, Func<bool> _OnTriggerCheck, Action<float> _OnTriggerSuccessful)
     {
         base.Init(_weapon);
         OnTriggerCheck = _OnTriggerCheck;
         OnTriggerSuccessful = _OnTriggerSuccessful;
+        m_TriggerTimer = new TimerBase(F_FireRate, true);
     }
-    public override void Tick(bool paused, float deltaTime)
+    public void Tick(bool paused, float deltaTime)
     {
-        base.Tick(paused, deltaTime);
+        m_TriggerTimer.Tick(deltaTime);
         if (paused || m_TriggerTimer.m_Timing)
             return;
 
@@ -25,7 +29,7 @@ public class WeaponTriggerAuto : WeaponTriggerBase {
 
         if (!OnTriggerCheck())
             return;
-        OnTriggerSuccessful();
+        OnTriggerSuccessful(m_TriggerTimer.m_TimerDuration);
         m_TriggerTimer.Replay();
     }
 }

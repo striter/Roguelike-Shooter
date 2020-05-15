@@ -12,13 +12,13 @@ public class WeaponDamageParacurve : WeaponDamageBase {
         base.OnPoolItemInit(_identity, _OnRecycle);
         projectileData = GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_BaseSFXWeaponIndex);
     }
-
-    protected override void OnKeyAnim()
+    protected override void OnAutoTrigger(float animDuration)
     {
-        base.OnKeyAnim();
         Vector3 direction = m_Muzzle.forward;
         SFXProjectile projectile = GameObjectManager.SpawnSFXWeapon<SFXProjectile>(m_BaseSFXWeaponIndex, m_Muzzle.position, m_Muzzle.forward);
-        projectile.Play(GetWeaponDamageInfo(m_BaseDamage), direction, m_Attacher.GetAimingPosition(false));
+        projectile.Play(GetWeaponDamageInfo(m_BaseDamage),  direction, m_Attacher.GetAimingPosition(false));
         GameObjectManager.PlayMuzzle(m_Attacher.m_EntityID, m_Muzzle.position, direction, projectileData.I_MuzzleIndex, projectileData.AC_MuzzleClip);
+        OnAmmoCost();
+        OnAttackAnim(animDuration);
     }
 }

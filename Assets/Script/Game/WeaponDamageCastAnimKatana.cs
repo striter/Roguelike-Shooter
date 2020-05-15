@@ -15,19 +15,16 @@ public class WeaponDamageCastAnimKatana : WeaponDamageCastAnim
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_DashCastIndex = GameExpression.GetPlayerExtraWeaponIndex(m_WeaponInfo.m_Index);
     }
-    protected override void OnStoreTrigger(bool success)
+    protected override void OnStoreTrigger(float animDuration, bool success)
     {
         m_Dashing = success;
-        if(success)
-            OnAttackAnim(1);
-        else
-            OnAttackAnim(0);
+        OnAttackAnim(animDuration, success ? 1 : 0);
     }
 
     protected override void OnKeyAnim()
     {
         DoMeleeCast(m_Dashing ? m_DashCastIndex : m_BaseSFXWeaponIndex, GetMeleeSize());
-        OnAmmoCost();
+
         if (m_Dashing)
             m_Attacher.PlayTeleport(NavigationManager.NavMeshPosition(m_Attacher.transform.position + m_Attacher.transform.forward * F_DashDistance * GetMeleeSize()), m_Attacher.transform.rotation);
     }

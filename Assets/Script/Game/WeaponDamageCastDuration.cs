@@ -6,7 +6,7 @@ using UnityEngine;
 public class WeaponDamageCastDuration : WeaponDamageCast {
     SFXCast m_Cast;
     public bool m_Casting => m_Cast;
-    protected override void OnAutoTrigger()
+    protected override void OnAutoTrigger(float duration)
     {
         SetCastAvailable(true);
         m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage));
