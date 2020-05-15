@@ -28,7 +28,6 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
         SFXCast cast = ShowCast(castIndex, m_Attacher.tf_WeaponAim.position);
         cast.V4_CastInfo = m_BaseSize* castScale;
         cast.Play(GetWeaponDamageInfo(m_BaseDamage));
-        OnAmmoCost();
     }
 
     public override void OnAttach(EntityCharacterPlayer _attacher, Transform _attachTo)
