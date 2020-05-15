@@ -23,7 +23,7 @@ public class SFXSubEntitySpawner : SFXWeaponBase {
     protected override void OnPlay()
     {
         base.OnPlay();
-        GameObjectManager.SpawnGameCharcter(I_EntitySpawnID, NavigationManager.NavMeshPosition(transform.position), Quaternion.identity).OnSubActivate(m_Spawner.m_Flag, m_Spawner.m_EntityID);
+        GameObjectManager.SpawnGameCharcter(I_EntitySpawnID, m_targetPos, Quaternion.identity).OnSubActivate(m_Spawner.m_Flag, m_Spawner.m_EntityID);
     }
 
 }
