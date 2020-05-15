@@ -1,10 +1,8 @@
-﻿using GameSetting;
-using UnityEngine;
-using System;
-using System.Collections.Generic;
+﻿using UnityEngine;
+using GameSetting;
 using System.Linq;
 
-namespace GameSetting_PlayerPerks
+namespace GameSetting_CharacterPlayerPerks_10000
 {
     public class P10000Bonefire : ExpirePlayerPerkBase
     {
@@ -69,7 +67,7 @@ namespace GameSetting_PlayerPerks
         public override void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info)
         {
             base.OnBeforeDealtDamage(receiver, info);
-            if (info.m_IdentityType== enum_DamageIdentity.Expire)
+            if (info.m_IdentityType == enum_DamageIdentity.Expire)
                 return;
 
             float rate = Value1 * m_Stack;
@@ -114,7 +112,7 @@ namespace GameSetting_PlayerPerks
         public override void OnKillEnermy(EntityCharacterBase target)
         {
             base.OnKillEnermy(target);
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage( -Value1 * m_Stack, enum_DamageType.Health));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(-Value1 * m_Stack, enum_DamageType.Health));
         }
         public P10010(PerkSaveData saveData) : base(saveData) { }
     }
@@ -167,7 +165,7 @@ namespace GameSetting_PlayerPerks
         public override int m_Index => 10013;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 50f;
-        public override float F_ClipMultiply => Value1*m_Stack / 100f;
+        public override float F_ClipMultiply => Value1 * m_Stack / 100f;
         public P10013(PerkSaveData saveData) : base(saveData) { }
     }
 
@@ -180,18 +178,18 @@ namespace GameSetting_PlayerPerks
         {
             base.OnBeforeDealtDamage(receiver, info);
             if (receiver.m_Health.m_HealthFull)
-                info.AddExtraDamage(Value1/100f*m_Stack , 0);
+                info.AddExtraDamage(Value1 / 100f * m_Stack, 0);
         }
 
-        public P10014(PerkSaveData saveData) : base(saveData) {  }
+        public P10014(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10015:ExpirePlayerPerkWeapon
+    public class P10015 : ExpirePlayerPerkWeapon
     {
         public override int m_Index => 10015;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 25f;
-        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(Value1*m_Stack / 100f *m_Attacher.m_WeaponCurrent.m_BaseDamage, enum_DamageType.Basic).AddPresetBuff(105);
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(Value1 * m_Stack / 100f * m_Attacher.m_WeaponCurrent.m_BaseDamage, enum_DamageType.Basic).AddPresetBuff(105);
         public override void OnKillEnermy(EntityCharacterBase target)
         {
             base.OnKillEnermy(target);
@@ -200,14 +198,14 @@ namespace GameSetting_PlayerPerks
         public P10015(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10016: ExpirePlayerPerkWeapon
+    public class P10016 : ExpirePlayerPerkWeapon
     {
         public override int m_Index => 10016;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_MaxStack => 1;
         public override float Value1 => 50f;
         float m_CurrentDamage = 0;
-        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(Value1 / 100f * m_CurrentDamage,enum_DamageType.Basic);
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(Value1 / 100f * m_CurrentDamage, enum_DamageType.Basic);
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
@@ -219,13 +217,13 @@ namespace GameSetting_PlayerPerks
         public P10016(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10017:ExpirePlayerPerkBase
+    public class P10017 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10017;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 3f;
         public override float Value2 => 5f;
-        TimerBase m_HealTimer = new TimerBase(3f,true);
+        TimerBase m_HealTimer = new TimerBase(3f, true);
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
@@ -237,7 +235,7 @@ namespace GameSetting_PlayerPerks
             m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(-m_Attacher.m_Health.m_MaxHealth * m_Stack * Value2 / 100f, enum_DamageType.Health));
             m_HealTimer.Replay();
         }
-        public P10017(PerkSaveData saveData) : base(saveData) { m_HealTimer = new TimerBase(Value1,true); }
+        public P10017(PerkSaveData saveData) : base(saveData) { m_HealTimer = new TimerBase(Value1, true); }
     }
 
     public class P10018 : ExpirePlayerPerkBase
@@ -271,16 +269,16 @@ namespace GameSetting_PlayerPerks
         public P10018(PerkSaveData saveData) : base(saveData) { m_Timer = new TimerBase(Value1); }
     }
 
-    public class P10019:ExpirePlayerPerkBase
+    public class P10019 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10019;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 40f;
-        public override float m_HealAdditive => Value1 / 100f*m_Stack;
-        public P10019(PerkSaveData saveData) : base(saveData) {}
+        public override float m_HealAdditive => Value1 / 100f * m_Stack;
+        public P10019(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10020:ExpirePlayerPerkBase
+    public class P10020 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10020;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
@@ -291,13 +289,13 @@ namespace GameSetting_PlayerPerks
         public P10020(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10021:ExpirePlayerPerkBase
+    public class P10021 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10021;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 30f;
         public override float Value2 => 3f;
-        public override float m_FireRateMultiply => m_Timer.m_Timing?Value1/100f*m_Stack*m_Timer.m_TimeLeftScale:0;
+        public override float m_FireRateMultiply => m_Timer.m_Timing ? Value1 / 100f * m_Stack * m_Timer.m_TimeLeftScale : 0;
         TimerBase m_Timer;
         public override void OnKillEnermy(EntityCharacterBase target)
         {
@@ -310,16 +308,16 @@ namespace GameSetting_PlayerPerks
             base.OnTick(deltaTime);
             m_Timer.Tick(deltaTime);
         }
-        public P10021(PerkSaveData saveData) : base(saveData) { m_Timer = new TimerBase(Value2,false); }
+        public P10021(PerkSaveData saveData) : base(saveData) { m_Timer = new TimerBase(Value2, false); }
     }
 
-    public class P10022:ExpirePlayerPerkBase
+    public class P10022 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10022;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 50f;
         public override float Value2 => 2f;
-        public override float m_MovementSpeedMultiply => m_Timer.m_Timing? Value1 / 100f * m_Stack:0;
+        public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f * m_Stack : 0;
         TimerBase m_Timer;
         public override void OnTick(float deltaTime)
         {
@@ -333,8 +331,8 @@ namespace GameSetting_PlayerPerks
         }
         public P10022(PerkSaveData saveData) : base(saveData) { m_Timer = new TimerBase(2f); }
     }
-    
-    public class P10023:ExpirePlayerPerkBase
+
+    public class P10023 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10023;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
@@ -343,12 +341,12 @@ namespace GameSetting_PlayerPerks
         {
             base.OnBeforeDealtDamage(receiver, info);
             if (receiver.m_CharacterInfo.m_Expires.Any(p => GameConst.m_GameDebuffID.Contains(p.m_Index)))
-                info.AddExtraDamage(Value1*m_Stack/100f,0);
+                info.AddExtraDamage(Value1 * m_Stack / 100f, 0);
         }
         public P10023(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10024:ExpirePlayerPerkBase
+    public class P10024 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10024;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
@@ -358,12 +356,12 @@ namespace GameSetting_PlayerPerks
             base.OnDealtDamage(receiver, info, applyAmount);
             if (applyAmount <= 0)
                 return;
-            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(-applyAmount*Value1/100f*m_Stack,enum_DamageType.Health));
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(-applyAmount * Value1 / 100f * m_Stack, enum_DamageType.Health));
         }
         public P10024(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10025:ExpirePlayerPerkBase
+    public class P10025 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10025;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
@@ -376,7 +374,7 @@ namespace GameSetting_PlayerPerks
         public P10025(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10026:ExpirePlayerPerkBase
+    public class P10026 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10026;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
@@ -385,7 +383,7 @@ namespace GameSetting_PlayerPerks
         public P10026(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10027:ExpirePlayerPerkBase
+    public class P10027 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10027;
         public override int m_MaxStack => 1;
@@ -394,26 +392,26 @@ namespace GameSetting_PlayerPerks
         public P10027(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10029:ExpirePlayerPerkWeapon
+    public class P10029 : ExpirePlayerPerkWeapon
     {
         public override int m_Index => 10029;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override float Value1 => 5f;
         public override float Value2 => 50f;
-        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(expireBaseDamage*Value2/100f*m_Stack,enum_DamageType.Basic);
+        protected override DamageInfo GetDamageInfo() => new DamageInfo(m_Attacher.m_EntityID, enum_DamageIdentity.Expire).SetDamage(expireBaseDamage * Value2 / 100f * m_Stack, enum_DamageType.Basic);
         float expireBaseDamage = 0;
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
             base.OnDealtDamage(receiver, info, applyAmount);
-            if (info.m_IdentityType== enum_DamageIdentity.Expire)
+            if (info.m_IdentityType == enum_DamageIdentity.Expire)
                 return;
             expireBaseDamage = applyAmount;
             m_SFXWeapon.OnPlay(false, receiver);
         }
         public P10029(PerkSaveData saveData) : base(saveData) { }
     }
-    
-    public class P10030:ExpirePlayerPerkWeapon
+
+    public class P10030 : ExpirePlayerPerkWeapon
     {
         public override int m_Index => 10030;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
@@ -426,12 +424,12 @@ namespace GameSetting_PlayerPerks
             if (TCommon.RandomPercentageInt() > Value1 * m_Stack)
                 return;
 
-            m_SFXWeapon.OnPlay(null,m_Attacher.GetAimingPosition(true));
+            m_SFXWeapon.OnPlay(null, m_Attacher.GetAimingPosition(true));
         }
         public P10030(PerkSaveData saveData) : base(saveData) { }
     }
 
-    public class P10031:ExpirePlayerPerkBase
+    public class P10031 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10031;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
@@ -458,18 +456,77 @@ namespace GameSetting_PlayerPerks
     }
     public class ExpirePlayerPerkWeapon : ExpirePlayerPerkBase
     {
-        public WeaponHelperBase m_SFXWeapon { get; private set; }
+        public CharacterWeaponHelperBase m_SFXWeapon { get; private set; }
         protected virtual DamageInfo GetDamageInfo()
         {
             Debug.LogError("Override This Please!");
-            return null; 
+            return null;
         }
 
         public override EntityExpireBase OnActivate(EntityCharacterBase _actionEntity)
         {
-            m_SFXWeapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetPlayerPerkSFXWeaponIndex(m_Index), _actionEntity, GetDamageInfo);
+            m_SFXWeapon = CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetPlayerPerkSFXWeaponIndex(m_Index), _actionEntity, 0, GetDamageInfo);
             return base.OnActivate(_actionEntity);
         }
-        public ExpirePlayerPerkWeapon(PerkSaveData data):base(data) { }
+        public ExpirePlayerPerkWeapon(PerkSaveData data) : base(data) { }
+    }
+}
+
+namespace GameSetting_CharacterGamePerks_20000
+{
+    public class EB20000_Default:ExpireGameCharacterBase
+    {
+        public override int m_Index => GameDataManager.m_DefaultEnermyPerkIdentity;
+        public EB20000_Default(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+    }
+
+    public class EB20001:ExpireGameCharacterBase
+    {
+        public override int m_Index => 20001;
+        public override int m_EffectIndex => 40014;
+        public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive + 3f;
+        public override void OnAttackSetDamage(DamageInfo info)
+        {
+            base.OnAttackSetDamage(info);
+            info.AddPresetBuff(105);
+        }
+        public EB20001(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+    }
+
+    public class EB20002 : ExpireGameCharacterBase
+    {
+        public override int m_Index => 20002;
+        public override int m_EffectIndex => 40002;
+        public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+3f;
+        public EB20002(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
+    }
+
+    public class EB20003 : ExpireGameCharacterBase
+    {
+        public override int m_Index => 20003;
+        public override int m_EffectIndex => 40001;
+        public override float m_MaxHealthMultiplierAdditive => base.m_MaxHealthMultiplierAdditive+3f;
+        TimerBase m_CooldownTimer = new TimerBase(5f,true);
+        TimerBase m_HealTimer = new TimerBase(1f,true);
+        public override void OnReceiveDamage(DamageInfo info, float amount)
+        {
+            base.OnReceiveDamage(info, amount);
+            m_CooldownTimer.Replay();
+            m_HealTimer.Stop();
+        }
+        public override void OnTick(float deltaTime)
+        {
+            base.OnTick(deltaTime);
+            m_CooldownTimer.Tick(deltaTime);
+            if (m_CooldownTimer.m_Timing)
+                return;
+
+            m_HealTimer.Tick(Time.deltaTime);
+            if (m_HealTimer.m_Timing)
+                return;
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(m_Attacher.m_EntityID,  enum_DamageIdentity.Expire).SetDamage(-m_Attacher.m_Health.m_MaxHealth/20f, enum_DamageType.Health));
+            m_HealTimer.Replay();
+        }
+        public EB20003(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 }

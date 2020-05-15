@@ -92,7 +92,7 @@ namespace GameSetting
         SafeBox=12,
     }
 
-    public enum enum_EntityType { Invalid = -1, None = 1, Player = 2, AIWeaponHelper = 3, AIWeaponModel = 4, Device = 5, }
+    public enum enum_EntityType { Invalid = -1, None = 1, Player = 2, GameEntity = 3,GameDevice=4, }
 
     public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
 

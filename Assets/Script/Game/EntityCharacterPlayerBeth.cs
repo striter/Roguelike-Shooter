@@ -48,7 +48,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
             if (!m_Rolling)
             {
                 m_WeaponCurrent.AddAmmo((int)(m_WeaponCurrent.m_ClipAmount*P_RollFinishClipRestore/100f));
-                m_CharacterInfo.AddExpire(new EntityExpirePreset( m_SpawnerEntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*P_RollFinishFireRateExtraMultiply/100f+m_CharacterInfo.m_RankManager.m_Rank*P_RollFinishFireRateRankMultiply/100f,F_RollFinishFireRateDuration)));
+                m_CharacterInfo.AddExpire(new EntityExpirePreset( m_EntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*P_RollFinishFireRateExtraMultiply/100f+m_CharacterInfo.m_RankManager.m_Rank*P_RollFinishFireRateRankMultiply/100f,F_RollFinishFireRateDuration)));
                 m_Animator.EndRoll();
             }
         }

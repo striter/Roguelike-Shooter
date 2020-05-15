@@ -7,9 +7,8 @@ using UnityEngine;
 
 public class EntityCharacterBase : EntityBase
 {
-    public int I_MaxHealth;
     public float F_MovementSpeed;
-    public float F_AttackSpread;
+
     public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
     public virtual Transform tf_Weapon=>null;
@@ -17,8 +16,6 @@ public class EntityCharacterBase : EntityBase
     public virtual MeshRenderer m_WeaponSkin { get; private set; }
     public EntityCharacterSkinEffectManager m_CharacterSkinEffect { get; private set; }
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
-    public int m_SpawnerEntityID { get; private set; }
-    public bool b_isSubEntity => m_SpawnerEntityID != -1;
     protected virtual CharacterExpireManager GetEntityInfo() => new CharacterExpireManager(this,  OnExpireChange);
     
     public virtual float m_baseMovementSpeed => F_MovementSpeed;
@@ -64,23 +61,12 @@ public class EntityCharacterBase : EntityBase
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
     public bool m_TargetAvailable =>  !m_IsDead;
-    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag)
     {
-        base.OnEntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag);
         m_CharacterSkinEffect.OnReset();
     }
 
-    protected void OnMainCharacterActivate(enum_EntityFlag _flag)
-    {
-        OnEntityActivate(_flag,I_MaxHealth);
-        m_SpawnerEntityID = -1;
-    }
-    public virtual EntityCharacterBase OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
-    {
-        OnEntityActivate(_flag, startHealth);
-        m_SpawnerEntityID = _spawnerID;
-        return this;
-    }
 
     protected virtual void OnExpireChange(){ }
 

@@ -4,9 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityCharacterForestExtra : EntityCharacterBase {
+public class EntityCharacterGameForestExtra : EntityCharacterGameBase {
 
-    public float F_Damage;
     [Range(0, 90)]
     public int I_SpreadAngleEach = 30;
     public float F_SpreadDuration = .5f;
@@ -14,15 +13,16 @@ public class EntityCharacterForestExtra : EntityCharacterBase {
     int i_spreadCountCheck = 0;
     float f_spreadCheck = 0;
     public override Transform tf_Weapon => tf_Head;
-    WeaponHelperBase m_Weapon;
+    CharacterWeaponHelperBase m_Weapon;
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
-        m_Weapon = WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this, () => m_CharacterInfo.GetDamageInfo(F_Damage) );
+        m_Weapon = CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this,F_Spread, () => m_CharacterInfo.GetDamageInfo(F_BaseDamage) );
     }
-    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
+
+    protected override void OnEntityActivate(enum_EntityFlag flag)
     {
-        base.OnEntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag);
         f_spreadCheck = F_SpreadDuration;
         i_spreadCountCheck = 0;
     }

@@ -68,7 +68,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
     public  EntityCharacterPlayer OnPlayerActivate(CGameProgressSave _battleSave)
     {
-        OnMainCharacterActivate(enum_EntityFlag.Player);
+        OnEntityActivate(enum_EntityFlag.Player);
         UIManager.Instance.DoBindings(this, OnMovementDelta, null, OnMainDown, OnSubDown, OnAbilityDown);
 
         m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, _battleSave.m_Health >= 0 ? _battleSave.m_Health : I_MaxHealth);

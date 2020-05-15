@@ -9,17 +9,18 @@ public class SFXSubEntitySpawner : SFXWeaponBase {
     public int I_EntitySpawnID;
     public int I_DelayIndicator = 0;
     public float F_DelayDuration = 0;
-    float m_StartHealth;
+    int m_StartHealth;
+    float m_StartDamage;
     Action<EntityCharacterBase> OnSpawn;
     EntityCharacterBase m_Spawner;
     Vector3 m_targetPos;
-    public void Play(EntityCharacterBase character,Vector3 target, float startHealth, Action<EntityCharacterBase> _OnSpawn)
+    public void Play(EntityCharacterBase character, Vector3 target, int startHealth, float startDamage)
     {
         base.PlayUncontrolled(character.m_EntityID,1f,F_DelayDuration);
         m_Spawner = character;
         m_targetPos = target;
+        m_StartDamage = startDamage;
         m_StartHealth = startHealth;
-        OnSpawn = _OnSpawn;
         if (I_DelayIndicator > 0)
             GameObjectManager.SpawnIndicator(I_DelayIndicator, transform.position, Vector3.up).PlayUncontrolled(character.m_EntityID,F_DelayDuration);
     }
@@ -27,7 +28,7 @@ public class SFXSubEntitySpawner : SFXWeaponBase {
     protected override void OnPlay()
     {
         base.OnPlay();
-        EntityCharacterBase entity = GameObjectManager.SpawnEntitySubCharacter(I_EntitySpawnID, NavigationManager.NavMeshPosition(transform.position), m_targetPos, m_Spawner.m_Flag, m_Spawner.m_EntityID, m_StartHealth);
+        EntityCharacterGameBase entity = GameObjectManager.SpawnEntitySubCharacter(I_EntitySpawnID, NavigationManager.NavMeshPosition(transform.position), m_targetPos, m_Spawner.m_Flag, m_Spawner.m_EntityID, m_StartHealth,m_StartDamage);
         OnSpawn?.Invoke(entity);
     }
 

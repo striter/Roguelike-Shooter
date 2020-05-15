@@ -8,8 +8,8 @@ public partial class TResources
 {
     public class ConstPath
     {
-        public const string S_PlayerEntity = "Entity/PlayerCharacter/";
-        public const string S_EnermyEntity = "Entity/AICharacter/";
+        public const string S_PlayerCharacter = "Character/Player/";
+        public const string S_GameCharacter = "Character/Game/";
 
         public const string S_ChunkRender = "Chunk/Render/";
         public const string S_ChunkTile = "Chunk/Tile/";
@@ -66,8 +66,8 @@ public partial class TResources
 
     public static SFXBase[] GetAllEffectSFX() => LoadAll<SFXBase>(ConstPath.S_SFXEffects);
 
-    public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Load<EntityCharacterPlayer>(ConstPath.S_PlayerEntity + (int)character);
-    public static EntityCharacterBase GetEnermyCharacter(int index) => Load<EntityCharacterBase>(ConstPath.S_EnermyEntity + index);
+    public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Load<EntityCharacterPlayer>(ConstPath.S_PlayerCharacter + (int)character);
+    public static EntityCharacterGameBase GetGameCharacter(int index) => Load<EntityCharacterGameBase>(ConstPath.S_GameCharacter + index);
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeaponIdentity weapon) => Load<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
     public static InteractGameBase GetInteract(enum_Interaction type) => Load<InteractGameBase>(ConstPath.S_InteractCommon + type);
     #endregion

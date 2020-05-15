@@ -18,7 +18,7 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
     public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Railer;
     public override bool m_AbilityAvailable => m_ShotStorage > 0;
     public override float m_AbilityCooldownScale => m_ShotRestoreTimer.m_TimeLeftScale;
-    WeaponHelperBase m_CharacterWeaponHelper;
+    CharacterWeaponHelperBase m_CharacterWeaponHelper;
 
     int m_MaxShotStorage => I_BaseShotStorage + m_CharacterInfo.m_RankManager.m_Rank / I_ExtraShotStorageRankStep;
     TimerBase m_ShotRestoreTimer;
@@ -29,11 +29,11 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
         m_ShotRestoreTimer = new TimerBase(F_ShotRestoreCoolDown,false);
     }
     DamageInfo GetAbilityDamageInfo() => new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(F_AbilityDamageBase + F_AbilityDamageExtraMultiply * m_CharacterInfo.m_DamageAdditive + m_CharacterInfo.m_RankManager.m_Rank * F_AbilityDamageRankMultiply).SetDamageCritical( m_CharacterInfo.m_CriticalRate * F_AbilityCriticalRateMultiply, m_CharacterInfo.m_CriticalDamageMultiply);
-    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag)
     {
-        base.OnEntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag);
         m_ShotStorage = m_MaxShotStorage;
-        m_CharacterWeaponHelper = WeaponHelperBase.AcquireWeaponHelper(I_ShotProjectileID,this,GetAbilityDamageInfo);
+        m_CharacterWeaponHelper = CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(I_ShotProjectileID,this,0,GetAbilityDamageInfo);
     }
 
     public override void OnAbilityDown(bool down)

@@ -351,9 +351,9 @@ public class GameManager : GameManagerBase
     #region Pickup Management
     public InteractPickupWeapon SpawnRandomUnlockedWeapon(Vector3 pos,Quaternion rot,Dictionary<enum_Rarity,float> weaponGenerate,Transform trans=null, System.Random random = null)=> GameObjectManager.SpawnInteract<InteractPickupWeapon>(pos, rot,trans).Play(GameDataManager.RandomUnlockedWeaponData(weaponGenerate.RandomPercentage( enum_Rarity.Ordinary,random),m_GameLevel.m_Stage,random));
 
-    void SpawnCharacterDeadDrops(EntityCharacterBase entity)
+    void SpawnCharacterDeadDrops(EntityCharacterGameBase entity)
     {
-        if (entity.m_Flag != enum_EntityFlag.Enermy||entity.b_isSubEntity)
+        if (entity.m_Flag != enum_EntityFlag.Enermy||entity.m_IsSubEntity)
             return;
 
         Vector3 sourcePosition = entity.transform.position;
@@ -446,7 +446,9 @@ public class GameManager : GameManagerBase
         if (character.m_ControllType == enum_EntityType.Player)
             SetPostEffect_Dead();
 
-        SpawnCharacterDeadDrops(character);
+        if(character.m_ControllType== enum_EntityType.GameEntity)
+            SpawnCharacterDeadDrops(character as EntityCharacterGameBase);
+
         CheckTransmitCharacterKilled(character.m_EntityID);
     }
 

@@ -8,12 +8,11 @@ using System;
 using TPhysics;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EntityCharacterAI : EntityCharacterBase {
+public class EntityCharacterGameAI : EntityCharacterGameBase {
     #region Preset
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
     public float F_AIChaseRange;
     public float F_AIAttackRange;
-    public float F_BaseDamage;
     public int I_BuffApplyOnHit;
     public float F_AttackRate;
     public RangeFloat F_AttackDuration;
@@ -23,44 +22,36 @@ public class EntityCharacterAI : EntityCharacterBase {
     public bool B_AttackMove = true;
     public float F_AttackFrontCheck = 2f;
     #endregion
-    public override enum_EntityType m_ControllType => enum_EntityType.AIWeaponHelper;
     WeaponHelperAnimator m_Animator;
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_IsDead;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
-    public ExpireEnermyPerkBase m_EnermyPerk { get; private set; }
     public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolItemInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
-        InitAI(WeaponHelperBase.AcquireWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,GetAIDamageInfo));
+        InitAI(CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,F_Spread,GetAIDamageInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new WeaponHelperAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
+        m_Agent.enabled = false;
     }
 
-    public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageInfo(F_BaseDamage,I_BuffApplyOnHit, enum_DamageType.Basic);
-
-    public EntityCharacterAI OnAIActivate(enum_EntityFlag _flag, ExpireEnermyPerkBase enermyPerk )
+    public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageInfo(F_BaseDamage, I_BuffApplyOnHit, enum_DamageType.Basic);
+    protected override void OnEntityActivate(enum_EntityFlag flag)
     {
-        m_EnermyPerk = enermyPerk;
-        base.OnMainCharacterActivate(_flag);
-        if (m_Animator != null)  m_Animator.OnActivate(E_AnimatorIndex);
+        base.OnEntityActivate(flag);
+        if (m_Animator != null) m_Animator.OnActivate(E_AnimatorIndex);
 
         m_Health.OnActivate(I_MaxHealth);
         m_Agent.enabled = true;
-        m_CharacterInfo.AddExpire(enermyPerk);
-        m_Health.OnHealthMultiplierChange(1f+enermyPerk.m_MaxHealthMultiplierAdditive);
-
         AIActivate();
-        return this;
     }
-    public override EntityCharacterBase OnSubCharacterActivate(enum_EntityFlag _flag, int _spawnerID, float startHealth)
+
+    public override void OnPoolItemRecycle()
     {
-        base.OnSubCharacterActivate(_flag, _spawnerID, startHealth == 0 ? I_MaxHealth : startHealth);
-        AIActivate();
-        return this;
+        base.OnPoolItemRecycle();
+        m_Agent.enabled = false;
     }
-
     protected override void OnRevive()
     {
         base.OnRevive();
@@ -73,7 +64,6 @@ public class EntityCharacterAI : EntityCharacterBase {
         if (m_Animator != null)  m_Animator.OnDead();
         m_Agent.enabled = false;
     }
-
     protected override void OnExpireChange()
     {
         base.OnExpireChange();
@@ -123,7 +113,7 @@ public class EntityCharacterAI : EntityCharacterBase {
 
     #region AI
     protected NavMeshAgent m_Agent;
-    protected WeaponHelperBase m_Weapon;
+    protected CharacterWeaponHelperBase m_Weapon;
     TimerBase m_TargetingTimer = new TimerBase(), m_MoveTimer = new TimerBase(), m_MoveOrderTimer = new TimerBase(),m_BattleDurationTimer=new TimerBase(),m_BattleFireTimer=new TimerBase();
 
     public EntityCharacterBase m_Target { get; private set; }
@@ -141,14 +131,14 @@ public class EntityCharacterAI : EntityCharacterBase {
         }
     }
 
-    void InitAI(WeaponHelperBase _weapon)
+    void InitAI(CharacterWeaponHelperBase _weapon)
     {
         m_Weapon = _weapon;
         m_Agent = GetComponent<NavMeshAgent>();
         m_Agent.stoppingDistance = 0f;
     }
 
-    public void AIActivate()
+    void AIActivate()
     {
         m_AgentEnabled = false;
         m_b_attacking = false;

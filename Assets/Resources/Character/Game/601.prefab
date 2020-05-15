@@ -326,13 +326,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 0
-  I_DefaultArmor: 0
   F_MovementSpeed: 0
-  F_AttackSpread: 0
+  F_BaseDamage: 0
+  F_Spread: 0
   E_AnimatorIndex: -1
   F_AIChaseRange: 30
   F_AIAttackRange: 30
-  F_BaseDamage: 0
   I_BuffApplyOnHit: 0
   F_AttackRate: 1
   F_AttackDuration:
@@ -364,7 +363,7 @@ NavMeshAgent:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1291371841804026}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.00001
   m_Speed: 3.5

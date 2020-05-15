@@ -297,13 +297,13 @@ namespace GameSetting
 
         #region Enermy Perk Data
        public const int m_DefaultEnermyPerkIdentity= 20000;
-        static Dictionary<int, ExpireEnermyPerkBase> m_AllEnermyPerks = new Dictionary<int, ExpireEnermyPerkBase>();
+        static Dictionary<int, ExpireGameCharacterBase> m_AllEnermyPerks = new Dictionary<int, ExpireGameCharacterBase>();
         static List<int> m_AvailableEnermyPerks = new List<int>();
         public static void InitEnermyPerks()
         {
             m_AllEnermyPerks.Clear();
             m_AvailableEnermyPerks.Clear();
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpireEnermyPerkBase perk) => {
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpireGameCharacterBase perk) => {
                 m_AllEnermyPerks.Add(perk.m_Index, perk);
                 if (perk.m_Index == m_DefaultEnermyPerkIdentity)
                     return;
@@ -311,8 +311,8 @@ namespace GameSetting
             }),0,0);
         }
 
-        public static ExpireEnermyPerkBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireEnermyPerkBase>(m_AllEnermyPerks[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity].GetType(), GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
-        public static bool IsElitePerk(this ExpireEnermyPerkBase perk) => perk.m_Index != m_DefaultEnermyPerkIdentity;
+        public static ExpireGameCharacterBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireGameCharacterBase>(m_AllEnermyPerks[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity].GetType(), GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
+        public static bool IsElitePerk(this ExpireGameCharacterBase perk) => perk.m_Index != m_DefaultEnermyPerkIdentity;
         #endregion
 
         #region ExcelData
@@ -523,20 +523,6 @@ namespace GameSetting
         public int m_Enhance { get; private set; }
         public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeaponIdentity.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:0 };
         public static WeaponSaveData New(enum_PlayerWeaponIdentity weapon,int enhanceLevel=0) => new WeaponSaveData() { m_Weapon = weapon,m_Enhance=enhanceLevel };
-    }
-
-    public struct MercenarySaveData : IDataConvert
-    {
-        public enum_MercenaryCharacter m_MercenaryCharacter { get; private set; }
-        public WeaponSaveData m_Weapon { get; private set; }
-        public float m_Health { get; private set; }
-        public MercenarySaveData(EntityCharacterMercenary _mercenary)
-        {
-            m_Weapon = WeaponSaveData.Save(_mercenary.m_Weapon);
-            m_MercenaryCharacter = _mercenary.m_Character;
-            m_Health = _mercenary.m_Health.m_CurrentHealth;
-
-        }
     }
 
     public struct PerkSaveData : IDataConvert

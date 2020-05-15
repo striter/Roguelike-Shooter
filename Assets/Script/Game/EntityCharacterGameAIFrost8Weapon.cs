@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityCharacterAIFrost8Weapon : EntityCharacterAI
+public class EntityCharacterGameAIFrost8Weapon : EntityCharacterGameAI
 {
     ModelBlink m_Blink;
     float timeElapsed;
@@ -14,9 +14,9 @@ public class EntityCharacterAIFrost8Weapon : EntityCharacterAI
         base.OnPoolItemInit(_identity, _OnRecycle);
         m_Blink = new ModelBlink(tf_Model.Find("BlinkModel"), .25f, .25f, Color.red);
     }
-    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag)
     {
-        base.OnEntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag);
         m_Blink.OnReset();
         b_selfDetonating = false;
         timeElapsed = 0;

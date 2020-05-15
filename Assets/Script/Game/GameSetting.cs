@@ -277,6 +277,7 @@ namespace GameSetting
             OnSetHealth(startHealth);
             m_BaseArmor = startArmor;
             OnSetArmor(startArmor);
+            m_HealthMultiplier = 1f;
             OnHealthChanged(enum_HealthChangeMessage.Default);
         }
         public void OnSetStatus(float setHealth, float setArmor)
@@ -508,7 +509,7 @@ namespace GameSetting
 
         public DamageInfo GetDamageInfo(float baseDamage, int buff = -1, enum_DamageType damageType = enum_DamageType.Basic,enum_DamageIdentity identityType= enum_DamageIdentity.Default,int identityID=-1)
         {
-            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).AddPresetBuff(buff);
+            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).SetDamageCritical(m_CriticalRate, m_CriticalRate).AddPresetBuff(buff);
             m_Expires.Traversal((EntityExpireBase interact) => { interact.OnAttackSetDamage(info); });
             return info;
         } 
@@ -998,7 +999,7 @@ namespace GameSetting
         public virtual float F_Cast_Melee_SizeMultiply => 0f;
     }
 
-    public class ExpireEnermyPerkBase:EntityExpireBase
+    public class ExpireGameCharacterBase:EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.EnermyElite;
         public virtual float m_MaxHealthMultiplierAdditive => m_GameBaseMaxHealthMultiplier;
@@ -1007,7 +1008,7 @@ namespace GameSetting
         protected float m_GameBaseMaxHealthMultiplier = 0;
         protected float m_GameBaseDamageMultiplier = 0;
 
-        public ExpireEnermyPerkBase(float baseMaxHealthMultiplier,float baseDamageMultiplier)
+        public ExpireGameCharacterBase(float baseMaxHealthMultiplier,float baseDamageMultiplier)
         {
             m_GameBaseDamageMultiplier = baseDamageMultiplier;
             m_GameBaseMaxHealthMultiplier = baseMaxHealthMultiplier;
@@ -1088,18 +1089,20 @@ namespace GameSetting
     #endregion
 
     #region WeaponHelper
-    public class WeaponHelperBase
+    public class CharacterWeaponHelperBase
     {
         public virtual bool B_TargetAlly => false;
         public int I_Index { get; private set; } = -1;
         public virtual bool B_LoopAnim => false;
-        protected EntityCharacterBase m_Entity;
         protected Transform attacherHead => m_Entity.tf_Head;
-        protected Func<DamageInfo> GetDamageDeliverInfo;
-        public WeaponHelperBase(int weaponIndex, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo)
+        protected EntityCharacterBase m_Entity { get; private set; }
+        protected Func<DamageInfo> GetDamageDeliverInfo { get; private set; }
+        protected float m_Spread { get; private set; }
+        public CharacterWeaponHelperBase(int weaponIndex, EntityCharacterBase _controller,float spread, Func<DamageInfo> _GetBuffInfo)
         {
             I_Index = weaponIndex;
             m_Entity = _controller;
+            m_Spread = spread;
             GetDamageDeliverInfo = _GetBuffInfo;
         }
         protected virtual Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target) => _target.tf_Head.position;
@@ -1113,7 +1116,7 @@ namespace GameSetting
         {
 
         }
-        public static WeaponHelperBase AcquireWeaponHelper(int weaponIndex, EntityCharacterBase _entity, Func<DamageInfo> GetDamageBuffInfo)
+        public static CharacterWeaponHelperBase AcquireCharacterWeaponHelper(int weaponIndex, EntityCharacterBase _entity,float spread, Func<DamageInfo> GetDamageBuffInfo)
         {
             SFXWeaponBase weaponInfo = GameObjectManager.GetSFXWeaponData<SFXWeaponBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
@@ -1122,9 +1125,9 @@ namespace GameSetting
                 switch (projectile.E_ProjectileType)
                 {
                     default: Debug.LogError("Invalid Type:" + projectile.E_ProjectileType); break;
-                    case enum_ProjectileFireType.Single: return new WeaponHelperBarrageRange(weaponIndex, projectile, _entity, GetDamageBuffInfo);
-                    case enum_ProjectileFireType.MultipleFan: return new WeaponHelperBarrageMultipleFan(weaponIndex, projectile, _entity, GetDamageBuffInfo);
-                    case enum_ProjectileFireType.MultipleLine: return new WeaponHelperBarrageMultipleLine(weaponIndex, projectile, _entity, GetDamageBuffInfo);
+                    case enum_ProjectileFireType.Single: return new CharacterWeaponHelperBarrageRange(weaponIndex, projectile, _entity, spread, GetDamageBuffInfo);
+                    case enum_ProjectileFireType.MultipleFan: return new CharacterWeaponHelperBarrageMultipleFan(weaponIndex, projectile, _entity, spread, GetDamageBuffInfo);
+                    case enum_ProjectileFireType.MultipleLine: return new CharacterWeaponHelperBarrageMultipleLine(weaponIndex, projectile, _entity, spread, GetDamageBuffInfo);
                 }
             }
 
@@ -1134,29 +1137,29 @@ namespace GameSetting
                 switch (cast.E_CastType)
                 {
                     default: Debug.LogError("Invalid Type:" + cast.E_CastType); break;
-                    case enum_CastControllType.CastFromOrigin: return new WeaponHelperCaster(weaponIndex, cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastControlledForward: return new WeaponHelperCasterControlled(weaponIndex, cast, _entity, GetDamageBuffInfo);
-                    case enum_CastControllType.CastAtTarget: return new WeaponHelperCasterTarget(weaponIndex, cast, _entity, GetDamageBuffInfo);
+                    case enum_CastControllType.CastFromOrigin: return new CharacterWeaponHelperCaster(weaponIndex, cast, _entity, spread, GetDamageBuffInfo);
+                    case enum_CastControllType.CastControlledForward: return new CharacterWeaponHelperCasterControlled(weaponIndex, cast, _entity, spread, GetDamageBuffInfo);
+                    case enum_CastControllType.CastAtTarget: return new CharacterWeaponHelperCasterTarget(weaponIndex, cast, _entity, spread, GetDamageBuffInfo);
                 }
             }
 
             SFXBuffApply buffApply = weaponInfo as SFXBuffApply;
             if (buffApply)
-                return new WeaponHelperBuffApply(weaponIndex, buffApply, _entity, GetDamageBuffInfo);
+                return new CharacterWeaponHelperBuffApply(weaponIndex, buffApply, _entity, spread, GetDamageBuffInfo);
 
             SFXSubEntitySpawner entitySpawner = weaponInfo as SFXSubEntitySpawner;
             if (entitySpawner)
-                return new WeaponHelperEntitySpawner(weaponIndex, entitySpawner, _entity, GetDamageBuffInfo);
+                return new CharacterWeaponHelperEntitySpawner(weaponIndex, entitySpawner, _entity, spread, GetDamageBuffInfo);
 
             return null;
         }
     }
 
-    public class WeaponHelperCaster : WeaponHelperBase
+    public class CharacterWeaponHelperCaster : CharacterWeaponHelperBase
     {
         protected enum_CastTarget m_CastAt { get; private set; }
         protected bool m_castForward { get; private set; }
-        public WeaponHelperCaster(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperCaster(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller,spread, _GetBuffInfo)
         {
             m_CastAt = _castInfo.E_CastTarget;
             m_castForward = _castInfo.B_CastForward;
@@ -1184,15 +1187,15 @@ namespace GameSetting
     }
 
 
-    public class WeaponHelperCasterTarget : WeaponHelperCaster
+    public class CharacterWeaponHelperCasterTarget : CharacterWeaponHelperCaster
     {
-        public WeaponHelperCasterTarget(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _castInfo, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperCasterTarget(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller,float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _castInfo, _controller,spread, _GetBuffInfo)
         {
         }
         protected override Vector3 GetTargetPosition(bool preAim, EntityCharacterBase _target)
         {
             Transform castAt = GetCastAt(_target);
-            Vector3 castPos = NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere() * m_Entity.F_AttackSpread);
+            Vector3 castPos = NavigationManager.NavMeshPosition(castAt.position + TCommon.RandomXZSphere() * m_Spread);
             castPos.y = castAt.transform.position.y;
             return castPos;
         }
@@ -1202,11 +1205,11 @@ namespace GameSetting
         }
     }
 
-    public class WeaponHelperCasterControlled : WeaponHelperCaster
+    public class CharacterWeaponHelperCasterControlled : CharacterWeaponHelperCaster
     {
         public override bool B_LoopAnim => true;
         SFXCast m_Cast;
-        public WeaponHelperCasterControlled(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _castInfo, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperCasterControlled(int weaponIndex, SFXCast _castInfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _castInfo, _controller,spread, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -1231,7 +1234,7 @@ namespace GameSetting
             }
         }
     }
-    public class WeaponHelperBarrageRange : WeaponHelperBase
+    public class CharacterWeaponHelperBarrageRange : CharacterWeaponHelperBase
     {
         protected float f_projectileSpeed { get; private set; }
         protected RangeInt m_CountExtension { get; private set; }
@@ -1239,7 +1242,7 @@ namespace GameSetting
         int i_muzzleIndex;
         AudioClip m_MuzzleClip;
 
-        public WeaponHelperBarrageRange(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperBarrageRange(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller,spread, _GetBuffInfo)
         {
             i_muzzleIndex = projectileInfo.I_MuzzleIndex;
             m_MuzzleClip = projectileInfo.AC_MuzzleClip;
@@ -1266,8 +1269,8 @@ namespace GameSetting
             if (preAim && Mathf.Abs(TCommon.GetAngle(m_Entity.tf_Weapon.forward, TCommon.GetXZLookDirection(m_Entity.tf_Weapon.position, targetPosition), Vector3.up)) > 90)    //Target Positioned Back, Return Target
                 targetPosition = _target.tf_Head.position;
 
-            if (TCommon.GetXZDistance(m_Entity.tf_Weapon.position, targetPosition) > m_Entity.F_AttackSpread)      //Target Outside Spread Sphere,Add Spread
-                targetPosition += TCommon.RandomXZSphere() * m_Entity.F_AttackSpread;
+            if (TCommon.GetXZDistance(m_Entity.tf_Weapon.position, targetPosition) > m_Spread)      //Target Outside Spread Sphere,Add Spread
+                targetPosition += TCommon.RandomXZSphere() * m_Spread;
             return targetPosition;
         }
 
@@ -1277,9 +1280,9 @@ namespace GameSetting
         }
         protected void SpawnMuzzle(Vector3 startPosition, Vector3 direction) => GameObjectManager.PlayMuzzle(m_Entity.m_EntityID, startPosition, direction, i_muzzleIndex, m_MuzzleClip);
     }
-    public class WeaponHelperBarrageMultipleLine : WeaponHelperBarrageRange
+    public class CharacterWeaponHelperBarrageMultipleLine : CharacterWeaponHelperBarrageRange
     {
-        public WeaponHelperBarrageMultipleLine(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, projectileInfo, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperBarrageMultipleLine(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, projectileInfo, _controller,spread, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -1295,9 +1298,9 @@ namespace GameSetting
         }
     }
 
-    public class WeaponHelperBarrageMultipleFan : WeaponHelperBarrageRange
+    public class CharacterWeaponHelperBarrageMultipleFan : CharacterWeaponHelperBarrageRange
     {
-        public WeaponHelperBarrageMultipleFan(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, projectileInfo, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperBarrageMultipleFan(int weaponIndex, SFXProjectile projectileInfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, projectileInfo, _controller,spread, _GetBuffInfo)
         {
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
@@ -1316,12 +1319,12 @@ namespace GameSetting
         }
     }
 
-    public class WeaponHelperBuffApply : WeaponHelperBase
+    public class CharacterWeaponHelperBuffApply : CharacterWeaponHelperBase
     {
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
         SFXBuffApply m_Effect;
-        public WeaponHelperBuffApply(int weaponIndex, SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperBuffApply(int weaponIndex, SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller,spread, _GetBuffInfo)
         {
             m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
@@ -1333,25 +1336,25 @@ namespace GameSetting
             m_Effect.Play(m_Entity.m_EntityID, m_buffInfo, m_Entity.tf_Weapon, _target);
         }
     }
-    public class WeaponHelperEntitySpawner : WeaponHelperBase
+    public class CharacterWeaponHelperEntitySpawner : CharacterWeaponHelperBase
     {
         bool m_SpawnAtTarget;
-        public WeaponHelperEntitySpawner(int weaponIndex, SFXSubEntitySpawner spawner, EntityCharacterBase _controller, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller, _GetBuffInfo)
+        public CharacterWeaponHelperEntitySpawner(int weaponIndex, SFXSubEntitySpawner spawner, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller,spread, _GetBuffInfo)
         {
             startHealth = 0;
             m_SpawnAtTarget = spawner.B_SpawnAtTarget;
         }
-        Action<EntityCharacterBase> OnSpawn;
-        float startHealth;
-        public void SetOnSpawn(float _startHealth, Action<EntityCharacterBase> _OnSpawn)
+        float startDamage;
+        int startHealth;
+        public void SetOnSpawn(int _startHealth, float _damage)
         {
-            OnSpawn = _OnSpawn;
+            startDamage = _damage;
             startHealth = _startHealth;
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere() * m_Entity.F_AttackSpread;
-            GameObjectManager.SpawnSFXWeapon<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity, _target.transform.position, startHealth, OnSpawn);
+            Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere() * m_Spread;
+            GameObjectManager.SpawnSFXWeapon<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity, _target.transform.position, startHealth, startDamage);
         }
     }
     #endregion

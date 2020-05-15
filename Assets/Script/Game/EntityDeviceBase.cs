@@ -5,7 +5,7 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityDeviceBase : EntityCharacterBase {
-    public override enum_EntityType m_ControllType => enum_EntityType.Device; 
+    public override enum_EntityType m_ControllType => enum_EntityType.GameDevice; 
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolListComponent<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
@@ -28,9 +28,9 @@ public class EntityDeviceBase : EntityCharacterBase {
         base.OnPoolItemDisable();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-    protected override void OnEntityActivate(enum_EntityFlag flag, float startHealth = 0)
+    protected override void OnEntityActivate(enum_EntityFlag flag)
     {
-        base.OnEntityActivate(flag, startHealth);
+        base.OnEntityActivate(flag);
         m_Particles.Traversal((ParticleSystem particle) => { particle.Play(); });
     }
     void OnCharacterDead(EntityCharacterBase character)
@@ -63,8 +63,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         {
             default:break;
             case enum_EntityType.Player:
-            case enum_EntityType.AIWeaponHelper:
-            case enum_EntityType.AIWeaponModel:
+            case enum_EntityType.GameEntity:
                 {
                     EntityCharacterBase target = entity.m_Attacher as EntityCharacterBase;
                     if (!CanConnectTarget(target))
