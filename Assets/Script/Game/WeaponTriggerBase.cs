@@ -8,12 +8,12 @@ public class WeaponTriggerBase : MonoBehaviour
     public virtual enum_PlayerWeaponTriggerType m_Type => enum_PlayerWeaponTriggerType.Invalid;
     public bool m_TriggerDown { get; protected set; }
     protected WeaponBase m_Weapon { get; private set; }
-    protected TimerBase m_TriggerTimer { get; private set; } = new TimerBase();
+    protected TimerBase m_TriggerTimer { get; private set; } 
     protected void Init(WeaponBase weapon)
     {
         m_Weapon = weapon;
         m_TriggerDown = false;
-        m_TriggerTimer.SetTimerDuration(F_FireRate);
+        m_TriggerTimer = new TimerBase(F_FireRate,true);
     }
     public virtual void OnSetTrigger(bool down)
     {
