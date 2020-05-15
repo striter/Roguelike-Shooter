@@ -56,7 +56,7 @@ MonoBehaviour:
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 0}
   I_TrailIndex: 70013
-  I_MuzzleIndex: 10013
+  I_MuzzleIndex: 19013
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
   F_Radius: 0.2
