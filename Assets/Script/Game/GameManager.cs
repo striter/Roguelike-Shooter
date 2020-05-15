@@ -30,7 +30,7 @@ public class GameManager : GameManagerBase
         });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enermy", KeyCode.Z, "101", (string id) => {
-            GameObjectManager.SpawnEntityCharacterAI(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity, enum_EntityFlag.Enermy,m_GameLevel.m_MinutesElapsed, m_GameLevel.m_GameDifficulty,false);
+            GameObjectManager.SpawnGameCharcter(int.Parse(id), NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).OnMainActivate(enum_EntityFlag.Enermy,GameDataManager.RandomEnermyPerk(m_GameLevel.m_MinutesElapsed, m_GameLevel.m_GameDifficulty,false));
         });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Damage", KeyCode.N, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1).SetDamage(int.Parse(damage), enum_DamageType.Basic)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Heal", KeyCode.M, "20", (string damage) => { m_LocalPlayer.m_HitCheck.TryHit(new DamageInfo(-1).SetDamage(-int.Parse(damage), enum_DamageType.Basic)); });
@@ -652,7 +652,7 @@ public class GameProgressManager
 
     public void OnTransmitTrigger(Vector3 playerPos)
     {
-        m_TransmitEliteID = GameObjectManager.SpawnEntityCharacterAI(GameConst.L_GameEliteIndexes.RandomItem(), GetSpawnList(playerPos)[0], Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty, false).m_EntityID;
+        m_TransmitEliteID = GameObjectManager.SpawnGameCharcter(GameConst.L_GameEliteIndexes.RandomItem(), GetSpawnList(playerPos)[0], Quaternion.identity).OnMainActivate(enum_EntityFlag.Enermy, GameDataManager.RandomEnermyPerk(m_MinutesElapsed, m_GameDifficulty, false)).m_EntityID;
     }
 
     public bool CheckTransmitEliteKilled(int enermyID)
@@ -673,8 +673,8 @@ public class GameProgressManager
         int pointLength = spawnPoint.Count > 5 ? 5 : spawnPoint.Count;
         float eliteGenerateRate = GameConst.F_EnermyEliteGenerateBase + GameConst.F_EnermyEliteGeneratePerMinuteMultiplier * m_MinutesElapsed;
         enermyGenerate.Traversal((int enermyID) => {
-            bool isElite = eliteGenerateRate > 100f ? true : eliteGenerateRate > TCommon.RandomPercentageInt();
-            GameObjectManager.SpawnEntityCharacterAI(enermyID, spawnPoint[TCommon.RandomLength(pointLength)], Quaternion.identity, enum_EntityFlag.Enermy, m_MinutesElapsed, m_GameDifficulty,isElite );
+            ExpireGameCharacterBase enermyPerk = GameDataManager.RandomEnermyPerk(m_MinutesElapsed,m_GameDifficulty, eliteGenerateRate > 100f||eliteGenerateRate > TCommon.RandomPercentageInt());
+            GameObjectManager.SpawnGameCharcter(enermyID, spawnPoint[TCommon.RandomLength(pointLength)], Quaternion.identity).OnMainActivate(enum_EntityFlag.Enermy, enermyPerk);
         });
     }
 

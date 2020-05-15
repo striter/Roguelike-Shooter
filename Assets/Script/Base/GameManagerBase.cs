@@ -276,17 +276,11 @@ public static class GameObjectManager
         return entity;
     }
 
-    public static EntityCharacterGameBase SpawnEntityCharacterAI(int poolIndex, Vector3 toPosition, Quaternion toRot, enum_EntityFlag _flag, int minutesPassed, enum_GameDifficulty gameDifficulty,bool isElite)
+    public static EntityCharacterGameBase SpawnGameCharcter(int poolIndex, Vector3 toPosition, Quaternion toRot)
     {
         RegisterAICharacter(poolIndex);
-        return SpawnEntity<EntityCharacterGameBase>(poolIndex, toPosition, toRot).OnMainActivate(_flag, GameDataManager.RandomEnermyPerk(minutesPassed,gameDifficulty,isElite)); 
+        return SpawnEntity<EntityCharacterGameBase>(poolIndex, toPosition, toRot); 
     }
-
-    public static EntityCharacterGameBase SpawnEntitySubCharacter(int poolIndex, Vector3 toPosition, Vector3 lookPos, enum_EntityFlag _flag, int spawnerID, int startHealth,float damage)
-    {
-        RegisterAICharacter(poolIndex);
-       return SpawnEntity<EntityCharacterGameBase>(poolIndex, toPosition, Quaternion.LookRotation(TCommon.GetXZLookDirection(toPosition, lookPos), Vector3.up)).OnSubActivate(_flag, spawnerID, startHealth,damage);
-    } 
 
     public static EntityCharacterPlayer SpawnPlayerCharacter(enum_PlayerCharacter character, Vector3 position, Quaternion rotation)
     {

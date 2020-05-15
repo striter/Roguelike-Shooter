@@ -1341,20 +1341,13 @@ namespace GameSetting
         bool m_SpawnAtTarget;
         public CharacterWeaponHelperEntitySpawner(int weaponIndex, SFXSubEntitySpawner spawner, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller,spread, _GetBuffInfo)
         {
-            startHealth = 0;
             m_SpawnAtTarget = spawner.B_SpawnAtTarget;
         }
-        float startDamage;
-        int startHealth;
-        public void SetOnSpawn(int _startHealth, float _damage)
-        {
-            startDamage = _damage;
-            startHealth = _startHealth;
-        }
+
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
             Vector3 spawnPosition = (m_SpawnAtTarget ? _target.transform.position : m_Entity.transform.position) + TCommon.RandomXZSphere() * m_Spread;
-            GameObjectManager.SpawnSFXWeapon<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity, _target.transform.position, startHealth, startDamage);
+            GameObjectManager.SpawnSFXWeapon<SFXSubEntitySpawner>(I_Index, spawnPosition, Vector3.up).Play(m_Entity, _target.transform.position);
         }
     }
     #endregion

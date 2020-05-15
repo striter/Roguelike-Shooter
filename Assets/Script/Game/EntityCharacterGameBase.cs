@@ -22,10 +22,8 @@ public class EntityCharacterGameBase : EntityCharacterBase {
         return this;
     }
 
-    public EntityCharacterGameBase OnSubActivate(enum_EntityFlag _flag, int _spawnerID, int startHealth, float startDamage)
+    public EntityCharacterGameBase OnSubActivate(enum_EntityFlag _flag, int _spawnerID)
     {
-        I_MaxHealth = startHealth;
-        F_BaseDamage = startDamage;
         m_SpawnerEntityID = _spawnerID;
         OnEntityActivate(_flag);
         m_Perk = null;
@@ -34,7 +32,7 @@ public class EntityCharacterGameBase : EntityCharacterBase {
 
     public override void OnPoolItemRecycle()
     {
-        base.OnPoolItemRecycle();
+        base.OnPoolItemRecycle(); 
         m_Perk = null;
     }
 }
