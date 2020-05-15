@@ -157,7 +157,7 @@ namespace GameSetting
 
         LavaWand = 401,PoisonWand = 402,FrostWand = 403,BlastWand=404,DestroyerWand=405,
 
-        Grenade=501,HealPotion=502,
+        Grenade=501,HealPotion=502,SpawnerBlastTurret,SpawnerBlastFreezeTurret,SpawnerSkeleton,
     }
 
 
