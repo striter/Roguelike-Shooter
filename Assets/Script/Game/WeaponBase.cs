@@ -24,7 +24,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public virtual int m_BuffApply => 0;
     public DamageInfo GetWeaponDamageInfo(float damage, enum_DamageType type = enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageInfo(damage, m_BuffApply, type, enum_DamageIdentity.PlayerWeapon, m_WeaponID);
 
-    protected WeaponTriggerBase m_Trigger { get; private set; }
+    public WeaponTriggerBase m_Trigger { get; private set; }
     WeaponTriggerAuto m_AutoTrigger;
     WeaponTriggerStore m_StoreTrigger;
 
@@ -95,7 +95,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     protected virtual void OnAutoTrigger(float animDuration) => OnAttackAnim(animDuration);
     protected virtual void OnStoreTrigger(float animDuration, float storeTimeLeft) => OnAttackAnim(animDuration);
 
-    protected void OnAttackAnim(float animDuration,int index = 0) => m_Attacher.AttackAnimPlay(animDuration / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
+    protected void OnAttackAnim(float animDuration,int index = 0) => m_Attacher.PlayAttackAnim(animDuration / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
     public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { if (eventType == TAnimatorEvent.enum_AnimEvent.Fire) OnKeyAnim(); }
     protected virtual void OnKeyAnim() { OnAmmoCost(); }
 
@@ -114,7 +114,6 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     public virtual void Tick(bool firePausing, float deltaTime)
     {
-        m_Attacher.AttackingAnimSet(m_Trigger.m_Triggering);
         int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(I_ClipAmount);
         if (m_ClipAmount != clipAmount)
         {

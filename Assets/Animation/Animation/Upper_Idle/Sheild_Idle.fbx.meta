@@ -1,36 +1,36 @@
 fileFormatVersion: 2
-guid: c76d1cfd3c060f544997cad19424c969
+guid: a138de946036a6b4c836050bc5413468
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
-    100000: B_L_Hand
-    100002: B_L_Forearm
-    100004: B_L_UpperArm
-    100006: B_Spine1
-    100008: B_R_Foot
-    100010: B_Prop1
-    100012: PositionLocator
-    100014: Mesh_Soldier_A
-    100016: //RootNode
-    100018: B_R_Hand
-    100020: B_R_Forearm
-    100022: B_R_UpperArm
-    100024: B_Head
-    100026: B_L_Thigh
-    100028: B_L_Calf
-    100030: B_L_Finger1
-    100032: B_L_Foot
-    100034: B_R_Calf
-    100036: B_Spine
-    100038: B_Pelvis
-    100040: B_L_Finger11
-    100042: B_L_Finger01
-    100044: B_L_Finger0
-    100046: B_R_Finger0
-    100048: B_R_Finger1
-    100050: B_R_Finger01
-    100052: B_R_Finger11
-    100054: B_R_Thigh
+    100000: B_L_Calf
+    100002: B_L_Thigh
+    100004: B_Head
+    100006: B_R_Foot
+    100008: B_L_Finger0
+    100010: B_L_Hand
+    100012: B_L_Forearm
+    100014: B_L_UpperArm
+    100016: B_Spine1
+    100018: B_Spine
+    100020: B_R_Finger11
+    100022: B_R_Finger1
+    100024: B_R_Finger01
+    100026: B_R_Finger0
+    100028: B_R_Hand
+    100030: B_R_Forearm
+    100032: B_Prop1
+    100034: B_R_UpperArm
+    100036: B_L_Finger11
+    100038: B_L_Finger1
+    100040: B_L_Finger01
+    100042: B_Pelvis
+    100044: PositionLocator
+    100046: Mesh_Soldier_A
+    100048: //RootNode
+    100050: B_R_Calf
+    100052: B_R_Thigh
+    100054: B_L_Foot
     100056: AK47
     100058: B_L_Clavicle
     100060: B_L_Toe
@@ -92,50 +92,56 @@ ModelImporter:
     100172: B_L_Finger41
     100174: B_L_Finger42
     100176: B_L_Toe0
-    100178: B_R_Finger02
-    100180: B_R_Finger12
-    100182: B_R_Finger2
-    100184: B_R_Finger21
-    100186: B_R_Finger22
-    100188: B_R_Finger3
-    100190: B_R_Finger31
-    100192: B_R_Finger32
-    100194: B_R_Finger4
-    100196: B_R_Finger41
-    100198: B_R_Finger42
-    100200: B_R_Toe0
-    100202: B_Spine2
-    100204: Motion
-    100206: RPG-Character-Mesh
-    100208: Exporter
-    400000: B_L_Hand
-    400002: B_L_Forearm
-    400004: B_L_UpperArm
-    400006: B_Spine1
-    400008: B_R_Foot
-    400010: B_Prop1
-    400012: PositionLocator
-    400014: Mesh_Soldier_A
-    400016: //RootNode
-    400018: B_R_Hand
-    400020: B_R_Forearm
-    400022: B_R_UpperArm
-    400024: B_Head
-    400026: B_L_Thigh
-    400028: B_L_Calf
-    400030: B_L_Finger1
-    400032: B_L_Foot
-    400034: B_R_Calf
-    400036: B_Spine
-    400038: B_Pelvis
-    400040: B_L_Finger11
-    400042: B_L_Finger01
-    400044: B_L_Finger0
-    400046: B_R_Finger0
-    400048: B_R_Finger1
-    400050: B_R_Finger01
-    400052: B_R_Finger11
-    400054: B_R_Thigh
+    100178: B_Prop
+    100180: B_R_Finger02
+    100182: B_R_Finger12
+    100184: B_R_Finger2
+    100186: B_R_Finger21
+    100188: B_R_Finger22
+    100190: B_R_Finger3
+    100192: B_R_Finger31
+    100194: B_R_Finger32
+    100196: B_R_Finger4
+    100198: B_R_Finger41
+    100200: B_R_Finger42
+    100202: B_R_Toe0
+    100204: B_Spine2
+    100206: Motion
+    100208: Particle View 001
+    100210: Rifle_Mesh
+    100212: RPG-Character-Mesh
+    100214: Staff
+    100216: Box001
+    100218: Shield
+    100220: Exporter
+    400000: B_L_Calf
+    400002: B_L_Thigh
+    400004: B_Head
+    400006: B_R_Foot
+    400008: B_L_Finger0
+    400010: B_L_Hand
+    400012: B_L_Forearm
+    400014: B_L_UpperArm
+    400016: B_Spine1
+    400018: B_Spine
+    400020: B_R_Finger11
+    400022: B_R_Finger1
+    400024: B_R_Finger01
+    400026: B_R_Finger0
+    400028: B_R_Hand
+    400030: B_R_Forearm
+    400032: B_Prop1
+    400034: B_R_UpperArm
+    400036: B_L_Finger11
+    400038: B_L_Finger1
+    400040: B_L_Finger01
+    400042: B_Pelvis
+    400044: PositionLocator
+    400046: Mesh_Soldier_A
+    400048: //RootNode
+    400050: B_R_Calf
+    400052: B_R_Thigh
+    400054: B_L_Foot
     400056: AK47
     400058: B_L_Clavicle
     400060: B_L_Toe
@@ -197,49 +203,68 @@ ModelImporter:
     400172: B_L_Finger41
     400174: B_L_Finger42
     400176: B_L_Toe0
-    400178: B_R_Finger02
-    400180: B_R_Finger12
-    400182: B_R_Finger2
-    400184: B_R_Finger21
-    400186: B_R_Finger22
-    400188: B_R_Finger3
-    400190: B_R_Finger31
-    400192: B_R_Finger32
-    400194: B_R_Finger4
-    400196: B_R_Finger41
-    400198: B_R_Finger42
-    400200: B_R_Toe0
-    400202: B_Spine2
-    400204: Motion
-    400206: RPG-Character-Mesh
-    400208: Exporter
+    400178: B_Prop
+    400180: B_R_Finger02
+    400182: B_R_Finger12
+    400184: B_R_Finger2
+    400186: B_R_Finger21
+    400188: B_R_Finger22
+    400190: B_R_Finger3
+    400192: B_R_Finger31
+    400194: B_R_Finger32
+    400196: B_R_Finger4
+    400198: B_R_Finger41
+    400200: B_R_Finger42
+    400202: B_R_Toe0
+    400204: B_Spine2
+    400206: Motion
+    400208: Particle View 001
+    400210: Rifle_Mesh
+    400212: RPG-Character-Mesh
+    400214: Staff
+    400216: Box001
+    400218: Shield
+    400220: Exporter
     2300000: Mesh_Soldier_A
     2300002: AK47
     2300004: Chaingun
     2300006: MissileLauncher
     2300008: USP
+    2300010: Rifle_Mesh
+    2300012: Staff
+    2300014: Box001
+    2300016: Shield
     3300000: Mesh_Soldier_A
     3300002: AK47
     3300004: Chaingun
     3300006: MissileLauncher
     3300008: USP
+    3300010: Rifle_Mesh
+    3300012: Staff
+    3300014: Box001
+    3300016: Shield
     4300000: Mesh_Soldier_A
     4300002: AK47
     4300004: MissileLauncher
     4300006: USP
     4300008: Chaingun
     4300010: Soldier_Mesh
-    4300012: RPG-Character-Mesh
-    7400000: Unarmed-Block-GetHit1
+    4300012: Rifle_Mesh
+    4300014: RPG-Character-Mesh
+    4300016: Staff
+    4300018: Box001
+    4300020: Shield
+    7400000: Shield_Idle
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
-    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -252,41 +277,34 @@ ModelImporter:
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
       might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
       and has rotation animation that will be discarded.\n"
-    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tLeftUpperArm
-      average position error 24.3 mm and maximum position error 28.2 mm at time 0:
-      6 (40.0%) Frame 6\n\tLeftLowerArm average position error 24.6 mm and maximum
-      position error 31.6 mm at time 0: 6 (40.0%) Frame 6\n\tLeftHand average position
-      error 18.7 mm and maximum position error 23.5 mm at time 0: 5 (33.3%) Frame
-      5\n\tRightUpperArm average position error 9.2 mm and maximum position error
-      9.3 mm at time 0:15 (100.0%) Frame 15\n\tRightLowerArm average position error
-      6.8 mm and maximum position error 7.5 mm at time 0:14 (93.3%) Frame 14\n\tRightHand
-      average position error 7.2 mm and maximum position error 7.8 mm at time 0:15
-      (100.0%) Frame 15\n\tHead average position error 44.1 mm and maximum position
-      error 49.7 mm at time 0: 6 (40.0%) Frame 6\n"
-    animationDoRetargetingWarnings: 1
-    animationCompression: 3
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
-    extraExposedTransformPaths: []
+    extraExposedTransformPaths:
+    - PositionLocator/B_Pelvis/B_Spine/B_Spine1/B_R_Clavicle/B_R_UpperArm/B_R_Forearm/B_R_Hand/B_Prop1
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Unarmed-Block-GetHit1
+      name: Shield_Idle
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 15
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
+      loopTime: 1
+      loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
@@ -297,7 +315,7 @@ ModelImporter:
       events: []
       transformMask: []
       maskType: 3
-      maskSource: {fileID: 101100000, guid: 3e4e408fdcc93ee468a1275b69104d63, type: 2}
+      maskSource: {fileID: 101100000, guid: 4ebc95c8618479f4d8251c7dafa10029, type: 2}
       additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
@@ -305,13 +323,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
     keepQuads: 0
     weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -321,6 +344,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:
@@ -1026,7 +1050,7 @@ ModelImporter:
     type: 3}
   animationType: 3
   humanoidOversampling: 1
-  additionalBone: 0
+  additionalBone: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 

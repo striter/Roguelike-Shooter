@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 0.2
+  F_FireRate: 0.5
 --- !u!114 &114631436680021194
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -486,7 +486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15691cfea61bf744cb9aeedbb4dc704e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_Anim: 2005
+  E_Anim: 3001
   B_AttachLeft: 0
   I_ClipAmount: 20
   F_RefillTime: 0.5

@@ -23,6 +23,8 @@ namespace GameSetting
         HammerOfDawn_2003=2003,
         Drink_2004=2004,
         LightSword_2005=2005,
+
+        Block_3001=3001,
     }
 
     public enum enum_EnermyAnim

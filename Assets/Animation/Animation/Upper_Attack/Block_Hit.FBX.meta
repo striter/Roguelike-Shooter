@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: 884ca423a24fb5541b2c91f9986642a5
+guid: c76d1cfd3c060f544997cad19424c969
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: B_L_Hand
     100002: B_L_Forearm
@@ -230,16 +230,17 @@ ModelImporter:
     4300008: Chaingun
     4300010: Soldier_Mesh
     4300012: RPG-Character-Mesh
-    7400000: Unarmed-Block
+    7400000: Block_Hit
     9500000: //RootNode
     11100000: //RootNode
     13700000: Soldier_Mesh
     13700002: RPG-Character-Mesh
-    2186277476908879412: ImportLogs
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -252,41 +253,34 @@ ModelImporter:
     animationImportWarnings: "\nClip 'Take 001' has import animation warnings that
       might lower retargeting quality:\n\t'B_Spine2' is inbetween humanoid transforms
       and has rotation animation that will be discarded.\n"
-    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tLeftUpperArm
-      average position error 24.4 mm and maximum position error 30.6 mm at time 0:24
-      (40.0%) Frame 24\n\tLeftLowerArm average position error 21.3 mm and maximum
-      position error 26.4 mm at time 0:24 (40.0%) Frame 24\n\tLeftHand average position
-      error 17.5 mm and maximum position error 23.0 mm at time 0:24 (40.0%) Frame
-      24\n\tRightUpperArm average position error 13.1 mm and maximum position error
-      18.3 mm at time 0:24 (40.0%) Frame 24\n\tRightLowerArm average position error
-      10.6 mm and maximum position error 15.0 mm at time 0:24 (40.0%) Frame 24\n\tRightHand
-      average position error 9.9 mm and maximum position error 13.1 mm at time 0:24
-      (40.0%) Frame 24\n\tHead average position error 50.2 mm and maximum position
-      error 66.7 mm at time 0:24 (40.0%) Frame 24\n"
+    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tRetargeting
+      quality is good. No significant differences with original animation were found.\n"
     animationDoRetargetingWarnings: 1
-    animationCompression: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Unarmed-Block
+      name: Block_Hit
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 60
+      lastFrame: 15
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 1
+      loopTime: 0
+      loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
@@ -305,13 +299,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 0
     keepQuads: 0
     weldVertices: 0
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -321,6 +320,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 2
     tangentImportMode: 2
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:

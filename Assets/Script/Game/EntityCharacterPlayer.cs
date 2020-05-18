@@ -109,8 +109,9 @@ public class EntityCharacterPlayer : EntityCharacterBase
         UIManager.Instance.RemoveBindings();
     }
 
-    public void AttackingAnimSet(bool attacking) => m_Animator.Attacking(attacking);
-    public void AttackAnimPlay(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
+    protected void SetAttackTriggering(bool attacking) => m_Animator.Attacking(attacking);
+
+    public void PlayAttackAnim(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
     public void PlayRecoil(float recoil) => TPSCameraController.Instance.AddRecoil(recoil);
     public void PlayTeleport(Vector3 position,Quaternion rotation)
     {
@@ -238,7 +239,9 @@ public class EntityCharacterPlayer : EntityCharacterBase
     {
         if (m_WeaponCurrent == null)
             return;
-        
+
+        SetAttackTriggering(m_WeaponCurrent.m_Trigger.m_Triggering);
+
         tf_WeaponAim.rotation = GetCharacterRotation();
 
         m_weaponFirePause = !CheckWeaponFiring();

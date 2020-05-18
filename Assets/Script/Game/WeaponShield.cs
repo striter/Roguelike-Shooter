@@ -11,5 +11,10 @@ public class WeaponShield : WeaponBase {
         OnAmmoCost();
     }
 
-    public override bool OnDamageBlockCheck(DamageInfo info) => m_Trigger.m_Triggering;
+    public override bool OnDamageBlockCheck(DamageInfo info) {
+        bool success = m_Trigger.m_Triggering;
+        if (success)
+            OnAttackAnim(1f);
+        return success;
+    }
 }
