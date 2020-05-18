@@ -321,7 +321,7 @@ MonoBehaviour:
   E_AnimatorIndex: -1
   F_AIChaseRange: 0
   F_AIAttackRange: 20
-  I_BuffApplyOnHit: 0
+  I_BuffApplyOnHit: 105
   F_AttackRate: 1
   F_AttackDuration:
     start: 0.5
