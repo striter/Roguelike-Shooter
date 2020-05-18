@@ -67,7 +67,8 @@ public class GameManager : GameManagerBase
         m_GameBattle = new GameBattleManager(GameDataManager.m_GameProgressData);
         tf_CameraAttach = transform.Find("CameraAttach");
     }
-    private void OnEnable()
+
+    void OnEnable()
     {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
@@ -75,9 +76,8 @@ public class GameManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterRevive, OnCharacterRevive);
     }
 
-    protected override void OnDisable()
+    void OnDisable()
     {
-        base.OnDisable();
         nInstance = null;
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntiyActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);

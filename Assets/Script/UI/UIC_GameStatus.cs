@@ -70,7 +70,6 @@ public class UIC_GameStatus : UIControlBase {
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, m_Map.OnEntityRecycle);
         TBroadCaster<enum_BC_UIStatus>.Add<PlayerExpireManager>(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, OnCurrencyUpdate);
     }
-    
 
     protected override void OnDestroy()
     {

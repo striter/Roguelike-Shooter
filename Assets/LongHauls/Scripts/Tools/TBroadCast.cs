@@ -6,13 +6,8 @@ public class TBroadCaster<TEnum>
     private static Dictionary<TEnum, List<LocalMessage>> dic_delegates = new Dictionary<TEnum, List<LocalMessage>>();
     public static void Init()
     {
-        Clear();
-        TCommon.TraversalEnum((TEnum temp) => { dic_delegates.Add(temp, new List<LocalMessage>()); });
-    }
-
-    public static void Clear()
-    {
         dic_delegates.Clear();
+        TCommon.TraversalEnum((TEnum temp) => { dic_delegates.Add(temp, new List<LocalMessage>()); });
     }
 
     public static void Add(TEnum type, Action Listener)
