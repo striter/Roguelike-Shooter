@@ -53,7 +53,7 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
     {
         m_Graphics.Traversal((Graphic graphic) => { graphic.color = TCommon.ColorAlpha(graphic.color, 1f); });
 
-        f_hideCheck = 2f;
+        f_hideCheck = UIConst.I_NumericVisualizeHealthBarShowDuration;
         if (b_showItem)
             return;
 
