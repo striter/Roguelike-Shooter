@@ -67,7 +67,7 @@ public class EntityCharacterBase : EntityBase
     #region Expire Interact
     protected virtual void OnCharacterHealthWillChange(DamageInfo damageInfo, EntityCharacterBase damageEntity)
     {
-        if (damageInfo.m_AmountApply <= 0)
+        if (!damageInfo.m_IsDamage)
             return;
 
         if (damageInfo.m_EntityID == m_EntityID)

@@ -211,7 +211,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
             base.OnDealtDamage(receiver, info, applyAmount);
             if (!info.m_CritcalHitted)
                 return;
-            m_CurrentDamage = info.m_AmountApply;
+            m_CurrentDamage = info.GetAmountApply();
             m_SFXWeapon.OnPlay(false, receiver);
         }
         public P10016(PerkSaveData saveData) : base(saveData) { }

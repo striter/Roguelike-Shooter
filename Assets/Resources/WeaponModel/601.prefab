@@ -86,9 +86,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4638786458670128}
   - component: {fileID: 114195839973500648}
-  - component: {fileID: 114192581977987866}
+  - component: {fileID: 114631436680021194}
   m_Layer: 0
-  m_Name: 505
+  m_Name: 601
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -463,24 +463,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1809524007545606}
   m_Mesh: {fileID: 4300012, guid: c40ff62f0cb84a44b9bce81448dc3dab, type: 3}
---- !u!114 &114192581977987866
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1399895265677266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cfc15872ceee3b4ebc06bd820ae501d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  E_Anim: 2004
-  B_AttachLeft: 1
-  I_ClipAmount: 2
-  F_RefillTime: 1
-  m_SpawnIndex: 101
-  m_HealthMultiplierPerEnhance: 0.5
-  m_DamageMultiplierPerEnhance: 0.5
 --- !u!114 &114195839973500648
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -492,4 +474,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 1
+  F_FireRate: 0.2
+--- !u!114 &114631436680021194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1399895265677266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15691cfea61bf744cb9aeedbb4dc704e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  E_Anim: 2005
+  B_AttachLeft: 0
+  I_ClipAmount: 20
+  F_RefillTime: 0.5
+  F_HealthDrainPerBlock: 5
+  F_HealthDrainAddivePerEnhance: 1

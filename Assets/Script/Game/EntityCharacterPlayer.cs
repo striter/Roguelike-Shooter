@@ -413,7 +413,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
     protected override float OnReceiveDamageAmount(DamageInfo damageInfo, Vector3 direction)
     {
-        if (m_WeaponCurrent.OnReceiveDamage(damageInfo))
+        if (damageInfo.m_IsDamage&&m_WeaponCurrent.OnDamageBlockCheck(damageInfo))
             return 0;
 
         float amount = base.OnReceiveDamageAmount(damageInfo, direction);

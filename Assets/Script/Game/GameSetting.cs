@@ -226,15 +226,15 @@ namespace GameSetting
             if (damageInfo.m_DamageType == enum_DamageType.Armor)
                 return amountApply;
 
-            if (damageInfo.m_AmountApply < 0)
+            if (amountApply < 0)
             {
-                amountApply = damageInfo.m_AmountApply * healEnhance;
+                amountApply = amountApply * healEnhance;
                 DamageHealth(amountApply);
                 OnHealthChanged?.Invoke(enum_HealthChangeMessage.ReceiveHealth);
             }
-            else
+            else if(amountApply>0)
             {
-                amountApply = damageInfo.m_AmountApply * damageReduction;
+                amountApply = amountApply * damageReduction;
                 DamageHealth(amountApply);
                 OnHealthChanged?.Invoke(enum_HealthChangeMessage.DamageHealth);
             }
@@ -292,7 +292,7 @@ namespace GameSetting
 
         public override float OnReceiveDamage(DamageInfo damageInfo, float damageReduction = 1, float healEnhance = 1)
         {
-            float amountApply = damageInfo.m_AmountApply;
+            float amountApply = damageInfo.GetAmountApply();
             if (amountApply == 0)
                 return amountApply;
             enum_HealthChangeMessage message = enum_HealthChangeMessage.Invalid;
@@ -302,7 +302,7 @@ namespace GameSetting
                 healEnhance = 1;
             }
 
-            if (damageInfo.m_AmountApply > 0)    //Damage
+            if (amountApply > 0)    //Damage
             {
                 if (damageReduction <= 0)
                     return 0;
@@ -338,7 +338,7 @@ namespace GameSetting
                         break;
                 }
             }
-            else if (damageInfo.m_AmountApply < 0)    //Healing
+            else if (amountApply < 0)    //Healing
             {
                 switch (damageInfo.m_DamageType)
                 {
@@ -426,7 +426,7 @@ namespace GameSetting
         public int m_EntityID { get; private set; } = -1;
         public enum_DamageIdentity m_IdentityType { get; private set; } = enum_DamageIdentity.Invalid;
         public int m_IdentityID { get; private set; } = -1;
-
+        
         public float m_DamageBase { get; private set; } = 0;
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageCriticalMultipy { get; private set; } = 0;
@@ -479,9 +479,11 @@ namespace GameSetting
             return this;
         }
 
-        public float m_AmountApply => m_DamageBase * m_BaseDamageMultiply;
+        public float GetAmountApply() => m_DamageBase * m_BaseDamageMultiply;
         public float m_BaseDamageMultiply=> (1 + m_DamageMultiply + m_DamageCriticalMultipy);
         public bool m_CritcalHitted => m_DamageCriticalMultipy != 0;
+        public bool m_IsDamage => m_DamageBase > 0;
+        public bool m_IsHealing => m_DamageBase < 0;
     }
     #endregion
 

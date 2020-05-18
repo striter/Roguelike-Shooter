@@ -108,7 +108,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     #region PlayerInteract
     public void Trigger(bool down) => m_Trigger.OnSetTrigger(down);
 
-    public virtual bool OnReceiveDamage(DamageInfo info) { return false; }
+    public virtual bool OnDamageBlockCheck(DamageInfo info) { return false; }
 
     public virtual void OnDealtDamage(float amountApply) { }
 
