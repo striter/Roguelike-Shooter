@@ -490,5 +490,6 @@ MonoBehaviour:
   B_AttachLeft: 0
   I_ClipAmount: 20
   F_RefillTime: 0.5
+  I_IndicatorIndex: 30008
   F_HealthDrainPerBlock: 5
   F_HealthDrainAddivePerEnhance: 1

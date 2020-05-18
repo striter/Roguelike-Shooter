@@ -20,10 +20,10 @@ public class WeaponDamageCastDuration : WeaponDamageCast {
             SetCastAvailable(false);
     }
 
-    public override void Tick(bool firePausing, float deltaTime)
+    public override void WeaponTick(bool firePausing, float deltaTime)
     {
-        base.Tick(firePausing, deltaTime);
-        SetCastAvailable(m_Trigger.m_TriggerDown && m_HaveAmmoLeft && !m_Attacher.m_IsDead && !m_Attacher.m_weaponFirePause);
+        base.WeaponTick(firePausing, deltaTime);
+        SetCastAvailable(m_Trigger.m_Triggering&& !m_Attacher.m_weaponFirePause);
     }
 
     void SetCastAvailable(bool showCast)

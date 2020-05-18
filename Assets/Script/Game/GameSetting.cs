@@ -1084,7 +1084,6 @@ namespace GameSetting
             }
         }
     }
-
     #endregion
 
     #region WeaponHelper

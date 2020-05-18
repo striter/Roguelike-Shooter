@@ -38,16 +38,25 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
         AddConsoleBinding();
         OnCommonOptionChanged();
+        SetBulletTime(false);
+    }
+
+    protected virtual void OnEnable()
+    {
         OptionsDataManager.event_OptionChanged += OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged += OnEffectOptionChanged;
-        SetBulletTime(false);
     }
 
     protected virtual void OnDisable()
     {
-        this.StopAllSingleCoroutines();
         OptionsDataManager.event_OptionChanged -= OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged -= OnEffectOptionChanged;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        this.StopAllSingleCoroutines();
         TBroadCaster<enum_BC_GameStatus>.Clear();
         TBroadCaster<enum_BC_UIStatus>.Clear();
     }

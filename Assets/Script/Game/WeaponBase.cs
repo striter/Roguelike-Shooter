@@ -33,8 +33,6 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public bool m_HaveAmmoLeft => I_ClipAmount == -1 || m_AmmoLeft > 0;
     public bool B_AmmoFull => I_ClipAmount == -1 || m_ClipAmount == m_AmmoLeft;
     public int m_WeaponID { get; private set; } = -1;
-    public bool m_Attacking { get; private set; }
-
     protected int m_BaseSFXWeaponIndex { get; private set; }
     public override void OnPoolInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
     {
@@ -80,13 +78,12 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     }
 
 
-    public virtual void OnShow(bool play)
+    public virtual void OnShow(bool showing)
     {
-        transform.SetActivate(play);
+        transform.SetActivate(showing);
 
-        if (play)
+        if (showing)
             return;
-
         m_Trigger.OnTriggerStop();
     }
 
@@ -112,8 +109,10 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     public virtual void OnDealtDamage(float amountApply) { }
 
-    public virtual void Tick(bool firePausing, float deltaTime)
+    public virtual void WeaponTick(bool firePausing, float deltaTime)
     {
+        m_Attacher.PlayAttackTriggering(m_Trigger.m_Triggering);
+
         int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(I_ClipAmount);
         if (m_ClipAmount != clipAmount)
         {
@@ -126,12 +125,11 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
             m_AutoTrigger.Tick(firePausing, m_Attacher.m_CharacterInfo.DoFireRateTick(deltaTime));
         if(m_StoreTrigger)
             m_StoreTrigger.Tick(firePausing, m_Attacher.m_CharacterInfo.DoFireRateTick(deltaTime), m_Attacher.m_CharacterInfo.DoStoreRateTick(deltaTime));
-
-        ReloadTick(m_Attacher.m_CharacterInfo.DoReloadRateTick(deltaTime));
     }
+    
 
     public void AddAmmo(int amount) => m_AmmoLeft = Mathf.Clamp(m_AmmoLeft + amount, 0, m_ClipAmount);
-    void ReloadTick(float deltaTime)
+    public void ReloadTick(float deltaTime)
     {
         m_RefillPauseTimer.Tick(deltaTime);
         if (m_RefillPauseTimer.m_Timing)

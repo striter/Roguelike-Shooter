@@ -109,8 +109,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         UIManager.Instance.RemoveBindings();
     }
 
-    protected void SetAttackTriggering(bool attacking) => m_Animator.Attacking(attacking);
-
+    public void PlayAttackTriggering(bool attacking) => m_Animator.Attacking(attacking);
     public void PlayAttackAnim(float animSpeed, int animIndex) => m_Animator.Attack(animSpeed, animIndex);
     public void PlayRecoil(float recoil) => TPSCameraController.Instance.AddRecoil(recoil);
     public void PlayTeleport(Vector3 position,Quaternion rotation)
@@ -240,14 +239,15 @@ public class EntityCharacterPlayer : EntityCharacterBase
         if (m_WeaponCurrent == null)
             return;
 
-        SetAttackTriggering(m_WeaponCurrent.m_Trigger.m_Triggering);
-
         tf_WeaponAim.rotation = GetCharacterRotation();
 
         m_weaponFirePause = !CheckWeaponFiring();
         m_AimAssist.SetEnable(!m_weaponFirePause  && m_AimingTarget != null);
-        if (m_Weapon1) m_Weapon1.Tick(m_weaponFirePause, deltaTime);
-        if (m_Weapon2) m_Weapon2.Tick(m_weaponFirePause, deltaTime);
+        m_WeaponCurrent.WeaponTick(m_weaponFirePause, deltaTime);
+
+        float reloadTick = m_CharacterInfo.DoReloadRateTick(deltaTime);
+        if (m_Weapon1) m_Weapon1.ReloadTick(reloadTick);
+        if (m_Weapon2) m_Weapon2.ReloadTick(reloadTick);
     }
 
     public WeaponBase ObtainWeapon(WeaponBase _weapon)

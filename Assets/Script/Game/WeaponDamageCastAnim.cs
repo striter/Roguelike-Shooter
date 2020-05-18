@@ -44,9 +44,9 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
         transform.localScale = Vector3.one;
     }
 
-    public override void Tick(bool firePausing, float deltaTime)
+    public override void WeaponTick(bool firePausing, float deltaTime)
     {
-        base.Tick(firePausing, deltaTime);
+        base.WeaponTick(firePausing, deltaTime);
         if (m_ScaleChecker.Check(GetMeleeSize()))
             transform.localScale = Vector3.one * m_ScaleChecker.check1;
     }
