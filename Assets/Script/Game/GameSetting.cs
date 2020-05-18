@@ -479,8 +479,7 @@ namespace GameSetting
             return this;
         }
 
-        public float GetAmountApply() => m_DamageBase * m_BaseDamageMultiply;
-        public float m_BaseDamageMultiply=> (1 + m_DamageMultiply + m_DamageCriticalMultipy);
+        public float GetAmountApply() => m_DamageBase * (1 + m_DamageMultiply + m_DamageCriticalMultipy);
         public bool m_CritcalHitted => m_DamageCriticalMultipy != 0;
         public bool m_IsDamage => m_DamageBase > 0;
         public bool m_IsHealing => m_DamageBase < 0;

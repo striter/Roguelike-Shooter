@@ -122,7 +122,7 @@ public class SFXProjectile : SFXWeaponBase
         if(I_TrailIndex>0)
         {
             m_Trail = GameObjectManager.SpawnTrail(I_TrailIndex,transform.position,transform.forward);
-            m_Trail.transform.localScale = m_DamageInfo.m_BaseDamageMultiply * Vector3.one;
+            m_Trail.transform.localScale = Vector3.one*(m_DamageInfo.m_CritcalHitted?1f:2f) ;
             m_Trail.AttachTo(transform);
             m_Trail.PlayControlled(m_SourceID);
         }
