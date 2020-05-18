@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class WeaponItemSpawner : WeaponItemBase {
     public int m_SpawnIndex;
+    public int m_SpawnParticleIndex;
     public float m_HealthMultiplierPerEnhance;
     public float m_DamageMultiplierPerEnhance;
 
@@ -14,6 +15,8 @@ public class WeaponItemSpawner : WeaponItemBase {
     protected override void OnKeyAnim()
     {
         base.OnKeyAnim();
-        GameObjectManager.SpawnGameCharcter(m_SpawnIndex,NavigationManager.NavMeshPosition( m_Attacher.transform.position+TCommon.RandomXZCircle()*2f),Quaternion.identity).OnCharacterGameActivate(m_Attacher.m_Flag,GameDataManager.DefaultGameCharacterPerk(m_HealthMultiplier,m_DamageMultiplier),m_Attacher.m_EntityID);
+        Vector3 position = NavigationManager.NavMeshPosition(m_Attacher.transform.position + TCommon.RandomXZCircle() * 2f);
+        GameObjectManager.SpawnParticles(m_SpawnParticleIndex,position,Vector3.up).PlayUncontrolled(m_Attacher.m_EntityID);
+        GameObjectManager.SpawnGameCharcter(m_SpawnIndex,position,Quaternion.identity).OnCharacterGameActivate(m_Attacher.m_Flag,GameDataManager.DefaultGameCharacterPerk(m_HealthMultiplier,m_DamageMultiplier),m_Attacher.m_EntityID);
     }
 }

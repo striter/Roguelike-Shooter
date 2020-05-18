@@ -479,6 +479,7 @@ MonoBehaviour:
   I_ClipAmount: 2
   F_RefillTime: 1
   m_SpawnIndex: 101
+  m_SpawnParticleIndex: 19204
   m_HealthMultiplierPerEnhance: 0.5
   m_DamageMultiplierPerEnhance: 0.5
 --- !u!114 &114195839973500648
