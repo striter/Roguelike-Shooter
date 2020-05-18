@@ -19,14 +19,13 @@ public class UI_PlayerDetail : UIPage
     UIT_TextExtend m_WeaponName;
     UIT_TextExtend m_WeaponIntro;
     Image m_WeaponImage;
-    Image m_WeaponBackground;
     UIT_TextExtend m_ClipSize;
     Transform m_WeaponScoreSliders;
     UIT_GridControllerClass<UIGC_WeaponScoreItem> m_WeaponScore;
     UIT_GridControllerClass<UIGC_WeaponTagItem> m_WeaponTag;
     
-    Image m_Damage, m_FireRate, m_Stability, m_ProjectileSpeed;
-    UIT_TextExtend m_DamageAmount, m_FireRateAmount, m_StabilityAmount, m_ProjectileSpeedAmount;
+    Image m_Score1Image, m_Score2Image, m_Score3Image, m_Score4Image;
+    UIT_TextExtend m_Score1Amount, m_Score2Amount, m_Score3Amount, m_Score4Amount;
 
     Transform m_PerkInfo;
     UIT_TextExtend m_PerkDetail;
@@ -47,7 +46,6 @@ public class UI_PlayerDetail : UIPage
         m_PerkSelect = new UIT_GridControlledSingleSelect<UIGI_DetailPerkSelect>(rtf_Container.Find("PerkSelect/ScrollRect/Viewport/Content"), OnPerkSelectClick);
 
         m_WeaponInfo = rtf_Container.Find("WeaponInfo");
-        m_WeaponBackground = m_WeaponInfo.Find("ImageBG").GetComponent<Image>();
         m_WeaponName = m_WeaponInfo.Find("Name").GetComponent<UIT_TextExtend>();
         m_WeaponIntro = m_WeaponInfo.Find("Intro").GetComponent<UIT_TextExtend>();
         m_WeaponImage = m_WeaponInfo.Find("Image").GetComponent<Image>();
@@ -57,14 +55,14 @@ public class UI_PlayerDetail : UIPage
         m_WeaponTag = new UIT_GridControllerClass<UIGC_WeaponTagItem>(m_WeaponInfo.Find("TagGrid"));
 
         m_WeaponScoreSliders = m_WeaponInfo.Find("ScoreSliders");
-        m_Damage = m_WeaponScoreSliders.Find("Damage/Fill").GetComponent<Image>();
-        m_DamageAmount = m_WeaponScoreSliders.Find("Damage/Amount").GetComponent<UIT_TextExtend>();
-        m_FireRate = m_WeaponScoreSliders.Find("FireRate/Fill").GetComponent<Image>();
-        m_FireRateAmount = m_WeaponScoreSliders.Find("FireRate/Amount").GetComponent<UIT_TextExtend>();
-        m_Stability = m_WeaponScoreSliders.Find("Stability/Fill").GetComponent<Image>();
-        m_StabilityAmount = m_WeaponScoreSliders.Find("Stability/Amount").GetComponent<UIT_TextExtend>();
-        m_ProjectileSpeed = m_WeaponScoreSliders.Find("ProjectileSpeed/Fill").GetComponent<Image>();
-        m_ProjectileSpeedAmount = m_WeaponScoreSliders.Find("ProjectileSpeed/Amount").GetComponent<UIT_TextExtend>();
+        m_Score1Image = m_WeaponScoreSliders.Find("Score1/Fill").GetComponent<Image>();
+        m_Score1Amount = m_WeaponScoreSliders.Find("Score1/Amount").GetComponent<UIT_TextExtend>();
+        m_Score2Image = m_WeaponScoreSliders.Find("Score2/Fill").GetComponent<Image>();
+        m_Score2Amount = m_WeaponScoreSliders.Find("Score2/Amount").GetComponent<UIT_TextExtend>();
+        m_Score3Image = m_WeaponScoreSliders.Find("Score3/Fill").GetComponent<Image>();
+        m_Score3Amount = m_WeaponScoreSliders.Find("Score3/Amount").GetComponent<UIT_TextExtend>();
+        m_Score4Image = m_WeaponScoreSliders.Find("Score4/Fill").GetComponent<Image>();
+        m_Score4Amount = m_WeaponScoreSliders.Find("Score4/Amount").GetComponent<UIT_TextExtend>();
 
         m_PerkInfo = rtf_Container.Find("PerkInfo");
         m_PerkImage = m_PerkInfo.Find("Image").GetComponent<Image>();
@@ -88,6 +86,7 @@ public class UI_PlayerDetail : UIPage
         m_WeaponTag.ClearGrid();
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
             m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
+        m_WeaponTag.Sort((a,b) => b.Key - a.Key);
 
         m_PerkSelect.ClearGrid();
         m_Player.m_CharacterInfo.m_ExpirePerks.Traversal((int index, ExpirePlayerPerkBase perk) => { m_PerkSelect.AddItem(index).Init(perk); });
@@ -126,7 +125,6 @@ public class UI_PlayerDetail : UIPage
         m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetNameLocalizeKey();
         m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());
         m_WeaponIntro.localizeKey = weaponInfo.m_Weapon.GetIntroLocalizeKey();
-        m_WeaponBackground.sprite = GameUIManager.Instance.m_InGameSprites[weaponInfo.m_Rarity.GetUIDetailBackground()];
         m_ClipSize.text =weapon.I_ClipAmount.ToString();
 
         m_WeaponScore.ClearGrid();
@@ -140,16 +138,16 @@ public class UI_PlayerDetail : UIPage
 
         enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
         for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
-            m_WeaponTag.GetItem(UIConst.I_DetailWeaponTagMax -1- i).SetTag(i < tags.Length ? tags[i] : enum_UIWeaponTag.Invalid);
+            m_WeaponTag.GetItem(i).SetTag(i < tags.Length ? tags[i] : enum_UIWeaponTag.Invalid);
 
-        m_DamageAmount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
-        m_Damage.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
-        m_StabilityAmount.text = string.Format("{0:N1}", weaponInfo.m_UIStability);
-        m_Stability.fillAmount = UIExpression.GetUIWeaponStabilityValue(weaponInfo.m_UIStability);
-        m_FireRateAmount.text = string.Format("{0:N1}", weaponInfo.m_UIRPM);
-        m_FireRate.fillAmount = UIExpression.GetUIWeaponRPMValue(weaponInfo.m_UIRPM);
-        m_ProjectileSpeedAmount.text = string.Format("{0:N1}", weaponInfo.m_UISpeed);
-        m_ProjectileSpeed.fillAmount = UIExpression.GetUIWeaponSpeedValue(weaponInfo.m_UISpeed);
+        m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
+        m_Score1Image.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
+        m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIStability);
+        m_Score3Image.fillAmount = UIExpression.GetUIWeaponStabilityValue(weaponInfo.m_UIStability);
+        m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIRPM);
+        m_Score2Image.fillAmount = UIExpression.GetUIWeaponRPMValue(weaponInfo.m_UIRPM);
+        m_Score4Amount.text = string.Format("{0:N1}", weaponInfo.m_UISpeed);
+        m_Score4Image.fillAmount = UIExpression.GetUIWeaponSpeedValue(weaponInfo.m_UISpeed);
     }
 
     void SetPerkInfo(ExpirePlayerPerkBase perk)

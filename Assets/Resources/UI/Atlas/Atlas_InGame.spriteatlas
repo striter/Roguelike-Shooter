@@ -29,16 +29,13 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 2338026
+    totalSpriteSurfaceArea: 1921018
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 9ccfbb6313b367644a6feff57dac1d66, type: 3}
   - {fileID: 21300000, guid: 1404a0ae27dcf8a46a132737373c01a9, type: 3}
-  - {fileID: 21300000, guid: b7f3c0538d6a8d949a6d8abf487046a0, type: 3}
-  - {fileID: 21300000, guid: a3e45407f28e88c4a98746072d9e427e, type: 3}
-  - {fileID: 21300000, guid: 53b1c15a289d3324ea8379d5b0caad55, type: 3}
-  - {fileID: 21300000, guid: fa42f7ad0cee34245ae9757fd8961786, type: 3}
+  - {fileID: 21300000, guid: 77eac363cbfca434492f33b6c830c7fc, type: 3}
   - {fileID: 21300000, guid: f707edb8147ad104b8e3b9a3fc7ed413, type: 3}
   - {fileID: 21300000, guid: d783a5f7194904445969c59766ac8443, type: 3}
   - {fileID: 21300000, guid: 18a7c2d7df8a6854e9bc2e3248a93804, type: 3}
@@ -69,10 +66,7 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - detail_lowpoly_background2
   - detail_lowpoly_background1
-  - detail_weapon_background_Epic
-  - detail_weapon_background_Rare
-  - detail_weapon_background_Ordinary
-  - detail_weapon_background_Advanced
+  - detail_weapon_background
   - result_title_win_EN
   - result_title_fail_EN
   - result_title_fail_CN
