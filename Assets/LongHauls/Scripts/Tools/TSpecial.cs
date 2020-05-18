@@ -936,6 +936,8 @@ public class TimerBase
         m_TimeCheck = _timeCheck;
         m_Timing = m_TimeCheck > 0;
         m_TimeLeftScale = m_TimerDuration == 0 ? 0 : m_TimeCheck / m_TimerDuration;
+        if (m_TimeLeftScale < 0)
+            m_TimeLeftScale = 0;
     }
 
     public void Replay() => OnTimeCheck(m_TimerDuration);

@@ -74,18 +74,18 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
         if (!B_Activating)
             return;
 
+        if (m_AttachTo)
+        {
+            transform.position = m_AttachTo.TransformPoint(m_localPos);
+            transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
+        }
+
         float deltaTime = m_ScaledDeltaTime ? Time.deltaTime : Time.unscaledDeltaTime;
         if (B_Delaying && f_delayTimeLeft >= 0)
         {
             f_delayTimeLeft -= deltaTime;
             if (f_delayTimeLeft < 0)
                 OnPlay();
-        }
-
-        if(B_Playing&&m_AttachTo)
-        {
-            transform.position = m_AttachTo.TransformPoint(m_localPos);
-            transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
         }
 
         if (f_lifeTimeCheck < 0)

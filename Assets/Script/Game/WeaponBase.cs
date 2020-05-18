@@ -93,7 +93,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     protected bool OnTriggerTickCheck() => m_HaveAmmoLeft;
 
     protected virtual void OnAutoTrigger(float animDuration) => OnAttackAnim(animDuration);
-    protected virtual void OnStoreTrigger(float animDuration, bool success) => OnAttackAnim(animDuration);
+    protected virtual void OnStoreTrigger(float animDuration, float storeTimeLeft) => OnAttackAnim(animDuration);
 
     protected void OnAttackAnim(float animDuration,int index = 0) => m_Attacher.AttackAnimPlay(animDuration / m_Attacher.m_CharacterInfo.m_FireRateMultiply, index);
     public void OnAnimEvent(TAnimatorEvent.enum_AnimEvent eventType) { if (eventType == TAnimatorEvent.enum_AnimEvent.Fire) OnKeyAnim(); }

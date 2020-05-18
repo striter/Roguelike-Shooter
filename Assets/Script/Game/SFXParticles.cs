@@ -16,10 +16,11 @@ public class SFXParticles : SFXBase
         m_Particle = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
 
-    public virtual void PlayUncontrolled(int sourceID, float duration=0,float delayDuration=0)
+    public SFXParticles PlayUncontrolled(int sourceID, float duration=0,float delayDuration=0)
     {
         Play();
         PlaySFX(sourceID,duration==0? 5f:duration,delayDuration,true);
+        return this;
     }
 
     public SFXParticles PlayControlled(int sourceID, float delayDuration = 0)
