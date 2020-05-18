@@ -13,7 +13,7 @@ public class SFXRelativeModelBlink : SFXRelativeBase {
         base.Init();
         m_Blink = new ModelBlink(transform, .25f, .25f, C_BlinkColor);
     }
-    public override void Play(SFXParticles _source)
+    public override void Play(SFXBase _source)
     {
         base.Play(_source);
         m_Blink.OnReset();

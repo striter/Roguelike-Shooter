@@ -5,14 +5,11 @@ using GameSetting;
 using UnityEngine;
 public class SFXParticles : SFXBase
 {
-    protected SFXRelativeBase[] m_relativeSFXs;
     public TSpecialClasses.ParticleControlBase m_Particle { get; private set; }
     public bool m_LoopParticles { get; private set; }
     public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolInit(_identity, _OnRecycle);
-        m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particle = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
 
@@ -32,14 +29,12 @@ public class SFXParticles : SFXBase
 
     protected virtual  void Play()
     {
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(this); });
     }
 
     protected override void OnPlay()
     {
         base.OnPlay();
         m_Particle.Play();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnPlay(); });
     }
 
     protected override void OnStop()
@@ -47,15 +42,12 @@ public class SFXParticles : SFXBase
         base.OnStop();
         transform.SetParent(GameObjectManager.TF_SFXWaitForRecycle);
         m_Particle.Stop();
-        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnStop(); });
     }
 
     protected override void OnRecycle()
     {
         base.OnRecycle();
         m_Particle.Clear();
-        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
     }
-
-    protected void SetParticlesActive(bool active) => m_Particle.SetActive(active);
+    
 }

@@ -1322,17 +1322,13 @@ namespace GameSetting
     {
         public override bool B_TargetAlly => true;
         SBuff m_buffInfo;
-        SFXBuffApply m_Effect;
         public CharacterWeaponHelperBuffApply(int weaponIndex, SFXBuffApply buffApplyinfo, EntityCharacterBase _controller, float spread, Func<DamageInfo> _GetBuffInfo) : base(weaponIndex, _controller,spread, _GetBuffInfo)
         {
             m_buffInfo = GameDataManager.GetPresetBuff(buffApplyinfo.I_BuffIndex);
         }
         public override void OnPlay(EntityCharacterBase _target, Vector3 _calculatedPosition)
         {
-            if (!m_Effect || !m_Effect.B_Playing)
-                m_Effect = GameObjectManager.SpawnSFXWeapon<SFXBuffApply>(I_Index, m_Entity.tf_Weapon.position, Vector3.up);
-
-            m_Effect.Play(m_Entity.m_EntityID, m_buffInfo, m_Entity.tf_Weapon, _target);
+            GameObjectManager.SpawnSFXWeapon<SFXBuffApply>(I_Index, m_Entity.tf_Weapon.position, Vector3.up).Play(m_Entity.m_EntityID, m_buffInfo, _target);
         }
     }
     public class CharacterWeaponHelperEntitySpawner : CharacterWeaponHelperBase

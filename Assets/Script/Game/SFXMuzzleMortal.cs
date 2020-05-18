@@ -16,6 +16,7 @@ public class SFXMuzzleMortal : SFXParticles
         tf_Model = transform.Find("Model");
         m_trail = tf_Model.GetComponentInChildren<TrailRenderer>();
     }
+
     protected override void Play()
     {
         base.Play();

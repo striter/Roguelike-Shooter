@@ -9,7 +9,7 @@ public class SFXRelativeTrail : SFXRelativeBase {
         base.Init();
         m_Trail = transform.GetComponentInChildren<TrailRenderer>();
     }
-    public override void Play(SFXParticles _source)
+    public override void Play(SFXBase _source)
     {
         base.Play(_source);
         m_Trail.Clear();

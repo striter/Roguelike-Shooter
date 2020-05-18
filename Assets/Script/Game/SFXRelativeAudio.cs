@@ -13,7 +13,7 @@ public class SFXRelativeAudio : SFXRelativeBase {
         if (m_Clips.Length <= 0)
             Debug.LogError("Set Audio Clip Here!");
     }
-    public override void Play(SFXParticles _source)
+    public override void Play(SFXBase _source)
     {
         base.Play(_source);
         if (B_PlayDuringDelay)

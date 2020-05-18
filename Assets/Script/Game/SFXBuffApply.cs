@@ -4,12 +4,9 @@ using UnityEngine;
 using GameSetting;
 public class SFXBuffApply : SFXWeaponBase {
     public int I_BuffIndex;
-    public void Play(int I_SourceID,SBuff buffInfo,Transform attachTo,EntityCharacterBase applyTarget)
+    public void Play(int I_SourceID,SBuff buffInfo,EntityCharacterBase applyTarget)
     {
-        base.PlayUncontrolled(I_SourceID,buffInfo.m_ExpireDuration);
-        transform.SetParent(attachTo);
-        transform.position = attachTo.position;
-        transform.localRotation = Quaternion.identity;
+        base.PlaySFX(I_SourceID,buffInfo.m_ExpireDuration,0f,true);
         applyTarget.m_HitCheck.TryHit(new DamageInfo(I_SourceID).AddPresetBuff(I_BuffIndex));
     }
 }

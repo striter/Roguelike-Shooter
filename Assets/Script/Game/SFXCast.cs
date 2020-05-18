@@ -32,14 +32,14 @@ public class SFXCast : SFXWeaponBase {
     public virtual void Play(DamageInfo buffInfo)
     {
         m_DamageInfo = buffInfo;
-        base.PlayUncontrolled(m_DamageInfo.m_EntityID, F_PlayDuration, F_DelayDuration);
+        base.PlaySFX(m_DamageInfo.m_EntityID, F_PlayDuration, F_DelayDuration,true);
         if (I_DelayIndicatorIndex > 0&&F_DelayDuration>0)
             GameObjectManager.SpawnIndicator(I_DelayIndicatorIndex, transform.position, Vector3.up).PlayUncontrolled(m_SourceID, F_DelayDuration, 0);
     }
 
     public virtual void PlayControlled(int sourceID,EntityCharacterBase entity, Transform directionTrans)
     {
-        base.PlayControlled(sourceID, F_DelayDuration);
+        base.PlaySFX(sourceID, F_DelayDuration,0f,false);
         tf_ControlledCast = directionTrans;
         AttachTo(entity.tf_Weapon);
         if (I_CastParticleIndex > 0)

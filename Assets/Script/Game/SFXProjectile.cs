@@ -6,7 +6,12 @@ using TPhysics;
 public class SFXProjectile : SFXWeaponBase
 {
     #region PresetInfos 
-    public enum_ProjectileFireType E_ProjectileType= enum_ProjectileFireType.Invalid;
+    public enum_ProjectileFireType E_ProjectileType = enum_ProjectileFireType.Invalid;
+    [Tooltip("Projectile Type:(Single|Unused) (Multiline/MultiFan| Projectile Count Each Count)")]
+    public RangeInt RI_CountExtension;
+    [Tooltip("Projectile Type:(Single|Unused) (Multiline|Offset Meter)  (MultiFan|Offset Angle)")]
+    public float F_OffsetExtension;
+
     public float F_Speed;
     public bool B_Penetrate;
     public AudioClip AC_MuzzleClip;
@@ -16,10 +21,6 @@ public class SFXProjectile : SFXWeaponBase
     public int I_IndicatorIndex;
     [Tooltip("Physics Size")]
     public float F_Radius = .5f, F_Height = 1f;
-    [Tooltip("Projectile Type:(Single|Unused) (Multiline/MultiFan| Projectile Count Each Count)")]
-    public RangeInt RI_CountExtension;
-    [Tooltip("Projectile Type:(Single|Unused) (Multiline|Offset Meter)  (MultiFan|Offset Angle)")]
-    public float F_OffsetExtension;
     #endregion
 
     protected PhysicsSimulator<HitCheckBase> m_PhysicsSimulator { get; private set; }
@@ -37,22 +38,16 @@ public class SFXProjectile : SFXWeaponBase
     protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
     public virtual void Play(DamageInfo damageInfo ,Vector3 direction, Vector3 targetPosition )
     {
-        base.PlayUncontrolled(damageInfo.m_EntityID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay);
+        base.PlaySFX (damageInfo.m_EntityID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay,true);
         m_DamageInfo= damageInfo;
         m_PhysicsSimulator = GetSimulator(direction, targetPosition);
         SpawnProjectileEffects(targetPosition, F_PlayDelay);
         m_EntityHitted.Clear();
     }
 
-    protected override void OnPlay()
-    {
-        base.OnPlay();
-        SetParticlesActive(true);
-    }
     protected override void OnStop()
     {
         base.OnStop();
-        SetParticlesActive(false);
         RemoveProjectileEffects();
     }
     protected override void Update()
@@ -117,11 +112,12 @@ public class SFXProjectile : SFXWeaponBase
         }
     }
     #endregion
+
     protected void SpawnProjectileEffects(Vector3 position,float delayDuration)
     {
         if(I_TrailIndex>0)
         {
-            m_Trail = GameObjectManager.SpawnTrail(I_TrailIndex,transform.position,transform.forward);
+            m_Trail = GameObjectManager.SpawnTrail(I_TrailIndex, m_CenterPos, transform.forward);
             m_Trail.transform.localScale = Vector3.one*(m_DamageInfo.m_CritcalHitted?1f:2f) ;
             m_Trail.AttachTo(transform);
             m_Trail.PlayControlled(m_SourceID);
@@ -134,26 +130,24 @@ public class SFXProjectile : SFXWeaponBase
         }
     }
 
-    protected void SpawnImpact(Vector3 hitPoint, Vector3 hitNormal)
-    {
-        if (I_ImpactIndex > 0)
-            GameObjectManager.SpawnParticles(I_ImpactIndex, hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
-    }
-
     protected void RemoveProjectileEffects()
     {
-        if(m_Trail)
+        if (m_Trail)
         {
-            m_Trail.transform.position = transform.position;
-            m_Trail.transform.rotation = transform.rotation;
             m_Trail.Stop();
             m_Trail = null;
         }
-        if(m_Indicator)
+        if (m_Indicator)
         {
             m_Indicator.Stop();
             m_Indicator = null;
         }
+    }
+
+    protected void SpawnImpact(Vector3 hitPoint, Vector3 hitNormal)
+    {
+        if (I_ImpactIndex > 0)
+            GameObjectManager.SpawnParticles(I_ImpactIndex, hitPoint, hitNormal).PlayUncontrolled(m_SourceID);
     }
 
     

@@ -18,17 +18,25 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
     public float f_delayLeftScale => f_delayTimeLeft>0? (f_delayTimeLeft / f_delayDuration):0;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
-    protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool tickPlayDuration)
+    protected SFXRelativeBase[] m_relativeSFXs;
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnSelfRecycle)
+    {
+        base.OnPoolInit(_identity, _OnSelfRecycle);
+        m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
+    }
+    protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool lifeTimeTick)
     {
         B_Activating = true;
         B_Delaying = true;
         B_Playing = false;
-        m_TickLifeTime = tickPlayDuration;
+        m_TickLifeTime = lifeTimeTick;
         m_SourceID = sourceID;
         f_playDuration = playDuration;
         f_delayDuration = delayDuration;
         f_delayTimeLeft = f_delayDuration;
         SetLifeTime(f_playDuration + f_delayDuration);
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Play(this); });
     }
 
     protected void SetLifeTime(float lifeDuration)
@@ -41,6 +49,7 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
     {
         B_Delaying = false;
         B_Playing = true;
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnPlay(); });
     }
 
     protected virtual void OnStop()
@@ -49,12 +58,14 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
         m_TickLifeTime = true;
         B_Delaying = false;
         B_Playing = false;
+        m_relativeSFXs.Traversal((SFXRelativeBase sfxRelative) => { sfxRelative.OnStop(); });
     }
 
     protected virtual void OnRecycle()
     {
         B_Activating = false;
         m_AttachTo = null;
+        m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         DoRecycle();
     }
 

@@ -13,7 +13,7 @@ public class SFXSubEntitySpawner : SFXWeaponBase {
     Vector3 m_targetPos;
     public void Play(EntityCharacterBase character, Vector3 target)
     {
-        base.PlayUncontrolled(character.m_EntityID,1f,F_DelayDuration);
+        base.PlaySFX(character.m_EntityID,1f,F_DelayDuration,true);
         m_Spawner = character;
         m_targetPos = target;
         if (I_DelayIndicator > 0)

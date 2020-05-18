@@ -48,12 +48,6 @@ public class SFXCastAreaConnections : SFXCast {
         Transform connections = transform.Find("Connections");
         m_Connections = new ObjectPoolListClass<EntityBase, ConnectionsItem>(connections,"Item");
     }
-    public override void PlayControlled(int sourceID, EntityCharacterBase entity, Transform directionTrans)
-    {
-        base.PlayControlled(sourceID, entity, directionTrans);
-        m_Particle.Clear();
-    }
-
     protected override void OnPlay()
     {
         base.OnPlay();
