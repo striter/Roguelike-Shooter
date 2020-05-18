@@ -28,6 +28,7 @@ namespace GameSetting
 
         public static Vector2 V2_UINumericVisualizeOffset = new Vector2(0, 100f);
         public const int I_NumericVisualizeHealthBarShowDuration = 4;
+        public const int I_NumericVisualizeHealthBarHideDuration = 1;
 
         public const int I_DetailWeaponTagMax = 5;
     }

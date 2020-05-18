@@ -10,10 +10,10 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
     Image m_Normal,m_Elite;
     Image m_EliteExpire;
     bool b_showItem = false;
-    float f_hideCheck;
     Graphic[] m_Graphics;
 
     ValueLerpSeconds m_HealthLerp;
+    TimerBase m_HideTimer=new TimerBase(UIConst.I_NumericVisualizeHealthBarHideDuration);
 
     public override void OnInitItem()
     {
@@ -53,7 +53,7 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
     {
         m_Graphics.Traversal((Graphic graphic) => { graphic.color = TCommon.ColorAlpha(graphic.color, 1f); });
 
-        f_hideCheck = UIConst.I_NumericVisualizeHealthBarShowDuration;
+        m_HideTimer.SetTimerDuration(m_AttachEntity.m_IsDead ? UIConst.I_NumericVisualizeHealthBarHideDuration : UIConst.I_NumericVisualizeHealthBarShowDuration);
         if (b_showItem)
             return;
 
@@ -67,15 +67,17 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
         if (!b_showItem)
             return;
 
+        float deltaTime = Time.deltaTime;
+
         m_HealthLerp.SetLerpValue(m_AttachEntity.m_Health.F_HealthMaxScale);
-        m_HealthLerp.TickDelta(Time.deltaTime);
-        rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position, CameraController.MainCamera, Time.deltaTime*20f);
+        m_HealthLerp.TickDelta(deltaTime);
+        rtf_RectTransform.SetWorldViewPortAnchor(m_AttachEntity.transform.position, CameraController.MainCamera, deltaTime * 20f);
 
-        f_hideCheck -= Time.deltaTime;
-        if (f_hideCheck < 1f)
-            m_Graphics.Traversal((Graphic graphic)=> { graphic.color = TCommon.ColorAlpha(graphic.color,f_hideCheck); });
+        m_HideTimer.Tick(deltaTime);
+        if (m_HideTimer.m_TimeCheck < UIConst.I_NumericVisualizeHealthBarHideDuration)
+            m_Graphics.Traversal((Graphic graphic)=> { graphic.color = TCommon.ColorAlpha(graphic.color, m_HideTimer.m_TimeCheck/UIConst.I_NumericVisualizeHealthBarHideDuration); });
 
-        if (f_hideCheck < 0)
+        if (!m_HideTimer.m_Timing )
             OnHide();
     }
     
