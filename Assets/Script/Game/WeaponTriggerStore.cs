@@ -28,27 +28,9 @@ public class WeaponTriggerStore : WeaponTriggerBase {
         m_Storing = false;
     }
 
-    public override void OnSetTrigger(bool down)
+    public override void Stop()
     {
-        base.OnSetTrigger(down);
-
-        if (!down)
-        {
-            SetStore(false);
-            return;
-        }
-
-        if (down && !m_TriggerTimer.m_Timing && OnStoreBeginCheck())
-        {
-            SetStore(true);
-            return;
-        }
-
-    }
-
-    public override void OnTriggerStop()
-    {
-        base.OnTriggerStop();
+        base.Stop();
         SetStore(false);
     }
 
@@ -74,6 +56,17 @@ public class WeaponTriggerStore : WeaponTriggerBase {
     public void Tick(bool paused,float fireRateDelta,  float storeDelta)
     {
         m_TriggerTimer.Tick(fireRateDelta);
+
+        if (m_TriggerDown)
+        {
+            if (!m_Storing && !m_TriggerTimer.m_Timing && OnStoreBeginCheck())
+            SetStore(true);
+        }
+        else
+        {
+            SetStore(false);
+        }
+
         if (!m_Storing||paused)
             return;
 

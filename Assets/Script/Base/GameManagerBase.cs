@@ -250,7 +250,7 @@ public static class GameObjectManager
     public static void Recycle()
     {
         ObjectPoolManager<int, SFXBase>.RecycleAll();
-        ObjectPoolManager<int, SFXWeaponBase>.RecycleAll();
+        ObjectPoolManager<int, SFXDamageBase>.RecycleAll();
         ObjectPoolManager<int, EntityBase>.RecycleAll();
         ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
         ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.RecycleAll();
@@ -259,7 +259,7 @@ public static class GameObjectManager
     public static void Destory()
     {
         ObjectPoolManager<int, SFXBase>.Destroy();
-        ObjectPoolManager<int, SFXWeaponBase>.Destroy();
+        ObjectPoolManager<int, SFXDamageBase>.Destroy();
         ObjectPoolManager<int, EntityBase>.Destroy();
         ObjectPoolManager<enum_Interaction, InteractGameBase>.Destroy();
         ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Destroy();
@@ -306,29 +306,29 @@ public static class GameObjectManager
     public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
     #endregion
     #region SFXWeapon
-    public static T SpawnSFXWeapon<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXWeaponBase
+    public static T SpawnSFXWeapon<T>(int weaponIndex, Vector3 position, Vector3 normal) where T : SFXDamageBase
     {
-        if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
+        if (!ObjectPoolManager<int, SFXDamageBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXDamageBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
-        T template = ObjectPoolManager<int, SFXWeaponBase>.Spawn(weaponIndex, TF_SFXWeapon, position, Quaternion.LookRotation(normal)) as T;
+        T template = ObjectPoolManager<int, SFXDamageBase>.Spawn(weaponIndex, TF_SFXWeapon, position, Quaternion.LookRotation(normal)) as T;
         if (template == null)
             Debug.LogError("Enermy Weapon Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         return template;
     }
-    public static T GetSFXWeaponData<T>(int weaponIndex) where T : SFXWeaponBase
+    public static T GetSFXWeaponData<T>(int weaponIndex) where T : SFXDamageBase
     {
-        if (!ObjectPoolManager<int, SFXWeaponBase>.Registed(weaponIndex))
-            ObjectPoolManager<int, SFXWeaponBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
+        if (!ObjectPoolManager<int, SFXDamageBase>.Registed(weaponIndex))
+            ObjectPoolManager<int, SFXDamageBase>.Register(weaponIndex, TResources.GetDamageSource(weaponIndex), 1);
 
-        T damageSourceInfo = ObjectPoolManager<int, SFXWeaponBase>.GetRegistedSpawnItem(weaponIndex) as T;
+        T damageSourceInfo = ObjectPoolManager<int, SFXDamageBase>.GetRegistedSpawnItem(weaponIndex) as T;
         if (damageSourceInfo == null)
             Debug.LogError("SFX Get Error! Invalid Type:" + typeof(T).ToString() + "|Index:" + weaponIndex);
         return damageSourceInfo;
     }
 
-    public static void TraversalAllSFXWeapon(Action<SFXWeaponBase> OnEachSFXWeapon) => ObjectPoolManager<int, SFXWeaponBase>.TraversalAllActive(OnEachSFXWeapon);
-    public static void RecycleAllSFXWeapon(Predicate<SFXWeaponBase> predicate) => ObjectPoolManager<int, SFXWeaponBase>.RecycleAll(predicate);
+    public static void TraversalAllSFXWeapon(Action<SFXDamageBase> OnEachSFXWeapon) => ObjectPoolManager<int, SFXDamageBase>.TraversalAllActive(OnEachSFXWeapon);
+    public static void RecycleAllSFXWeapon(Predicate<SFXDamageBase> predicate) => ObjectPoolManager<int, SFXDamageBase>.RecycleAll(predicate);
     #endregion
     #region SFXEffects
     public static T SpawnSFX<T>(int index, Vector3 position, Vector3 normal) where T : SFXBase

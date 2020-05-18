@@ -62,7 +62,7 @@ public partial class TResources
     public static TileItemBase[] GetChunkTiles(enum_GameStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile + _levelStyle);
     public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
 
-    public static SFXWeaponBase GetDamageSource(int index) => Load<SFXWeaponBase>(ConstPath.S_SFXWeapon + index.ToString());
+    public static SFXDamageBase GetDamageSource(int index) => Load<SFXDamageBase>(ConstPath.S_SFXWeapon + index.ToString());
 
     public static SFXBase[] GetAllEffectSFX() => LoadAll<SFXBase>(ConstPath.S_SFXEffects);
 

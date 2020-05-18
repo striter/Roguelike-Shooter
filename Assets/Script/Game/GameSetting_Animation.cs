@@ -25,6 +25,7 @@ namespace GameSetting
         LightSword_2005=2005,
 
         Block_3001=3001,
+        Bow_3002=3002,
     }
 
     public enum enum_EnermyAnim

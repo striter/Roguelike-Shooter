@@ -1116,7 +1116,7 @@ namespace GameSetting
         }
         public static CharacterWeaponHelperBase AcquireCharacterWeaponHelper(int weaponIndex, EntityCharacterBase _entity,float spread, Func<DamageInfo> GetDamageBuffInfo)
         {
-            SFXWeaponBase weaponInfo = GameObjectManager.GetSFXWeaponData<SFXWeaponBase>(weaponIndex);
+            SFXDamageBase weaponInfo = GameObjectManager.GetSFXWeaponData<SFXDamageBase>(weaponIndex);
             SFXProjectile projectile = weaponInfo as SFXProjectile;
             if (projectile)
             {

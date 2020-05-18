@@ -4,7 +4,7 @@ using UnityEngine;
 using GameSetting;
 using System;
 
-public class SFXSubEntitySpawner : SFXWeaponBase {
+public class SFXSubEntitySpawner : SFXDamageBase {
     public bool B_SpawnAtTarget = false;
     public int I_EntitySpawnID;
     public int I_DelayIndicator = 0;

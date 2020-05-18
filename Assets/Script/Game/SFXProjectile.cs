@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GameSetting;
 using TPhysics;
-public class SFXProjectile : SFXWeaponBase
+public class SFXProjectile : SFXDamageBase
 {
     #region PresetInfos 
     public enum_ProjectileFireType E_ProjectileType = enum_ProjectileFireType.Invalid;

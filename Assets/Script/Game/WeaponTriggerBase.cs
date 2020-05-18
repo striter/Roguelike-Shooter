@@ -13,10 +13,7 @@ public class WeaponTriggerBase : MonoBehaviour
         m_Weapon = weapon;
         m_TriggerDown = false;
     }
-    public virtual void OnSetTrigger(bool down)
-    {
-        m_TriggerDown = down;
-    }
+    public void OnSetTrigger(bool down)=> m_TriggerDown = down;
 
-    public virtual void OnTriggerStop()=>  m_TriggerDown = false;
+    public virtual void Stop()=>  m_TriggerDown = false;
 }

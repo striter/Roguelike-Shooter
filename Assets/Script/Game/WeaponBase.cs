@@ -84,7 +84,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
         if (showing)
             return;
-        m_Trigger.OnTriggerStop();
+        m_Trigger.Stop();
     }
 
     protected bool OnTriggerTickCheck() => m_HaveAmmoLeft;
