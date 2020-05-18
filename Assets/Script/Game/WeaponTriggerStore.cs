@@ -31,10 +31,38 @@ public class WeaponTriggerStore : WeaponTriggerBase {
     public override void Stop()
     {
         base.Stop();
-        SetStore(false);
+        StoreCheck(false);
     }
 
-    void SetStore(bool store)
+
+    public void Tick(bool paused,float fireRateDelta,  float storeDelta)
+    {
+        m_TriggerTimer.Tick(fireRateDelta);
+
+        if (m_TriggerDown)
+        {
+            if (!m_Storing && !m_TriggerTimer.m_Timing && OnStoreBeginCheck())
+                StoreCheck(true);
+        }
+        else
+        {
+            StoreCheck(false);
+        }
+
+        if (!m_Storing||paused)
+            return;
+
+        m_Indicator.transform.localScale = Vector3.one * (2f - m_StoreTimer.m_TimeLeftScale);
+        if (m_TriggerDown&&m_StoreTimer.m_Timing)
+        {
+            m_StoreTimer.Tick(storeDelta);
+            if (!m_StoreTimer.m_Timing)
+                GameObjectManager.SpawnParticles(I_StoreSuccesfulParticlesIndex, m_Weapon.m_Muzzle.position, m_Weapon.m_Muzzle.forward).PlayUncontrolled(m_Weapon.m_Attacher.m_EntityID).AttachTo(m_Weapon.m_Muzzle);
+            return;
+        }
+    }
+
+    void StoreCheck(bool store)
     {
         if (m_Storing == store)
             return;
@@ -49,34 +77,6 @@ public class WeaponTriggerStore : WeaponTriggerBase {
         {
             OnStoreEndCheck(m_TriggerTimer.m_TimerDuration, m_StoreTimer.m_TimeLeftScale);
             m_TriggerTimer.Replay();
-        }
-
-    }
-
-    public void Tick(bool paused,float fireRateDelta,  float storeDelta)
-    {
-        m_TriggerTimer.Tick(fireRateDelta);
-
-        if (m_TriggerDown)
-        {
-            if (!m_Storing && !m_TriggerTimer.m_Timing && OnStoreBeginCheck())
-            SetStore(true);
-        }
-        else
-        {
-            SetStore(false);
-        }
-
-        if (!m_Storing||paused)
-            return;
-
-        m_Indicator.transform.localScale = Vector3.one * (2f - m_StoreTimer.m_TimeLeftScale);
-        if (m_TriggerDown&&m_StoreTimer.m_Timing)
-        {
-            m_StoreTimer.Tick(storeDelta);
-            if (!m_StoreTimer.m_Timing)
-                GameObjectManager.SpawnParticles(I_StoreSuccesfulParticlesIndex, m_Weapon.m_Muzzle.position, m_Weapon.m_Muzzle.forward).PlayUncontrolled(m_Weapon.m_Attacher.m_EntityID).AttachTo(m_Weapon.m_Muzzle);
-            return;
         }
     }
 
