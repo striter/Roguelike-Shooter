@@ -49,7 +49,7 @@ namespace TPhysics
             Vector3 direction = (m_curPos - m_prePos).normalized;
             float distance = Vector3.Distance(m_curPos, m_prePos);
             distance = distance > m_castHeight ? distance : m_castHeight;
-            OnTargetsHitBreak(deltaTime, Physics.SphereCastAll(new Ray(m_prePos, direction), m_castRadius, distance, m_hitLayer), ref m_curPos);
+            OnTargetsHitBreak(deltaTime, Physics.SphereCastAll(new Ray(m_prePos, direction), m_castRadius, distance, m_hitLayer));
             m_prePos = m_curPos;
             transform.position = m_curPos;
             transform.rotation = GetSimulateRotation(deltaTime, direction);
@@ -65,17 +65,13 @@ namespace TPhysics
             Debug.Log("Override This Please");
             return Vector3.zero;
         }
-        protected void OnTargetsHitBreak(float deltaTime, RaycastHit[] castHits, ref Vector3 breakPoint)
+        protected void OnTargetsHitBreak(float deltaTime, RaycastHit[] castHits)
         {
             for (int i = 0; i < castHits.Length; i++)
             {
                 T temp = castHits[i].collider.GetComponent<T>();
                 if (CanHitTarget(temp) && OnTargetHit(deltaTime, castHits[i], temp))
-                {
-                    if (castHits[i].point != Vector3.zero)
-                        breakPoint = castHits[i].point;
                     break;
-                }
             }
         }
         public virtual bool OnTargetHit(float deltaTime, RaycastHit hit, T template) => OnTargetHitBreak(hit, template);

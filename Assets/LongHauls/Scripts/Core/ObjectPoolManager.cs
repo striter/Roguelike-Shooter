@@ -5,15 +5,16 @@ using System.Linq;
 using UnityEngine;
 #region Static Pool
 public interface IObjectPoolStaticBase<T>{
-    void OnPoolItemInit(T identity,Action<T,MonoBehaviour> OnRecycle);
-    void OnPoolItemRecycle();
+    void OnPoolInit(T identity,Action<T,MonoBehaviour> OnRecycle);
+    void OnPoolSpawn();
+    void OnPoolRecycle();
 }
 public class CObjectPoolStaticPrefabBase<T> :MonoBehaviour,IObjectPoolStaticBase<T>
 {
     public bool m_PoolItemInited { get; private set; }
     public T m_Identity { get; private set; }
     private Action<T,MonoBehaviour> OnSelfRecycle;
-    public virtual void OnPoolItemInit(T _identity,Action<T,MonoBehaviour> _OnSelfRecycle)
+    public virtual void OnPoolInit(T _identity,Action<T,MonoBehaviour> _OnSelfRecycle)
     {
         m_Identity = _identity;
         m_PoolItemInited = true;
@@ -21,18 +22,8 @@ public class CObjectPoolStaticPrefabBase<T> :MonoBehaviour,IObjectPoolStaticBase
     }
     public void DoRecycle() =>  OnSelfRecycle?.Invoke(m_Identity, this);
 
-    public virtual void OnPoolItemRecycle() { }
-    private void OnEnable() { if (m_PoolItemInited) OnPoolItemEnable(); }
-    private void OnDisable() { if (m_PoolItemInited) OnPoolItemDisable(); }
-    protected virtual void OnPoolItemEnable() { }
-    protected virtual void OnPoolItemDisable(){}
-
-    protected virtual void OnPoolItemAdd()
-    {
-    }
-    protected virtual void OnPoolItemRemove()
-    {
-    }
+    public virtual void OnPoolSpawn() {  }
+    public virtual void OnPoolRecycle() { }
 }
 public class ObjectPoolManager
 {
@@ -55,7 +46,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
             Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); 
             item.SetActivate(false);
             item.name = m_spawnItem.name + "_" + (m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
-            item.OnPoolItemInit(identity, OnRecycle);
+            item.OnPoolInit(identity, OnRecycle);
             return item;
         }
 
@@ -111,6 +102,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
             item = info.NewItem(identity, SelfRecycle);
 
         info.m_ActiveList.Add(item);
+        item.OnPoolSpawn();
         item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
         item.transform.position = toPos;
         item.transform.rotation = rot;
@@ -127,7 +119,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         }
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_ActiveList.Remove(obj);
-        obj.OnPoolItemRecycle();
+        obj.OnPoolRecycle();
         obj.SetActivate(false);
         obj.transform.SetParent(tf_PoolSpawn);
         info.m_DeactiveQueue.Enqueue(obj);

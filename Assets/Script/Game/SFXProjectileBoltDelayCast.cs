@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SFXProjectileBoltDelayCast : SFXProjectileBolt {
-    protected override bool B_StopParticlesOnHit => false;
+    protected override bool B_StopOnPenetradeFail => false;
     public float F_DelayDuration;
     protected override bool OnHitTargetPenetrate(HitCheckBase hitCheck)
     {

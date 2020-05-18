@@ -9,9 +9,9 @@ public class InteractTradeContainer : InteractGameBase {
     protected override bool B_SelfRecycleOnInteract => true;
     public InteractGameBase m_TradeInteract { get; private set; }
     Transform tf_Model;
-    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(identity, OnRecycle);
+        base.OnPoolInit(identity, OnRecycle);
         tf_Model = transform.Find("Container/Model");
     }
     public InteractTradeContainer Play(float _tradePrice, InteractGameBase _interactItem)

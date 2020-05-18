@@ -23,9 +23,9 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
     int m_MaxShotStorage => I_BaseShotStorage + m_CharacterInfo.m_RankManager.m_Rank / I_ExtraShotStorageRankStep;
     TimerBase m_ShotRestoreTimer;
     public int m_ShotStorage { get; private set; } = 0;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_ShotRestoreTimer = new TimerBase(F_ShotRestoreCoolDown,false);
     }
     DamageInfo GetAbilityDamageInfo() => new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(F_AbilityDamageBase + F_AbilityDamageExtraMultiply * m_CharacterInfo.m_DamageAdditive + m_CharacterInfo.m_RankManager.m_Rank * F_AbilityDamageRankMultiply).SetDamageCritical( m_CharacterInfo.m_CriticalRate * F_AbilityCriticalRateMultiply, m_CharacterInfo.m_CriticalDamageMultiply);

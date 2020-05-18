@@ -42,9 +42,9 @@ public class SFXCastAreaConnections : SFXCast {
             m_Renderer.SetPosition(1, targetTrans.position);
         }
     }
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         Transform connections = transform.Find("Connections");
         m_Connections = new ObjectPoolListClass<EntityBase, ConnectionsItem>(connections,"Item");
     }

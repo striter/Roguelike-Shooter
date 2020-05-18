@@ -31,8 +31,4 @@ public class UIWorldBase : MonoBehaviour, ICoroutineHelperClass
         Destroy(this.gameObject);
     }
 
-    protected virtual void OnDestroy()
-    {
-        this.StopAllSingleCoroutines();
-    }
 }

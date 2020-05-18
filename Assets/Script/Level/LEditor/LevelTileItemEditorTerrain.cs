@@ -10,14 +10,13 @@ public class LevelTileItemEditorTerrain : TileItemBase, IObjectPoolStaticBase<en
 
     public enum_EditorTerrainType m_EditorTerrainType = enum_EditorTerrainType.Invalid;
     Action<enum_EditorTerrainType, MonoBehaviour> OnRecycle;
-    public void OnPoolItemInit(enum_EditorTerrainType identity, Action<enum_EditorTerrainType, MonoBehaviour> OnRecycle)
+    public void OnPoolInit(enum_EditorTerrainType identity, Action<enum_EditorTerrainType, MonoBehaviour> OnRecycle)
     {
         Init();
         this.OnRecycle = OnRecycle;
     }
-    public void OnPoolItemRecycle()
-    {
-    }
+    public void OnPoolSpawn() { }
+    public void OnPoolRecycle() { }
     public override void DoRecycle() => OnRecycle(m_EditorTerrainType, this);
 
 }

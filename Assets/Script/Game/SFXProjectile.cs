@@ -25,11 +25,9 @@ public class SFXProjectile : SFXWeaponBase
     protected PhysicsSimulator<HitCheckBase> m_PhysicsSimulator { get; private set; }
     protected SFXParticles m_Indicator;
     protected SFXTrail m_Trail;
-    public bool B_PhysicsSimulating { get; private set; }
     protected virtual float F_PlayDuration(Vector3 startPos, Vector3 endPos) => GameConst.I_ProjectileInvalidDistance / F_Speed;
     protected virtual float F_PlayDelay => 0f;
-    protected virtual bool B_StopParticlesOnHit => true;
-    protected virtual bool B_StopPhysicsOnHit => true;
+    protected virtual bool B_StopOnPenetradeFail => true;
     protected virtual PhysicsSimulator<HitCheckBase> GetSimulator(Vector3 direction, Vector3 targetPosition) => new SpeedDirectionPSimulator<HitCheckBase>(transform,transform.position, direction, Vector3.down, F_Speed, F_Height,F_Radius, GameLayer.Mask.I_ProjectileMask, OnHitTargetBreak,CanHitTarget);
     protected DamageInfo m_DamageInfo { get; private set; }
     protected virtual void PlayIndicator(float duration) => m_Indicator.PlayUncontrolled(base.m_SourceID, duration);
@@ -49,13 +47,11 @@ public class SFXProjectile : SFXWeaponBase
     protected override void OnPlay()
     {
         base.OnPlay();
-        B_PhysicsSimulating = true;
         SetParticlesActive(true);
     }
     protected override void OnStop()
     {
         base.OnStop();
-        B_PhysicsSimulating = false;
         SetParticlesActive(false);
         RemoveProjectileEffects();
     }
@@ -63,7 +59,7 @@ public class SFXProjectile : SFXWeaponBase
     {
         base.Update();
 
-        if (m_PhysicsSimulator!=null&&B_PhysicsSimulating)
+        if (B_Playing && m_PhysicsSimulator != null)
             m_PhysicsSimulator.Simulate(Time.deltaTime);
     }
     #region Physics
@@ -77,8 +73,7 @@ public class SFXProjectile : SFXWeaponBase
         if (OnHitTargetPenetrate(hitCheck))
             return false;
         
-        if (B_StopParticlesOnHit) OnStop();
-        if (B_StopPhysicsOnHit) B_PhysicsSimulating = false;
+        if (B_StopOnPenetradeFail) OnStop();
         return true;
     }
 

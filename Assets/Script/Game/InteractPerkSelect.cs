@@ -9,9 +9,9 @@ public class InteractPerkSelect : InteractGameBase
     public override enum_Interaction m_InteractType => enum_Interaction.PerkSelect;
     List<int> m_PerkIDs;
     TSpecialClasses.ParticleControlBase m_Particles;
-    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(identity, OnRecycle);
+        base.OnPoolInit(identity, OnRecycle);
         m_Particles = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
     public InteractPerkSelect Play(List<int> _perkID)

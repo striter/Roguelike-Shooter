@@ -6,9 +6,9 @@ public class SFXAudioBase : SFXBase
 {
     protected override bool m_ScaledDeltaTime => false;
     AudioSource m_Audio;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_Audio = GetComponent<AudioSource>();
         m_Audio.playOnAwake = false;
     }

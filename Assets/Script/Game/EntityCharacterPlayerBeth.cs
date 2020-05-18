@@ -20,9 +20,9 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     Vector3 m_RollDirection;
     public override bool m_AbilityAvailable => !m_RollCooldown.m_Timing;
     public override float m_AbilityCooldownScale => m_RollCooldown.m_TimeLeftScale;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_RollTimer = new TimerBase(F_RollDuration, true);
         m_RollCooldown = new TimerBase(F_AbilityCoolDown, true);
     }

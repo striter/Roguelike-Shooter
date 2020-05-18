@@ -12,9 +12,9 @@ public class SFXAimAssist : SFXBase {
     float m_assistDistance;
     int m_castMask;
     Func<Collider, bool> CanHitCollider;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_lineRenderer = transform.GetComponentInChildren<LineRenderer>();
         m_lineRenderer.positionCount = 2;
         tf_Dot = transform.Find("Dot");

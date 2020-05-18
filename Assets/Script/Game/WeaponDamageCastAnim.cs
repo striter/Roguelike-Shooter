@@ -10,9 +10,9 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
 
     protected float GetMeleeSize() => m_Attacher.m_CharacterInfo.F_Cast_Melee_SizeMultiply;
     Vector4 m_BaseSize;
-    public override void OnPoolItemInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         SFXCast cast = GameObjectManager.GetSFXWeaponData<SFXCast>(m_BaseSFXWeaponIndex);
         m_BaseSize = cast.V4_CastInfo;
     }

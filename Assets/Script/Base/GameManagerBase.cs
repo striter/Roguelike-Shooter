@@ -48,6 +48,8 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         this.StopAllSingleCoroutines();
         OptionsDataManager.event_OptionChanged -= OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged -= OnEffectOptionChanged;
+        TBroadCaster<enum_BC_GameStatus>.Clear();
+        TBroadCaster<enum_BC_UIStatus>.Clear();
     }
 
     protected void SwitchScene(enum_Scene scene,Func<bool> onfinishLoading=null)

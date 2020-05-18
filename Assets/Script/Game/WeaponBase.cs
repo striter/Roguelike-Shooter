@@ -36,9 +36,9 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public bool m_Attacking { get; private set; }
 
     protected int m_BaseSFXWeaponIndex { get; private set; }
-    public override void OnPoolItemInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_Muzzle = transform.FindInAllChild("Muzzle");
         m_WeaponSkin = transform.FindInAllChild("Case").GetComponent<MeshRenderer>();
         m_WeaponInfo = GameDataManager.GetWeaponProperties(_identity);

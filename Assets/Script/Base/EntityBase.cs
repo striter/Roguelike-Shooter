@@ -17,9 +17,9 @@ public class EntityBase : CObjectPoolStaticPrefabBase<int>
     public bool m_IsDead { get; private set; }
     public bool m_Activating { get; private set; }
     HitCheckEntity[] m_HitChecks;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_HitChecks = GetComponentsInChildren<HitCheckEntity>();
         m_Health = GetHealthManager();
     }
@@ -59,9 +59,9 @@ public class EntityBase : CObjectPoolStaticPrefabBase<int>
         EnableHitbox(true);
     }
 
-    public override void OnPoolItemRecycle()
+    public override void OnPoolRecycle()
     {
-        base.OnPoolItemRecycle();
+        base.OnPoolRecycle();
         m_Activating = false;
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnEntityRecycle, this);
     }

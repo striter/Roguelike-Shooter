@@ -11,15 +11,14 @@ public class TilePlantsBase : TileItemBase,IObjectPoolStaticBase<enum_TilePlants
     Action<enum_TilePlantsType, MonoBehaviour> OnRecycle;
     public override void DoRecycle() => OnRecycle(m_PlantsType, this);
 
-    public void OnPoolItemInit(enum_TilePlantsType identity, Action<enum_TilePlantsType, MonoBehaviour> OnRecycle)
+    public void OnPoolInit(enum_TilePlantsType identity, Action<enum_TilePlantsType, MonoBehaviour> OnRecycle)
     {
         Init();
         GetComponentsInChildren<HitCheckDynamic>().Traversal((HitCheckDynamic hitCheck) => { hitCheck.Attach(OnObjectHit); });
         this.OnRecycle = OnRecycle;
     }
-    public void OnPoolItemRecycle()
-    {
-    }
+    public void OnPoolRecycle() { }
+    public void OnPoolSpawn() { }
 
     public override void OnGenerateItem(ChunkTileData _data, System.Random random)
     {

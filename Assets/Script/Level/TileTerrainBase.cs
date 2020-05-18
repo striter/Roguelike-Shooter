@@ -9,16 +9,15 @@ public class TileTerrainBase : TileItemBase,IObjectPoolStaticBase<enum_TileTerra
     public enum_TileTerrainType m_GroundType = enum_TileTerrainType.Invalid;
     public override enum_TileSubType m_Type => enum_TileSubType.Terrain;
     Action<enum_TileTerrainType, MonoBehaviour> OnRecycle;
-    public void OnPoolItemInit(enum_TileTerrainType identity, Action<enum_TileTerrainType, MonoBehaviour> OnRecycle)
+    public void OnPoolInit(enum_TileTerrainType identity, Action<enum_TileTerrainType, MonoBehaviour> OnRecycle)
     {
         Init();
         m_GroundType = identity;
         this.OnRecycle = OnRecycle;
     }
 
-    public void OnPoolItemRecycle()
-    {
-    }
+    public void OnPoolSpawn() { }
+    public void OnPoolRecycle() { }
 
     public override void DoRecycle()
     {

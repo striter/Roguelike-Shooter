@@ -12,9 +12,9 @@ public class SFXCastLaserBeam : SFXCast {
     LineRenderer m_Beam;
     float f_castLength;
     protected override float F_CastLength => f_castLength;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_Beam = transform.Find("Connections").GetComponent<LineRenderer>();
         m_Beam.SetPosition(0, Vector3.zero);
         m_Beam.SetPosition(1, Vector3.zero);

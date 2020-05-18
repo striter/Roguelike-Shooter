@@ -28,9 +28,9 @@ public class EntityCharacterBase : EntityBase
     protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
     protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
 
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         tf_Head = transform.Find("Head");
         Transform tf_Skin = tf_Model.Find("Skin");
@@ -40,22 +40,16 @@ public class EntityCharacterBase : EntityBase
         m_CharacterInfo = GetEntityInfo();
     }
 
-    public override void OnPoolItemRecycle()
+    public override void OnPoolSpawn()
     {
-        base.OnPoolItemRecycle();
+        base.OnPoolSpawn();
         m_CharacterInfo.OnRecycle();
-    }
-
-    protected override void OnPoolItemEnable()
-    {
-        base.OnPoolItemEnable();
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);
     }
-
-    protected override void OnPoolItemDisable()
+    public override void OnPoolRecycle()
     {
-        base.OnPoolItemDisable();
+        base.OnPoolRecycle();
         m_CharacterSkinEffect.OnDisable();
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase>(enum_BC_GameStatus.OnCharacterHealthWillChange, OnCharacterHealthWillChange);

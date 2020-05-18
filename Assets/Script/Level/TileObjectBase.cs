@@ -11,15 +11,14 @@ public class TileObjectBase : TileItemBase,IObjectPoolStaticBase<enum_TileObject
     Action<enum_TileObjectType, MonoBehaviour> OnRecycle;
     public override TileAxis GetDirectionedSize(enum_TileDirection direction) => m_ObjectType.GetSizeAxis(direction);
 
-    public void OnPoolItemInit(enum_TileObjectType identity, Action<enum_TileObjectType, MonoBehaviour> OnRecycle)
+    public void OnPoolInit(enum_TileObjectType identity, Action<enum_TileObjectType, MonoBehaviour> OnRecycle)
     {
         Init();
         m_ObjectType = identity;
         this.OnRecycle = OnRecycle;
     }
-    public void OnPoolItemRecycle()
-    {
-    }
+    public void OnPoolRecycle() { }
+    public void OnPoolSpawn() { }
 
 
     public override void DoRecycle()=> OnRecycle(m_ObjectType, this);

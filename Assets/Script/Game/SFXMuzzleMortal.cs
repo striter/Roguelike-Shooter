@@ -10,9 +10,9 @@ public class SFXMuzzleMortal : SFXParticles
     public float F_PlayTime = 5f;
     Transform tf_Model;
     TrailRenderer m_trail;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         tf_Model = transform.Find("Model");
         m_trail = tf_Model.GetComponentInChildren<TrailRenderer>();
     }

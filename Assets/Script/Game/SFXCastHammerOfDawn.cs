@@ -7,9 +7,9 @@ public class SFXCastHammerOfDawn : SFXCast {
 
     int m_DawnSFXIndex;
 
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_DawnSFXIndex = GameExpression.GetWeaponSubIndex(_identity);
     }
     protected override List<EntityBase> DoCastDealtDamage()

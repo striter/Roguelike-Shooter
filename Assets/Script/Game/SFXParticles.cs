@@ -8,9 +8,9 @@ public class SFXParticles : SFXBase
     protected SFXRelativeBase[] m_relativeSFXs;
     public TSpecialClasses.ParticleControlBase m_Particle { get; private set; }
     public bool m_LoopParticles { get; private set; }
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_relativeSFXs = GetComponentsInChildren<SFXRelativeBase>();
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.Init(); });
         m_Particle = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));

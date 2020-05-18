@@ -7,9 +7,9 @@ public class WeaponDamageParacurve : WeaponDamageBase {
     SFXProjectile projectileData;
     public override enum_PlayerWeaponBaseType m_WeaponType => enum_PlayerWeaponBaseType.Paracurve;
 
-    public override void OnPoolItemInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(enum_PlayerWeaponIdentity _identity, Action<enum_PlayerWeaponIdentity, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         projectileData = GameObjectManager.GetSFXWeaponData<SFXProjectile>(m_BaseSFXWeaponIndex);
     }
     protected override void OnAutoTrigger(float animDuration)

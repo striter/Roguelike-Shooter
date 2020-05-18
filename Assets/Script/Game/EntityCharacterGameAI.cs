@@ -26,9 +26,9 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     bool OnCheckTarget(EntityCharacterBase target) => target.m_Flag!=m_Flag && !target.m_IsDead;
     Transform tf_Barrel;
     public override Transform tf_Weapon => tf_Barrel;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
         InitAI(CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,F_Spread,GetAIDamageInfo));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
@@ -47,9 +47,9 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
         AIActivate();
     }
 
-    public override void OnPoolItemRecycle()
+    public override void OnPoolRecycle()
     {
-        base.OnPoolItemRecycle();
+        base.OnPoolRecycle();
         m_Agent.enabled = false;
     }
     protected override void OnRevive()

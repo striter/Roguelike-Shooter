@@ -16,9 +16,9 @@ public class InteractSignalTower : InteractGameBase {
     bool m_Transmitting = false;
     Func<InteractSignalTower, bool> OnTransmitCountFinish;
     Action<InteractSignalTower> OnTransmitStart;
-    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(identity, OnRecycle);
+        base.OnPoolInit(identity, OnRecycle);
         m_Canvas = transform.Find("Canvas");
         m_Count = m_Canvas.Find("Count").GetComponent<Text>();
         m_PortalPos = transform.Find("PortalPos");

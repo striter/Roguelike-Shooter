@@ -18,7 +18,6 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
     public float f_delayLeftScale => f_delayTimeLeft>0? (f_delayTimeLeft / f_delayDuration):0;
     Transform m_AttachTo;
     Vector3 m_localPos, m_localDir;
-
     protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool tickPlayDuration)
     {
         B_Activating = true;
@@ -50,7 +49,6 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
         m_TickLifeTime = true;
         B_Delaying = false;
         B_Playing = false;
-        m_AttachTo = null;
     }
 
     protected virtual void OnRecycle()

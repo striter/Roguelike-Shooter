@@ -11,9 +11,9 @@ public class InteractBonfire : InteractGameBase {
     DamageInfo m_HealInfo;
     TimerBase m_DistinguishCheck=new TimerBase(5f);
     EntityCharacterPlayer m_Interactor;
-    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(identity, OnRecycle);
+        base.OnPoolInit(identity, OnRecycle);
         m_FireParticles = new TSpecialClasses.ParticleControlBase(transform.Find("Fire"));
         tf_Light = transform.Find("Light");
     }

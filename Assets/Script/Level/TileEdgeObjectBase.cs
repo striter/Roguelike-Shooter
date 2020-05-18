@@ -11,13 +11,12 @@ public class TileEdgeObjectBase : TileItemBase,IObjectPoolStaticBase<enum_TileEd
 
     public override void DoRecycle() => OnRecycle(m_EdgeObjectType, this);
 
-    public void OnPoolItemInit(enum_TileEdgeObjectType identity, Action<enum_TileEdgeObjectType, MonoBehaviour> OnRecycle)
+    public void OnPoolInit(enum_TileEdgeObjectType identity, Action<enum_TileEdgeObjectType, MonoBehaviour> OnRecycle)
     {
         Init();
         this.OnRecycle = OnRecycle;
     }
 
-    public void OnPoolItemRecycle()
-    {
-    }
+    public void OnPoolSpawn() { }
+    public void OnPoolRecycle()  { }
 }

@@ -10,9 +10,9 @@ public class InteractPickupWeapon : InteractPickup {
     public override enum_Interaction m_InteractType => enum_Interaction.PickupWeapon;
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor) => base.OnTryInteractCheck(_interactor)&& m_Weapon != null;
     protected override bool B_SelfRecycleOnInteract => false;
-    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(identity, OnRecycle);
+        base.OnPoolInit(identity, OnRecycle);
         tf_ModelContainer = transform.Find("Container/Model");
     }
     public InteractPickupWeapon Play(WeaponSaveData data )

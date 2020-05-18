@@ -24,9 +24,9 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
     protected override float CalculateMovementSpeedBase() => m_AssassinAttackTimer.m_Timing ? 0 : base.CalculateMovementSpeedBase();
     protected override bool CheckWeaponFiring() => !m_AssassinAttackTimer.m_Timing && base.CheckWeaponFiring();
 
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_AssassinAttackTimer = new TimerBase(F_AssassinAttackDuration, true);
         m_AssassinCooldownTimer = new TimerBase(F_AssasinTriggerCooldown, true);
         m_AssassinStackResetTimer = new TimerBase(F_AssassinDamageStackResetDuration,true);

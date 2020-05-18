@@ -16,8 +16,9 @@ public class InteractGameBase : InteractBase,IObjectPoolStaticBase<enum_Interact
     protected void SetTradePrice(float tradePrice) => m_TradePrice = Mathf.RoundToInt(tradePrice);
     protected void SetKeyAcquire(int keyAcquire) => m_KeyRequire = keyAcquire;
 
-    public virtual void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle) { }
-    public void OnPoolItemRecycle() { }
+    public virtual void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle) { }
+    public void OnPoolSpawn() { }
+    public void OnPoolRecycle() { }
 
     protected override void Play()
     {

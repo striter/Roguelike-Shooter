@@ -14,9 +14,9 @@ public class EntityCharacterGameForestExtra : EntityCharacterGameBase {
     float f_spreadCheck = 0;
     public override Transform tf_Weapon => tf_Head;
     CharacterWeaponHelperBase m_Weapon;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_Weapon = CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this,F_Spread, () => m_CharacterInfo.GetDamageInfo(F_BaseDamage) );
     }
 

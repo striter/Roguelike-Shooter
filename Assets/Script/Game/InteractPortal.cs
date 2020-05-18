@@ -14,9 +14,9 @@ public class InteractPortal : InteractGameBase
     public override string GetUIIntroKey() => m_PortalEvent.GetLocalizeIntroKey();
     public override bool B_InteractOnTrigger => false;
     Dictionary<enum_ChunkPortalType, TSpecialClasses.ParticleControlBase> m_PortalParticles=new Dictionary<enum_ChunkPortalType, TSpecialClasses.ParticleControlBase>();
-    public override void OnPoolItemInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
+    public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
-        base.OnPoolItemInit(identity, OnRecycle);
+        base.OnPoolInit(identity, OnRecycle);
         TCommon.TraversalEnum((enum_ChunkPortalType portalType) =>
         {
             m_PortalParticles.Add(portalType, new TSpecialClasses.ParticleControlBase(transform.Find(portalType.ToString())));

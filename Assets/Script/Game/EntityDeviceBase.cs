@@ -9,23 +9,23 @@ public class EntityDeviceBase : EntityCharacterBase {
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolListComponent<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_Detect = transform.Find("EntityDetector").GetComponent<EntityDetector>();
         m_Detect.Init(OnEntityDetect);
         m_Particles = GetComponentsInChildren<ParticleSystem>();
         Transform connectionsParent = transform.Find("Connections");
         m_Connections = new ObjectPoolListComponent<EntityCharacterBase, LineRenderer>(connectionsParent,"Item");
     }
-    protected override void OnPoolItemEnable()
+    public override void OnPoolSpawn()
     {
-        base.OnPoolItemEnable();
+        base.OnPoolSpawn();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
-    protected override void OnPoolItemDisable()
+    public override void OnPoolRecycle()
     {
-        base.OnPoolItemDisable();
+        base.OnPoolRecycle();
         TBroadCaster<enum_BC_GameStatus>.Add<EntityCharacterBase>(enum_BC_GameStatus.OnCharacterDead, OnCharacterDead);
     }
     protected override void OnEntityActivate(enum_EntityFlag flag)

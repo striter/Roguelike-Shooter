@@ -8,9 +8,9 @@ public class SFXCastDetonate : SFXCastOverlapSphere
 {
     public int I_MuzzleIndex = 0;
     Transform m_Model;
-    public override void OnPoolItemInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
+    public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
-        base.OnPoolItemInit(_identity, _OnRecycle);
+        base.OnPoolInit(_identity, _OnRecycle);
         m_Model = transform.Find("Model");
     }
     public override void Play(DamageInfo damageInfo)

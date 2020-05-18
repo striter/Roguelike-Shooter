@@ -23,9 +23,9 @@ public class EntityCharacterGameBase : EntityCharacterBase {
         return this;
     }
 
-    public override void OnPoolItemRecycle()
+    public override void OnPoolRecycle()
     {
-        base.OnPoolItemRecycle(); 
+        base.OnPoolRecycle(); 
         m_Perk = null;
     }
 }
