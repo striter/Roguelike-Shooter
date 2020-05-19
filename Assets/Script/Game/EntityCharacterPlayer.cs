@@ -8,10 +8,13 @@ using UnityEngine.AI;
 
 public class EntityCharacterPlayer : EntityCharacterBase
 {
+    public int I_HealthPerRank=10;
     public int I_DefaultArmor;
+    public int I_ArmorPerRank=10;
     public override enum_EntityType m_ControllType => enum_EntityType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
     protected virtual PlayerCharacterBethAnimator m_Animator { get; private set; }
+
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_AimAssist = null;
@@ -43,6 +46,9 @@ public class EntityCharacterPlayer : EntityCharacterBase
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected TimerBase m_ReviveTimer=new TimerBase(GameConst.F_PlayerReviveCheckAfterDead);
+
+    public float GetMaxHealthAdditive() => m_CharacterInfo.m_RankManager.m_Rank * I_HealthPerRank + m_CharacterInfo.F_MaxHealthAdditive;
+    public float GetMaxArmorAdditive() => m_CharacterInfo.m_RankManager.m_Rank * I_ArmorPerRank + m_CharacterInfo.F_MaxArmorAdditive;
 
     protected override CharacterExpireManager GetEntityInfo()
     {
@@ -178,7 +184,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
         OnWeaponTick(deltaTime);
         OnMoveTick(deltaTime);
-        m_Health.OnMaxChange(m_CharacterInfo.F_MaxHealthAdditive,m_CharacterInfo.F_MaxArmorAdditive);
+        m_Health.OnMaxChange(GetMaxHealthAdditive(), GetMaxArmorAdditive());
         OnUICommonStatus();
     }
 
