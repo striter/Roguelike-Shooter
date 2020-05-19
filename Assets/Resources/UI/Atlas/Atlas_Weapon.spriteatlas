@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 0396c725e26df884a977ed541580352c, type: 3}
-    totalSpriteSurfaceArea: 4230936
+    totalSpriteSurfaceArea: 2670336
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -57,30 +57,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 63e8962143d79a748a3697167461eb3e, type: 3}
   - {fileID: 21300000, guid: 90e84afdc8b862349914122666e23e0e, type: 3}
   - {fileID: 21300000, guid: 9799fcaad1b496443bd2edcda97e6d6b, type: 3}
-  - {fileID: 21300000, guid: d3e1eaa59e37c7d48a249a13f06d0a5f, type: 3}
-  - {fileID: 21300000, guid: 1fef2c7d5450c8744afa1b3d6f54b4e1, type: 3}
-  - {fileID: 21300000, guid: 0982a2ae45e912a4fa356dceedaa604f, type: 3}
-  - {fileID: 21300000, guid: 5cb398fbb3a0c224b9be95a11ac78c17, type: 3}
-  - {fileID: 21300000, guid: bf90633d25c36b64e82b501550c1e8a3, type: 3}
-  - {fileID: 21300000, guid: bdfcef36efb619a4c919697757afc9ab, type: 3}
-  - {fileID: 21300000, guid: ec7a57d768a7ab74485adfdbccb405b4, type: 3}
-  - {fileID: 21300000, guid: 93a897d607ac68f49a680234c3abf225, type: 3}
-  - {fileID: 21300000, guid: 44ffe36a2787e8a4bb3484eb7d3bd76a, type: 3}
-  - {fileID: 21300000, guid: 7535d62942a4c6246876acd9859348ae, type: 3}
-  - {fileID: 21300000, guid: 898b7b8d34ed9ee43ba586dde7a72db7, type: 3}
-  - {fileID: 21300000, guid: c0abe4af7c4383347b072aff4689e22e, type: 3}
-  - {fileID: 21300000, guid: 9d6816b57f5e0cb409739b1ec1dacb18, type: 3}
-  - {fileID: 21300000, guid: da697403aea6a7449a1f7ad2c8c6d957, type: 3}
-  - {fileID: 21300000, guid: 3afd4d7a0b6936647a21053c7f23de25, type: 3}
-  - {fileID: 21300000, guid: bcc2d011c325d7f4c83ed6e58e6864de, type: 3}
-  - {fileID: 21300000, guid: a067f56476cb31e4b87e253232915a4a, type: 3}
-  - {fileID: 21300000, guid: a027eb381a252344cb2738c5661faca6, type: 3}
-  - {fileID: 21300000, guid: c3fa4231efad43c4d95029b628706fa5, type: 3}
-  - {fileID: 21300000, guid: 26be2c1e4d7d11b40b471973d378d511, type: 3}
-  - {fileID: 21300000, guid: a24ff88b2cc7e214fba86619beabc4e9, type: 3}
-  - {fileID: 21300000, guid: 390a2101cb35d404387994c8ed4bca61, type: 3}
-  - {fileID: 21300000, guid: 7981ef639d2e2cd4488d242b32f2e407, type: 3}
-  - {fileID: 21300000, guid: b60ce2675f154894fb2cb802422e875e, type: 3}
   m_PackedSpriteNamesToIndex:
   - detail_116
   - detail_201
@@ -106,29 +82,5 @@ SpriteAtlas:
   - detail_101
   - detail_111
   - detail_105
-  - icon_204
-  - icon_116
-  - icon_106
-  - icon_109
-  - icon_201
-  - icon_107
-  - icon_202
-  - icon_108
-  - icon_103
-  - icon_203
-  - icon_104
-  - icon_115
-  - icon_113
-  - icon_112
-  - icon_102
-  - icon_401
-  - icon_402
-  - icon_403
-  - icon_114
-  - icon_110
-  - icon_105
-  - icon_404
-  - icon_111
-  - icon_101
   m_Tag: Atlas_Weapon
   m_IsVariant: 0

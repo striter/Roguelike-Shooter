@@ -84,7 +84,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
         if (showing)
             return;
-        m_Trigger.Stop();
+        m_Trigger.OnTriggerStop();
     }
 
     protected bool OnTriggerTickCheck() => m_HaveAmmoLeft;
@@ -111,7 +111,7 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     public virtual void WeaponTick(bool firePausing, float deltaTime)
     {
-        m_Attacher.PlayAttackTriggering(m_Trigger.m_Triggering);
+            m_Attacher.PlayAttackTriggering(m_Trigger.m_Triggering);
 
         int clipAmount = m_Attacher.m_CharacterInfo.CheckClipAmount(I_ClipAmount);
         if (m_ClipAmount != clipAmount)

@@ -118,8 +118,7 @@ namespace GameSetting
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
         public static string GetAbilitySprite(this enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
-        public static string GetIconSprite(this enum_PlayerWeaponIdentity weapon) => "icon_" + ((int)weapon);
-        public static string GetDetailSprite(this enum_PlayerWeaponIdentity weapon) => "detail_" + ((int)weapon);
+        public static string GetSprite(this enum_PlayerWeaponIdentity weapon) => "detail_" + ((int)weapon);
         public static string GetExpireSprite(this EntityExpireBase expire) => expire.m_Index.ToString();
 
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
