@@ -15,9 +15,9 @@ public class InteractSignalTower : InteractGameBase {
     PE_DepthCircleArea m_TransmitArea;
     ValueLerpSeconds m_TransmitColorLerp;
 
-    Color colorFillValid = TCommon.GetHexColor("2DFFF62F");
+    Color colorFillValid = TCommon.GetHexColor("2DFF6B2F");
     Color colorFillInvalid = TCommon.ColorAlpha(Color.red, .5f);
-    Color colorEdgeValid = TCommon.GetHexColor("02025EFF");
+    Color colorEdgeValid = TCommon.GetHexColor("00FF0CFF");
     Color colorEdgeInvalid = Color.red;
 
 
@@ -49,9 +49,9 @@ public class InteractSignalTower : InteractGameBase {
 
     public void OnTransmitSet(bool begin)
     {
-        if(begin)
+        m_TransmitArea = CameraController.Instance.m_Effect.SetDepthAreaCircle(true, transform.position, 10f, .3f, 1f).SetTexture(TResources.m_HolographTex, .5f, new Vector2(.5f, .5f));
+        if (begin)
         {
-            m_TransmitArea = CameraController.Instance.m_Effect.SetDepthAreaCircle(begin, transform.position, 10f, .3f, 1f).SetTexture(TResources.m_HolographTex, .5f, new Vector2(.5f, .5f));
             m_TransmitColorLerp = new ValueLerpSeconds(0f, .5f, .2f, (float value)=> { m_TransmitArea.SetColor(Color.Lerp(colorFillInvalid, colorFillValid, value), Color.Lerp( colorEdgeInvalid, colorEdgeValid, value)); });
             m_TransmitColorLerp.SetFinalValue(1f);
         }
