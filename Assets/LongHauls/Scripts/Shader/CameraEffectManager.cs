@@ -60,24 +60,31 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
                 return;
 
             m_DoGraphicBlitz |= effectBase.m_DoGraphicBlitz;
-            m_DepthToWorldMatrix |= effectBase.m_DepthToWorldMatrix;
+            m_DepthToWorldMatrix |= effectBase.m_DepthFrustumCornors;
         });
     }
 
 
-    public void StartAreaScan(Vector3 startPoint,Color scanColor, Texture scanTex=null,float texScale=1f, float colorOpacity=.7f,float width=1f,float range=20,float duration=1.5f)
+    public PE_DepthCircleScan StartDepthScanCircle(Vector3 origin, Color scanColor, float width = 1f, float radius = 20, float duration = 1.5f)
     {
-        PE_AreaScanDepth areaScan= GetOrAddCameraEffect<PE_AreaScanDepth>();
-        areaScan.SetEffect(startPoint, scanColor, scanTex,texScale, colorOpacity, width);
+        PE_DepthCircleScan scan= GetOrAddCameraEffect<PE_DepthCircleScan>().SetEffect(origin, scanColor);
         this.StartSingleCoroutine(0,TIEnumerators.ChangeValueTo((float value)=> {
-            areaScan.SetElapse(range*value);
+            scan.SetElapse(radius*value,width);
         },0,1,duration,()=> {
-            RemoveCameraEffect<PE_AreaScanDepth>();
+            RemoveCameraEffect<PE_DepthCircleScan>();
             ResetCameraEffectParams();
         }));
         ResetCameraEffectParams();
+        return scan;
     }
     
+    public PE_DepthCircleArea SetDepthAreaCircle(bool begin, Vector3 origin,Color fillColor, Color edgeColor, float radius = 10f, float edgeWidth = .5f, float duration = 1.5f)
+    {
+        PE_DepthCircleArea area = GetOrAddCameraEffect<PE_DepthCircleArea>().SetEffect(origin,fillColor,edgeColor);
+        this.StartSingleCoroutine(1,TIEnumerators.ChangeValueTo((float value)=>{area.SetRadius(radius*value,edgeWidth) ; }, begin?0:1, begin?1:0, duration));
+        ResetCameraEffectParams();
+        return area;
+    }
     #endregion
     List<CameraEffectBase> m_CameraEffects=new List<CameraEffectBase>();
     public Camera m_Camera { get; protected set; }

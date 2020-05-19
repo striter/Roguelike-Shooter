@@ -277,7 +277,7 @@ public class GameManager : GameManagerBase
 
     void OnSignalTowerTransmitStart(InteractSignalTower signalTower)
     {
-        SetPostEffect_AreaScan(signalTower.m_Canvas.position, Color.red);
+        SetPostEffect_AreaScan(signalTower.m_Canvas.position, TCommon.ColorAlpha( Color.red,.5f));
         m_GameBattle.OnTransmitTrigger(m_LocalPlayer.transform.position);
         TBroadCaster<enum_BC_GameStatus>.Trigger( enum_BC_GameStatus.OnGameTransmitStatus, m_GameBattle.m_BattleTransmiting);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameTransmitEliteStatus, GetCharacter(m_GameBattle.m_TransmitEliteID));
@@ -296,7 +296,7 @@ public class GameManager : GameManagerBase
             return false;
         
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameTransmitStatus, m_GameBattle.m_BattleTransmiting);
-        SetPostEffect_AreaScan(signalTower.m_PortalPos.position,Color.green);
+        SetPostEffect_AreaScan(signalTower.m_PortalPos.position,TCommon.ColorAlpha( Color.green,.7f));
         enum_GamePortalType portal = m_GameProgress.GetNextStageGenerate();
         GameObjectManager.SpawnInteract<InteractPortal>(signalTower.m_PortalPos.position, signalTower.m_PortalPos.rotation).Play(portal, OnChunkPortalEnter);
         return true;

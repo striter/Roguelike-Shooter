@@ -1,15 +1,14 @@
-﻿Shader "Hidden/PostEffect/PE_AreaSphereDepth"
+﻿Shader "Hidden/PostEffect/PE_DepthCircleScan"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_ScanTex(" Scan Texture",2D) = "white"{}
-		_ScanTexScale("Scan Tex Scale",float)=15
-		_ScanColor("Scan Color",Color)=(1,1,1,1)
-		_ScanElapse("Scan Elapse",float)=.5
-		_ScanLerp("Scan Lerp",float)=1
-		_ScanOrigin("Scan Origin",Vector)=(1,1,1,1)
-		_ScanWidth("Scan Width",float)=.5
+		_Texture(" Scan Texture",2D) = "white"{}
+		_TextureScale("Scan Tex Scale",float)=15
+		_Color("Scan Color",Color)=(1,1,1,1)
+		_MinSqrDistance("Min Squared Distance",float) = .5
+		_MaxSqrDistance("Max Squared Distance",float)=.5
+		_Origin("Scan Origin",Vector)=(1,1,1,1)
 	}
 		SubShader
 		{
@@ -22,17 +21,16 @@
 				#pragma vertex vert
 				#pragma fragment frag
 
+				#include "../CommonInclude.cginc"
 				#include "UnityCG.cginc"
 				#include "PostEffectInclude.cginc"
 
-			sampler2D _ScanTex;
-			float4 _ScanColor;
-			float _ScanLerp;
-			float _ScanElapse;
-			float4 _ScanOrigin;
-			float _ScanWidth;
-			float _ScanTexScale;
-
+			sampler2D _Texture;
+			float _TextureScale;
+			float4 _Color;
+			float4 _Origin;
+			float _MinSqrDistance;
+			float _MaxSqrDistance;
 
 			struct v2f
 			{
@@ -56,12 +54,13 @@
 			{
 				float linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth));
 				float3 worldPos = _WorldSpaceCameraPos + i.interpolatedRay*linearDepth;
-				float offsetLength = length(_ScanOrigin.xyz-worldPos );
-				float scanValue = .0f;
-				float4 texColor = tex2D(_ScanTex, i.uv*_ScanTexScale);
-				if (offsetLength<_ScanElapse&&offsetLength>_ScanElapse - _ScanWidth)
-					scanValue = _ScanLerp*texColor.r;
-				return tex2D(_MainTex,i.uv)+_ScanColor* scanValue;
+				float squareDistance = sqrdistance(_Origin.xyz,worldPos);
+
+				float scan = 1;
+				scan *= _Color.a;
+				scan *= step(_MinSqrDistance, squareDistance)*step(squareDistance, _MaxSqrDistance);
+				scan *= tex2D(_Texture, worldPos.xz*_TextureScale).r;
+				return tex2D(_MainTex,i.uv)+_Color* scan;
 			}
 			ENDCG
 		}

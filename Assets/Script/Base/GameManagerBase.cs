@@ -113,7 +113,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     protected void SetPostEffect_AreaScan(Vector3 position,Color color)
     {
-        CameraController.Instance.m_Effect.StartAreaScan(position,color,null,1,.7f,1.5f,40,2f);
+        CameraController.Instance.m_Effect.StartDepthScanCircle(position, color, 1.5f, 40, 2f);
     }
 
     protected void SetPostEffect_Dead()
