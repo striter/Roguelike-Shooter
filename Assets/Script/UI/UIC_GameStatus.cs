@@ -70,7 +70,7 @@ public class UIC_GameStatus : UIControlBase {
         m_Rank = transform.Find("Rank");
         m_RankFill = m_Rank.Find("Fill").GetComponent<Image>();
         m_RankAmount = m_Rank.Find("Amount").GetComponent<Text>();
-        m_RankLerp = new ValueLerpSeconds(0, .1f, .1f, (float value) => {m_RankFill.fillAmount=value - Mathf.Floor(value); });
+        m_RankLerp = new ValueLerpSeconds(0, .1f, .5f, (float value) => {m_RankFill.fillAmount=value - Mathf.Floor(value); });
 
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameTransmitStatus, OnTransmissionStatus);
