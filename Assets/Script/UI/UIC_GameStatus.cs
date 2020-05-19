@@ -11,7 +11,7 @@ public class UIC_GameStatus : UIControlBase {
     UIC_Minimap m_Map;
 
     Transform m_Currency;
-    Text m_Coins, m_Keys, m_Ranks;
+    Text m_Coins, m_Keys;
     ValueLerpSeconds m_CoinLerp;
 
     Transform m_Mission;
@@ -31,6 +31,11 @@ public class UIC_GameStatus : UIControlBase {
     ValueChecker<float> m_EliteHealthCheck;
     EntityCharacterBase m_Elite;
 
+    Transform m_Rank;
+    Image m_RankFill;
+    Text m_RankAmount;
+    ValueLerpSeconds m_RankLerp;
+
     protected override void Init()
     {
         base.Init();
@@ -46,7 +51,6 @@ public class UIC_GameStatus : UIControlBase {
         m_Currency = transform.Find("Currency");
         m_Coins = m_Currency.Find("CoinData").GetComponent<Text>();
         m_Keys = m_Currency.Find("KeyData").GetComponent<Text>();
-        m_Ranks = m_Currency.Find("RankData").GetComponent<Text>();
         m_CoinLerp = new ValueLerpSeconds(-1f, 20f, 1f, (float value) => { m_Coins.text = ((int)value).ToString(); });
 
         m_Progress = transform.Find("Progress");
@@ -62,6 +66,11 @@ public class UIC_GameStatus : UIControlBase {
         m_EliteName = m_EliteHealth.Find("Name").GetComponent<UIT_TextExtend>();
         m_EliteHealthLerp = new ValueLerpSeconds(0,.1f,1f,(float value)=> { m_EliteHealthImage.fillAmount = value; });
         m_EliteHealthCheck = new ValueChecker<float>(-1);
+
+        m_Rank = transform.Find("Rank");
+        m_RankFill = m_Rank.Find("Fill").GetComponent<Image>();
+        m_RankAmount = m_Rank.Find("Amount").GetComponent<Text>();
+        m_RankLerp = new ValueLerpSeconds(0, .1f, .1f, (float value) => {m_RankFill.fillAmount=value; });
 
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameTransmitStatus, OnTransmissionStatus);
@@ -98,7 +107,8 @@ public class UIC_GameStatus : UIControlBase {
     {
         m_CoinLerp.SetLerpValue(_playerInfo.m_Coins);
         m_Keys.text = _playerInfo.m_Keys.ToString();
-        m_Ranks.text = _playerInfo.m_RankManager.m_ExpCurRank + "|" + _playerInfo.m_RankManager.m_ExpToNextRank + "," + _playerInfo.m_RankManager.m_Rank;
+        m_RankAmount.text = _playerInfo.m_RankManager.m_Rank.ToString();
+        m_RankLerp.SetLerpValue(_playerInfo.m_RankManager.m_ExpCurRankScale);
     }
 
     void OnTransmissionStatus(bool transmiting)=>m_MissionData.text = "UI_GAMESTATUS_MISSION".GetKeyLocalized() + (transmiting ? "UI_MISSION_SURVIVE" : "UI_MISSION_ENTERPORTAL").GetKeyLocalized();
@@ -124,6 +134,7 @@ public class UIC_GameStatus : UIControlBase {
         float deltaTime = Time.deltaTime;
 
         m_CoinLerp.TickDelta(deltaTime);
+        m_RankLerp.TickDelta(deltaTime);
         m_Map.MinimapUpdate(GameManager.Instance.m_LocalPlayer);
 
         int secondPassed= (int)GameManager.Instance.m_GameBattle.m_TimeElapsed;

@@ -955,42 +955,39 @@ public class TimerBase
 
 public class ExpRankBase
 {
-    public int m_TotalExp { get; private set; }
     public int m_Rank { get; private set; }
-    public int m_ExpCurRank { get; private set; }
-    public int m_ExpToNextRank { get; private set; }
+    public int m_TotalExpOwned { get; private set; }
+    public int m_ExpCurRankOwned { get; private set; }
+    public int m_ExpCurRankRequired { get; private set; }
+    public int m_ExpLeftToNextRank => m_ExpCurRankRequired - m_ExpCurRankOwned;
+    public float m_ExpCurRankScale => m_ExpCurRankOwned / (float)m_ExpCurRankRequired;
     Func<int, int> GetExpToNextLevel;
     public ExpRankBase(Func<int, int> GetExpToNextLevel)
     {
         this.GetExpToNextLevel = GetExpToNextLevel;
-        m_TotalExp = 0;
+        m_TotalExpOwned = 0;
         m_Rank = 0;
-        m_ExpCurRank = 0;
-        m_ExpToNextRank = 0;
+        m_ExpCurRankOwned = 0;
     }
     public void OnExpSet(int totalExp)
     {
-        m_TotalExp = 0;
+        m_TotalExpOwned = 0;
         m_Rank = 0;
-        m_ExpCurRank = 0;
-        m_ExpToNextRank = 0;
+        m_ExpCurRankOwned = 0;
         OnExpGainCheckLevelOffset(totalExp);
     }
 
     public int OnExpGainCheckLevelOffset(int exp)
     {
         int startRank = m_Rank;
-        m_TotalExp += exp;
-        m_ExpCurRank += exp;
+        m_TotalExpOwned += exp;
+        m_ExpCurRankOwned += exp;
         for (; ; )
         {
-            int expNext = GetExpToNextLevel(m_Rank);
-            if (m_ExpCurRank < expNext)
-            {
-                m_ExpToNextRank = expNext - m_ExpCurRank;
+            m_ExpCurRankRequired = GetExpToNextLevel(m_Rank);
+            if (m_ExpCurRankOwned < m_ExpCurRankRequired)
                 break;
-            }
-            m_ExpCurRank -= expNext;
+            m_ExpCurRankOwned -= m_ExpCurRankRequired;
             m_Rank++;
         }
         return m_Rank - startRank;

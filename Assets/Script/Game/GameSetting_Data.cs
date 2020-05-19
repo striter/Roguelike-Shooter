@@ -444,7 +444,7 @@ namespace GameSetting
             m_TimeElapsed = _battle.m_TimeElapsed;
             m_Stage = _level.m_Stage;
             m_Keys = _player.m_CharacterInfo.m_Keys;
-            m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExp;
+            m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExpOwned;
             m_Health = _player.m_Health.m_CurrentHealth;
             m_Weapon1 = WeaponSaveData.Save(_player.m_Weapon1);
             m_Weapon2 = WeaponSaveData.Save(_player.m_Weapon2);
