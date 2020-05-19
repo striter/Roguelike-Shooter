@@ -70,7 +70,7 @@ public class UIC_GameStatus : UIControlBase {
         m_Rank = transform.Find("Rank");
         m_RankFill = m_Rank.Find("Fill").GetComponent<Image>();
         m_RankAmount = m_Rank.Find("Amount").GetComponent<Text>();
-        m_RankLerp = new ValueLerpSeconds(0, .1f, .1f, (float value) => {m_RankFill.fillAmount=value; });
+        m_RankLerp = new ValueLerpSeconds(0, .1f, .1f, (float value) => {m_RankFill.fillAmount=value - Mathf.Floor(value); });
 
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameTransmitStatus, OnTransmissionStatus);
@@ -108,7 +108,7 @@ public class UIC_GameStatus : UIControlBase {
         m_CoinLerp.SetLerpValue(_playerInfo.m_Coins);
         m_Keys.text = _playerInfo.m_Keys.ToString();
         m_RankAmount.text = _playerInfo.m_RankManager.m_Rank.ToString();
-        m_RankLerp.SetLerpValue(_playerInfo.m_RankManager.m_ExpCurRankScale);
+        m_RankLerp.SetLerpValue(_playerInfo.m_RankManager.m_ExpCurRankScale+_playerInfo.m_RankManager.m_Rank);
     }
 
     void OnTransmissionStatus(bool transmiting)=>m_MissionData.text = "UI_GAMESTATUS_MISSION".GetKeyLocalized() + (transmiting ? "UI_MISSION_SURVIVE" : "UI_MISSION_ENTERPORTAL").GetKeyLocalized();

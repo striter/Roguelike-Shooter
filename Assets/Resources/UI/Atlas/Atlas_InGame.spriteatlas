@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1921018
+    totalSpriteSurfaceArea: 1942922
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -50,6 +50,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 50a27b304cb3072499f7c426c6bfe073, type: 3}
   - {fileID: 21300000, guid: e632b06f76869104c903d83accb219a4, type: 3}
   - {fileID: 21300000, guid: 3149cb800216b9b42b49823951103c3c, type: 3}
+  - {fileID: 21300000, guid: e2ea6798788e5e2458b78567d5ab8b4e, type: 3}
+  - {fileID: 21300000, guid: 2c591be845d1f7845bad7a62d55e44ba, type: 3}
   - {fileID: 21300000, guid: ab90529173c2faa4188d2d7f4a1207c4, type: 3}
   - {fileID: 21300000, guid: 471f2c6bff785a049b3b37e24002cdae, type: 3}
   - {fileID: 21300000, guid: a7f61c52ae3337c439860ceb040c6801, type: 3}
@@ -63,6 +65,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 6c373eed2ec2e17438b1cdb4765988bd, type: 3}
   - {fileID: 21300000, guid: b4c028231d32f0644a24c929ba91f1b4, type: 3}
   - {fileID: 21300000, guid: 7ceaf2a444de1a34587c0071f5f5d8ca, type: 3}
+  - {fileID: 21300000, guid: 35bc44b820d6607408e931e60d8af785, type: 3}
   m_PackedSpriteNamesToIndex:
   - detail_lowpoly_background2
   - detail_lowpoly_background1
@@ -81,6 +84,8 @@ SpriteAtlas:
   - gamestatus_currency_bg
   - detail_select_weapon
   - gamestatus_mission_bg
+  - gamestatus_EXP
+  - gamestatus_EXP_bg
   - detail_select_perk
   - backpack_shadow
   - detail_weapon_tag_blank
@@ -94,5 +99,6 @@ SpriteAtlas:
   - NumericIcon_Coin
   - NumericIcon_Armor
   - NumericIcon_Health
+  - gamestatus_icon_exp
   m_Tag: Atlas_InGame
   m_IsVariant: 0
