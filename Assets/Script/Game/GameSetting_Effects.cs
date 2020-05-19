@@ -24,7 +24,6 @@ namespace GameSetting
         { enum_Effects.Scan,Shader.Find("Game/Extra/ScanEffect")},
         { enum_Effects.Freeze, Shader.Find("Game/Effect/Ice")}
     };
-        public static readonly Texture TX_Noise = TResources.GetNoiseTex();
         public static readonly int ID_Color = Shader.PropertyToID("_Color");
         public static readonly int ID_Dissolve = Shader.PropertyToID("_DissolveAmount");
         public static readonly int ID_DissolveScale = Shader.PropertyToID("_DissolveScale");
@@ -72,7 +71,7 @@ namespace GameSetting
         {
             m_Particles.Stop();
             CheckMaterials(enum_Effects.Death);
-            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TResources.m_NoiseTex);
             m_EffectMaterial.SetFloat(TEffects.ID_Dissolve, 0);
             m_EffectMaterial.SetFloat(TEffects.ID_DissolveScale, .4f);
         }
@@ -88,7 +87,7 @@ namespace GameSetting
 
             if (!_freezed)
                 return;
-            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TEffects.TX_Noise);
+            m_EffectMaterial.SetTexture(TEffects.ID_NoiseTex, TResources.m_NoiseTex);
             m_EffectMaterial.SetColor("_IceColor", TCommon.GetHexColor("3DAEC5FF"));
             m_EffectMaterial.SetFloat("_Opacity", .5f);
         }

@@ -111,9 +111,13 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Normal, OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.High);
     }
 
-    protected void SetPostEffect_AreaScan(Vector3 position,Color color)
+    protected void SetPostEffect_DepthScan(bool enter,Vector3 position)
     {
-        CameraController.Instance.m_Effect.StartDepthScanCircle(position, color, 1.5f, 40, 2f);
+        CameraController.Instance.m_Effect.StartDepthScanCircle(position,TCommon.ColorAlpha(enter?Color.red:Color.green,.7f), 1f, 40, 2f);
+    }
+    protected void SetPostEffect_DepthArea(bool begin, Vector3 position)
+    {
+        CameraController.Instance.m_Effect.SetDepthAreaCircle(begin,position,TCommon.GetHexColor("2DFFF62F"),TCommon.GetHexColor("02025EFF"),10f,.3f,1f).SetTexture(TResources.m_HolographTex,.5f,new Vector2(.5f,.5f));
     }
 
     protected void SetPostEffect_Dead()
@@ -132,7 +136,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     private void SetPostEffect_Vortex(bool on,Transform target,float duration,Action OnEnter=null)
     {
         PE_DistortVortex vortex = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DistortVortex>();
-        vortex.SetTexture(TResources.GetNoiseTex());
+        vortex.SetTexture(TResources.m_NoiseTex);
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
          {
              vortex.SetDistort(CameraController.Instance.m_Camera.WorldToViewportPoint(target.position),value);

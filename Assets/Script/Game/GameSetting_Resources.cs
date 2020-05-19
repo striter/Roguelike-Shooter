@@ -39,13 +39,8 @@ public partial class TResources
         public const string S_UIAudio_VFX = "Audio/UIVFX/";
     }
 
-    static Texture m_NoiseTex = null;
-    public static Texture GetNoiseTex()
-    {
-        if (m_NoiseTex == null)
-            m_NoiseTex = Load<Texture>(ConstPath.S_PETex_Noise);
-        return m_NoiseTex;
-    }
+    public static readonly Texture m_NoiseTex = Load<Texture>(ConstPath.S_PETex_Noise);
+    public static readonly Texture m_HolographTex = Load<Texture>(ConstPath.S_PETex_Holograph);
 
     #region UI
     public static GameObject InstantiateUIManager() => Instantiate(ConstPath.S_UI_Manager);
