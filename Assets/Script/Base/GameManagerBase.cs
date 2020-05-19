@@ -107,6 +107,8 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 4, 5, 2);
         else if (OptionsDataManager.m_OptionsData.m_Effect == enum_Option_Effect.High)
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
+        else
+            m_Bloom.m_Blur.SetEffect( PE_Blurs.enum_BlurType.Invalid);
         m_DepthSSAO.SetAOEnable(OptionsDataManager.m_OptionsData.m_Effect>=  enum_Option_Effect.High);
         m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Normal, OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.High);
     }

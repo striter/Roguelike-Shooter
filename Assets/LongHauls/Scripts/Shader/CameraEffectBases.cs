@@ -22,9 +22,9 @@ public class CameraEffectBase
     public bool m_Enabled { get; protected set; }
     public CameraEffectBase()
     {
-        m_Supported=OnCreate();
+        m_Supported=Init();
     }
-    protected virtual bool OnCreate()
+    protected virtual bool Init()
     {
         return true;
     }
@@ -175,6 +175,7 @@ public class CB_GenerateTransparentOverlayTexture:CommandBufferBase
 
     void ReleaseTexture()
     {
+        m_Blur.SetEffect(PE_Blurs.enum_BlurType.Invalid);
         if (!m_TransparentBlurTexture1)
             return;
         RenderTexture.ReleaseTemporary(m_TransparentBlurTexture1);
@@ -233,7 +234,7 @@ public class PostEffectBase: CameraEffectBase
     const string S_ParentPath = "Hidden/PostEffect/";
     public Material m_Material { get; private set; }
     public override bool m_DoGraphicBlitz => true;
-    protected override bool OnCreate()
+    protected override bool Init()
     {
         m_Material = CreateMaterial(this.GetType());
         return m_Material!=null;
@@ -315,28 +316,43 @@ public class PE_Blurs : PostEffectBase       //Blur Base Collection
     float F_BlurSpread;
     int I_Iterations;
     RenderTexture buffer0, buffer1;
-    int rtW, rtH;
-    public void SetEffect(enum_BlurType blurType, float _blurSpread=2f, int _iterations=5, int _downSample = 4)
+    int m_textureWidth, m_textureHeight;
+    public void SetEffect(enum_BlurType blurType= enum_BlurType.AverageBlur, float _blurSpread=2f, int _iterations=5, int _downSample = 4)
     {
         m_BlurType = blurType;
-        F_BlurSpread = _blurSpread;
-        I_Iterations = _iterations;
-        _downSample = _downSample > 0 ? _downSample : 1;
-        rtW = m_Manager.m_Camera.scaledPixelWidth >> _downSample;
-        rtH = m_Manager.m_Camera.scaledPixelHeight >> _downSample;
-        if (buffer0) RenderTexture.ReleaseTemporary(buffer0);
-        if (buffer1) RenderTexture.ReleaseTemporary(buffer1);
-        buffer0 = RenderTexture.GetTemporary(rtW, rtH, 0);
-        buffer0.filterMode = FilterMode.Bilinear;
-        buffer1 = RenderTexture.GetTemporary(rtW, rtH, 0);
-        buffer0.filterMode = FilterMode.Bilinear;
+        bool enable = m_BlurType != enum_BlurType.Invalid;
+        if (enable)
+        {
+            F_BlurSpread = _blurSpread;
+            I_Iterations = _iterations;
+            _downSample = _downSample > 0 ? _downSample : 1;
+            m_textureWidth = m_Manager.m_Camera.scaledPixelWidth >> _downSample;
+            m_textureHeight = m_Manager.m_Camera.scaledPixelHeight >> _downSample;
+        }
+        EnableTextures(enable);
     }
+
     public override void OnDestroy()
     {
         base.OnDestroy();
-        RenderTexture.ReleaseTemporary(buffer0);
-        RenderTexture.ReleaseTemporary(buffer1);
+        EnableTextures(false);
     }
+
+    void EnableTextures(bool enable)
+    {
+        if(buffer0)  RenderTexture.ReleaseTemporary(buffer0);
+       if(buffer1)  RenderTexture.ReleaseTemporary(buffer1);
+        buffer0 = null;
+        buffer1 = null;
+        if (!enable)
+            return;
+
+        buffer0 = RenderTexture.GetTemporary(m_textureWidth, m_textureHeight, 0);
+        buffer0.filterMode = FilterMode.Bilinear;
+        buffer1 = RenderTexture.GetTemporary(m_textureWidth, m_textureHeight, 0);
+        buffer0.filterMode = FilterMode.Bilinear;
+    }
+
     public override void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if (m_BlurType == enum_BlurType.Invalid)
@@ -345,8 +361,7 @@ public class PE_Blurs : PostEffectBase       //Blur Base Collection
             Graphics.Blit(source, destination);
             return;
         }
-
-        RenderTexture target = null;
+        RenderTexture targetBuffer = null;
         Graphics.Blit(source, buffer0);
         for (int i = 0; i < I_Iterations; i++)
         {
@@ -355,16 +370,16 @@ public class PE_Blurs : PostEffectBase       //Blur Base Collection
             {
                 case enum_BlurType.AverageBlur:
                     Graphics.Blit(buffer0, buffer1, m_Material, (int)enum_BlurPass.Average);
-                    target = buffer1;
+                    targetBuffer = buffer1;
                     break;
                 case enum_BlurType.GaussianBlur:
                     Graphics.Blit(buffer0, buffer1, m_Material,(int)enum_BlurPass.GaussianHorizontal);
                     Graphics.Blit(buffer1, buffer0, m_Material, (int)enum_BlurPass.GaussianVertical);
-                    target = buffer0;
+                    targetBuffer = buffer0;
                     break;
             }
         }
-        Graphics.Blit(target, destination);
+        Graphics.Blit(targetBuffer, destination);
     }
 }
 public class PE_Bloom : PostEffectBase
@@ -496,7 +511,7 @@ public class PE_FocalDepth : PostEffectBase
     }
     public void SetEffect(int downSample=2)
     {
-        m_Blur.SetEffect( PE_Blurs.enum_BlurType.GaussianBlur,2, 3, downSample);
+        m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur,2, 3, downSample);
         m_TempTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelHeight >> downSample, m_Manager.m_Camera.scaledPixelWidth >> downSample);
         m_Material.SetTexture("_BlurTex",m_TempTexture);
     }
