@@ -1054,16 +1054,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5289e4785202d3640a66bf79739adf85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 200
-  I_DefaultArmor: 30
-  F_MovementSpeed: 7
-  F_AttackSpread: 0
+  I_MaxHealth: 150
+  F_MovementSpeed: 8
+  I_DefaultArmor: 20
   F_AssasinTriggerCooldown: 1
-  F_AssassinttackRange: 15
+  F_AssassinttackRange: 17
   F_AssassinAttackDuration: 0.2
-  F_FinishBlowRate: 0.25
-  F_AbilityDamagePerStack: 20
-  I_MaxAbilityDamageStack: 5
+  F_FinishBlowRate: 0
+  F_AbilityDamagePerStack: 200
+  I_MaxAbilityDamageStack: 50
   F_AssassinDamageStackResetDuration: 20
 --- !u!135 &135432215870104796
 SphereCollider:
