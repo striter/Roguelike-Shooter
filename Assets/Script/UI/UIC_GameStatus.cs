@@ -70,7 +70,7 @@ public class UIC_GameStatus : UIControlBase {
         m_Rank = transform.Find("Rank");
         m_RankFill = m_Rank.Find("Fill").GetComponent<Image>();
         m_RankAmount = m_Rank.Find("Amount").GetComponent<Text>();
-        m_RankLerp = new ValueLerpSeconds(0, .1f, .5f, (float value) => {m_RankFill.fillAmount=value - Mathf.Floor(value); });
+        m_RankLerp = new ValueLerpSeconds(0, .1f, .3f, (float value) => {m_RankFill.fillAmount=value - Mathf.Floor(value); });
 
         TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
         TBroadCaster<enum_BC_GameStatus>.Add<bool>(enum_BC_GameStatus.OnGameTransmitStatus, OnTransmissionStatus);
@@ -91,10 +91,7 @@ public class UIC_GameStatus : UIControlBase {
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerExpireManager>(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, OnCurrencyUpdate);
     }
 
-    void OnEquipmentBtnClick()
-    {
-        UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f);
-    }
+    void OnEquipmentBtnClick()=> UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f);
 
     void OnStageStart()
     {
