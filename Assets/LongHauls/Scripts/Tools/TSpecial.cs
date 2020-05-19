@@ -802,118 +802,116 @@ namespace TSpecialClasses          //Put Some Common Shits Into Specifical Class
         }
         #endregion
     }
-    #region UI
-    public class ValueLerpBase
-    {
-        float m_check;
-        float m_duration;
-        protected float m_value { get; private set; }
-        protected float m_previousValue { get; private set; }
-        protected float m_targetValue { get; private set; }
-        Action<float> OnValueChanged;
-        public ValueLerpBase(float startValue, Action<float> _OnValueChanged)
-        {
-            m_targetValue = startValue;
-            m_previousValue = startValue;
-            m_value = m_targetValue;
-            OnValueChanged = _OnValueChanged;
-            OnValueChanged(m_value);
-        }
-
-        protected void SetLerpValue(float value,float duration)
-        {
-            if (value == m_targetValue)
-                return;
-            m_duration = duration;
-            m_check = m_duration;
-            m_previousValue = m_value;
-            m_targetValue = value;
-        }
-
-        public void SetFinalValue(float value)
-        {
-            if (value == m_value)
-                return;
-            m_value = value;
-            m_previousValue = m_value;
-            m_targetValue = m_value;
-            OnValueChanged(m_value);
-        }
-
-        public void TickDelta(float deltaTime)
-        {
-            if (m_check <= 0)
-                return;
-            m_check -= deltaTime;
-            m_value = GetValue(m_check / m_duration);
-            OnValueChanged(m_value);
-        }
-        protected virtual float GetValue(float checkLeftParam)
-        {
-            Debug.LogError("Override This Please");
-            return 0;
-        }
-    }
-
-    public class ValueLerpSeconds: ValueLerpBase
-    {
-        float m_perSecondValue;
-        float m_maxDuration;
-        float m_maxDurationValue;
-        public ValueLerpSeconds(float startValue, float perSecondValue,float maxDuration, Action<float> _OnValueChanged) :base(startValue,_OnValueChanged)
-        {
-            m_perSecondValue = perSecondValue;
-            m_maxDuration = maxDuration;
-            m_maxDurationValue = m_perSecondValue * maxDuration;
-        }
-
-        public void SetLerpValue(float value)=> SetLerpValue(value,Mathf.Abs(value-m_value)> m_maxDurationValue? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
-        
-        protected override float GetValue(float checkLeftParam) => Mathf.Lerp(m_previousValue, m_targetValue, 1 - checkLeftParam);
-    }
-
-
-    public class ValueChecker<T>
-    {
-        public T check1 { get; private set; }
-        public ValueChecker(T _check)
-        {
-            check1 = _check;
-        }
-
-        public bool Check(T target)
-        {
-            if (check1.Equals(target))
-                return false;
-            check1 = target;
-            return true;
-        }
-    }
-
-    public class ValueChecker<T, Y> : ValueChecker<T>
-    {
-        public Y check2 { get; private set; }
-        public ValueChecker(T temp1, Y temp2) : base(temp1)
-        {
-            check2 = temp2;
-        }
-
-        public bool Check(T target1, Y target2)
-        {
-            bool check1 = Check(target1);
-            bool check2= Check(target2);
-            return check1 || check2;
-        }
-        public bool Check(Y target2)
-        {
-            if (check2.Equals(target2))
-                return false;
-            check2 = target2;
-            return true;
-        }
-    }
-    #endregion
 }
+public class ValueLerpBase
+{
+    float m_check;
+    float m_duration;
+    protected float m_value { get; private set; }
+    protected float m_previousValue { get; private set; }
+    protected float m_targetValue { get; private set; }
+    Action<float> OnValueChanged;
+    public ValueLerpBase(float startValue, Action<float> _OnValueChanged)
+    {
+        m_targetValue = startValue;
+        m_previousValue = startValue;
+        m_value = m_targetValue;
+        OnValueChanged = _OnValueChanged;
+        OnValueChanged(m_value);
+    }
+
+    protected void SetLerpValue(float value, float duration)
+    {
+        if (value == m_targetValue)
+            return;
+        m_duration = duration;
+        m_check = m_duration;
+        m_previousValue = m_value;
+        m_targetValue = value;
+    }
+
+    public void SetFinalValue(float value)
+    {
+        if (value == m_value)
+            return;
+        m_value = value;
+        m_previousValue = m_value;
+        m_targetValue = m_value;
+        OnValueChanged(m_value);
+    }
+
+    public void TickDelta(float deltaTime)
+    {
+        if (m_check <= 0)
+            return;
+        m_check -= deltaTime;
+        m_value = GetValue(m_check / m_duration);
+        OnValueChanged(m_value);
+    }
+    protected virtual float GetValue(float checkLeftParam)
+    {
+        Debug.LogError("Override This Please");
+        return 0;
+    }
+}
+
+public class ValueLerpSeconds : ValueLerpBase
+{
+    float m_perSecondValue;
+    float m_maxDuration;
+    float m_maxDurationValue;
+    public ValueLerpSeconds(float startValue, float perSecondValue, float maxDuration, Action<float> _OnValueChanged) : base(startValue, _OnValueChanged)
+    {
+        m_perSecondValue = perSecondValue;
+        m_maxDuration = maxDuration;
+        m_maxDurationValue = m_perSecondValue * maxDuration;
+    }
+
+    public void SetLerpValue(float value) => SetLerpValue(value, Mathf.Abs(value - m_value) > m_maxDurationValue ? m_maxDuration : Mathf.Abs((value - m_value)) / m_perSecondValue);
+
+    protected override float GetValue(float checkLeftParam) => Mathf.Lerp(m_previousValue, m_targetValue, 1 - checkLeftParam);
+}
+
+public class ValueChecker<T>
+{
+    public T check1 { get; private set; }
+    public ValueChecker(T _check)
+    {
+        check1 = _check;
+    }
+
+    public bool Check(T target)
+    {
+        if (check1.Equals(target))
+            return false;
+        check1 = target;
+        return true;
+    }
+}
+
+public class ValueChecker<T, Y> : ValueChecker<T>
+{
+    public Y check2 { get; private set; }
+    public ValueChecker(T temp1, Y temp2) : base(temp1)
+    {
+        check2 = temp2;
+    }
+
+    public bool Check(T target1, Y target2)
+    {
+        bool check1 = Check(target1);
+        bool check2 = Check(target2);
+        return check1 || check2;
+    }
+    public bool Check(Y target2)
+    {
+        if (check2.Equals(target2))
+            return false;
+        check2 = target2;
+        return true;
+    }
+}
+
 public class TimerBase
 {
     public float m_TimerDuration { get; private set; } = 0;

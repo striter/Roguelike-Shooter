@@ -26,8 +26,7 @@ public class UIC_PlayerStatus : UIControlBase
 
     ValueLerpSeconds m_HealthLerp,  m_ArmorLerp;
     
-
-    TSpecialClasses.ValueChecker<bool> m_DyingCheck;
+    ValueChecker<bool> m_DyingCheck;
     protected override void Init()
     {
         base.Init();

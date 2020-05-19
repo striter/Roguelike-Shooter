@@ -13,7 +13,7 @@ public class UIC_Control : UIControlBase {
     ControlMainButton m_weapon1Btn, m_weapon2Btn;
     Action<bool> OnCharacterAbility;
     Action<bool> OnMainDown, OnSubDown;
-    TSpecialClasses.ValueChecker<bool> m_AbilityCooldownChecker;
+    ValueChecker<bool> m_AbilityCooldownChecker;
     protected override void Init()
     {
         base.Init();
@@ -33,7 +33,7 @@ public class UIC_Control : UIControlBase {
         m_TouchDelta = transform.GetComponent<TouchDeltaManager>();
         OnOptionsChanged();
         OptionsDataManager.event_OptionChanged += OnOptionsChanged;
-        m_AbilityCooldownChecker = new TSpecialClasses.ValueChecker<bool>(true);
+        m_AbilityCooldownChecker = new ValueChecker<bool>(true);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerCommonUpdate, OncommonStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerWeaponUpdate, OnWeaponStatus);
         TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterPlayer>(enum_BC_UIStatus.UI_PlayerInteractUpdate, OnMainButtonStatus);
