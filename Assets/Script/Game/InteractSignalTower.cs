@@ -49,7 +49,7 @@ public class InteractSignalTower : InteractGameBase {
 
     public void OnTransmitSet(bool begin)
     {
-        m_TransmitArea = CameraController.Instance.m_Effect.SetDepthAreaCircle(true, transform.position, 10f, .3f, 1f).SetTexture(TResources.m_HolographTex, .5f, new Vector2(.5f, .5f));
+        m_TransmitArea = CameraController.Instance.m_Effect.SetDepthAreaCircle(begin, transform.position, 10f, .3f, 1f).SetTexture(TResources.m_HolographTex, .5f, new Vector2(.5f, .5f));
         if (begin)
         {
             m_TransmitColorLerp = new ValueLerpSeconds(0f, .5f, .2f, (float value)=> { m_TransmitArea.SetColor(Color.Lerp(colorFillInvalid, colorFillValid, value), Color.Lerp( colorEdgeInvalid, colorEdgeValid, value)); });
