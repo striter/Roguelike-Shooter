@@ -10,12 +10,10 @@ public class InteractSignalTower : InteractGameBase {
     public Transform m_Canvas { get; private set; }
     Text m_Count;
     public Transform m_PortalPos { get; private set; }
-    TimerBase m_ActivateTimer = new TimerBase(GameConst.F_SignalTowerTransmitDuration);
-    EntityCharacterBase m_Activator;
-    bool m_Activated=>m_Activator;
-    bool m_Transmitting = false;
-    Func<InteractSignalTower, bool> OnTransmitCountFinish;
-    Action<InteractSignalTower> OnTransmitStart;
+    Action OnSignalTowerTrigger;
+
+    PE_DepthCircleArea m_TransmitArea;
+
     public override void OnPoolInit(enum_Interaction identity, Action<enum_Interaction, MonoBehaviour> OnRecycle)
     {
         base.OnPoolInit(identity, OnRecycle);
@@ -24,40 +22,34 @@ public class InteractSignalTower : InteractGameBase {
         m_PortalPos = transform.Find("PortalPos");
     }
 
-    public InteractSignalTower Play(Action<InteractSignalTower> OnTransmitStart, Func<InteractSignalTower, bool> OnTransmitCountFinish)
+    public InteractSignalTower Play(Action OnSignalTowerTrigger)
     {
         base.Play();
-        m_Activator = null;
         m_Canvas.SetActivate(false);
-        m_Transmitting = false;
-        this.OnTransmitStart = OnTransmitStart;
-        this.OnTransmitCountFinish = OnTransmitCountFinish;
+        this.OnSignalTowerTrigger = OnSignalTowerTrigger;
         return this;
     }
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        m_Activator = _interactor;
-        m_ActivateTimer.Replay();
         m_Canvas.SetActivate(true);
         m_Count.text = "0";
-        m_Transmitting = true;
-        OnTransmitStart(this);
+        OnSignalTowerTrigger();
         return false;
     }
-    
-    private void Update()
+
+    public void OnTransmitSet(bool begin)
     {
-        if (!m_Activated)
-            return;
+        m_TransmitArea=CameraController.Instance.m_Effect.SetDepthAreaCircle(begin, transform.position, 10f, .3f, 1f).SetTexture(TResources.m_HolographTex, .5f, new Vector2(.5f, .5f));
+        if (!begin)
+            m_TransmitArea = null;
+    }
 
+    public void Tick(float deltaTime,float progress,bool available)
+    {
         m_Canvas.rotation = CameraController.CameraProjectionOnPlane(m_Canvas.position);
-        m_ActivateTimer.Tick(Time.deltaTime);
-
-        if (m_Transmitting && !m_ActivateTimer.m_Timing)
-            m_Transmitting = !OnTransmitCountFinish(this);
-
-        m_Count.text = ((int)((1-m_ActivateTimer.m_TimeLeftScale)*99f+(m_Transmitting?0f:1f))).ToString();
+        m_Count.text = ((int)progress).ToString();
+        m_TransmitArea.SetColor(available ? TCommon.GetHexColor("2DFFF62F") : TCommon.ColorAlpha(Color.red, .7f), TCommon.GetHexColor("02025EFF"));
     }
 }

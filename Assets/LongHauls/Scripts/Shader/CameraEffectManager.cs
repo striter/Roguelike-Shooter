@@ -76,9 +76,9 @@ public class CameraEffectManager :MonoBehaviour, ICoroutineHelperClass
         return scan;
     }
     
-    public PE_DepthCircleArea SetDepthAreaCircle(bool begin, Vector3 origin,Color fillColor, Color edgeColor, float radius = 10f, float edgeWidth = .5f, float duration = 1.5f)
+    public PE_DepthCircleArea SetDepthAreaCircle(bool begin, Vector3 origin, float radius = 10f, float edgeWidth = .5f, float duration = 1.5f)
     {
-        PE_DepthCircleArea area = GetOrAddCameraEffect<PE_DepthCircleArea>().SetEffect(origin,fillColor,edgeColor);
+        PE_DepthCircleArea area = GetOrAddCameraEffect<PE_DepthCircleArea>().SetOrigin(origin);
         this.StartSingleCoroutine(1,TIEnumerators.ChangeValueTo((float value)=>{area.SetRadius(radius*value,edgeWidth) ; },
             begin?0:1, begin?1:0, duration,
             ()=> {

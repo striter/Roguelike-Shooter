@@ -649,9 +649,14 @@ public class PE_DepthCircleArea:PostEffectBase
         m_Material.SetFloat(ID_SqrEdgeMin, edgeMin * edgeMin);
     }
 
-    public PE_DepthCircleArea SetEffect(Vector3 origin,Color fillColor,Color edgeColor)
+    public PE_DepthCircleArea SetOrigin(Vector3 origin)
     {
         m_Material.SetVector(ID_Origin, origin);
+        return this;
+    }
+
+    public PE_DepthCircleArea SetColor( Color fillColor, Color edgeColor)
+    {
         m_Material.SetColor(ID_FillColor, fillColor);
         m_Material.SetColor(ID_EdgeColor, edgeColor);
         return this;

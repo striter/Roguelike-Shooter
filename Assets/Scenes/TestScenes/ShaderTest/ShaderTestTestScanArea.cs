@@ -25,7 +25,7 @@ public class ShaderTestTestScanArea : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0) && CameraController.Instance.InputRayCheck(Input.mousePosition, 1 << 0, ref hit))
         {
             set = !set;
-            CameraController.Instance.m_Effect.SetDepthAreaCircle(set,hit.point, fillColor,edgeColor,radius,width, duration).SetTexture(tex,texScale,texFlow);
+            CameraController.Instance.m_Effect.SetDepthAreaCircle(set,hit.point, radius,width, duration).SetColor(fillColor, edgeColor).SetTexture(tex,texScale,texFlow);
         }
     }
 }
