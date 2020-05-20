@@ -74,7 +74,6 @@ public class SFXCastAreaConnections : SFXCast {
         return entityEffecting;
     }
 
-    float check;
     protected override void Update()
     {
         base.Update();

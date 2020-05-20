@@ -20,9 +20,6 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
     public int m_AmmoLeft { get; private set; } = 0;
     public Transform m_Muzzle { get; private set; } = null;
     public MeshRenderer m_WeaponSkin { get; private set; } = null;
-    public virtual float m_BaseDamage => 0;
-    public virtual int m_BuffApply => 0;
-    public DamageInfo GetWeaponDamageInfo(float damage, enum_DamageType type = enum_DamageType.Basic) => m_Attacher.m_CharacterInfo.GetDamageInfo(damage, m_BuffApply, type, enum_DamageIdentity.PlayerWeapon, m_WeaponID);
 
     public WeaponTriggerBase m_Trigger { get; private set; }
     WeaponTriggerAuto m_AutoTrigger;

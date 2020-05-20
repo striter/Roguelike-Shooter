@@ -36,7 +36,6 @@ public class UI_Options : UIPage {
     class SelectionItem
     {
         public enum_OptionSelection m_selection { get; private set; }
-        bool m_highLight;
         Transform m_highlight, m_dehighlight;
         Action<enum_OptionSelection> OnSelectionClick;
         public SelectionItem(Transform _transform,enum_OptionSelection _selection,Action<enum_OptionSelection> _OnSelectionClick)

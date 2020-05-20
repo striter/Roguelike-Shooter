@@ -59,8 +59,8 @@ public class UIC_Control : UIControlBase {
 
         if (m_AbilityCooldownChecker.Check(!player.m_AbilityAvailable))
         {
-            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[SpriteKeyJoint.GetAbilityBackground(m_AbilityCooldownChecker.check1)];
-            m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.check1);
+            m_AbilityBG.sprite = UIManager.Instance.m_CommonSprites[SpriteKeyJoint.GetAbilityBackground(m_AbilityCooldownChecker.value1)];
+            m_AbilityCooldown.SetActivate(m_AbilityCooldownChecker.value1);
         }
     }
 

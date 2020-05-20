@@ -202,9 +202,8 @@ public class EntityCharacterPlayer : EntityCharacterBase
                     m_WeaponCurrent.OnDealtDamage(amountApply);
 
                 if (damageEntity.m_IsDead)
-                    m_CharacterInfo.OnKilledEnermy(damageEntity);
+                    m_CharacterInfo.OnKilledEnermy(damageInfo,damageEntity);
             }
-
         }
     }
 

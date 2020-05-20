@@ -136,7 +136,7 @@ public class UIC_GameStatus : UIControlBase {
 
         int secondPassed= (int)GameManager.Instance.m_GameBattle.m_TimeElapsed;
         if (m_TimeValueChecker.Check(secondPassed))
-            m_Time.text = TTime.TTimeTools.GetMinuteSecond(m_TimeValueChecker.check1);
+            m_Time.text = TTime.TTimeTools.GetMinuteSecond(m_TimeValueChecker.value1);
 
         int minutePassed = GameManager.Instance.m_GameBattle.m_MinutesElapsed;
         if (m_MinuteValueCheck.Check(minutePassed))

@@ -2,8 +2,8 @@
 {
 	Properties
 	{
-		_MainTex("Color UV TEX",2D) = "white"{}
-		_Color("Color Tint",Color) = (1,1,1,1)
+		_MainTex("Main Tex",2D) = "white"{}
+		_Color("Color",Color) = (1,1,1,1)
 	}
 		SubShader
 		{
@@ -45,7 +45,7 @@
 				v2fDV o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
-				o.uv = v.uv;
+				o.uv = TRANSFORM_TEX( v.uv,_MainTex);
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 				o.diffuse = GetDiffuse(v.normal,ObjSpaceLightDir(v.vertex));

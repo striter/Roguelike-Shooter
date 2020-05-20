@@ -17,7 +17,7 @@ public class EntityCharacterGameForestExtra : EntityCharacterGameBase {
     public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolInit(_identity, _OnRecycle);
-        m_Weapon = CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this,F_Spread, () => m_CharacterInfo.GetDamageInfo(F_BaseDamage) );
+        m_Weapon = CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(_identity), this,F_Spread);
     }
 
     protected override void OnEntityActivate(enum_EntityFlag flag)
@@ -38,7 +38,7 @@ public class EntityCharacterGameForestExtra : EntityCharacterGameBase {
         f_spreadCheck = F_SpreadDuration;
 
         Vector3 splitDirection = transform.forward.RotateDirectionClockwise(Vector3.up, i_spreadCountCheck * I_SpreadAngleEach);
-        m_Weapon.OnPlay(null, transform.position + splitDirection * 20);
+        m_Weapon.OnPlay(null, transform.position + splitDirection * 20, m_CharacterInfo.GetDamageInfo(F_BaseDamage));
         i_spreadCountCheck++;
         if (i_spreadCountCheck > I_SpreadCount)
             OnDead();

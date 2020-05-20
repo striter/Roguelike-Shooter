@@ -20,14 +20,14 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
     protected override void OnKeyAnim()
     {
         base.OnKeyAnim();
-        DoMeleeCast(m_BaseSFXWeaponIndex, GetMeleeSize());
+        DoMeleeCast(m_BaseSFXWeaponIndex,false, GetMeleeSize());
     }
 
-    protected void DoMeleeCast(int castIndex,float castScale=1)
+    protected void DoMeleeCast(int castIndex,bool store,float castScale=1)
     {
         SFXCast cast = ShowCast(castIndex, m_Attacher.tf_WeaponAim.position);
         cast.V4_CastInfo = m_BaseSize* castScale;
-        cast.Play(GetWeaponDamageInfo(m_BaseDamage));
+        cast.Play(GetWeaponDamageInfo(store));
     }
 
     public override void OnAttach(EntityCharacterPlayer _attacher, Transform _attachTo)
@@ -48,6 +48,12 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
     {
         base.WeaponTick(firePausing, deltaTime);
         if (m_ScaleChecker.Check(GetMeleeSize()))
-            transform.localScale = Vector3.one * m_ScaleChecker.check1;
+            transform.localScale = Vector3.one * m_ScaleChecker.value1;
+    }
+
+    public override void OnDealtDamage(float amountApply)
+    {
+        base.OnDealtDamage(amountApply);
+        TimeScaleController.SetDurationTimeScale(.12f);
     }
 }

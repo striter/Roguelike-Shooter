@@ -4,32 +4,36 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
+public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
     #region Preset
-    public float F_AssasinTriggerCooldown = 1f;
-    public float F_AssassinttackRange = 8;
-    public float F_AssassinAttackDuration = .2f;
+    public float F_AbilityCooldown = 1f;
+    public float F_AbilityAttackRange = 8;
+    public float F_AbilityAttackDuration = .2f;
 
-    public float F_FinishBlowRate = .25f;
+    public float F_AbilityBaseDamage = 20;
     public float F_AbilityDamagePerStack = 30;
     public int I_MaxAbilityDamageStack = 5;
-    public float F_AssassinDamageStackResetDuration = 20;
+    public float F_AbilityStackResetDuration = 20;
+
+    public float F_AbilityKillsHealPercent = .1f;
+    public float F_AbilityKillsHealPercentAdditivePerRank = .01f;
     #endregion
+
     public int m_AssassinDamageStack { get; private set; }
     TimerBase m_AssassinAttackTimer, m_AssassinCooldownTimer,m_AssassinStackResetTimer;
     EntityCharacterBase m_AssassinTarget;
-    public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Assassin;
+    public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Vampire;
     public override float m_AbilityCooldownScale => m_AssassinCooldownTimer.m_TimeLeftScale;
-    public override bool m_AbilityAvailable => !m_AssassinCooldownTimer.m_Timing&&m_AimingTarget&& Vector3.Distance(transform.position,m_AimingTarget.transform.position)<F_AssassinttackRange;
+    public override bool m_AbilityAvailable => !m_AssassinCooldownTimer.m_Timing&&m_AimingTarget&& Vector3.Distance(transform.position,m_AimingTarget.transform.position)<F_AbilityAttackRange;
     protected override float CalculateMovementSpeedBase() => m_AssassinAttackTimer.m_Timing ? 0 : base.CalculateMovementSpeedBase();
     protected override bool CheckWeaponFiring() => !m_AssassinAttackTimer.m_Timing && base.CheckWeaponFiring();
 
     public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {
         base.OnPoolInit(_identity, _OnRecycle);
-        m_AssassinAttackTimer = new TimerBase(F_AssassinAttackDuration, true);
-        m_AssassinCooldownTimer = new TimerBase(F_AssasinTriggerCooldown, true);
-        m_AssassinStackResetTimer = new TimerBase(F_AssassinDamageStackResetDuration,true);
+        m_AssassinAttackTimer = new TimerBase(F_AbilityAttackDuration, true);
+        m_AssassinCooldownTimer = new TimerBase(F_AbilityCooldown, true);
+        m_AssassinStackResetTimer = new TimerBase(F_AbilityStackResetDuration,true);
         m_AssassinDamageStack = 0;
     }
     public override void OnAbilityDown(bool down)
@@ -41,7 +45,7 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         m_AssassinTarget = m_AimingTarget;
         m_AssassinCooldownTimer.Replay();
         m_AssassinAttackTimer.Replay();
-        m_CharacterSkinEffect.SetCloak(true,0f,F_AssassinAttackDuration);
+        m_CharacterSkinEffect.SetCloak(true,0f,F_AbilityAttackDuration);
         m_CharacterInfo.OnAbilityTrigger();
     }
 
@@ -70,13 +74,13 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
 
     void OnAssassinBlow()
     {
-        m_CharacterSkinEffect.SetCloak(false, 0f, F_AssassinAttackDuration);
+        m_CharacterSkinEffect.SetCloak(false, 0f, F_AbilityAttackDuration);
         PlayTeleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         if (!m_AssassinTarget.m_IsDead)
         {
-            m_AssassinTarget.m_HitCheck.TryHit(m_WeaponCurrent.GetWeaponDamageInfo(m_WeaponCurrent.m_BaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack));
-            if (m_AssassinTarget.m_Health.F_HealthMaxScale <= F_FinishBlowRate)
-                m_AssassinTarget.m_HitCheck.TryHit(new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(m_AssassinTarget.m_Health.m_MaxHealth, enum_DamageType.HealthPenetrate));
+            m_AssassinTarget.m_HitCheck.TryHit(m_CharacterInfo.GetDamageInfo(F_AbilityBaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack)); 
+            if (m_AssassinTarget.m_IsDead)
+                m_HitCheck.TryHit(new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(-m_Health.m_MaxHealth*(F_AbilityKillsHealPercent+m_CharacterInfo.m_RankManager.m_Rank*F_AbilityKillsHealPercentAdditivePerRank), enum_DamageType.Health));
         }
 
         if (!m_AssassinTarget.m_IsDead)
@@ -84,6 +88,11 @@ public class EntityCharacterPlayerAssassin : EntityCharacterPlayer {
         m_AssassinStackResetTimer.Replay();
         if (m_AssassinDamageStack < I_MaxAbilityDamageStack)
             m_AssassinDamageStack += 1;
+    }
+
+    protected override void OnCharacterHealthChange(DamageInfo damageInfo, EntityCharacterBase damageEntity, float amountApply)
+    {
+        base.OnCharacterHealthChange(damageInfo, damageEntity, amountApply);
     }
 
     protected override void OnDead()

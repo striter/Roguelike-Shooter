@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class UIT_TextExtend : Text
 {
@@ -26,12 +27,12 @@ public class UIT_TextExtend : Text
 
     void OnKeyLocalize()
     {
-        if(B_AutoLocalize)
+        if (B_AutoLocalize)
             text = TLocalization.GetKeyLocalized(S_AutoLocalizeKey);
     }
 
     public string formatText(string formatKey, params object[] subItems) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), subItems);
-    public string formatKey(string formatKey, string subKey) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey),TLocalization.GetKeyLocalized( subKey));
+    public string formatKey(string formatKey, string subKey) => base.text = string.Format(TLocalization.GetKeyLocalized(formatKey), TLocalization.GetKeyLocalized(subKey));
 
     public string localizeKey
     {
@@ -44,82 +45,108 @@ public class UIT_TextExtend : Text
     }
     #endregion
     #region CharacterSpacing
-    public int m_characterSpacing;
-    float GetCalculatedSpacing(int linedLetterIndex, int lineCount)
+    private const string m_RichTextRegexPatterns = @"<b>|</b>|<i>|</i>|<size=.*?>|</size>|<color=.*?>|</color>|<Color=.*?>|</Color>|<material=.*?>|</material>";
+    public override float preferredWidth
     {
-        switch (alignment)
+        get
         {
-            case TextAnchor.UpperLeft:
-            case TextAnchor.MiddleLeft:
-            case TextAnchor.LowerLeft:
-                return linedLetterIndex == 0 ? 0 : m_characterSpacing*linedLetterIndex;
-            case TextAnchor.UpperRight:
-            case TextAnchor.MiddleRight:
-            case TextAnchor.LowerRight:
-                return linedLetterIndex == lineCount - 1 ? 0 : -m_characterSpacing*(lineCount- linedLetterIndex-1);
-            case TextAnchor.UpperCenter:
-            case TextAnchor.MiddleCenter:
-            case TextAnchor.LowerCenter:
-                    return (linedLetterIndex - (lineCount / 2)+ ((lineCount+1)%2)*.5f) * m_characterSpacing;
+            float preferdWidth = cachedTextGenerator.GetPreferredWidth(text, GetGenerationSettings(Vector2.zero));
+            List<List<int>> linesVertexStartIndexes = GetLinesVertexStartIndexes();
+            int maxLineCount = 0;
+            for (int i=0;i<linesVertexStartIndexes.Count;i++)
+                maxLineCount = Mathf.Max(maxLineCount, linesVertexStartIndexes[i].Count);
+            return preferdWidth + m_characterSpacing * (maxLineCount - 1);
         }
-        return 0;
-    }
-    UIVertex m_tempVertex;
-    List<UIVertex> m_AllVertexes = new List<UIVertex>();
-    List<List<LetterVertex>> m_LinedLetters=new List<List<LetterVertex>>();
+    } 
+
+    public int m_characterSpacing;
     protected override void OnPopulateMesh(VertexHelper toFill)
     {
         base.OnPopulateMesh(toFill);
-
         if (m_characterSpacing == 0)
             return;
+        List<UIVertex> vertexes = new List<UIVertex>();
+        toFill.GetUIVertexStream(vertexes);
 
-        m_LinedLetters.Clear();
-        m_AllVertexes.Clear();
-        toFill.GetUIVertexStream(m_AllVertexes);
-        if (m_AllVertexes.Count == 0)
-            return;
+        List<List<int>> linesVertexStartIndexes = GetLinesVertexStartIndexes();
+        float alignmentFactor = GetAlignmentFactor();
 
-        string[] letters = text.Split('\n');
-        int totalVertexes=0;
-        for (int i = 0; i < letters.Length; i++)
+        for (int i = 0; i < linesVertexStartIndexes.Count; i++)
         {
-            m_LinedLetters.Add(new List<LetterVertex>());
-            for (int j = 0; j < letters[i].Length; j++)
-                m_LinedLetters[m_LinedLetters.Count - 1].Add(new LetterVertex((totalVertexes++) * 6));
-            totalVertexes++;
-        }
-        
-        int vertexCount = 0;
-        for (int i = 0; i < m_LinedLetters.Count; i++)
-        {
-            for (int j = 0; j < m_LinedLetters[i].Count; j++)
+            float lineOffset = (linesVertexStartIndexes[i].Count - 1) * m_characterSpacing * alignmentFactor;
+            for (int j = 0; j < linesVertexStartIndexes[i].Count; j++)
             {
-                for (int k = 0; k < 6; k++)
-                {
-                    if (k > 2 && k != 4)
-                        continue;
-                    m_tempVertex = m_AllVertexes[m_LinedLetters[i][j].beginIndex+k];
-                    m_tempVertex.position += new Vector3(GetCalculatedSpacing(j,m_LinedLetters[i].Count), 0f, 0f);
-                    int uiFillVertex= vertexCount * 4 + (k == 4 ? 3 : k);
-                    toFill.SetUIVertex(m_tempVertex, uiFillVertex);
-                }
-                vertexCount++;
+                int vertexStartIndex = linesVertexStartIndexes[i][j];
+                Vector3 offset = Vector3.right * ((m_characterSpacing * j) - lineOffset);
+                AddVertexOffset(vertexes, vertexStartIndex + 0, offset);
+                AddVertexOffset(vertexes, vertexStartIndex + 1, offset);
+                AddVertexOffset(vertexes, vertexStartIndex + 2, offset);
+                AddVertexOffset(vertexes, vertexStartIndex + 3, offset);
+                AddVertexOffset(vertexes, vertexStartIndex + 4, offset);
+                AddVertexOffset(vertexes, vertexStartIndex + 5, offset);
             }
-            vertexCount++;
         }
-    }
-    
 
-    struct LetterVertex
+        toFill.Clear();
+        toFill.AddUIVertexTriangleStream(vertexes);
+    }
+
+    void AddVertexOffset(List<UIVertex> vertexes,int index,Vector3 offset)
     {
-        public int letterIndex { get; private set; }
-        public int beginIndex { get; private set; }
-        public LetterVertex(int _startIndex)
+        UIVertex vertex = vertexes[index];
+        vertex.position += offset;
+        vertexes[index] = vertex;
+    }
+
+    List<List<int>> GetLinesVertexStartIndexes()
+    {
+        List<List<int>> linesVertexIndexes = new List<List<int>>();
+        IList<UILineInfo> lineInfos = cachedTextGenerator.lines;
+        int vertexIndex=0;
+        for(int i=0;i<lineInfos.Count;i++,vertexIndex++)
         {
-            beginIndex = _startIndex;
-            letterIndex = _startIndex / 6;
+            List<int> lineVertexStartIndex = new List<int>();
+            string line = (i < lineInfos.Count - 1) ? text.Substring(lineInfos[i].startCharIdx, lineInfos[i + 1].startCharIdx - lineInfos[i].startCharIdx - 1) : text.Substring(lineInfos[i].startCharIdx);
+            List<int> ignoreIndexes = new List<int>();
+            if (supportRichText)
+            {
+                foreach (Match matchTag in Regex.Matches(line, m_RichTextRegexPatterns))
+                {
+                    for(int j=0;j<matchTag.Length;j++)
+                        ignoreIndexes.Add(matchTag.Index + j);
+                }
+            }
+
+            for (int j = 0; j < line.Length; j++, vertexIndex++)
+                if (!ignoreIndexes.Contains(vertexIndex))
+                    lineVertexStartIndex.Add(vertexIndex*6);
+
+            linesVertexIndexes.Add(lineVertexStartIndex);
         }
+        return linesVertexIndexes;
+    }
+
+    float GetAlignmentFactor()
+    {
+        switch (alignment)
+        {
+            default:
+                Debug.LogError("Invalid Convertions Here!");
+                return 0;
+            case TextAnchor.UpperLeft:
+            case TextAnchor.MiddleLeft:
+            case TextAnchor.LowerLeft:
+                return 0;
+            case TextAnchor.UpperCenter:
+            case TextAnchor.MiddleCenter:
+            case TextAnchor.LowerCenter:
+                return .5f;
+            case TextAnchor.UpperRight:
+            case TextAnchor.MiddleRight:
+            case TextAnchor.LowerRight:
+                return 1f;
+        }
+
     }
     #endregion
 }

@@ -11,7 +11,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     #region Test
     protected virtual void AddConsoleBinding()
     {
-        UIT_MobileConsole.Instance.InitConsole((bool show)=> { Time.timeScale = show ? .1f : 1f; });
+        UIT_MobileConsole.Instance.InitConsole((bool show) => { TimeScaleController.SetBaseTimeScale(show ? .1f : 1f);  });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
     }
     #endregion
@@ -40,7 +40,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         OnCommonOptionChanged();
         OptionsDataManager.event_OptionChanged += OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged += OnEffectOptionChanged;
-        SetBulletTime(false);
+        TimeScaleController.SetBaseTimeScale(1f);
     }
 
     protected override void OnDestroy()
@@ -66,17 +66,15 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         Application.targetFrameRate = (int)OptionsDataManager.m_OptionsData.m_FrameRate;
     }
 
+    protected virtual void Update()
+    {
+        TimeScaleController.Tick();
+    }
+
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)=>SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
 
     protected void OnPortalExit(float duration,Transform vortexTarget)=> SetPostEffect_Vortex(false, vortexTarget, 1f);
     #region Game Effect
-    protected static float m_BulletTime = 1f;
-    public static bool m_BulletTiming => m_BulletTime != 1f;
-    public static void SetBulletTime(bool enter,float timeScale=.8f)
-    {
-        m_BulletTime = enter ? timeScale:1f ;
-        Time.timeScale = m_BulletTime;
-    }
 
     PE_BloomSpecific m_Bloom;
     PE_DepthSSAO m_DepthSSAO;

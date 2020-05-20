@@ -9,7 +9,7 @@ public class WeaponDamageCastDuration : WeaponDamageCast {
     protected override void OnAutoTrigger(float duration)
     {
         SetCastAvailable(true);
-        m_Cast.ControlledCheck(GetWeaponDamageInfo(m_BaseDamage));
+        m_Cast.ControlledCheck(GetWeaponDamageInfo(true));
         OnAmmoCost();
     }
 
