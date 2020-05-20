@@ -2913,10 +2913,10 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 999
+  m_Text: 123
   B_AutoLocalize: 0
   S_AutoLocalizeKey: 
-  m_characterSpacing: 0
+  m_characterSpacing: -5
 --- !u!114 &114664595023210708
 MonoBehaviour:
   m_ObjectHideFlags: 1

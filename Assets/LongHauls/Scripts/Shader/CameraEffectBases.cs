@@ -696,7 +696,6 @@ public class PE_DepthSSAO : PostEffectBase
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
     public void SetAOEnable(bool enable)=>m_Enabled = enable;
     public override bool m_DoGraphicBlitz => false;
-    CommandBuffer m_Buffer;
     
     public PE_DepthSSAO SetEffect(Color aoColor, float strength = 1f, float texelRadius = 15f, float _fallOff = 0.002f, Texture _noiseTex = null, int _sampleCount = 16)
     {

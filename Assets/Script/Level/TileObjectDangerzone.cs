@@ -27,7 +27,6 @@ public class TileObjectDangerzone : TileObjectBase {
             m_HitEntities.Remove(hitCheck);
     }
 
-    RaycastHit m_Hit;
     private void Update()
     {
         m_TimerReset.Tick(Time.deltaTime);

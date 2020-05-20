@@ -137,7 +137,6 @@ public class LoadingManager : SingletonMono<LoadingManager>
             });
             tf_Player = tf_GameStage.Find("Player").GetComponent<RectTransform>();
         }
-        bool playing;
         public void Begin(enum_GameStage m_Stage)
         {
             bool inGame = m_Stage != enum_GameStage.Invalid;

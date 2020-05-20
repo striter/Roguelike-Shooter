@@ -113,13 +113,12 @@ public class UIC_PlayerStatus : UIControlBase
         GridLayoutGroup m_AmmoLayout;
         float m_AmmoGridWidth;
         UIT_GridControllerGridItem<UIGI_AmmoItem> m_AmmoGrid;
-        UIT_TextExtend m_AmmoAmount, m_AmmoAmountProjection;
+        UIT_TextExtend m_AmmoAmount;
         ValueChecker<int, int> m_AmmoUpdate = new ValueChecker<int, int>(-1, -1);
         public AmmoData(Transform _transform)
         {
             transform = _transform as RectTransform;
             m_AmmoAmount = transform.Find("Container/Amount").GetComponent<UIT_TextExtend>();
-            m_AmmoAmountProjection = transform.Find("Container/AmountProjection").GetComponent<UIT_TextExtend>();
             m_AmmoGrid = new UIT_GridControllerGridItem<UIGI_AmmoItem>(transform.Find("Container/AmmoGrid"));
             m_AmmoGridWidth = m_AmmoGrid.transform.GetComponent<RectTransform>().sizeDelta.x;
             m_AmmoLayout = m_AmmoGrid.transform.GetComponent<GridLayoutGroup>();
@@ -132,9 +131,7 @@ public class UIC_PlayerStatus : UIControlBase
             if (weaponInfo == null || !m_AmmoUpdate.Check(weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount))
                 return;
 
-            string ammoText = string.Format("{0} / {1}", weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount);
-            m_AmmoAmount.text = ammoText;
-            m_AmmoAmountProjection.text = ammoText;
+            m_AmmoAmount.text = string.Format("<Size=18>{0}</Size><Color=#E3E3E380> / {1}</Color>", weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount);
 
             if (m_AmmoGrid.m_Count != weaponInfo.m_ClipAmount)
             {
