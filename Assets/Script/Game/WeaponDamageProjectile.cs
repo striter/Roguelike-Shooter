@@ -34,10 +34,8 @@ public class WeaponDamageProjectile : WeaponDamageBase
         if (shotCount>1)
         {
             float spreadAngle = GetPelletSpread();
-            int pelletCount = GetPelletPerShot();
-
-            float beginAnle = -spreadAngle * (pelletCount - 1) / 2f;
-            for (int i = 0; i < pelletCount; i++)
+            float beginAnle = -spreadAngle * (shotCount - 1) / 2f;
+            for (int i = 0; i < shotCount; i++)
                 FireOneProjectile(projectileIndex, targetProjectile, damageInfo, baseSpreadDirection.RotateDirectionClockwise(Vector3.up, beginAnle + i * spreadAngle));
         }
         else
