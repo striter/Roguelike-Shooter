@@ -30,13 +30,13 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     {
         base.OnPoolInit(_identity, _OnRecycle);
         tf_Barrel = transform.FindInAllChild("Barrel");
-        InitAI(CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,F_Spread,GetAIDamageInfo));
+        InitAI(CharacterWeaponHelperBase.AcquireCharacterWeaponHelper(GameExpression.GetAIWeaponIndex(m_Identity, 0),this,F_Spread));
         if (E_AnimatorIndex != enum_EnermyAnim.Invalid)
             m_Animator = new GameCharacterAnimator(tf_Model.GetComponent<Animator>(), OnAnimKeyEvent);
         m_Agent.enabled = false;
     }
 
-    public DamageInfo GetAIDamageInfo() => m_CharacterInfo.GetDamageInfo(F_BaseDamage, I_BuffApplyOnHit, enum_DamageType.Basic);
+    protected DamageInfo GetDamageInfo() => m_CharacterInfo.GetDamageInfo(F_BaseDamage, 0f,I_BuffApplyOnHit, enum_DamageType.Basic);
     protected override void OnEntityActivate(enum_EntityFlag flag)
     {
         base.OnEntityActivate(flag);
@@ -272,7 +272,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     protected virtual void OnAttackAnimTrigger()
     {
         if (m_Target)
-            m_Weapon.OnPlay(b_preAim, m_Target);
+            m_Weapon.OnPlay(b_preAim, m_Target,GetDamageInfo());
 
         if (i_playCount <= 0)
             FinishAttack();

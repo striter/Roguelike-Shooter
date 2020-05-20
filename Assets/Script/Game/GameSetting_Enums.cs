@@ -126,7 +126,7 @@ namespace GameSetting
 
     public enum enum_HealthChangeMessage { Invalid = -1, Default = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
-    public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,HealthPenetrate=10, }
+    public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,True=4, }
     
     public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,  Perk = 2,EnermyElite=4, }
 
@@ -134,7 +134,7 @@ namespace GameSetting
 
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
-    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Assassin=1002,Railer=1003, }
+    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Vampire=1002,Railer=1003, }
     
     public enum enum_InteractCharacter { Invalid = -1, Trader = 2001, Trainer = 2002, }
 
@@ -149,7 +149,7 @@ namespace GameSetting
     public enum enum_PlayerWeaponIdentity
     {
         Invalid = -1,
-        RailPistol = 101, Railgun = 102,M82A1 = 103,Kar98 = 104,UZI = 105,UMP45 = 106,SCAR = 107,M16A4 = 108,AKM = 109,P92 = 110,DE = 111,XM1014 = 112,S686 = 113,Crossbow = 114,RocketLauncher = 115,Minigun = 116,Bow=117,
+        RailPistol = 101, Railgun = 102,M82A1 = 103,Kar98 = 104,UZI = 105,UMP45 = 106,SCAR = 107,M16A4 = 108,AKM = 109,P92 = 110,DE = 111,XM1014 = 112,S686 = 113,Crossbow = 114,RocketLauncher = 115,Minigun = 116,Bow=117,MultishotBow=118,
 
         Flamer = 201,Driller = 202,Bouncer = 203,Tesla = 204,
 

@@ -36,7 +36,7 @@ public class EntityCharacterGameAIFrost8Weapon : EntityCharacterGameAI
         m_Blink.Tick(Time.deltaTime * timeMultiply);
         if (timeElapsed > 2f)
         {
-            m_Weapon.OnPlay(false, m_Target);
+            m_Weapon.OnPlay(false, m_Target,GetDamageInfo());
             b_selfDetonating = false;
             OnDead();
         }

@@ -85,10 +85,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4638786458670128}
-  - component: {fileID: 114580794526143494}
+  - component: {fileID: 114461030922619542}
   - component: {fileID: 114745134643471812}
   m_Layer: 0
-  m_Name: 117
+  m_Name: 118
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -463,7 +463,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1809524007545606}
   m_Mesh: {fileID: 4300012, guid: c40ff62f0cb84a44b9bce81448dc3dab, type: 3}
---- !u!114 &114580794526143494
+--- !u!114 &114461030922619542
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -471,7 +471,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1399895265677266}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: babca4e37b9eb89488c8f789a0a06c3d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0734749966fc0cc46867bf8ed33d01e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   E_Anim: 3002
@@ -488,6 +488,7 @@ MonoBehaviour:
   B_MultiShotAvailable: 0
   I_PelletsPerShot: 1
   F_PelletSpreadAngle: 1
+  m_ExtraShotAdditiveStoreSuccessful: 2
 --- !u!114 &114745134643471812
 MonoBehaviour:
   m_ObjectHideFlags: 1

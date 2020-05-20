@@ -14,5 +14,9 @@ public class WeaponDamageProjectileRailgun : WeaponDamageProjectile
         m_StoreProjectileDataIndex = GameExpression.GetPlayerExtraWeaponIndex(m_WeaponInfo.m_Index);
     }
 
-    protected override void OnStoreTrigger(float duration,float storeTimeLeft)=> FireProjectile(storeTimeLeft==0 ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex, GetWeaponDamageInfo(m_BaseDamage),duration);
+    protected override void OnStoreTrigger(float duration, float storeTimeLeft)
+    {
+        bool successful=storeTimeLeft==0;
+        FireProjectile(successful, successful ? m_StoreProjectileDataIndex : m_BaseSFXWeaponIndex, duration);
+    }
 }

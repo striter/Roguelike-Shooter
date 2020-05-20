@@ -23,7 +23,7 @@ public class WeaponDamageCastAnimKatana : WeaponDamageCastAnim
 
     protected override void OnKeyAnim()
     {
-        DoMeleeCast(m_Dashing ? m_DashCastIndex : m_BaseSFXWeaponIndex, GetMeleeSize());
+        DoMeleeCast(m_Dashing ? m_DashCastIndex : m_BaseSFXWeaponIndex, m_Dashing,GetMeleeSize());
         OnAmmoCost();
         if (m_Dashing)
             m_Attacher.PlayTeleport(NavigationManager.NavMeshPosition(m_Attacher.transform.position + m_Attacher.transform.forward * F_DashDistance * GetMeleeSize()), m_Attacher.transform.rotation);
