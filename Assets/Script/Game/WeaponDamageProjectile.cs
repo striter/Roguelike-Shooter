@@ -20,7 +20,7 @@ public class WeaponDamageProjectile : WeaponDamageBase
     protected override void OnAutoTrigger(float animDuration)=> FireProjectile(false, m_BaseSFXWeaponIndex,animDuration);
     protected override void OnStoreTrigger(float animDuration, float storeTimeLeft) => FireProjectile(storeTimeLeft==0,m_BaseSFXWeaponIndex,animDuration);
 
-    protected void FireProjectile(bool store, int projectileIndex, float animDuration,int multiShotAdditive=1) => FireProjectile(projectileIndex, animDuration, GetWeaponDamageInfo(store), GetPelletPerShot()+multiShotAdditive);
+    protected void FireProjectile(bool store, int projectileIndex, float animDuration,int multiShotAdditive=0) => FireProjectile(projectileIndex, animDuration, GetWeaponDamageInfo(store), GetPelletPerShot()+multiShotAdditive);
     void FireProjectile( int projectileIndex, float animDuration, DamageInfo damageInfo,int shotCount)
     {
         Vector3 baseSpreadDirection = Vector3.Normalize(  m_Attacher.GetAimingPosition(true)- m_Muzzle.position);
