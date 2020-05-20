@@ -11,7 +11,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     #region Test
     protected virtual void AddConsoleBinding()
     {
-        UIT_MobileConsole.Instance.InitConsole((bool show)=> { Time.timeScale = show ? .1f : 1f; });
+        UIT_MobileConsole.Instance.InitConsole((bool show) => { TimeScaleController.SetBaseTimeScale(show ? .1f : 1f);  });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
     }
     #endregion
@@ -40,7 +40,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         OnCommonOptionChanged();
         OptionsDataManager.event_OptionChanged += OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged += OnEffectOptionChanged;
-        SetBaseBulletTime(1f);
+        TimeScaleController.SetBaseTimeScale(1f);
     }
 
     protected override void OnDestroy()
@@ -68,20 +68,13 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     protected virtual void Update()
     {
-        m_GameBulletTimer.Tick(Time.unscaledDeltaTime);
-        if (m_BulletTimeChecker.Check(Mathf.Min(m_BaseBulletTime, (m_GameBulletTimer.m_Timing ? .3f : 1f))))
-            Time.timeScale = m_BulletTimeChecker.value1;
+        TimeScaleController.Tick();
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)=>SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
 
     protected void OnPortalExit(float duration,Transform vortexTarget)=> SetPostEffect_Vortex(false, vortexTarget, 1f);
     #region Game Effect
-    protected static float m_BaseBulletTime = 1f;
-    static TimerBase m_GameBulletTimer = new TimerBase();
-    ValueChecker<float> m_BulletTimeChecker = new ValueChecker<float>(1f);
-    public static void SetGameBulletTime(float duration)=>m_GameBulletTimer.SetTimerDuration(duration);
-    public static void SetBaseBulletTime(float timeScale=1f)=>m_BaseBulletTime = timeScale ;
 
     PE_BloomSpecific m_Bloom;
     PE_DepthSSAO m_DepthSSAO;

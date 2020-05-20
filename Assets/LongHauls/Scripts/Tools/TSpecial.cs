@@ -992,6 +992,24 @@ public class ExpRankBase
     }
 }
 
+public static class TimeScaleController
+{
+    static float m_BaseBulletTime = 1f;
+    public static bool m_BaseBulletTiming => m_BaseBulletTime != 1f;
+    static TimerBase m_DurationTimeScale = new TimerBase();
+    static ValueChecker<float> m_BulletTimeChecker = new ValueChecker<float>(1f);
+    public static void SetDurationTimeScale(float duration) => m_DurationTimeScale.SetTimerDuration(duration);
+    public static void SetBaseTimeScale(float timeScale = 1f) => m_BaseBulletTime = timeScale;
+
+    public static void Tick()
+    {
+        float deltaTime = Time.unscaledDeltaTime;
+
+        m_DurationTimeScale.Tick(deltaTime);
+        if (m_BulletTimeChecker.Check(Mathf.Min(m_BaseBulletTime, (m_DurationTimeScale.m_Timing ? .3f : 1f))))
+            Time.timeScale = m_BulletTimeChecker.value1;
+    }
+}
 #region UI Classes
 public class AtlasLoader
 {

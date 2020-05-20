@@ -108,7 +108,7 @@ public class GameManager : GameManagerBase
     #region GenerateLevel
     void LoadStage()
     {
-        SetBaseBulletTime(1f);
+        TimeScaleController.SetBaseTimeScale(1f);
 
         m_GameProgress.StageInit();
         GameObjectManager.Recycle();
@@ -311,7 +311,7 @@ public class GameManager : GameManagerBase
             case enum_GamePortalType.StageEnd:
                 m_GameProgress.NextStage();
                 GameDataManager.StageFinishSaveData(this);
-                SetBaseBulletTime(.1f);
+                TimeScaleController.SetBaseTimeScale(.1f);
                 OnPortalEnter(1f, tf_CameraAttach, LoadStage);
                 break;
             case enum_GamePortalType.GameWin:
