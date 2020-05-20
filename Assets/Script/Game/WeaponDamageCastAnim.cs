@@ -48,6 +48,12 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
     {
         base.WeaponTick(firePausing, deltaTime);
         if (m_ScaleChecker.Check(GetMeleeSize()))
-            transform.localScale = Vector3.one * m_ScaleChecker.check1;
+            transform.localScale = Vector3.one * m_ScaleChecker.value1;
+    }
+
+    public override void OnDealtDamage(float amountApply)
+    {
+        base.OnDealtDamage(amountApply);
+        GameManager.SetGameBulletTime(.2f);
     }
 }

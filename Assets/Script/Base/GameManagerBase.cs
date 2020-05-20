@@ -40,7 +40,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         OnCommonOptionChanged();
         OptionsDataManager.event_OptionChanged += OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged += OnEffectOptionChanged;
-        SetBulletTime(false);
+        SetBaseBulletTime(1f);
     }
 
     protected override void OnDestroy()
@@ -66,17 +66,22 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         Application.targetFrameRate = (int)OptionsDataManager.m_OptionsData.m_FrameRate;
     }
 
+    protected virtual void Update()
+    {
+        m_GameBulletTimer.Tick(Time.unscaledDeltaTime);
+        if (m_BulletTimeChecker.Check(Mathf.Min(m_BaseBulletTime, (m_GameBulletTimer.m_Timing ? .3f : 1f))))
+            Time.timeScale = m_BulletTimeChecker.value1;
+    }
+
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)=>SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
 
     protected void OnPortalExit(float duration,Transform vortexTarget)=> SetPostEffect_Vortex(false, vortexTarget, 1f);
     #region Game Effect
-    protected static float m_BulletTime = 1f;
-    public static bool m_BulletTiming => m_BulletTime != 1f;
-    public static void SetBulletTime(bool enter,float timeScale=.8f)
-    {
-        m_BulletTime = enter ? timeScale:1f ;
-        Time.timeScale = m_BulletTime;
-    }
+    protected static float m_BaseBulletTime = 1f;
+    static TimerBase m_GameBulletTimer = new TimerBase();
+    ValueChecker<float> m_BulletTimeChecker = new ValueChecker<float>(1f);
+    public static void SetGameBulletTime(float duration)=>m_GameBulletTimer.SetTimerDuration(duration);
+    public static void SetBaseBulletTime(float timeScale=1f)=>m_BaseBulletTime = timeScale ;
 
     PE_BloomSpecific m_Bloom;
     PE_DepthSSAO m_DepthSSAO;

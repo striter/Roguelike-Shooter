@@ -874,27 +874,27 @@ public class ValueLerpSeconds : ValueLerpBase
 
 public class ValueChecker<T>
 {
-    public T check1 { get; private set; }
+    public T value1 { get; private set; }
     public ValueChecker(T _check)
     {
-        check1 = _check;
+        value1 = _check;
     }
 
     public bool Check(T target)
     {
-        if (check1.Equals(target))
+        if (value1.Equals(target))
             return false;
-        check1 = target;
+        value1 = target;
         return true;
     }
 }
 
 public class ValueChecker<T, Y> : ValueChecker<T>
 {
-    public Y check2 { get; private set; }
+    public Y value2 { get; private set; }
     public ValueChecker(T temp1, Y temp2) : base(temp1)
     {
-        check2 = temp2;
+        value2 = temp2;
     }
 
     public bool Check(T target1, Y target2)
@@ -905,9 +905,9 @@ public class ValueChecker<T, Y> : ValueChecker<T>
     }
     public bool Check(Y target2)
     {
-        if (check2.Equals(target2))
+        if (value2.Equals(target2))
             return false;
-        check2 = target2;
+        value2 = target2;
         return true;
     }
 }

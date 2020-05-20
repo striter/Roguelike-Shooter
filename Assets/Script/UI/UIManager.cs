@@ -68,7 +68,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         SetBlurBackground(blurBG);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageOpen, bulletTime);
         if (bulletTime != 1f)
-            GameManagerBase.SetBulletTime(true, bulletTime);
+            GameManagerBase.SetBaseBulletTime(bulletTime);
         return page;
     }
 
@@ -79,7 +79,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
             return;
 
         SetBlurBackground(false);
-        GameManagerBase.SetBulletTime(false);
+        GameManagerBase.SetBaseBulletTime(1f);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);
     }
 
