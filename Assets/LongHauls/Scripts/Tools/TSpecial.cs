@@ -992,21 +992,30 @@ public class ExpRankBase
     }
 }
 
-public static class TimeScaleController
+public static class TimeScaleController<T> where T:struct
 {
-    static float m_BaseBulletTime = 1f;
-    public static bool m_BaseBulletTiming => m_BaseBulletTime != 1f;
-    static TimerBase m_DurationTimeScale = new TimerBase();
+    static Dictionary<T, float> m_TimeScales=new Dictionary<T, float>();
+    public static void Clear() => m_TimeScales.Clear();
+
+    static float GetLowestScale()
+    {
+        float scale = 1f;
+        m_TimeScales.Traversal((float value) => { if (scale > value) scale = value; });
+        return scale;
+    }
+
+    public static float GetScale(T index) => m_TimeScales.ContainsKey(index) ? m_TimeScales[index] : 1f;
+    public static void SetScale(T scaleIndex,float scale)
+    {
+        if (!m_TimeScales.ContainsKey(scaleIndex))
+            m_TimeScales.Add(scaleIndex,1f);
+        m_TimeScales[scaleIndex] = scale;
+    }
     static ValueChecker<float> m_BulletTimeChecker = new ValueChecker<float>(1f);
-    public static void SetDurationTimeScale(float duration) => m_DurationTimeScale.SetTimerDuration(duration);
-    public static void SetBaseTimeScale(float timeScale = 1f) => m_BaseBulletTime = timeScale;
 
     public static void Tick()
     {
-        float deltaTime = Time.unscaledDeltaTime;
-
-        m_DurationTimeScale.Tick(deltaTime);
-        if (m_BulletTimeChecker.Check(Mathf.Min(m_BaseBulletTime, (m_DurationTimeScale.m_Timing ? .3f : 1f))))
+        if (m_BulletTimeChecker.Check(GetLowestScale()))
             Time.timeScale = m_BulletTimeChecker.value1;
     }
 }

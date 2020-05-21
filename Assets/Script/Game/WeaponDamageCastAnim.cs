@@ -54,6 +54,6 @@ public class WeaponDamageCastAnim : WeaponDamageCast {
     public override void OnDealtDamage(float amountApply)
     {
         base.OnDealtDamage(amountApply);
-        TimeScaleController.SetDurationTimeScale(.12f);
+        GameManagerBase.Instance.SetDurationTimeScale(.12f);
     }
 }

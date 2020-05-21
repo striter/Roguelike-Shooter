@@ -24,7 +24,7 @@ public class ParticlesViewerManager : MonoBehaviour {
         m_TrailHelperPool.m_ActiveItemDic.Traversal((Transform transform) => { transform.Translate(Vector3.forward * Time.deltaTime*10, Space.World); });
 
         if (Input.GetKeyDown(KeyCode.BackQuote))
-            TimeScaleController.SetBaseTimeScale(TimeScaleController.m_BaseBulletTiming?.1f:1f);
+            TimeScaleController<int>.SetScale(0,TimeScaleController<int>.GetScale(0)==1f?.1f:1f);
 
         m_Repeater.Tick(Time.deltaTime);
         if (m_Repeater.m_Timing)

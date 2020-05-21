@@ -162,7 +162,7 @@ namespace GameSetting
         SheildDrain=601,
     }
 
-
+    public enum enum_GameTimeScaleType { Invalid=-1,GameBase,GameExtra,GameImpact}
 
     public enum enum_GameVFX
     {

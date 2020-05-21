@@ -111,7 +111,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         }
 
         m_Interact = null;
-        OnUIInteractStatus();
+        OnInteractStatus();
         UIManager.Instance.RemoveBindings();
     }
 
@@ -394,12 +394,12 @@ public class EntityCharacterPlayer : EntityCharacterBase
         if (isEnter)
         {
             m_Interact = interactTarget;
-            OnUIInteractStatus();
+            OnInteractStatus();
         }
         else if (m_Interact == interactTarget)
         {
             m_Interact = null;
-            OnUIInteractStatus();
+            OnInteractStatus();
         }
     }
     protected bool OnInteract()
@@ -415,7 +415,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         if (!interactTarget.m_InteractEnable)
             m_Interact = null;
 
-        OnUIInteractStatus();
+        OnInteractStatus();
         return true;
     }
 
@@ -429,14 +429,15 @@ public class EntityCharacterPlayer : EntityCharacterBase
         return amount;
     }
     #endregion
-    #region UI Indicator
+    #region Indicator
 
     protected void OnUICommonStatus()
     {
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCommonUpdate, this);
     }
-    protected void OnUIInteractStatus()
+    protected void OnInteractStatus()
     {
+        GameManagerBase.Instance.SetExtraTimeScale(m_Interact==null?1f:.2f);
         TBroadCaster<enum_BC_UIStatus>.Trigger( enum_BC_UIStatus.UI_PlayerInteractUpdate,this);
     }
     protected void OnUIWeaponStatus()

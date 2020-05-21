@@ -11,7 +11,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     #region Test
     protected virtual void AddConsoleBinding()
     {
-        UIT_MobileConsole.Instance.InitConsole((bool show) => { TimeScaleController.SetBaseTimeScale(show ? .1f : 1f);  });
+        UIT_MobileConsole.Instance.InitConsole((bool show) => { TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.GameBase, show ? .1f : 1f); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
     }
     #endregion
@@ -35,12 +35,12 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         AudioManagerBase.Instance.Init();
         GameObjectManager.RegisterGameObjects();
         UIManager.Activate(B_InGame);
+        TimeScaleController<enum_GameTimeScaleType>.Clear();
 
         AddConsoleBinding();
         OnCommonOptionChanged();
         OptionsDataManager.event_OptionChanged += OnCommonOptionChanged;
         OptionsDataManager.event_OptionChanged += OnEffectOptionChanged;
-        TimeScaleController.SetBaseTimeScale(1f);
     }
 
     protected override void OnDestroy()
@@ -68,7 +68,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     protected virtual void Update()
     {
-        TimeScaleController.Tick();
+        TimeScaleTick();
     }
 
     protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)=>SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
@@ -165,8 +165,30 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
              focal.SetFocalTarget(target.position, width);
          },0,1,duration));
     }
+
     #endregion
-    
+
+    #region TimeScale
+    TimerBase m_DurationTimeScale = new TimerBase();
+    public void SetBaseTimeScale(float timeScale = 1f) => TimeScaleController< enum_GameTimeScaleType>.SetScale( enum_GameTimeScaleType.GameBase, timeScale);
+    public void SetExtraTimeScale(float timeScale = 1f) => TimeScaleController<enum_GameTimeScaleType>.SetScale( enum_GameTimeScaleType.GameExtra, timeScale);
+    public void SetDurationTimeScale(float duration)
+    {
+        m_DurationTimeScale.SetTimerDuration(duration);
+        TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.GameImpact, .12f);
+    }
+    void TimeScaleTick()
+    {
+        float unscaledDeltaTime = Time.unscaledDeltaTime;
+        if (m_DurationTimeScale.m_Timing)
+        {
+            m_DurationTimeScale.Tick(unscaledDeltaTime);
+            if (!m_DurationTimeScale.m_Timing)
+                TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.GameImpact, 1f);
+        }
+        TimeScaleController<enum_GameTimeScaleType>.Tick();
+    }
+    #endregion
     protected void AttachSceneCamera(Transform attachTo,Transform lookAt=null)
     {
         CameraController.Instance.Attach(attachTo, true) .SetLookAt(lookAt);
