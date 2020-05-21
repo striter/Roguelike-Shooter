@@ -23,7 +23,7 @@ public class UIGI_ArmoryWeaponSelect : UIT_GridItem{
         GetComponent<Button>().onClick.AddListener(()=> { OnWeaponClick((enum_PlayerWeaponIdentity)m_Identity); });
     }
 
-    public void Play(bool unlocked, Action<enum_PlayerWeaponIdentity> OnWeaponClick)
+    public UIGI_ArmoryWeaponSelect Play(bool unlocked, Action<enum_PlayerWeaponIdentity> OnWeaponClick)
     {
         this.OnWeaponClick = OnWeaponClick;
         SWeaponInfos weaponInfo = GameDataManager.GetWeaponProperties((enum_PlayerWeaponIdentity)m_Identity);
@@ -33,6 +33,7 @@ public class UIGI_ArmoryWeaponSelect : UIT_GridItem{
             m_ScoreGrid.AddItem(i);
         m_Name.SetName(weaponInfo);
         m_Image.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(unlocked)];
+        return this;
     }
 
     public void OnHighlight(bool highlight) => m_Hightlight.SetActivate(highlight);

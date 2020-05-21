@@ -9,12 +9,14 @@ public class UI_Armory : UIPage {
     UIT_GridControllerGridItemScrollView<UIGI_ArmoryWeaponSelect> m_ArmoryGrid;
     UIC_WeaponInfo m_WeaponInfo;
     Button m_UnlockButton;
+    Text m_Price;
     enum_PlayerWeaponIdentity m_SelectingWeapon;
     protected override void Init()
     {
         base.Init();
         m_ArmoryGrid = new UIT_GridControllerGridItemScrollView<UIGI_ArmoryWeaponSelect>(rtf_Container.Find("WeaponSelect/ScrollRect"),36);
         m_WeaponInfo = new UIC_WeaponInfo(rtf_Container.Find("WeaponInfo"));
+        m_Price = rtf_Container.Find("UnlockBtn/Amount").GetComponent<Text>();
         m_UnlockButton = rtf_Container.Find("UnlockBtn").GetComponent<Button>();
         m_UnlockButton.onClick.AddListener(OnUnlockButtonClick);
     }
@@ -31,8 +33,8 @@ public class UI_Armory : UIPage {
         enum_PlayerWeaponIdentity firstAvailableWeapon = enum_PlayerWeaponIdentity.Invalid;
         m_ArmoryGrid.ClearGrid();
 
-        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(false, OnWeaponClick); });
-        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(true, OnWeaponClick); });
+        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(false, OnWeaponClick).OnHighlight(false); });
+        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(true, OnWeaponClick).OnHighlight(false); });
         return firstAvailableWeapon;
     }
 
@@ -40,14 +42,15 @@ public class UI_Armory : UIPage {
     void OnWeaponClick(enum_PlayerWeaponIdentity weapon)
     {
         if (m_SelectingWeapon != enum_PlayerWeaponIdentity.Invalid)
-            m_ArmoryGrid.GetItem((int)weapon).OnHighlight(false);
+            m_ArmoryGrid.GetItem((int)m_SelectingWeapon).OnHighlight(false);
         m_SelectingWeapon = weapon;
-        m_ArmoryGrid.GetItem((int)weapon).OnHighlight(true);
+        m_ArmoryGrid.GetItem((int)m_SelectingWeapon).OnHighlight(true);
 
         bool m_Unlocked = GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(m_SelectingWeapon);
 
+        m_Price.text = GameDataManager.GetArmoryUnlockPrice(weapon).ToString();
         m_UnlockButton.SetActivate(!m_Unlocked);
-        m_WeaponInfo.SetWeaponInfo(GameObjectManager.GetWeaponData(weapon),m_Unlocked);
+        m_WeaponInfo.SetWeaponInfo(GameDataManager.GetWeaponProperties(weapon), m_Unlocked);
     }
 
     void OnUnlockButtonClick()

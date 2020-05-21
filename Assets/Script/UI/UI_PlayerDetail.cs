@@ -68,7 +68,8 @@ public class UI_PlayerDetail : UIPage
     void OnWeaponSelectClick(int index)
     {
         m_PerkSelect.ClearHighlight();
-        m_WeaponDetail.SetWeaponInfo(index == 0 ? m_Player.m_Weapon1 : m_Player.m_Weapon2,true);
+        WeaponBase weapon = index == 0 ? m_Player.m_Weapon1 : m_Player.m_Weapon2;
+        m_WeaponDetail.SetWeaponInfo(weapon.m_WeaponInfo,true,weapon.m_EnhanceLevel);
         m_WeaponDetail.transform.SetActivate(true);
         m_PerkInfo.SetActivate(false);
     }

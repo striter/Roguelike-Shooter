@@ -146,7 +146,7 @@ namespace GameSetting
             return WeaponSaveData.New(m_GameWeaponUnlocked[rarity].RandomItem(random), GameConst.m_StageWeaponEnhanceLevel[stage].RandomPercentage(0,random));
         }
 
-        public static float GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
+        public static int GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
         public static bool CanArmoryUnlock(enum_PlayerWeaponIdentity weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
         public static void OnArmoryUnlock(enum_PlayerWeaponIdentity weapon)
         {
@@ -168,7 +168,6 @@ namespace GameSetting
             OnCreditStatus(-GetArmoryUnlockPrice(weapon));
             m_ArmoryData.m_WeaponBlueprints.Remove(weapon);
             m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
-            m_ArmoryData.m_WeaponSelected = weapon;
             TGameData<CArmoryData>.Save();
             InitArmoryGameWeaponUnlocked();
         }
@@ -540,10 +539,13 @@ namespace GameSetting
         public bool m_Hidden { get; private set; }
         public enum_Rarity m_Rarity { get; private set; }
 
+        public int m_UICipAmount { get; private set; }
         public float m_UIDamage { get; private set; }
         public float m_UIRPM { get; private set; }
         public float m_UIStability { get; private set; }
         public float m_UISpeed { get; private set; }
+        public List<int> m_UITags { get; private set; }
+
         public enum_PlayerWeaponIdentity m_Weapon => (enum_PlayerWeaponIdentity)m_Index;
 
         public void InitAfterSet()

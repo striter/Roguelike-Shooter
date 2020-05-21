@@ -6,19 +6,6 @@ using UnityEngine.UI;
 
 namespace GameSetting
 {
-
-    public enum enum_UIWeaponTag
-    {
-        Invalid=-1,
-        Projectile,
-        MultiShot,
-        StoreShot,
-
-        Cast,
-        Melee,
-        Duration,
-    }
-
     public static class UIConst
     {
         public const int I_PlayerDyingMinValue = 10;
@@ -63,20 +50,6 @@ namespace GameSetting
 
     public static class UIConvertions
     {
-        public static enum_UIWeaponTag[] GetWeaponTags(this enum_PlayerWeaponBaseType type)
-        {
-            switch (type)
-            {
-                default:Debug.LogError("Invalid Convertions Here!");return new enum_UIWeaponTag[0];
-                case enum_PlayerWeaponBaseType.Projectile: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Duration};
-                case enum_PlayerWeaponBaseType.Paracurve: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Cast, enum_UIWeaponTag.Melee};
-                case enum_PlayerWeaponBaseType.Cast:return new enum_UIWeaponTag[1] { enum_UIWeaponTag.Projectile };
-                case enum_PlayerWeaponBaseType.Shield: return new enum_UIWeaponTag[2] {  enum_UIWeaponTag.Projectile, enum_UIWeaponTag.MultiShot};
-                case enum_PlayerWeaponBaseType.Item:return new enum_UIWeaponTag[2] { enum_UIWeaponTag.Projectile, enum_UIWeaponTag.StoreShot };
-            }
-
-        }
-
         public static Color GetVisualizeAmountColor(this enum_Interaction type)
         {
             switch (type)
@@ -168,7 +141,6 @@ namespace GameSetting
         public static string GetLocalizeKey(this enum_Option_JoyStickMode joystick) => "UI_Option_" + joystick;
         public static string GetLocalizeKey(this enum_Option_LanguageRegion region) => "UI_Option_" + region;
         public static string SetActionIntro(this ExpirePlayerPerkBase actionInfo, UIT_TextExtend text) => text.formatText(actionInfo.GetIntroLocalizeKey(), actionInfo.Value1, actionInfo.Value2, actionInfo.Value3);
-        public static string GetLocalizeKey(this enum_UIWeaponTag tag) => "UI_Weapon_Tag_" + tag;
     }
     public class UIC_RarityLevel
     {
@@ -364,24 +336,23 @@ namespace GameSetting
 
             m_WeaponTag.ClearGrid();
             for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
-                m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
+                m_WeaponTag.AddItem(i).SetTag(-1);
             m_WeaponTag.Sort((a, b) => b.Key - a.Key);
         }
 
 
-        public void SetWeaponInfo(WeaponBase weapon, bool weaponUnlocked)
+        public void SetWeaponInfo(SWeaponInfos weaponInfo, bool weaponUnlocked,int enhanceLevel=0)
         {
-            SWeaponInfos weaponInfo = weapon.m_WeaponInfo;
             m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(weaponUnlocked)];
             m_WeaponName.SetName(weaponInfo);
             m_WeaponIntro.localizeKey = weaponInfo.m_Weapon.GetIntroLocalizeKey();
-            m_ClipSize.text = weaponUnlocked ? weapon.I_ClipAmount.ToString() : "???";
+            m_ClipSize.text = weaponUnlocked ? weaponInfo.m_UICipAmount.ToString() : "???";
 
             m_WeaponScore.ClearGrid();
-            int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;
+            int baseScore = (int)weaponInfo.m_Rarity;
             if (weaponUnlocked)
             {
-                int enhanceScore = weapon.m_EnhanceLevel;
+                int enhanceScore = enhanceLevel;
                 for (int i = 0; i < enhanceScore; i++)
                     m_WeaponScore.AddItem().SetScore(true);
             }
@@ -389,9 +360,9 @@ namespace GameSetting
                 m_WeaponScore.AddItem().SetScore(false);
             m_WeaponScore.Sort((a, b) => a.Key - b.Key);
 
-            enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
-            for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
-                m_WeaponTag.GetItem(i).SetTag(i < tags.Length ? tags[i] : enum_UIWeaponTag.Invalid);
+            if(weaponInfo.m_UITags!=null)
+                for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+                    m_WeaponTag.GetItem(i).SetTag(i < weaponInfo.m_UITags.Count ? weaponInfo.m_UITags[i] : -1);
 
             m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
             m_Score1Image.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
@@ -432,13 +403,13 @@ namespace GameSetting
             m_Text = m_Tagged.Find("Text").GetComponent<UIT_TextExtend>();
         }
 
-        public void SetTag(enum_UIWeaponTag tag)
+        public void SetTag(int tagIndex)
         {
-            bool validTag = tag != enum_UIWeaponTag.Invalid;
-            m_Empty.SetActivate(tag == enum_UIWeaponTag.Invalid);
-            m_Tagged.SetActivate(tag != enum_UIWeaponTag.Invalid);
+            bool validTag = tagIndex != -1;
+            m_Empty.SetActivate(!validTag);
+            m_Tagged.SetActivate(validTag);
             if (validTag)
-                m_Text.localizeKey = tag.GetLocalizeKey();
+                m_Text.localizeKey = "UI_WeaponTag_"+tagIndex;
         }
     }
     #endregion
