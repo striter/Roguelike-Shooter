@@ -39,6 +39,7 @@ namespace GameSetting
         }
 
         public static int GetUIWeaponScore(WeaponBase weapon) => (int)weapon.m_WeaponInfo.m_Rarity + weapon.m_EnhanceLevel;
+        public static float GetUIDamageScale(float damage) => ((damage / 50 / 10) + .9f) / 2;  //伤害显示比例缩放，默认是两倍大小
         public static Vector2 GetUIDamagePositionOffset() => new Vector2(TCommon.RandomUnitValue() * 40f, TCommon.RandomLength(1f) * 30f);
     }
 
