@@ -47,8 +47,8 @@ public class UI_Armory : UIPage {
         m_ArmoryGrid.GetItem((int)m_SelectingWeapon).OnHighlight(true);
 
         bool m_Unlocked = GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(m_SelectingWeapon);
-
-        m_Price.text = GameDataManager.GetArmoryUnlockPrice(weapon).ToString();
+        if(!m_Unlocked)
+            m_Price.text = GameDataManager.GetArmoryUnlockPrice(m_SelectingWeapon).ToString();
         m_UnlockButton.SetActivate(!m_Unlocked);
         m_WeaponInfo.SetWeaponInfo(GameDataManager.GetWeaponProperties(weapon), m_Unlocked);
     }

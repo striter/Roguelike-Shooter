@@ -146,7 +146,7 @@ namespace GameSetting
             return WeaponSaveData.New(m_GameWeaponUnlocked[rarity].RandomItem(random), GameConst.m_StageWeaponEnhanceLevel[stage].RandomPercentage(0,random));
         }
 
-        public static int GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[m_AvailableWeapons[weapon].m_Rarity];
+        public static int GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[GetWeaponProperties(weapon).m_Rarity];
         public static bool CanArmoryUnlock(enum_PlayerWeaponIdentity weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
         public static void OnArmoryUnlock(enum_PlayerWeaponIdentity weapon)
         {
