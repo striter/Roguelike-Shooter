@@ -408,7 +408,6 @@ namespace GameSetting
         public List<PerkSaveData> m_Perks;
 
         public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked;
-        public int m_ArmoryPartsAcquired;
 
         public CGameProgressSave() : this(GameDataManager.m_GameData.m_GameDifficulty,GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected)
         {
@@ -429,7 +428,6 @@ namespace GameSetting
             m_Weapon2 = WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid);
             m_Stage = enum_GameStage.Rookie;
             m_ArmoryBlueprintsUnlocked = new List<enum_PlayerWeaponIdentity>();
-            m_ArmoryPartsAcquired = 0;
         }
 
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level,GameBattleManager _battle)
@@ -443,7 +441,6 @@ namespace GameSetting
             m_Weapon2 = WeaponSaveData.Save(_player.m_Weapon2);
             m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
             m_ArmoryBlueprintsUnlocked = _level.m_ArmoryBlueprintsUnlocked;
-            m_ArmoryPartsAcquired = _level.m_ArmoryPartsAcquired;
         }
 
         void ISave.DataRecorrect()
