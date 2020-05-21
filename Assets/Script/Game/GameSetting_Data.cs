@@ -563,10 +563,11 @@ namespace GameSetting
         public float m_DamageMultiply { get; private set; }
         public float m_DamageReduction { get; private set; }
 
-        public float m_DamagePerTickTime { get; private set; }
-        public float m_DamagePercentPerTick { get; private set; }
-        public enum_DamageType m_DamageType { get; private set; }
-        public enum_ExpireRefreshType m_AddType => (enum_ExpireRefreshType)m_Refresh;
+        public float m_DotTick { get; private set; }
+        public float m_DotPercentage { get; private set; }
+        public enum_DamageType m_DotType { get; private set; }
+
+        public enum_ExpireRefreshType m_RefreshType => (enum_ExpireRefreshType)m_Refresh;
         public void InitAfterSet()
         {
             m_MovementSpeedMultiply /= 100f;

@@ -576,7 +576,7 @@ namespace GameSetting
                             {
                                 EntityExpirePreset buffRefresh = m_Expires.Find(p => p.m_Index == buff.m_Index) as EntityExpirePreset;
                                 if (buffRefresh != null)
-                                    buffRefresh.BuffRefresh();
+                                    buffRefresh.RefreshTimer();
                                 else
                                     m_Expires.Add(expire.OnActivate(m_Entity));
                             }
@@ -905,49 +905,44 @@ namespace GameSetting
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.PresetBuff;
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
-        public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_AddType;
+        public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_RefreshType;
         public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
         public override float m_DamageReduction => m_buffInfo.m_DamageReduction;
         public override int m_Index => m_buffInfo.m_Index;
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;
-        public float m_ExpireDuration { get; private set; } = 0;
-        public float f_expireCheck { get; private set; }
-        public float f_expireLeftScale => f_expireCheck / m_ExpireDuration;
         public int I_SourceID { get; private set; }
         SBuff m_buffInfo;
-        float f_dotCheck;
+        TimerBase m_DotTimer;
+        TimerBase m_ExpireTimer;
         public EntityExpirePreset(int sourceID, SBuff _buffInfo)
         {
             I_SourceID = sourceID;
             m_buffInfo = _buffInfo;
-            SetDuration(_buffInfo.m_ExpireDuration);
+            m_DotTimer = new TimerBase(_buffInfo.m_DotTick);
+            m_ExpireTimer = new TimerBase(_buffInfo.m_ExpireDuration);
         }
-        protected void SetDuration(float duration)
-        {
-            m_ExpireDuration = duration;
-            BuffRefresh();
-        }
-        public void BuffRefresh() => f_expireCheck = m_ExpireDuration;
+
+        public void RefreshTimer() => m_ExpireTimer.Replay();
+
         public override void OnTick(float deltaTime)
         {
             base.OnTick(deltaTime);
 
-            if (m_ExpireDuration <= 0)
+            if (!m_ExpireTimer.m_Timing)
                 return;
-            f_expireCheck -= deltaTime;
-            if (f_expireCheck <= 0)
-                m_Expired = true;
-
-            if (m_buffInfo.m_DamagePerTickTime <= 0)
-                return;
-            f_dotCheck += deltaTime;
-            if (f_dotCheck > m_buffInfo.m_DamagePerTickTime)
+            m_ExpireTimer.Tick(deltaTime);
+            if (!m_ExpireTimer.m_Timing)
             {
-                f_dotCheck -= m_buffInfo.m_DamagePerTickTime;
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID, enum_DamageIdentity.Expire).SetDamage(m_buffInfo.m_DamagePercentPerTick*m_Attacher.m_Health.m_MaxHealth, m_buffInfo.m_DamageType));
+                m_Expired = true;
+                return;
             }
+            m_DotTimer.Tick(deltaTime);
+            if (m_DotTimer.m_Timing)
+                return;
+            m_DotTimer.Replay();
+            m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID, enum_DamageIdentity.Expire).SetDamage(m_buffInfo.m_DotPercentage * m_Attacher.m_Health.m_MaxHealth, m_buffInfo.m_DotType));
         }
     }
     
