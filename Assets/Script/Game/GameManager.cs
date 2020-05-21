@@ -647,6 +647,7 @@ public class GameBattleManager
     {
         m_Transmiting = true;
         m_TransmitEliteID = GenerateGameElite(GameConst.L_GameEliteIndexes.RandomItem(), GetSpawnList(playerPos)[0]);
+        m_TransmitTimer.Replay();
         m_TransmitSignalTower.OnTransmitSet(true);
     }
 

@@ -54,14 +54,14 @@
 				{
 					float linearDepth = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv_depth));
 					float3 worldPos = _WorldSpaceCameraPos + i.interpolatedRay*linearDepth;
-
+					float2 uv = worldPos.xz + worldPos.yy;
 					float squaredDistance = sqrdistance(worldPos,_Origin);
 
 					float fill = step(squaredDistance,_SqrEdgeMax);
 					float edge = fill * step(_SqrEdgeMin,squaredDistance);
 
 					fill *=  (1 - edge);
-					fill *= tex2D(_FillTexture,worldPos.xz*_TextureScale+_TextureFlow.xy*(_Time.y)).r;
+					fill *= tex2D(_FillTexture, uv*_TextureScale+_TextureFlow.xy*(_Time.y)).r;
 
 					fill *= _FillColor.a;
 					edge *= _EdgeColor.a;
