@@ -39,12 +39,6 @@ namespace GameSetting
         }
 
         public static int GetUIWeaponScore(WeaponBase weapon) => (int)weapon.m_WeaponInfo.m_Rarity + weapon.m_EnhanceLevel;
-
-        public static float GetUIWeaponDamageValue(float uiDamage) => Mathf.InverseLerp(0, 100, uiDamage);   //武器数据查看ui标准
-        public static float GetUIWeaponRPMValue(float uiRPM) => Mathf.InverseLerp(0, 400, uiRPM);
-        public static float GetUIWeaponStabilityValue(float uiStability) => Mathf.InverseLerp(0, 100, uiStability);
-        public static float GetUIWeaponSpeedValue(float uiSpeed) => Mathf.InverseLerp(0, 100, uiSpeed);
-        public static float GetUIDamageScale(float damage) => ((damage / 50 / 10) + .9f) / 2;  //伤害显示比例缩放，默认是两倍大小
         public static Vector2 GetUIDamagePositionOffset() => new Vector2(TCommon.RandomUnitValue() * 40f, TCommon.RandomLength(1f) * 30f);
     }
 
@@ -365,13 +359,13 @@ namespace GameSetting
                     m_WeaponTag.GetItem(i).SetTag(i < weaponInfo.m_UITags.Count ? weaponInfo.m_UITags[i] : -1);
 
             m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
-            m_Score1Image.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
+            m_Score1Image.fillAmount = weaponInfo.m_UIDamage/100f;
             m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIStability);
-            m_Score3Image.fillAmount = UIExpression.GetUIWeaponStabilityValue(weaponInfo.m_UIStability);
+            m_Score3Image.fillAmount = weaponInfo.m_UIStability/100f;
             m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIRPM);
-            m_Score2Image.fillAmount = UIExpression.GetUIWeaponRPMValue(weaponInfo.m_UIRPM);
+            m_Score2Image.fillAmount = weaponInfo.m_UIRPM / 100f;
             m_Score4Amount.text = string.Format("{0:N1}", weaponInfo.m_UISpeed);
-            m_Score4Image.fillAmount = UIExpression.GetUIWeaponSpeedValue(weaponInfo.m_UISpeed);
+            m_Score4Image.fillAmount = weaponInfo.m_UISpeed/100f;
         }
     }
     #region Extra Class
