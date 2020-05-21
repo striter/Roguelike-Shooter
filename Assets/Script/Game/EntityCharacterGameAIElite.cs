@@ -24,7 +24,7 @@ public class EntityCharacterGameAIElite : EntityCharacterGameAI {
             if (m_IndicateCounter.m_Timing)
                 return;
 
-            m_CharacterInfo.AddExpire(new EntityExpirePreset( -1, GameDataManager.GetPresetBuff(m_Buff.m_BuffIndex)));
+            m_CharacterInfo.AddExpire(new EntityExpirePreset(m_EntityID, GameDataManager.GetPresetBuff(m_Buff.m_BuffIndex)));
             GameObjectManager.SpawnSFX<SFXMuzzle>(m_Buff.m_MuzzleIndex, transform.position, Vector3.up).PlayUncontrolled(m_EntityID);
             m_Buff = GameConst.L_GameEliteBuff.RandomItem();
             m_BuffCounter.Replay();

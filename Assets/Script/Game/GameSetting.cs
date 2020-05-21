@@ -940,13 +940,13 @@ namespace GameSetting
             if (f_expireCheck <= 0)
                 m_Expired = true;
 
-            if (m_buffInfo.m_DamageTickTime <= 0)
+            if (m_buffInfo.m_DamagePerTickTime <= 0)
                 return;
             f_dotCheck += deltaTime;
-            if (f_dotCheck > m_buffInfo.m_DamageTickTime)
+            if (f_dotCheck > m_buffInfo.m_DamagePerTickTime)
             {
-                f_dotCheck -= m_buffInfo.m_DamageTickTime;
-                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID, enum_DamageIdentity.Expire).SetDamage(m_buffInfo.m_DamagePerTick, m_buffInfo.m_DamageType));
+                f_dotCheck -= m_buffInfo.m_DamagePerTickTime;
+                m_Attacher.m_HitCheck.TryHit(new DamageInfo(I_SourceID, enum_DamageIdentity.Expire).SetDamage(m_buffInfo.m_DamagePercentPerTick*m_Attacher.m_Health.m_MaxHealth, m_buffInfo.m_DamageType));
             }
         }
     }
