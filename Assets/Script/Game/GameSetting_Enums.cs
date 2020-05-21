@@ -107,7 +107,7 @@ namespace GameSetting
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack,CoinSack, WeaponVendorMachine,
         PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, PickupWeapon,PickupKey,
         TradeContainer, PerkSelect,PerkLottery,PerkShrine,BloodShrine,HealShrine,
-        PickupArmoryBlueprint,PickupArmoryParts,
+        PickupArmoryBlueprint,
         SignalTower, Portal,
         GameEnd,
 

@@ -216,13 +216,6 @@ namespace GameSetting
 
             return bluePrint;
         }
-
-        public static bool CanUseArmoryParts(int count) => m_ArmoryData.m_WeaponParts >= count;
-        public static void OnArmoryPartsStatus(int count)
-        {
-            m_ArmoryData.m_WeaponParts += count;
-            TGameData<CArmoryData>.Save();
-        }
         #endregion
 
         #region CharacterData
@@ -463,13 +456,11 @@ namespace GameSetting
         public List<enum_PlayerWeaponIdentity> m_WeaponsUnlocked;
         public List<enum_PlayerWeaponIdentity> m_WeaponBlueprints;
         public enum_PlayerWeaponIdentity m_WeaponSelected;
-        public int m_WeaponParts;
         public CArmoryData()
         {
             m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.UMP45, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.AKM, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.FrostWand };
             m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Flamer };
             m_WeaponSelected = enum_PlayerWeaponIdentity.P92;
-            m_WeaponParts = 5;
         }
 
         public void DataRecorrect()

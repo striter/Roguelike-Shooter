@@ -337,7 +337,7 @@ public class GameManager : GameManagerBase
     {
         m_GameProgress.GameFinished(win);
         GameDataManager.OnGameResult(m_GameProgress.m_GameWin,100);
-        Debug.Log(m_GameProgress.m_ArmoryPartsAcquired + " " + TDataConvert.Convert(m_GameProgress.m_ArmoryBlueprintsUnlocked));
+        Debug.Log("Blueprint Unlocked:"+ TDataConvert.Convert(m_GameProgress.m_ArmoryBlueprintsUnlocked));
         GameUIManager.Instance.OnGameFinished(m_GameProgress, OnGameExit);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
@@ -376,13 +376,6 @@ public class GameManager : GameManagerBase
                 GameObjectManager.SpawnInteract<InteractPickupArmoryBlueprint>(sourcePosition, Quaternion.identity).Play(weaponBlueprint).PlayDropAnim(GetPickupPosition(entity)).PlayMoveAnim(m_LocalPlayer.transform);
                 m_GameProgress.OnArmoryBlueprintsUnlocked(weaponBlueprint);
             }
-        }
-
-        bool generateParts = GameConst.m_ArmoryPartsGameDropRate >= TCommon.RandomPercentageFloat();
-        if(generateParts)
-        {
-            GameDataManager.OnArmoryPartsStatus(1);
-            m_GameProgress.OnArmoryPartsAcquired(1);
         }
     }
 
@@ -585,7 +578,6 @@ public class GameProgressManager
         m_Stage = _battleSave.m_Stage;
 
         m_ArmoryBlueprintsUnlocked = _battleSave.m_ArmoryBlueprintsUnlocked;
-        m_ArmoryPartsAcquired = _battleSave.m_ArmoryPartsAcquired;
 
         m_Random = new System.Random(m_GameSeed.GetHashCode());
         List<enum_GameStyle> styleList = TCommon.GetEnumList<enum_GameStyle>();
@@ -605,10 +597,8 @@ public class GameProgressManager
 
     #region ResultData
     public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked { get; private set; } = new List<enum_PlayerWeaponIdentity>();
-    public int m_ArmoryPartsAcquired = 0;
 
     public void OnArmoryBlueprintsUnlocked(enum_PlayerWeaponIdentity weapon) => m_ArmoryBlueprintsUnlocked.Add(weapon);
-    public void OnArmoryPartsAcquired(int count) => m_ArmoryPartsAcquired += count;
     #endregion
 }
 
