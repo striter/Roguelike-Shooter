@@ -108,6 +108,7 @@ public class GameManager : GameManagerBase
     #region GenerateLevel
     void LoadStage()
     {
+        SetBaseTimeScale(1f);
         m_GameProgress.StageInit();
         GameObjectManager.Recycle();
         EntityDicReset();
