@@ -144,7 +144,7 @@ public class UIC_Control : UIControlBase {
             bool m_interactValid = interact;
             if (m_weaponValid)
             {
-                m_Weapon.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSprite()];
+                m_Weapon.sprite = UIManager.Instance.m_WeaponSprites[weapon.m_WeaponInfo.m_Weapon.GetSprite(true)];
                 m_WeaponScore.text = UIExpression.GetUIWeaponScore(weapon).ToString();
             }
             if (m_interactValid)

@@ -148,7 +148,7 @@ public class UIC_PlayerInteract : UIControlBase
     void SetWeaponInfo(WeaponBase weapon)
     {
         SWeaponInfos weaponInfo = weapon.m_WeaponInfo;
-        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite()];
+        m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(true)];
         m_WeaponName.localizeKey = weaponInfo.m_Weapon.GetNameLocalizeKey();
         m_WeaponName.color = TCommon.GetHexColor(weaponInfo.m_Rarity.GetUIColor());
         m_ClipSize.text = weapon.I_ClipAmount.ToString();

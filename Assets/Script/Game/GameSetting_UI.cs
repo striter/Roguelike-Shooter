@@ -118,7 +118,7 @@ namespace GameSetting
         public static string GetInteractIcon(this enum_Interaction type) => "Interact_Icon_" + type;
         public static string GetAbilitySprite(this enum_PlayerCharacter character) => "control_ability_" + character;
         public static string GetAbilityBackground(bool cooldowning) => cooldowning ? "control_ability_bottom_cooldown" : "control_ability_bottom_activate";
-        public static string GetSprite(this enum_PlayerWeaponIdentity weapon) => "detail_" + ((int)weapon);
+        public static string GetSprite(this enum_PlayerWeaponIdentity weapon,bool unlocked) =>(unlocked?"icon_":"unlock_icon_") + ((int)weapon);
         public static string GetExpireSprite(this EntityExpireBase expire) => expire.m_Index.ToString();
 
         public static string GetUIInteractBackground(this enum_Rarity rarity) => "interact_" + rarity;
@@ -313,7 +313,96 @@ namespace GameSetting
         }
     }
 
+    public class UIC_WeaponName
+    {
+        UIT_TextExtend text;
+        public UIC_WeaponName(Transform transform)
+        {
+            text = transform.GetComponent<UIT_TextExtend>();
+        }
 
+        public void SetName(SWeaponInfos info)
+        {
+            text.localizeKey = info.m_Weapon.GetNameLocalizeKey();
+            text.color = TCommon.GetHexColor(info.m_Rarity.GetUIColor());
+        }
+    }
+
+    public class UIC_WeaponInfo
+    {
+        public Transform transform;
+        UIC_WeaponName m_WeaponName;
+        UIT_TextExtend m_WeaponIntro;
+        Image m_WeaponImage;
+        UIT_TextExtend m_ClipSize;
+        Transform m_WeaponScoreSliders;
+        Image m_Score1Image, m_Score2Image, m_Score3Image, m_Score4Image;
+        UIT_TextExtend m_Score1Amount, m_Score2Amount, m_Score3Amount, m_Score4Amount;
+        UIT_GridControllerClass<UIGC_WeaponScoreItem> m_WeaponScore;
+        UIT_GridControllerClass<UIGC_WeaponTagItem> m_WeaponTag;
+        public UIC_WeaponInfo(Transform transform)
+        {
+            this.transform = transform;
+
+            m_WeaponName =new UIC_WeaponName( transform.Find("Name"));
+            m_WeaponIntro = transform.Find("Intro").GetComponent<UIT_TextExtend>();
+            m_WeaponImage = transform.Find("Image").GetComponent<Image>();
+            m_ClipSize = transform.Find("ClipSize").GetComponent<UIT_TextExtend>();
+
+            m_WeaponScore = new UIT_GridControllerClass<UIGC_WeaponScoreItem>(transform.Find("ScoreGrid"));
+            m_WeaponTag = new UIT_GridControllerClass<UIGC_WeaponTagItem>(transform.Find("TagGrid"));
+
+            m_WeaponScoreSliders = transform.Find("ScoreSliders");
+            m_Score1Image = m_WeaponScoreSliders.Find("Score1/Fill").GetComponent<Image>();
+            m_Score1Amount = m_WeaponScoreSliders.Find("Score1/Amount").GetComponent<UIT_TextExtend>();
+            m_Score2Image = m_WeaponScoreSliders.Find("Score2/Fill").GetComponent<Image>();
+            m_Score2Amount = m_WeaponScoreSliders.Find("Score2/Amount").GetComponent<UIT_TextExtend>();
+            m_Score3Image = m_WeaponScoreSliders.Find("Score3/Fill").GetComponent<Image>();
+            m_Score3Amount = m_WeaponScoreSliders.Find("Score3/Amount").GetComponent<UIT_TextExtend>();
+            m_Score4Image = m_WeaponScoreSliders.Find("Score4/Fill").GetComponent<Image>();
+            m_Score4Amount = m_WeaponScoreSliders.Find("Score4/Amount").GetComponent<UIT_TextExtend>();
+
+            m_WeaponTag.ClearGrid();
+            for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+                m_WeaponTag.AddItem(i).SetTag(enum_UIWeaponTag.Invalid);
+            m_WeaponTag.Sort((a, b) => b.Key - a.Key);
+        }
+
+
+        public void SetWeaponInfo(WeaponBase weapon, bool weaponUnlocked)
+        {
+            SWeaponInfos weaponInfo = weapon.m_WeaponInfo;
+            m_WeaponImage.sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(weaponUnlocked)];
+            m_WeaponName.SetName(weaponInfo);
+            m_WeaponIntro.localizeKey = weaponInfo.m_Weapon.GetIntroLocalizeKey();
+            m_ClipSize.text = weaponUnlocked ? weapon.I_ClipAmount.ToString() : "???";
+
+            m_WeaponScore.ClearGrid();
+            int baseScore = (int)weapon.m_WeaponInfo.m_Rarity;
+            if (weaponUnlocked)
+            {
+                int enhanceScore = weapon.m_EnhanceLevel;
+                for (int i = 0; i < enhanceScore; i++)
+                    m_WeaponScore.AddItem().SetScore(true);
+            }
+            for (int i = 0; i < baseScore; i++)
+                m_WeaponScore.AddItem().SetScore(false);
+            m_WeaponScore.Sort((a, b) => a.Key - b.Key);
+
+            enum_UIWeaponTag[] tags = weapon.m_WeaponType.GetWeaponTags();
+            for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+                m_WeaponTag.GetItem(i).SetTag(i < tags.Length ? tags[i] : enum_UIWeaponTag.Invalid);
+
+            m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
+            m_Score1Image.fillAmount = UIExpression.GetUIWeaponDamageValue(weaponInfo.m_UIDamage);
+            m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIStability);
+            m_Score3Image.fillAmount = UIExpression.GetUIWeaponStabilityValue(weaponInfo.m_UIStability);
+            m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIRPM);
+            m_Score2Image.fillAmount = UIExpression.GetUIWeaponRPMValue(weaponInfo.m_UIRPM);
+            m_Score4Amount.text = string.Format("{0:N1}", weaponInfo.m_UISpeed);
+            m_Score4Image.fillAmount = UIExpression.GetUIWeaponSpeedValue(weaponInfo.m_UISpeed);
+        }
+    }
     #region Extra Class
     class UIGC_WeaponScoreItem : UIT_GridItemClass
     {

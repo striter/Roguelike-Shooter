@@ -6,86 +6,54 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_Armory : UIPage {
-    UIT_GridControllerGridItem<UIGI_ArmoryItem> m_UnlockedGrid, m_BlueprintGrid;
+    UIT_GridControllerGridItemScrollView<UIGI_ArmoryWeaponSelect> m_ArmoryGrid;
+    UIC_WeaponInfo m_WeaponInfo;
     Button m_UnlockButton;
-    Text m_Title,m_ButtonTitle;
     enum_PlayerWeaponIdentity m_SelectingWeapon;
     protected override void Init()
     {
         base.Init();
-        m_UnlockedGrid = new UIT_GridControllerGridItem<UIGI_ArmoryItem>(rtf_Container.Find("Unlocked"));
-        m_BlueprintGrid = new UIT_GridControllerGridItem<UIGI_ArmoryItem>(rtf_Container.Find("Blueprints"));
-        m_UnlockButton = rtf_Container.Find("Unlock").GetComponent<Button>();
-        m_ButtonTitle = m_UnlockButton.GetComponentInChildren<Text>();
-        m_Title = rtf_Container.Find("Title").GetComponent<Text>();
+        m_ArmoryGrid = new UIT_GridControllerGridItemScrollView<UIGI_ArmoryWeaponSelect>(rtf_Container.Find("WeaponSelect/ScrollRect"),36);
+        m_WeaponInfo = new UIC_WeaponInfo(rtf_Container.Find("WeaponInfo"));
+        m_UnlockButton = rtf_Container.Find("UnlockBtn").GetComponent<Button>();
         m_UnlockButton.onClick.AddListener(OnUnlockButtonClick);
     }
 
     public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
     {
         base.OnPlay(doAnim, OnPageExit);
-        InitArmory();
-        OnWeaponClick(enum_PlayerWeaponIdentity.Invalid);
+        m_SelectingWeapon = enum_PlayerWeaponIdentity.Invalid;
+        OnWeaponClick(InitArmory());
     }
 
-    void InitArmory()
+    enum_PlayerWeaponIdentity InitArmory()
     {
-        m_UnlockedGrid.ClearGrid();
-        m_BlueprintGrid.ClearGrid();
-        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) =>
-        {
-            m_BlueprintGrid.AddItem((int)weapon).Play(OnWeaponClick);
-        });
-        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) =>
-        {
-            m_UnlockedGrid.AddItem((int)weapon).Play(OnWeaponClick);
-        });
+        enum_PlayerWeaponIdentity firstAvailableWeapon = enum_PlayerWeaponIdentity.Invalid;
+        m_ArmoryGrid.ClearGrid();
+
+        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(false, OnWeaponClick); });
+        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(true, OnWeaponClick); });
+        return firstAvailableWeapon;
     }
 
-
-    bool m_Blueprint=false;
-    bool m_Unlocked=false;
-    bool m_Equipping=false;
 
     void OnWeaponClick(enum_PlayerWeaponIdentity weapon)
     {
+        if (m_SelectingWeapon != enum_PlayerWeaponIdentity.Invalid)
+            m_ArmoryGrid.GetItem((int)weapon).OnHighlight(false);
         m_SelectingWeapon = weapon;
-         m_Blueprint = GameDataManager.m_ArmoryData.m_WeaponBlueprints.Contains(m_SelectingWeapon);
-         m_Unlocked = GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(m_SelectingWeapon);
+        m_ArmoryGrid.GetItem((int)weapon).OnHighlight(true);
 
-        bool valid = m_Blueprint || m_Unlocked;
-        m_Title.SetActivate(valid);
-        m_UnlockButton.SetActivate(valid);
-        if (!valid)
-            return;
+        bool m_Unlocked = GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(m_SelectingWeapon);
 
-        m_Equipping = weapon == GameDataManager.m_ArmoryData.m_WeaponSelected;
-        if(m_Blueprint)
-        {
-            m_Title.text = "Blueprint:" + weapon + " " + GameDataManager.GetArmoryUnlockPrice(weapon);
-            m_UnlockButton.interactable = GameDataManager.CanArmoryUnlock(weapon);
-            m_ButtonTitle.text = "Unlock";
-;        }
-        else
-        {
-            m_Title.text = (m_Equipping ? "Equipping:":"Unlocked:") + weapon;
-            m_UnlockButton.interactable = !m_Equipping;
-            m_ButtonTitle.text = "Equip";
-        }
+        m_UnlockButton.SetActivate(!m_Unlocked);
+        m_WeaponInfo.SetWeaponInfo(GameObjectManager.GetWeaponData(weapon),m_Unlocked);
     }
 
     void OnUnlockButtonClick()
     {
-        if (m_Blueprint)
-        {
-            GameDataManager.OnArmoryUnlock(m_SelectingWeapon);
-            InitArmory();
-        }
-
-        if (m_Unlocked)
-            GameDataManager.OnArmorySelect(m_SelectingWeapon);
-
-        CampManager.Instance.m_LocalPlayer.GameWeaponReforge(GameObjectManager.SpawnWeapon(WeaponSaveData.New(m_SelectingWeapon)));
+        GameDataManager.OnArmoryUnlock(m_SelectingWeapon);
+        InitArmory();
         OnWeaponClick(m_SelectingWeapon);
     }
 

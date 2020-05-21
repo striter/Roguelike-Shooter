@@ -316,14 +316,23 @@ public static class GameObjectManager
     public static void RecycleEntity(int index, EntityBase target) => ObjectPoolManager<int, EntityBase>.Recycle(index, target);
     #endregion
     #region Model Weapon
+    static void CheckWeaponExists(enum_PlayerWeaponIdentity identity)
+    {
+        if (!ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Registed(identity))
+        {
+            WeaponBase preset = TResources.GetPlayerWeapon(identity);
+            ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Register(identity, preset, 1);
+        }
+    }
     public static WeaponBase SpawnWeapon(WeaponSaveData weaponData, Transform toTrans = null)
     {
-        if (!ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Registed(weaponData.m_Weapon))
-        {
-            WeaponBase preset = TResources.GetPlayerWeapon(weaponData.m_Weapon);
-            ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Register(weaponData.m_Weapon, preset, 1);
-        }
+        CheckWeaponExists(weaponData.m_Weapon);
         return ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity, Vector3.zero, Quaternion.identity).InitWeapon(weaponData);
+    }
+    public static WeaponBase GetWeaponData(enum_PlayerWeaponIdentity weapon)
+    {
+        CheckWeaponExists(weapon);
+        return ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.GetRegistedSpawnItem(weapon);
     }
     public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
     #endregion
