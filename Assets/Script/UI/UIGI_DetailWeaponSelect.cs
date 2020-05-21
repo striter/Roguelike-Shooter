@@ -20,7 +20,7 @@ public class UIGI_DetailWeaponSelect : UIT_GridItem,IGridHighlight {
 
     public void Init(enum_PlayerWeaponIdentity weapon)
     {
-        m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.GetSprite()];
+        m_Image.sprite = UIManager.Instance.m_WeaponSprites[weapon.GetSprite(true)];
     }
 
     Action<int> OnButtonClick;
