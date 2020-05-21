@@ -199,6 +199,12 @@ public class GameManager : GameManagerBase
         }
         #endregion
         m_StageInteracts.Clear();
+        //Spawn Player
+        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_GameProgressData.m_Character, playerSpawn.m_Pos, playerSpawn.m_Rot).OnPlayerActivate(GameDataManager.m_GameProgressData);
+        tf_CameraAttach.position = playerSpawn.m_Pos;
+        tf_CameraAttach.rotation = playerSpawn.m_Rot;
+        AttachPlayerCamera(tf_CameraAttach);
+
         //Spawn Signal Tower
         InteractSignalTower _signalTower = GameObjectManager.SpawnInteract<InteractSignalTower>(signalTowerSpawn.m_Pos, signalTowerSpawn.m_Rot,GameLevelManager.Instance.GetQuadrantChunk(signalTowerSpawn.m_QuadrantIndex).m_InteractParent).Play(OnSignalTowerTrigger);
         m_StageInteracts.Add(_signalTower);
@@ -210,12 +216,6 @@ public class GameManager : GameManagerBase
             enum_GameEventType eventType = TCommon.RandomPercentage(GameConst.D_GameEventRate, enum_GameEventType.Invalid, m_GameProgress.m_Random);
             GenerateStageInteract(eventType,objectData,tradePriceMultiply);
         });
-
-        //Spawn Player
-        m_LocalPlayer = GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_GameProgressData.m_Character, playerSpawn.m_Pos, playerSpawn.m_Rot).OnPlayerActivate(GameDataManager.m_GameProgressData);
-        tf_CameraAttach.position = playerSpawn.m_Pos;
-        tf_CameraAttach.rotation = playerSpawn.m_Rot;
-        AttachPlayerCamera(tf_CameraAttach);
 
         m_GameBattle.Init(enermySpawns, m_GameProgress.m_Stage, _signalTower);
     }
