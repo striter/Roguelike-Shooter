@@ -329,11 +329,6 @@ public static class GameObjectManager
         CheckWeaponExists(weaponData.m_Weapon);
         return ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Spawn(weaponData.m_Weapon, toTrans ? toTrans : TF_Entity, Vector3.zero, Quaternion.identity).InitWeapon(weaponData);
     }
-    public static WeaponBase GetWeaponData(enum_PlayerWeaponIdentity weapon)
-    {
-        CheckWeaponExists(weapon);
-        return ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.GetRegistedSpawnItem(weapon);
-    }
     public static void RecycleWeapon(WeaponBase weapon) => ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Recycle(weapon.m_WeaponInfo.m_Weapon, weapon);
     #endregion
     #region SFXWeapon
