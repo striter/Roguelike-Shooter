@@ -17,7 +17,12 @@ namespace GameSetting
         public const int I_NumericVisualizeHealthBarShowDuration = 4;
         public const int I_NumericVisualizeHealthBarHideDuration = 1;
 
-        public const int I_DetailWeaponTagMax = 5;
+        public const int I_WeaponInfoMaxTag = 5;
+
+        public const float F_WeaponInfoScore1Max = 400;
+        public const float F_WeaponInfoScore2Max = 10;
+        public const float F_WeaponInfoScore3Max = 100;
+        public const float F_WeaponInfoScore4Max = 200;
     }
 
     public static class UIExpression
@@ -330,7 +335,7 @@ namespace GameSetting
             m_Score4Amount = m_WeaponScoreSliders.Find("Score4/Amount").GetComponent<UIT_TextExtend>();
 
             m_WeaponTag.ClearGrid();
-            for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+            for (int i = 0; i < UIConst.I_WeaponInfoMaxTag; i++)
                 m_WeaponTag.AddItem(i).SetTag(-1);
             m_WeaponTag.Sort((a, b) => b.Key - a.Key);
         }
@@ -356,17 +361,17 @@ namespace GameSetting
             m_WeaponScore.Sort((a, b) => a.Key - b.Key);
 
             if(weaponInfo.m_UITags!=null)
-                for (int i = 0; i < UIConst.I_DetailWeaponTagMax; i++)
+                for (int i = 0; i < UIConst.I_WeaponInfoMaxTag; i++)
                     m_WeaponTag.GetItem(i).SetTag(i < weaponInfo.m_UITags.Count ? weaponInfo.m_UITags[i] : -1);
 
-            m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIDamage);
-            m_Score1Image.fillAmount = weaponInfo.m_UIDamage/100f;
-            m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIStability);
-            m_Score3Image.fillAmount = weaponInfo.m_UIStability/100f;
-            m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIRPM);
-            m_Score2Image.fillAmount = weaponInfo.m_UIRPM / 100f;
-            m_Score4Amount.text = string.Format("{0:N1}", weaponInfo.m_UISpeed);
-            m_Score4Image.fillAmount = weaponInfo.m_UISpeed/100f;
+            m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore1);
+            m_Score1Image.fillAmount = weaponInfo.m_UIScore1/UIConst.F_WeaponInfoScore1Max;
+            m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore2);
+            m_Score3Image.fillAmount = weaponInfo.m_UIScore2/ UIConst.F_WeaponInfoScore2Max;
+            m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore3);
+            m_Score2Image.fillAmount = weaponInfo.m_UIScore3 / UIConst.F_WeaponInfoScore3Max;
+            m_Score4Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore4);
+            m_Score4Image.fillAmount = weaponInfo.m_UIScore4/ UIConst.F_WeaponInfoScore4Max;
         }
     }
     #region Extra Class

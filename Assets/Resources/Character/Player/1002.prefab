@@ -1055,8 +1055,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 150
-  F_MovementSpeed: 8
+  F_MovementSpeed: 7
+  I_HealthPerRank: 10
   I_DefaultArmor: 20
+  I_ArmorPerRank: 10
   F_AssasinTriggerCooldown: 1
   F_AssassinttackRange: 17
   F_AssassinAttackDuration: 0.2

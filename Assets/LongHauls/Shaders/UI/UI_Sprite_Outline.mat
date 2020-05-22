@@ -103,4 +103,4 @@ Material:
     - _FlowVec: {r: 0, g: 0, b: -0.1, a: 0}
     - _LightColor: {r: 1, g: 1, b: 1, a: 0}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SpriteRect: {r: 0.29007152, g: 0.020133756, b: 0.71320647, a: 0.93486625}
+    - _SpriteRect: {r: 0.061062366, g: 0, b: 0.99776113, a: 0.99769324}
