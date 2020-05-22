@@ -70,9 +70,6 @@ GameObject:
   - component: {fileID: 4885293041348302}
   - component: {fileID: 111301535441747210}
   - component: {fileID: 114374907506776882}
-  - component: {fileID: 65438657783399592}
-  - component: {fileID: 114455789973495194}
-  - component: {fileID: 54315386306006512}
   m_Layer: 0
   m_Name: Tile_Desert_Object_Dangerzone
   m_TagString: Untagged
@@ -217,33 +214,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1503756894334018}
   m_Mesh: {fileID: 4300000, guid: fb975af2137a2d14487dd219023d788b, type: 3}
---- !u!54 &54315386306006512
-Rigidbody:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1656840310849616}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!65 &65438657783399592
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1656840310849616}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!111 &111301535441747210
 Animation:
   m_ObjectHideFlags: 1
@@ -271,14 +241,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ObjectType: 1
---- !u!114 &114455789973495194
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1656840310849616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a76ef42d72d7214458b5c588d84668c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
