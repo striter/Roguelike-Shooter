@@ -52,7 +52,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2c591be845d1f7845bad7a62d55e44ba, type: 3}
   - {fileID: 21300000, guid: ab90529173c2faa4188d2d7f4a1207c4, type: 3}
   - {fileID: 21300000, guid: d363cd23557dd01419f0dc61db48324b, type: 3}
-  - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
   - {fileID: 21300000, guid: 86b71b5e29d8abe468841d6e521a3b7f, type: 3}
   - {fileID: 21300000, guid: 1a0efb1eea613644fb4aaf215439ce85, type: 3}
   - {fileID: 21300000, guid: 972c02c8f10410d40a3bcc0840743004, type: 3}
@@ -81,7 +80,6 @@ SpriteAtlas:
   - gamestatus_EXP_bg
   - detail_select_perk
   - visualize_healthElite
-  - background_angle
   - NumericIcon_StartAttack
   - gamestatus_eliteHealthNameBG
   - visualize_healthBG

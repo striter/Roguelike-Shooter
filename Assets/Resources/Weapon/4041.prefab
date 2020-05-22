@@ -70,7 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_CastType: 1
   E_CastTarget: -1
-  I_CastParticleIndex: 29015
+  I_CastParticleIndex: 29016
   B_CastForward: 0
   I_TickCount: 1
   F_Tick: 0.5

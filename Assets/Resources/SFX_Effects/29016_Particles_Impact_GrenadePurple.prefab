@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4265985892107014}
   - component: {fileID: 114546385948391144}
   m_Layer: 0
-  m_Name: 29015_Particles_Impact_GrenadePurple
+  m_Name: 29016_Particles_Impact_GrenadePurple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
