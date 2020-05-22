@@ -37,6 +37,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
         m_RollTimer.Replay();
         m_RollCooldown.Replay();
         m_CharacterInfo.OnAbilityTrigger();
+        EnableHitbox(false);
     }
     
     protected override void OnAliveTick(float deltaTime)
@@ -50,6 +51,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
                 m_WeaponCurrent.AddAmmo((int)(m_WeaponCurrent.m_ClipAmount*P_RollFinishClipRestore/100f));
                 m_CharacterInfo.AddExpire(new EntityExpirePreset( m_EntityID,SBuff.CreateGameBethBuff(m_CharacterInfo.m_ExtraFireRateMultiply*P_RollFinishFireRateExtraMultiply/100f+m_CharacterInfo.m_RankManager.m_Rank*P_RollFinishFireRateRankMultiply/100f,F_RollFinishFireRateDuration)));
                 m_Animator.EndRoll();
+                EnableHitbox(true);
             }
         }
         base.OnAliveTick(deltaTime);
