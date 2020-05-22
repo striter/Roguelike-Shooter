@@ -20,8 +20,8 @@ namespace GameSetting
         public const int I_WeaponInfoMaxTag = 5;
 
         public const float F_WeaponInfoScore1Max = 300;
-        public const float F_WeaponInfoScore2Max = 10;
-        public const float F_WeaponInfoScore3Max = 15;
+        public const float F_WeaponInfoScore2Max = 15;
+        public const float F_WeaponInfoScore3Max = 10;
         public const float F_WeaponInfoScore4Max = 20;
     }
 
@@ -366,10 +366,10 @@ namespace GameSetting
 
             m_Score1Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore1);
             m_Score1Image.fillAmount = weaponInfo.m_UIScore1/UIConst.F_WeaponInfoScore1Max;
-            m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore2);
-            m_Score3Image.fillAmount = weaponInfo.m_UIScore2/ UIConst.F_WeaponInfoScore2Max;
-            m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore3);
-            m_Score2Image.fillAmount = weaponInfo.m_UIScore3 / UIConst.F_WeaponInfoScore3Max;
+            m_Score2Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore2);
+            m_Score2Image.fillAmount = weaponInfo.m_UIScore2/ UIConst.F_WeaponInfoScore2Max;
+            m_Score3Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore3);
+            m_Score3Image.fillAmount = weaponInfo.m_UIScore3 / UIConst.F_WeaponInfoScore3Max;
             m_Score4Amount.text = string.Format("{0:N1}", weaponInfo.m_UIScore4);
             m_Score4Image.fillAmount = weaponInfo.m_UIScore4/ UIConst.F_WeaponInfoScore4Max;
         }

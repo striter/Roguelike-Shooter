@@ -541,8 +541,8 @@ namespace GameSetting
 
         public int m_UICipAmount { get; private set; }
         public float m_UIScore1 { get; private set; }
-        public float m_UIScore3 { get; private set; }
         public float m_UIScore2 { get; private set; }
+        public float m_UIScore3 { get; private set; }
         public float m_UIScore4 { get; private set; }
         public List<int> m_UITags { get; private set; }
 
