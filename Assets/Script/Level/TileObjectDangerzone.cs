@@ -5,26 +5,16 @@ using UnityEngine;
 using GameSetting;
 using TTiles;
 using LevelSetting;
+using TPhysics;
 
 public class TileObjectDangerzone : TileObjectBase {
     TSpecialClasses.AnimationClipControl m_Animation;
     TimerBase m_TimerReset=new TimerBase(GameConst.F_DangerzoneResetDuration);
-    EntityDetector m_EntityDetector;
+
     public override void OnGenerateItem(ChunkTileData _data, System.Random random)
     {
         base.OnGenerateItem(_data, random);
         m_Animation = new TSpecialClasses.AnimationClipControl(GetComponent<Animation>());
-        m_EntityDetector = GetComponentInChildren<EntityDetector>();
-        m_EntityDetector.Init(OnInteractCheck);
-    }
-
-    List<HitCheckEntity> m_HitEntities = new List<HitCheckEntity>();
-    void OnInteractCheck(HitCheckEntity hitCheck,bool enter)
-    {
-        if (enter)
-            m_HitEntities.Add(hitCheck);
-        else
-            m_HitEntities.Remove(hitCheck);
     }
 
     private void Update()
@@ -32,10 +22,19 @@ public class TileObjectDangerzone : TileObjectBase {
         m_TimerReset.Tick(Time.deltaTime);
         if (m_TimerReset.m_Timing)
             return;
-        
-        m_HitEntities.Traversal((HitCheckEntity entity)=>entity.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(GameConst.I_DangerzoneDamage, enum_DamageType.Basic)));
         m_Animation.Play(true);
         m_TimerReset.Replay();
-    } 
+        Physics_Extend.BoxCastAll(m_Model.position,Vector3.up,transform.forward,Vector3.one,GameLayer.Mask.I_Entity).Traversal((RaycastHit hit)=> hit.collider.DetectEntity()?.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(GameConst.I_DangerzoneDamage, enum_DamageType.Basic)));
+    }
 
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (GameManager.Instance.B_PhysicsDebugGizmos)
+        {
+            Gizmos.color = Color.red;
+            Gizmos_Extend.DrawWireCube(m_Model.position, Quaternion.LookRotation(Vector3.up, transform.forward), Vector3.one);
+        }
+    }
+    #endif
 }

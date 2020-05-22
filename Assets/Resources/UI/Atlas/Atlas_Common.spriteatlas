@@ -29,12 +29,13 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 2294796
+    totalSpriteSurfaceArea: 2452182
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: e3fbf3f12a144a549887391ddaa8a267, type: 3}
   - {fileID: 21300000, guid: 38f42b51776c9154ba33af7287510e68, type: 3}
+  - {fileID: 21300000, guid: 77eac363cbfca434492f33b6c830c7fc, type: 3}
   - {fileID: 21300000, guid: 6a4e7777b01b76b44b374c25625a8c8a, type: 3}
   - {fileID: 21300000, guid: 737da97c521ba6b46a7f9ec37123c419, type: 3}
   - {fileID: 21300000, guid: 861e25883cb242745aa2b0605b1901b8, type: 3}
@@ -74,6 +75,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 389b60b53720261438d8fdcd07fc2234, type: 3}
   - {fileID: 21300000, guid: a386833f607b4ba478930b8dfe4656ee, type: 3}
   - {fileID: 21300000, guid: 9047f140630863245ae8f4d97a50502d, type: 3}
+  - {fileID: 21300000, guid: 541ee0b71e107cc45867c0f4d1489104, type: 3}
   - {fileID: 21300000, guid: 980515194edb6e643ba473774b4a2065, type: 3}
   - {fileID: 21300000, guid: bd1c0690faaedc04b8bbda27351be635, type: 3}
   - {fileID: 21300000, guid: e084e15498c9b5d45ac18967796c1be8, type: 3}
@@ -98,6 +100,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eb7a94fd6ce83cc4ab473b324bc74b01, type: 3}
   - {fileID: 21300000, guid: 246778bc5a456b940ab95c17f8bd791e, type: 3}
   - {fileID: 21300000, guid: 38f81ac9a2b60d84a83738c539b8b202, type: 3}
+  - {fileID: 21300000, guid: a7f61c52ae3337c439860ceb040c6801, type: 3}
+  - {fileID: 21300000, guid: 4b7d50bff3360bd40bc8f953b8e62a0c, type: 3}
   - {fileID: 21300000, guid: eefdd652272d2684cbfdc70bf20d1d05, type: 3}
   - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
   - {fileID: 21300000, guid: 54e6d06b223d9c54b91a5bbd4a7477a7, type: 3}
@@ -120,6 +124,7 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - UI_common_lowpoly_background_small
   - control_rocker_bottom
+  - weaponinfo_background2
   - UI_title_orange_long
   - control_main_bottom
   - UI_title_orange_ML
@@ -159,6 +164,7 @@ SpriteAtlas:
   - control_main_interact
   - control_setting_bottom
   - bottom_black
+  - weaponinfo_progress
   - icon_rarity
   - UI_common_black60
   - UI_common_darkgray50_line
@@ -183,6 +189,8 @@ SpriteAtlas:
   - UI_common_triangle
   - status_ammo_bg
   - icon_bullet_big
+  - weaponinfo_tag_blank
+  - weaponinfo_tag
   - icon_scoreStar2
   - icon_close
   - icon_hp
