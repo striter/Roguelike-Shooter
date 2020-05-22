@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+[AddComponentMenu("UI/Text_Extend",0)]
 public class UIT_TextExtend : Text
 {
     #region Localization
