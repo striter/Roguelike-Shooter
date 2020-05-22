@@ -486,10 +486,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 1001
   B_AttachLeft: 0
-  F_Damage: 131.2
-  F_DamageMultiplyPerEnhance: 0.087
   I_ClipAmount: 5
   F_RefillTime: 0.5
+  F_Damage: 101
+  F_DamageMultiplyPerEnhance: 0.087
+  F_DamageMultiplyOnStoreSuccessful: 0.5
+  F_CriticalRate: 0.3
   F_RecoilPerShot: 0.48
   I_ExtraBuffApply: -1
   F_AimSpread: 1.25

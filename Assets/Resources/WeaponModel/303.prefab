@@ -401,10 +401,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 2003
   B_AttachLeft: 0
-  F_Damage: 286
-  F_DamageMultiplyPerEnhance: 0.069
   I_ClipAmount: 1
   F_RefillTime: 20
+  F_Damage: 256.3
+  F_DamageMultiplyPerEnhance: 0.069
+  F_DamageMultiplyOnStoreSuccessful: 0.5
+  F_CriticalRate: 0.1
   F_RecoilPerShot: 0
   I_ExtraBuffApply: -1
 --- !u!114 &114867326755695550
