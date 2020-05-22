@@ -1044,13 +1044,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 200
-  I_DefaultArmor: 30
   F_MovementSpeed: 7
-  F_AttackSpread: 0
-  F_AbilityCoolDown: 1
-  F_RollSpeedMultiple: 2
+  I_DefaultArmor: 30
+  F_AbilityCoolDown: 3
+  F_RollSpeedMultiple: 1.8
   F_RollDuration: 0.5
-  P_RollFinishClipRestore: 50
+  P_RollFinishClipRestore: 0
   P_RollFinishFireRateExtraMultiply: 100
   P_RollFinishFireRateRankMultiply: 10
   F_RollFinishFireRateDuration: 1.5
