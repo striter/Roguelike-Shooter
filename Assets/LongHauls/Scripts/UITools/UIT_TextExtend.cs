@@ -46,17 +46,16 @@ public class UIT_TextExtend : Text
     }
     #endregion
     #region CharacterSpacing
-    private const string m_RichTextRegexPatterns = @"<b>|</b>|<i>|</i>|<size=.*?>|</size>|<color=.*?>|</color>|<Color=.*?>|</Color>|<material=.*?>|</material>";
+    private const string m_RichTextRegexPatterns = @"<b>|</b>|<i>|</i>|<size=.*?>|</size>|<Size=.*?>|</Size>|<color=.*?>|</color>|<Color=.*?>|</Color>|<material=.*?>|</material>";
     public override float preferredWidth
     {
         get
         {
-            float preferdWidth = cachedTextGenerator.GetPreferredWidth(text, GetGenerationSettings(Vector2.zero));
             List<List<int>> linesVertexStartIndexes = GetLinesVertexStartIndexes();
             int maxLineCount = 0;
             for (int i=0;i<linesVertexStartIndexes.Count;i++)
                 maxLineCount = Mathf.Max(maxLineCount, linesVertexStartIndexes[i].Count);
-            return preferdWidth + m_characterSpacing * (maxLineCount - 1);
+            return base.preferredWidth + m_characterSpacing * (maxLineCount - 1);
         }
     } 
 
