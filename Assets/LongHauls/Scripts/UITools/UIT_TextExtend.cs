@@ -103,14 +103,15 @@ public class UIT_TextExtend : Text
     {
         List<List<int>> linesVertexIndexes = new List<List<int>>();
         IList<UILineInfo> lineInfos = cachedTextGenerator.lines;
-        int vertexIndex=0;
-        for(int i=0;i<lineInfos.Count;i++,vertexIndex++)
+        for(int i=0;i<lineInfos.Count;i++)
         {
             List<int> lineVertexStartIndex = new List<int>();
-            string line = (i < lineInfos.Count - 1) ? text.Substring(lineInfos[i].startCharIdx, lineInfos[i + 1].startCharIdx - lineInfos[i].startCharIdx - 1) : text.Substring(lineInfos[i].startCharIdx);
+            int lineStart = lineInfos[i].startCharIdx;
+            int lineLength = (i < lineInfos.Count - 1) ? lineInfos[i + 1].startCharIdx - lineInfos[i].startCharIdx:text.Length - lineInfos[i].startCharIdx;
             List<int> ignoreIndexes = new List<int>();
             if (supportRichText)
             {
+                string line = text.Substring(lineStart, lineLength);
                 foreach (Match matchTag in Regex.Matches(line, m_RichTextRegexPatterns))
                 {
                     for(int j=0;j<matchTag.Length;j++)
@@ -118,9 +119,9 @@ public class UIT_TextExtend : Text
                 }
             }
 
-            for (int j = 0; j < line.Length; j++, vertexIndex++)
-                if (!ignoreIndexes.Contains(vertexIndex))
-                    lineVertexStartIndex.Add(vertexIndex*6);
+            for (int j = 0; j < lineLength; j++)
+                if (!ignoreIndexes.Contains(j))
+                    lineVertexStartIndex.Add((lineStart+j)*6);
 
             linesVertexIndexes.Add(lineVertexStartIndex);
         }
