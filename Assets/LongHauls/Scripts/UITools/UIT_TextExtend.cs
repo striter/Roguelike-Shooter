@@ -51,7 +51,7 @@ public class UIT_TextExtend : Text
     {
         get
         {
-            float preferedWidth= cachedTextGenerator.GetPreferredWidth(text, GetGenerationSettings( Vector2.zero));
+            float preferredWidth= cachedTextGenerator.GetPreferredWidth(text, GetGenerationSettings( Vector2.zero));
             List<List<int>> linesVertexStartIndexes = GetLinesVertexStartIndexes();
             int maxLineCount = 0;
             for (int i=0;i<linesVertexStartIndexes.Count;i++)
