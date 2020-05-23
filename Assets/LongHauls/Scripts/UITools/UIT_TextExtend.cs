@@ -51,11 +51,12 @@ public class UIT_TextExtend : Text
     {
         get
         {
+            float preferedWidth= cachedTextGenerator.GetPreferredWidth(text, GetGenerationSettings( Vector2.zero));
             List<List<int>> linesVertexStartIndexes = GetLinesVertexStartIndexes();
             int maxLineCount = 0;
             for (int i=0;i<linesVertexStartIndexes.Count;i++)
                 maxLineCount = Mathf.Max(maxLineCount, linesVertexStartIndexes[i].Count);
-            return base.preferredWidth + m_characterSpacing * (maxLineCount - 1);
+            return preferredWidth + m_characterSpacing * (maxLineCount - 1);
         }
     } 
 
