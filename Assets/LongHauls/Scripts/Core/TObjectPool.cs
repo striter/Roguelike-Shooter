@@ -158,7 +158,6 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
 
 #endregion
 
-
 #region Class Pool
 
 public class ObjectPoolListBase<T, Y> 
