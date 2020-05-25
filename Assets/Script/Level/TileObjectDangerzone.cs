@@ -30,7 +30,7 @@ public class TileObjectDangerzone : TileObjectBase {
     #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (GameManager.Instance.B_PhysicsDebugGizmos)
+        if (GameManager.m_HaveInstance&&GameManager.Instance.B_PhysicsDebugGizmos)
         {
             Gizmos.color = Color.red;
             Gizmos_Extend.DrawWireCube(m_Model.position, Quaternion.LookRotation(Vector3.up, transform.forward), Vector3.one);

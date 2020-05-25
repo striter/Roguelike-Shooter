@@ -77,6 +77,7 @@ namespace TPhysics
         public virtual bool OnTargetHit(float deltaTime, RaycastHit hit, T template) => OnTargetHitBreak(hit, template);
 
     }
+
     public class AccelerationPSimulator<T> : CapsuleCastPSimulator<T> where T : MonoBehaviour
     {
         protected Vector3 m_HorizontalDirection, m_VerticalDirection;

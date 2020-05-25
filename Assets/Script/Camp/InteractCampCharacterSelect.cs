@@ -8,7 +8,7 @@ public class InteractCampCharacterSelect : InteractCampBase {
     public Transform m_CameraPos { get; private set; }
     Transform m_CharacterPos;
 
-    public EntityCharacterPlayer m_Character { get; private set; }
+    public EntityCharacterPlayer m_CharacterModel { get; private set; }
     float rotation = 0;
 
     protected override void Awake()
@@ -25,19 +25,18 @@ public class InteractCampCharacterSelect : InteractCampBase {
         return true;
     }
 
-    public EntityCharacterPlayer ShowCharacter(enum_PlayerCharacter character)
+    public void ShowCharacter(enum_PlayerCharacter character)
     {
-        if (m_Character)
-            m_Character.DoRecycle();
+        if (m_CharacterModel)
+            m_CharacterModel.DoRecycle();
 
         rotation = m_CameraPos.rotation.eulerAngles.y;
-        m_Character = GameObjectManager.SpawnPlayerCharacter(character,m_CharacterPos.position,m_CharacterPos.rotation);
-        return m_Character;
+        m_CharacterModel = GameObjectManager.SpawnPlayerCharacter(character,m_CharacterPos.position,m_CharacterPos.rotation);
     }
 
     public void RotateCharacter(Vector2 delta)
     {
         rotation += delta.x;
-        m_Character.transform.rotation = Quaternion.Euler(0,rotation,0);
+        m_CharacterModel.transform.rotation = Quaternion.Euler(0,rotation,0);
     }
 }

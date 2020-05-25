@@ -136,6 +136,8 @@ namespace GameSetting
 
     public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Vampire=1002,Railer=1003, }
     
+    public enum enum_PlayerCharacterEnhance {Invalid=-1,None=0,Health,Armor,MovementSpeed,StartWeapon,StageCoin,Critical,Ability,DropWeapon, Max, }
+
     public enum enum_InteractCharacter { Invalid = -1, Trader = 2001, Trainer = 2002, }
 
     public enum enum_MercenaryCharacter { Invalid = -1, Militia = 3001, Veteran = 3002 }

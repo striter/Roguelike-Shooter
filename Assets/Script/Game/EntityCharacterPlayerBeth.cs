@@ -64,7 +64,7 @@ public class EntityCharacterPlayerBeth : EntityCharacterPlayer {
     }
 
     protected override bool CheckWeaponFiring() => !m_Rolling&& base.CheckWeaponFiring();
-    protected override float CalculateMovementSpeedBase() => (m_Rolling? F_RollSpeedMultiple :1)* base.CalculateMovementSpeedBase();
+    public override float GetBaseMovementSpeed()=> (m_Rolling ? F_RollSpeedMultiple : 1) * base.GetBaseMovementSpeed();
     protected override float CalculateMovementSpeedMultiple() => m_Rolling ? 1f : base.CalculateMovementSpeedMultiple();
     protected override Vector3 CalculateMoveDirection(Vector2 moveAxisInput) => m_Rolling ? m_RollDirection : base.CalculateMoveDirection(moveAxisInput);
     protected override Quaternion GetCharacterRotation() => m_Rolling ? Quaternion.LookRotation(m_RollDirection, Vector3.up) : base.GetCharacterRotation();

@@ -14,6 +14,7 @@ public class InteractPerkSelect : InteractGameBase
         base.OnPoolInit(identity, OnRecycle);
         m_Particles = new TSpecialClasses.ParticleControlBase(transform.Find("Particles"));
     }
+
     public InteractPerkSelect Play(List<int> _perkID)
     {
         base.Play();
@@ -21,7 +22,6 @@ public class InteractPerkSelect : InteractGameBase
         m_Particles.Play();
         return this;
     }
-
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {

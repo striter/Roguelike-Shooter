@@ -25,7 +25,7 @@ public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
     public override enum_PlayerCharacter m_Character => enum_PlayerCharacter.Vampire;
     public override float m_AbilityCooldownScale => m_AssassinCooldownTimer.m_TimeLeftScale;
     public override bool m_AbilityAvailable => !m_AssassinCooldownTimer.m_Timing&&m_AimingTarget&& Vector3.Distance(transform.position,m_AimingTarget.transform.position)<F_AbilityAttackRange;
-    protected override float CalculateMovementSpeedBase() => m_AssassinAttackTimer.m_Timing ? 0 : base.CalculateMovementSpeedBase();
+    public override float GetBaseMovementSpeed() => m_AssassinAttackTimer.m_Timing ? 0 : base.GetBaseMovementSpeed();
     protected override bool CheckWeaponFiring() => !m_AssassinAttackTimer.m_Timing && base.CheckWeaponFiring();
 
     public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)

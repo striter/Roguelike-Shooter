@@ -8,6 +8,7 @@ using UnityEngine;
 public class EntityCharacterBase : EntityBase
 {
     public float F_MovementSpeed;
+    public float F_CriticalRate;
 
     public Transform tf_Model { get; private set; }
     public Transform tf_Head { get; private set; }
@@ -18,7 +19,8 @@ public class EntityCharacterBase : EntityBase
     public virtual Vector3 m_PrecalculatedTargetPos(float time)=> tf_Head.position;
     protected virtual CharacterExpireManager GetEntityInfo() => new CharacterExpireManager(this,  OnExpireChange);
     
-    public virtual float m_baseMovementSpeed => F_MovementSpeed;
+    public virtual float GetBaseMovementSpeed() => F_MovementSpeed;
+    public virtual float GetBaseCriticalRate() => F_CriticalRate;
     protected override float DamageReceiveMultiply => m_CharacterInfo.m_DamageReceiveMultiply;
     protected override float HealReceiveMultiply => m_CharacterInfo.m_HealReceiveMultiply;
 

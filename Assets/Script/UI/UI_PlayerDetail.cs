@@ -7,10 +7,7 @@ using UnityEngine.UI;
 
 public class UI_PlayerDetail : UIPage
 {
-    Transform m_AbilityInfo;
-    Image m_AbilityImage;
-    UIT_TextExtend m_AbilityTitle;
-    UIT_TextExtend m_AbilityIntro;
+    UIC_CharacterAbility m_Ability;
 
     UIT_GridControlledSingleSelect<UIGI_DetailWeaponSelect> m_WeaponSelect;
     UIT_GridControlledSingleSelect<UIGI_DetailPerkSelect> m_PerkSelect;
@@ -28,11 +25,7 @@ public class UI_PlayerDetail : UIPage
     protected override void Init()
     {
         base.Init();
-
-        m_AbilityInfo = rtf_Container.Find("AbilityInfo");
-        m_AbilityImage = m_AbilityInfo.Find("Image").GetComponent<Image>();
-        m_AbilityTitle = m_AbilityInfo.Find("Title").GetComponent<UIT_TextExtend>();
-        m_AbilityIntro = m_AbilityInfo.Find("Intro").GetComponent<UIT_TextExtend>();
+        m_Ability = new UIC_CharacterAbility(rtf_Container.Find("AbilityInfo"));
 
         m_WeaponSelect = new UIT_GridControlledSingleSelect<UIGI_DetailWeaponSelect>(rtf_Container.Find("WeaponSelect/Grid"), OnWeaponSelectClick);
         m_PerkSelect = new UIT_GridControlledSingleSelect<UIGI_DetailPerkSelect>(rtf_Container.Find("PerkSelect/ScrollRect/Viewport/Content"), OnPerkSelectClick);
@@ -61,7 +54,7 @@ public class UI_PlayerDetail : UIPage
         m_PerkSelect.ClearGrid();
         m_Player.m_CharacterInfo.m_ExpirePerks.Traversal((int index, ExpirePlayerPerkBase perk) => { m_PerkSelect.AddItem(index).Init(perk); });
 
-        SetAbilityInfo(m_Player);
+        m_Ability.SetAbilityInfo(m_Player.m_Character);
         m_WeaponSelect.OnItemClick(0);
     }
 
@@ -80,13 +73,6 @@ public class UI_PlayerDetail : UIPage
         SetPerkInfo(m_Player.m_CharacterInfo.m_ExpirePerks[index]);
         m_WeaponDetail.transform.SetActivate(false);
         m_PerkInfo.SetActivate(true);
-    }
-
-    void SetAbilityInfo(EntityCharacterPlayer player)
-    {
-        m_AbilityIntro.formatText(player.m_Character.GetAbilityDetailLocalizeKey(), string.Format("<color=#FE9E00FF>{0}</color>", "?"), string.Format("<color=#FE9E00FF>{0}</color>", "¿"));
-        m_AbilityTitle.text = string.Format("{0} <color=#FE9E00FF>LV{1}</color>", player.m_Character.GetNameLocalizeKey().GetKeyLocalized(),player.m_CharacterInfo.m_RankManager.m_Rank);
-        m_AbilityImage.sprite = UIManager.Instance.m_CommonSprites[player.m_Character.GetAbilitySprite()];
     }
 
 

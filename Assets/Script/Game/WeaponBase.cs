@@ -10,8 +10,8 @@ public class WeaponBase : CObjectPoolStaticPrefabBase<enum_PlayerWeaponIdentity>
 
     public int I_ClipAmount = 10;
     public float F_RefillTime = .1f;
-
     #endregion
+
     public virtual enum_PlayerWeaponBaseType m_WeaponType => enum_PlayerWeaponBaseType.Invalid;
     public EntityCharacterPlayer m_Attacher { get; private set; }
     public SWeaponInfos m_WeaponInfo { get; private set; }

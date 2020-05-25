@@ -127,6 +127,31 @@ namespace GameSetting
         #region Cultivate
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, int> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500 }, { enum_Rarity.Rare, 3000 }, { enum_Rarity.Epic, 5000} };
+
+        public static readonly Dictionary<enum_PlayerCharacter, enum_PlayerWeaponIdentity> m_CharacterStartWeapon = new Dictionary<enum_PlayerCharacter, enum_PlayerWeaponIdentity>() { { enum_PlayerCharacter.Beth,enum_PlayerWeaponIdentity.UMP45},{ enum_PlayerCharacter.Vampire,enum_PlayerWeaponIdentity.PoisonWand},{ enum_PlayerCharacter.Railer,enum_PlayerWeaponIdentity.RailPistol} };
+
+        public static readonly Dictionary<enum_PlayerCharacter, float> m_CharacterUnlockCost = new Dictionary<enum_PlayerCharacter, float>() {
+            { enum_PlayerCharacter.Beth,5000 },{ enum_PlayerCharacter.Railer,6000},{ enum_PlayerCharacter.Vampire,7000}
+        };
+
+        public static readonly Dictionary<enum_PlayerCharacterEnhance, int> m_CharacterEnhanceCost = new Dictionary<enum_PlayerCharacterEnhance, int>() {
+            { enum_PlayerCharacterEnhance.Health,250 },
+            { enum_PlayerCharacterEnhance.Armor, 500 },
+            { enum_PlayerCharacterEnhance.MovementSpeed, 1000 },
+            { enum_PlayerCharacterEnhance.StartWeapon, 2000 },
+            { enum_PlayerCharacterEnhance.StageCoin, 3000 },
+            { enum_PlayerCharacterEnhance.Critical, 4000 },
+            { enum_PlayerCharacterEnhance.Ability, 5000 },
+            { enum_PlayerCharacterEnhance.DropWeapon, 6000 } };
+
+        public const int I_PlayerEnhanceMaxHealthAdditive = 50;
+        public const int I_PlayerEnhanceMaxArmorAddtive = 30;
+        public const float F_PlayerEnhanceMovementSpeedAdditive = .5f;
+        public const int I_PlayerEnhanceStartWeaponEnhanceAdditive = 1;
+        public const int I_PlayerEnhanceStageStartCoin = 20;
+        public const float F_PlayerEnhanceCriticalRateAdditive = 5f;
+        public const int I_PlayerEnhanceDropWeaponEnhanceAdditive = 1;
+
         #endregion
     }
 
@@ -241,6 +266,7 @@ namespace GameSetting
             return amountApply;
         }
     }
+
     public class EntityHealth : HealthBase
     {
         public float m_CurrentArmor { get; private set; }
@@ -434,7 +460,6 @@ namespace GameSetting
 
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
 
-
         public DamageInfo(int entityID, enum_DamageIdentity identity= enum_DamageIdentity.Default, int identityID=-1)
         {
             m_EntityID = entityID;
@@ -500,18 +525,21 @@ namespace GameSetting
         public float m_DamageMultiply { get; private set; } = 0f;
         public float m_DamageAdditive { get; private set; } = 0f;
         public float m_CriticalDamageMultiply { get; private set; } = 1f;
-        public float m_CriticalRate { get; private set; } = 0f;
+        public float m_CriticalRateAdditive { get; private set; } = 0f;
+
         public float DoFireRateTick(float deltaTime) => deltaTime * m_FireRateMultiply;
         public float DoReloadRateTick(float deltaTime) => deltaTime * m_ReloadRateMultiply;
-        public float GetMovementSpeed => m_Entity.m_baseMovementSpeed * m_MovementSpeedMultiply;
+
+        public float GetCharacterMovementSpeed() => m_Entity.GetBaseMovementSpeed() * m_MovementSpeedMultiply;
+        public float GetCharacterCritcalRate() => m_Entity.GetBaseCriticalRate() + m_CriticalRateAdditive;
 
         public float m_ExtraFireRateMultiply => m_FireRateMultiply - 1;
         public float m_ExtraCriticalHitMultiply => m_CriticalDamageMultiply - 1;
         public float m_ExtraMovemendSpeedMultiply => m_MovementSpeedMultiply-1f;
 
-        public DamageInfo GetDamageInfo(float baseDamage,float baseCritical=0, int buff = -1, enum_DamageType damageType = enum_DamageType.Basic,enum_DamageIdentity identityType= enum_DamageIdentity.Default,int identityID=-1)
+        public DamageInfo GetDamageInfo(float baseDamage,float criticalAdditive=0, int buff = -1, enum_DamageType damageType = enum_DamageType.Basic,enum_DamageIdentity identityType= enum_DamageIdentity.Default,int identityID=-1)
         {
-            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).SetDamageMultiply(m_DamageMultiply).SetDamageCritical(baseCritical+m_CriticalRate, m_CriticalDamageMultiply).AddPresetBuff(buff);
+            DamageInfo info = new DamageInfo(m_Entity.m_EntityID, identityType, identityID).SetDamage(baseDamage + m_DamageAdditive, damageType).SetDamageMultiply(m_DamageMultiply).SetDamageCritical(criticalAdditive+GetCharacterCritcalRate(), m_CriticalDamageMultiply).AddPresetBuff(buff);
             m_Expires.Traversal((EntityExpireBase interact) => { interact.OnAttackSetDamage(info); });
             return info;
         } 
@@ -631,7 +659,7 @@ namespace GameSetting
             m_ReloadRateMultiply = 1f;
             m_DamageMultiply = 0f;
             m_DamageAdditive = 0f;
-            m_CriticalRate = 0f;
+            m_CriticalRateAdditive = 0f;
             m_CriticalDamageMultiply = 1f;
         }
         protected virtual void OnSetExpireInfo(EntityExpireBase expire)
@@ -643,7 +671,7 @@ namespace GameSetting
             m_ReloadRateMultiply += expire.m_ReloadRateMultiply;
             m_DamageMultiply += expire.m_DamageMultiply;
             m_DamageAdditive += expire.m_DamageAdditive;
-            m_CriticalRate += expire.m_CriticalRateAdditive;
+            m_CriticalRateAdditive += expire.m_CriticalRateAdditive;
             m_CriticalDamageMultiply += expire.m_CriticalHitMultiplyAdditive;
         }
         protected virtual void AfterInfoSet()
@@ -652,7 +680,7 @@ namespace GameSetting
             if (m_MovementSpeedMultiply < 0) m_MovementSpeedMultiply = 0;
             if (m_HealReceiveMultiply < 0) m_HealReceiveMultiply = 0;
             if (m_CriticalDamageMultiply < 0) m_CriticalDamageMultiply = 0;
-            if (m_CriticalRate < 0) m_CriticalRate = 0;
+            if (m_CriticalRateAdditive < 0) m_CriticalRateAdditive = 0;
         }
         #endregion
 
@@ -904,11 +932,11 @@ namespace GameSetting
     public class EntityExpirePreset : EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.PresetBuff;
+        public override int m_Index => m_buffInfo.m_Index;
         public override int m_EffectIndex => m_buffInfo.m_EffectIndex;
         public override enum_ExpireRefreshType m_RefreshType => m_buffInfo.m_RefreshType;
         public override float m_DamageMultiply => m_buffInfo.m_DamageMultiply;
         public override float m_DamageReduction => m_buffInfo.m_DamageReduction;
-        public override int m_Index => m_buffInfo.m_Index;
         public override float m_FireRateMultiply => m_buffInfo.m_FireRateMultiply;
         public override float m_MovementSpeedMultiply => m_buffInfo.m_MovementSpeedMultiply;
         public override float m_ReloadRateMultiply => m_buffInfo.m_ReloadRateMultiply;

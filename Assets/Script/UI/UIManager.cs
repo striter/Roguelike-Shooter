@@ -16,6 +16,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     public AtlasLoader m_CommonSprites { get; private set; }
     public AtlasLoader m_ExpireSprites { get; private set; }
     public AtlasLoader m_WeaponSprites { get; private set; }
+    public AtlasLoader m_CharacterSprites { get; private set; }
     protected CB_GenerateTransparentOverlayTexture m_BlurBG { get; private set; }
     public static void Activate(bool inGame)
     {
@@ -38,6 +39,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_CommonSprites = TResources.GetUIAtlas_Common();
         m_ExpireSprites = TResources.GetUIAtlas_Expires();
         m_WeaponSprites = TResources.GetUIAtlas_Weapon();
+        m_CharacterSprites = TResources.GetUIAtlas_Character();
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();

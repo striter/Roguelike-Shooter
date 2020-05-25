@@ -28,6 +28,7 @@ public partial class TResources
 
         public const string S_UI_Atlas_Numeric = "UI/Atlas/Atlas_Numeric";
         public const string S_UI_Atlas_Common = "UI/Atlas/Atlas_Common";
+        public const string S_UI_Atlas_Character = "UI/Atlas/Atlas_Character";
         public const string S_UI_Atlas_InGame = "UI/Atlas/Atlas_InGame";
         public const string S_UI_Atlas_Expires = "UI/Atlas/Atlas_Expires";
         public const string S_UI_Atlas_Weapon = "UI/Atlas/Atlas_Weapon";
@@ -46,6 +47,7 @@ public partial class TResources
     public static GameObject InstantiateUIManager() => Instantiate(ConstPath.S_UI_Manager);
     public static AtlasLoader GetUIAtlas_Numeric() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Numeric));
     public static AtlasLoader GetUIAtlas_Common() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Common));
+    public static AtlasLoader GetUIAtlas_Character() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Character));
     public static AtlasLoader GetUIAtlas_InGame() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_InGame));
     public static AtlasLoader GetUIAtlas_Expires() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Expires));
     public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));

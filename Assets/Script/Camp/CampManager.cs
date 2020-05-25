@@ -50,7 +50,7 @@ public class CampManager : GameManagerBase
         m_LocalPlayer = character.OnPlayerActivate(new CGameProgressSave());
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
 
-        if (GameDataManager.CanChangeCharacter(character.m_Character))
+        if (GameDataManager.CheckCharacterUnlocked(character.m_Character))
             GameDataManager.SwitchCharacter(character.m_Character);
     }
 

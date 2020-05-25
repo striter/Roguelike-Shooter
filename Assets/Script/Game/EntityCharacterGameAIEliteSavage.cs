@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EntityCharacterGameAIEliteSavage : EntityCharacterGameAIElite {
     public float F_AttackMoveMultiply = 2f;
-    public override float m_baseMovementSpeed => base.m_baseMovementSpeed*m_AttackMoveMultiply;
+    public override float GetBaseMovementSpeed() => base.GetBaseMovementSpeed()*m_AttackMoveMultiply;
     float m_AttackMoveMultiply = 1f;
     protected override void OnEntityActivate(enum_EntityFlag flag)
     {

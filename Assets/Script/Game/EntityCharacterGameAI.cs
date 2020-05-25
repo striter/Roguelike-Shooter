@@ -68,7 +68,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     {
         base.OnExpireChange();
         if (m_Animator != null)  m_Animator.SetMovementFireSpeed(m_CharacterInfo.m_MovementSpeedMultiply, m_CharacterInfo.m_FireRateMultiply);
-        m_Agent.speed = m_CharacterInfo.GetMovementSpeed;
+        m_Agent.speed = m_CharacterInfo.GetCharacterMovementSpeed();
     }
 
     Vector3 m_DamageImpact;
@@ -315,7 +315,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
         m_MoveOrderTimer.SetTimerDuration(GameConst.AI.F_AIMaxRepositionDuration);
     }
 
-    bool ForceHoldPosition() => m_CharacterInfo.GetMovementSpeed == 0 || (m_b_attacking && !B_AttackMove);
+    bool ForceHoldPosition() => m_CharacterInfo.GetCharacterMovementSpeed() == 0 || (m_b_attacking && !B_AttackMove);
 
     void StopMoving() { m_AgentEnabled = false; }
     void SetDestination(Vector3 destination) { m_AgentEnabled = true; m_Agent.SetDestination(destination); }

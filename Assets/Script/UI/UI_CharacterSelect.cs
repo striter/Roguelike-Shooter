@@ -6,64 +6,156 @@ using GameSetting;
 using System;
 
 public class UI_CharacterSelect : UIPage {
+    Transform m_Attributes;
+    Text m_AttributeHealth, m_AttributeArmor, m_AttributeMovement, m_AttributeCritical;
+    UIC_WeaponInfoName m_AttributeWeapon;
 
-    Transform m_CharacterStatus;
-    Transform m_CharacterDetail;
-    Text m_CharacterName, m_CharacterIntro,m_CharacterAbility;
-    Button m_CharacterConfirm;
-    UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem> m_CharacterSelect;
-    UIT_GridControllerComponent<Text> m_AttributesGrid;
+    Transform m_AttributeStatus;
+    Transform m_AttributeMaxEnhance;
+    UIT_TextExtend m_AttributeUpgradeTitle;
+    Button m_AttributeButton;
+    UIT_TextExtend m_AttributeButtonTitle;
+    Text m_AttributeButtonAmount;
 
-    InteractCampCharacterSelect m_SelectModel;
-    enum_PlayerCharacter m_SelectingCharacter;
+    Transform m_Character;
+    UIT_TextExtend m_CharacterName;
+    UIT_GridControllerComponent<Image> m_CharacterEnhanceGrid;
+    UIT_TextExtend m_CharacterIntro;
+    UIC_CharacterAbility m_CharacterAbility;
+    Button m_CharacterSkinBtn;
+    UIC_Button m_CharacterConfirmBtn;
+
+    UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem> m_CharacterSelectGrid;
+
+    InteractCampCharacterSelect m_ModelViewer;
+    enum_PlayerCharacter m_SelectCharacter;
     protected override void Init()
     {
         base.Init();
-        m_CharacterStatus = rtf_Container.Find("CharacterStatus");
+        m_Attributes = rtf_Container.Find("Attributes");
+        m_AttributeHealth = m_Attributes.Find("Health/Amount").GetComponent<Text>();
+        m_AttributeArmor = m_Attributes.Find("Armor/Amount").GetComponent<Text>();
+        m_AttributeMovement = m_Attributes.Find("Movement/Amount").GetComponent<Text>();
+        m_AttributeCritical = m_Attributes.Find("Critical/Amount").GetComponent<Text>();
+        m_AttributeWeapon = new UIC_WeaponInfoName(m_Attributes.Find("Weapon/Info"));
+        m_AttributeStatus = m_Attributes.Find("Status");
+        m_AttributeMaxEnhance = m_AttributeStatus.Find("MaxEnhance");
+        m_AttributeUpgradeTitle = m_AttributeStatus.Find("UpgradeTitle").GetComponent<UIT_TextExtend>();
+        m_AttributeButton = m_AttributeStatus.Find("Button").GetComponent<Button>();
+        m_AttributeButton.onClick.AddListener(OnAttributeButtonClick);
+        m_AttributeButtonTitle = m_AttributeButton.transform.Find("Title").GetComponent<UIT_TextExtend>();
+        m_AttributeButtonAmount = m_AttributeButton.transform.Find("Amount").GetComponent<Text>();
 
-        m_CharacterDetail = rtf_Container.Find("CharacterDetail");
-        m_CharacterName = m_CharacterDetail.Find("Name").GetComponent<Text>();
-        m_CharacterIntro = m_CharacterDetail.Find("Intro").GetComponent<Text>();
-        m_CharacterAbility = m_CharacterDetail.Find("Ability").GetComponent<Text>();
-        m_CharacterConfirm = m_CharacterDetail.Find("Confirm").GetComponent<Button>();
-        m_CharacterConfirm.onClick.AddListener(OnConfirmBtnClick);
-        m_AttributesGrid = new UIT_GridControllerComponent<Text>(m_CharacterStatus.Find("Attributes"));
-        m_CharacterSelect = new UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem>(rtf_Container.Find("CharacterSelectGrid"),OnCharacterSelect);
-        TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelect.AddItem((int)character); });
+        m_Character = rtf_Container.Find("Character");
+        m_CharacterName = m_Character.Find("Name").GetComponent<UIT_TextExtend>();
+        m_CharacterEnhanceGrid = new UIT_GridControllerComponent<Image>(m_Character.Find("Enhance"));
+        m_CharacterIntro = m_Character.Find("Intro").GetComponent<UIT_TextExtend>();
+        m_CharacterAbility = new UIC_CharacterAbility(m_Character.Find("Ability"));
+        m_CharacterConfirmBtn = new UIC_Button(m_Character.Find("ConfirmBtn"),OnCharacterButtonClick);
+
+        m_CharacterSelectGrid = new UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem>(rtf_Container.Find("CharacterSelect/Viewport/Content"),OnCharacterSelect);
+        TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelectGrid.AddItem((int)character); });
     }
 
     public void Play(InteractCampCharacterSelect characterSelect)
     {
-        m_SelectingCharacter = enum_PlayerCharacter.Invalid;
         CampManager.Instance.RecycleLocalCharacter();
-        m_SelectModel = characterSelect;
-        m_CharacterSelect.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
+        m_ModelViewer = characterSelect;
+
+        m_SelectCharacter = enum_PlayerCharacter.Invalid;
+        m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
     }
 
-    void OnCharacterSelect(int index)=> UpdateCharacter((enum_PlayerCharacter)index);
 
-    void OnConfirmBtnClick()=>OnCancelBtnClick();
+    void OnCharacterSelect(int charcterIndex)
+    {
+        enum_PlayerCharacter character = (enum_PlayerCharacter)charcterIndex;
+        if (m_SelectCharacter == character)
+            return;
+        m_SelectCharacter = character;
+        m_ModelViewer.ShowCharacter(m_SelectCharacter);
+        UpdateInfo();
+    }
+
+    void UpdateInfo()
+    {
+        EntityCharacterPlayer _model = m_ModelViewer.m_CharacterModel;
+        PlayerCharacterCultivateSaveData cultivateData = GameDataManager.m_CharacterData.GetCharacterCultivateDetail(m_SelectCharacter);
+
+        m_AttributeHealth.text = (_model.I_MaxHealth + (cultivateData.m_Enhance >= enum_PlayerCharacterEnhance.Health ? GameConst.I_PlayerEnhanceMaxHealthAdditive : 0f)).ToString();
+        m_AttributeArmor.text = (_model.I_DefaultArmor + (cultivateData.m_Enhance >= enum_PlayerCharacterEnhance.Armor ? GameConst.I_PlayerEnhanceMaxArmorAddtive : 0f)).ToString();
+        m_AttributeMovement.text = (_model.F_MovementSpeed + (cultivateData.m_Enhance >= enum_PlayerCharacterEnhance.MovementSpeed ? GameConst.F_PlayerEnhanceMovementSpeedAdditive : 0f)).ToString();
+        m_AttributeCritical.text = (_model.F_CriticalRate+(cultivateData .m_Enhance>= enum_PlayerCharacterEnhance.Critical?GameConst.F_PlayerEnhanceCriticalRateAdditive:0f)).ToString();
+        m_AttributeWeapon.SetWeaponInfo(GameDataManager.GetWeaponProperties(GameConst.m_CharacterStartWeapon[m_SelectCharacter]),true, cultivateData.m_Enhance>= enum_PlayerCharacterEnhance.StartWeapon?1:0);
+
+        bool unlocked = GameDataManager.CheckCharacterUnlocked(m_SelectCharacter);
+        bool showUpgradeTitle = false;
+        bool showStatusButton = false;
+        bool maxEnhance = false;
+        if(!unlocked)
+        {
+            showStatusButton = true;
+            m_AttributeButtonTitle.localizeKey = "UI_CharacterSelect_Unlock";
+            m_AttributeButtonAmount.text = GameDataManager.GetCharacterUnlockPrice(m_SelectCharacter).ToString();
+        }
+        else if(GameDataManager.CheckCharacterEnhancable(m_SelectCharacter))
+        {
+            showStatusButton = true;
+            showUpgradeTitle = true;
+            m_AttributeUpgradeTitle.text = cultivateData.NextEnhance().GetIntroLocalizeKey();
+            m_AttributeButtonTitle.localizeKey = "UI_CharacterSelect_Enhance";
+            m_AttributeButtonAmount.text = GameDataManager.GetCharacterEnhancePrice(m_SelectCharacter).ToString();
+        }
+        else
+        {
+            maxEnhance = true;
+        }
+        m_AttributeButton.SetActivate(showStatusButton);
+        m_AttributeUpgradeTitle.SetActivate(showUpgradeTitle);
+        m_AttributeMaxEnhance.SetActivate(maxEnhance);
+
+        m_CharacterName.localizeKey = m_SelectCharacter.GetNameLocalizeKey();
+        m_CharacterIntro.localizeKey = m_SelectCharacter.GetIntroLocalizeKey();
+        m_CharacterAbility.SetAbilityInfo(m_SelectCharacter);
+        m_CharacterEnhanceGrid.ClearGrid();
+        for (int i = 0; i < (int)cultivateData.m_Enhance; i++)
+            m_CharacterEnhanceGrid.AddItem(i);
+
+        bool equipping = GameDataManager.m_CharacterData.m_CharacterSelected == m_SelectCharacter;
+        m_CharacterConfirmBtn.SetInteractable(unlocked&&!equipping);
+    }
+
+    void OnAttributeButtonClick()
+    {
+        if(GameDataManager.CanCharacterUnlock(m_SelectCharacter))
+        {
+            GameDataManager.DoUnlockCharacter(m_SelectCharacter);
+            GameDataManager.SwitchCharacter(m_SelectCharacter);
+            UpdateInfo();
+            return;
+        }
+
+        if(GameDataManager.CanEnhanceCharacter(m_SelectCharacter))
+        {
+            GameDataManager.DoEnhanceCharacter(m_SelectCharacter);
+            GameDataManager.SwitchCharacter(m_SelectCharacter);
+            UpdateInfo();
+            return;
+        }
+    }
+
+    void OnCharacterButtonClick()
+    {
+
+    }
+
+
 
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
-        CampManager.Instance.OnSwitchCharacter(m_SelectModel.m_Character);
+        m_ModelViewer.ShowCharacter(GameDataManager.m_CharacterData.m_CharacterSelected);
+        CampManager.Instance.OnSwitchCharacter(m_ModelViewer.m_CharacterModel);
     }
 
-    void UpdateCharacter(enum_PlayerCharacter character)
-    {
-        if (m_SelectingCharacter == character)
-            return;
-        m_SelectingCharacter = character;
-
-        m_CharacterName.text = character.GetNameLocalizeKey();
-        m_CharacterIntro.text = character.GetIntroLocalizeKey();
-        m_CharacterAbility.text = character.GetAbilityNameLocalizeKey();
-        m_CharacterConfirm.interactable = GameDataManager.CanChangeCharacter(character);
-        EntityCharacterPlayer characterModel = m_SelectModel.ShowCharacter(character);
-        m_AttributesGrid.ClearGrid();
-        m_AttributesGrid.AddItem().text = "Armor:" + characterModel.I_DefaultArmor;
-        m_AttributesGrid.AddItem().text = "Move Speed:" + characterModel.F_MovementSpeed;
-        m_AttributesGrid.AddItem().text = "Health:" + characterModel.I_MaxHealth;
-    }
 }

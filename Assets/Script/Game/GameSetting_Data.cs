@@ -33,7 +33,7 @@ namespace GameSetting
     {
         public static CGameSave m_GameData => TGameData<CGameSave>.Data;
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
-        public static CCharacterUpgradeData m_CharacterData => TGameData<CCharacterUpgradeData>.Data;
+        public static CPlayerCharactersCultivateData m_CharacterData => TGameData<CPlayerCharactersCultivateData>.Data;
         public static CGameProgressSave m_GameProgressData => TGameData<CGameProgressSave>.Data;
 
         public static bool m_Inited { get; private set; } = false;
@@ -50,12 +50,13 @@ namespace GameSetting
             InitArmory();
 
             TGameData<CGameSave>.Init();
-            TGameData<CCharacterUpgradeData>.Init();
+            TGameData<CPlayerCharactersCultivateData>.Init();
             TGameData<CArmoryData>.Init();
             TGameData<CGameProgressSave>.Init();
 
             InitArmoryGameWeaponUnlocked();
         }
+
         #region GameSave
         public static void OnNewGame()
         {
@@ -172,22 +173,6 @@ namespace GameSetting
             InitArmoryGameWeaponUnlocked();
         }
 
-        public static void OnArmorySelect(enum_PlayerWeaponIdentity weapon)
-        {
-            if (!m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
-            {
-                Debug.LogError("Error! Equipping A Locked Weapon!");
-                return;
-            }
-            if (weapon == m_ArmoryData.m_WeaponSelected)
-            {
-                Debug.LogError("Error! Equipping A Selcted Weapon!");
-                return;
-            }
-            m_ArmoryData.m_WeaponSelected = weapon;
-            TGameData<CArmoryData>.Save();
-        }
-
         public static enum_PlayerWeaponIdentity UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
         {
             Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>> _blueprintAvailable = new Dictionary<enum_Rarity, List<enum_PlayerWeaponIdentity>>();
@@ -218,18 +203,70 @@ namespace GameSetting
         #endregion
 
         #region CharacterData
-        public static bool CanChangeCharacter(enum_PlayerCharacter character) => m_CharacterData.m_CharacterSelected != character;
         public static void SwitchCharacter(enum_PlayerCharacter character)
         {
-            if (!CanChangeCharacter(character))
+            if (!CheckCharacterUnlocked(character))
             {
-                Debug.LogError("Can't Change Character!");
+                Debug.LogError("Can't Change To Locked Character!");
                 return;
             }
 
             m_CharacterData.ChangeSelectedCharacter(character);
-            TGameData<CCharacterUpgradeData>.Save();
+            TGameData<CPlayerCharactersCultivateData>.Save();
         }
+
+        public static bool CheckCharacterUnlocked(enum_PlayerCharacter character) => !m_CharacterData.GetCharacterCultivateDetail(character).m_Unlocked;
+        public static float GetCharacterUnlockPrice(enum_PlayerCharacter character)
+        {
+            if (!GameConst.m_CharacterUnlockCost.ContainsKey(character))
+            {
+                Debug.LogError("Invalid Character Found From Dic!" + character);
+                return -1;
+            }
+            return GameConst.m_CharacterUnlockCost[character];
+        }
+        public static bool CanCharacterUnlock(enum_PlayerCharacter character) => !CheckCharacterUnlocked(character) &&CanUseCredit(GetCharacterUnlockPrice(character));
+        public static void DoUnlockCharacter(enum_PlayerCharacter character)
+        {
+            if (!CanCharacterUnlock(character))
+            {
+                Debug.LogError("Can't Unlock Invalid Character!");
+                return;
+            }
+            OnCreditStatus(-GetCharacterUnlockPrice(character));
+            m_CharacterData.DoUnlock(character);
+            TGameData<CPlayerCharactersCultivateData>.Save();
+        }
+
+
+        public static bool CheckCharacterEnhancable(enum_PlayerCharacter character) => m_CharacterData.GetCharacterCultivateDetail(character).CanEnhance();
+        public static float GetCharacterEnhancePrice(enum_PlayerCharacter character)
+        {
+            if(!CheckCharacterEnhancable(character))
+            {
+                Debug.LogError("Invlaid Character Enhance!");
+                return 0;
+            }
+            enum_PlayerCharacterEnhance enhance = m_CharacterData.GetCharacterCultivateDetail(character).m_Enhance;
+            if (GameConst.m_CharacterEnhanceCost.ContainsKey(enhance))
+            {
+                Debug.LogError("Invalid Character Enhance From Dic!" + enhance);
+                return 0;
+            }
+            return GameConst.m_CharacterEnhanceCost[enhance];
+        }
+        public static bool CanEnhanceCharacter(enum_PlayerCharacter character) => CheckCharacterEnhancable(character)&&CanUseCredit(GetCharacterEnhancePrice(character));
+        public static void DoEnhanceCharacter(enum_PlayerCharacter character)
+        {
+            if(CanEnhanceCharacter(character))
+            {
+                Debug.LogError("Can't Enhance A Invalid Character!");
+                return;
+            }
+            OnCreditStatus(GetCharacterEnhancePrice(character));
+            m_CharacterData.DoEnhance(character);
+            TGameData<CPlayerCharactersCultivateData>.Save();
+        } 
         #endregion
 
         #region Player Perk Data
@@ -402,17 +439,21 @@ namespace GameSetting
         public int m_Keys;
         public int m_TotalExp;
         public enum_PlayerCharacter m_Character;
+        public enum_PlayerCharacterEnhance m_Enhance;
         public WeaponSaveData m_Weapon1;
         public WeaponSaveData m_Weapon2;
         public List<PerkSaveData> m_Perks;
 
         public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked;
 
-        public CGameProgressSave() : this(GameDataManager.m_GameData.m_GameDifficulty,GameDataManager.m_CharacterData.m_CharacterSelected, GameDataManager.m_ArmoryData.m_WeaponSelected)
+        public CGameProgressSave()
         {
+            enum_PlayerCharacter characterSelected = GameDataManager.m_CharacterData.m_CharacterSelected;
+            enum_PlayerCharacterEnhance playerEnhance = GameDataManager.m_CharacterData.GetCharacterCultivateDetail(characterSelected).m_Enhance;
+            SetData(GameDataManager.m_GameData.m_GameDifficulty, characterSelected, playerEnhance, WeaponSaveData.New(GameConst.m_CharacterStartWeapon[characterSelected], playerEnhance >= enum_PlayerCharacterEnhance.StartWeapon ? 1 : 0), WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid));
         }
 
-        public CGameProgressSave(enum_GameDifficulty difficulty, enum_PlayerCharacter character, enum_PlayerWeaponIdentity weapon)
+        public CGameProgressSave SetData(enum_GameDifficulty difficulty, enum_PlayerCharacter character,enum_PlayerCharacterEnhance enhance, WeaponSaveData weapon1,WeaponSaveData weapon2)
         {
             m_GameSeed = DateTime.Now.ToLongTimeString();
             m_GameDifficulty = difficulty;
@@ -423,22 +464,27 @@ namespace GameSetting
             m_Health = -1;
             m_Character = character;
             m_Perks = new List<PerkSaveData>();
-            m_Weapon1 = WeaponSaveData.New(weapon);
-            m_Weapon2 = WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid);
+            m_Weapon1 = weapon1;
+            m_Weapon2 = weapon2;
             m_Stage = enum_GameStage.Rookie;
             m_ArmoryBlueprintsUnlocked = new List<enum_PlayerWeaponIdentity>();
+            return this;
         }
 
         public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level,GameBattleManager _battle)
         {
             m_TimeElapsed = _battle.m_TimeElapsed;
             m_Stage = _level.m_Stage;
+
+            m_Character = _player.m_Character;
+            m_Enhance = _player.m_Enhance;
             m_Keys = _player.m_CharacterInfo.m_Keys;
             m_TotalExp = _player.m_CharacterInfo.m_RankManager.m_TotalExpOwned;
             m_Health = _player.m_Health.m_CurrentHealth;
+
             m_Weapon1 = WeaponSaveData.Save(_player.m_Weapon1);
             m_Weapon2 = WeaponSaveData.Save(_player.m_Weapon2);
-            m_Perks = PerkSaveData.Create(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
+            m_Perks = PerkSaveData.Save(_player.m_CharacterInfo.m_ExpirePerks.Values.ToList());
             m_ArmoryBlueprintsUnlocked = _level.m_ArmoryBlueprintsUnlocked;
         }
 
@@ -451,12 +497,11 @@ namespace GameSetting
     {
         public List<enum_PlayerWeaponIdentity> m_WeaponsUnlocked;
         public List<enum_PlayerWeaponIdentity> m_WeaponBlueprints;
-        public enum_PlayerWeaponIdentity m_WeaponSelected;
+
         public CArmoryData()
         {
             m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.UMP45, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.AKM, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.FrostWand };
             m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Flamer };
-            m_WeaponSelected = enum_PlayerWeaponIdentity.P92;
         }
 
         public void DataRecorrect()
@@ -464,16 +509,52 @@ namespace GameSetting
         }
     }
 
-    public class CCharacterUpgradeData:ISave
+    public class CPlayerCharactersCultivateData:ISave
     {
         public enum_PlayerCharacter m_CharacterSelected;
+        public Dictionary<enum_PlayerCharacter, PlayerCharacterCultivateSaveData> m_CharacterDetail;
 
-        public CCharacterUpgradeData()
+        public CPlayerCharactersCultivateData()
         {
             m_CharacterSelected = enum_PlayerCharacter.Railer;
+            m_CharacterDetail = new Dictionary<enum_PlayerCharacter, PlayerCharacterCultivateSaveData>() { { enum_PlayerCharacter.Beth, new PlayerCharacterCultivateSaveData(true, enum_PlayerCharacterEnhance.Armor)} };
         }
 
         public void ChangeSelectedCharacter(enum_PlayerCharacter character) => m_CharacterSelected = character;
+
+        void Check(enum_PlayerCharacter character)
+        {
+            if (!m_CharacterDetail.ContainsKey(character))
+                m_CharacterDetail.Add(character, new PlayerCharacterCultivateSaveData(false, enum_PlayerCharacterEnhance.None));
+        }
+
+        public PlayerCharacterCultivateSaveData GetCharacterCultivateDetail(enum_PlayerCharacter character)
+        {
+            Check(character);
+            return m_CharacterDetail[character];
+        }
+        public void DoUnlock(enum_PlayerCharacter character)
+        {
+            Check(character);
+
+            if (m_CharacterDetail[character].m_Unlocked)
+            {
+                Debug.LogError("Can't Unlock Unlocked!");
+                return;
+            }
+            m_CharacterDetail[character] = m_CharacterDetail[character].Unlock();
+        }
+
+        public void DoEnhance(enum_PlayerCharacter character)
+        {
+            Check(character);
+            if(m_CharacterDetail[character].m_Enhance>= enum_PlayerCharacterEnhance.Max)
+            {
+                Debug.LogError("Can't Enhance Max!");
+                return;
+            }
+            m_CharacterDetail[character] = m_CharacterDetail[character].Enhance();
+        }
 
         public void DataRecorrect()
         {
@@ -508,12 +589,14 @@ namespace GameSetting
         }
     }
 
+
     public struct WeaponSaveData : IDataConvert
     {
         public enum_PlayerWeaponIdentity m_Weapon { get; private set; }
         public int m_Enhance { get; private set; }
-        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeaponIdentity.Invalid,m_Enhance=weapon!=null?weapon.m_EnhanceLevel:0 };
+
         public static WeaponSaveData New(enum_PlayerWeaponIdentity weapon,int enhanceLevel=0) => new WeaponSaveData() { m_Weapon = weapon,m_Enhance=enhanceLevel };
+        public static WeaponSaveData Save(WeaponBase weapon) => new WeaponSaveData() { m_Weapon = weapon != null ? weapon.m_WeaponInfo.m_Weapon : enum_PlayerWeaponIdentity.Invalid, m_Enhance = weapon != null ? weapon.m_EnhanceLevel : 0 };
     }
 
     public struct PerkSaveData : IDataConvert
@@ -521,14 +604,39 @@ namespace GameSetting
         public int m_Index { get; private set; }
         public int m_PerkStack { get; private set; }
         public float m_RecordData { get; private set; }
+
         public static PerkSaveData New(int index) => new PerkSaveData() { m_Index = index, m_PerkStack = 1, m_RecordData = -1 };
         public static PerkSaveData Create(ExpirePlayerPerkBase perk) => new PerkSaveData() { m_Index = perk.m_Index, m_PerkStack = perk.m_Stack, m_RecordData = perk.m_RecordData };
-        public static List<PerkSaveData> Create(List<ExpirePlayerPerkBase> perks)
+        public static List<PerkSaveData> Save(List<ExpirePlayerPerkBase> perks)
         {
             List<PerkSaveData> data = new List<PerkSaveData>();
             perks.Traversal((ExpirePlayerPerkBase perk) => { data.Add(Create(perk)); });
             return data;
         }
+    }
+    
+    public struct PlayerCharacterCultivateSaveData:IDataConvert
+    {
+        public bool m_Unlocked { get; private set; }
+        public enum_PlayerCharacterEnhance m_Enhance { get; private set; }
+        public PlayerCharacterCultivateSaveData(bool unlocked,enum_PlayerCharacterEnhance enhance)
+        {
+            m_Unlocked = unlocked;
+            m_Enhance = enhance;
+        }
+        public PlayerCharacterCultivateSaveData Unlock()
+        {
+            m_Unlocked = true;
+            return this;
+        }
+        public PlayerCharacterCultivateSaveData Enhance()
+        {
+            m_Enhance =NextEnhance();
+            return this;
+        }
+
+        public bool CanEnhance() => m_Unlocked&&m_Enhance < enum_PlayerCharacterEnhance.Max;
+        public enum_PlayerCharacterEnhance NextEnhance() => m_Enhance + 1;
     }
     #endregion
 

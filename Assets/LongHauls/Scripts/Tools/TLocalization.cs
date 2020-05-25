@@ -6,6 +6,7 @@ public enum enum_Option_LanguageRegion
 {
     CN=1,
     EN=2,
+    EU,
 }
 public static class TLocalization 
 {

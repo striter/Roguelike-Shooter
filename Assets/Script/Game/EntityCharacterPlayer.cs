@@ -11,44 +11,48 @@ public class EntityCharacterPlayer : EntityCharacterBase
     public int I_HealthPerRank=10;
     public int I_DefaultArmor;
     public int I_ArmorPerRank=10;
+
     public override enum_EntityType m_ControllType => enum_EntityType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
-    protected virtual PlayerCharacterBethAnimator m_Animator { get; private set; }
+    protected override enum_GameVFX m_DamageClip => enum_GameVFX.PlayerDamage;
 
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
     protected SFXAimAssist m_AimAssist = null;
     public bool m_weaponEquipingFirst { get; private set; } = false;
+    protected virtual PlayerCharacterBethAnimator m_Animator { get; private set; }
+
+    public enum_PlayerCharacterEnhance m_Enhance { get; private set; }
     public WeaponBase m_WeaponCurrent => m_weaponEquipingFirst ? m_Weapon1 : m_Weapon2;
     public WeaponBase m_Weapon1 { get; private set; }
     public WeaponBase m_Weapon2 { get; private set; }
     public InteractBase m_Interact { get; private set; }
     public Transform tf_UIStatus { get; private set; }
-    public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
-    public override MeshRenderer m_WeaponSkin => m_WeaponCurrent.m_WeaponSkin;
-    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.GetMovementSpeed * time;
     public new PlayerExpireManager m_CharacterInfo { get; private set; }
     public bool m_Aiming { get; private set; } = false;
-    protected override enum_GameVFX m_DamageClip => enum_GameVFX.PlayerDamage;
     public new EntityPlayerHealth m_Health { get; private set; }
+
+    NavMeshAgent m_Agent;
+    CharacterController m_Controller;
+    TimerBase m_ArmorRegenTimer = new TimerBase(GameConst.F_PlayerArmorRegenDuration);
+
+    public override Transform tf_Weapon => m_WeaponCurrent.m_Muzzle;
+    public override MeshRenderer m_WeaponSkin => m_WeaponCurrent.m_WeaponSkin;
+    public override Vector3 m_PrecalculatedTargetPos(float time) => tf_Head.position + (transform.right * m_MoveAxisInput.x + transform.forward * m_MoveAxisInput.y).normalized * m_CharacterInfo.GetCharacterMovementSpeed() * time;
     protected override HealthBase GetHealthManager()
     {
         m_Health=new EntityPlayerHealth(this, OnUIHealthChanged);
         return m_Health;
     }
     
-    NavMeshAgent m_Agent;
-    CharacterController m_Controller;
-    TimerBase m_ArmorRegenTimer = new TimerBase(GameConst.F_PlayerArmorRegenDuration);
-
-    protected float m_BaseMovementSpeed;
-    public override float m_baseMovementSpeed => m_BaseMovementSpeed;
     protected float f_aimMovementReduction = 0f;
     protected bool m_aimingMovementReduction => f_aimMovementReduction > 0f;
     protected TimerBase m_ReviveTimer=new TimerBase(GameConst.F_PlayerReviveCheckAfterDead);
 
-    public float GetMaxHealthAdditive() => m_CharacterInfo.m_RankManager.m_Rank * I_HealthPerRank + m_CharacterInfo.F_MaxHealthAdditive;
-    public float GetMaxArmorAdditive() => m_CharacterInfo.m_RankManager.m_Rank * I_ArmorPerRank + m_CharacterInfo.F_MaxArmorAdditive;
+    public override float GetBaseMovementSpeed() => (base.GetBaseMovementSpeed()+(m_Enhance>= enum_PlayerCharacterEnhance.MovementSpeed?GameConst.F_PlayerEnhanceMovementSpeedAdditive:0f)) * CalculateMovementSpeedMultiple();
+    public override float GetBaseCriticalRate()=> base.GetBaseCriticalRate()+(m_Enhance>= enum_PlayerCharacterEnhance.Critical?GameConst.F_PlayerEnhanceCriticalRateAdditive:0f);
+    public float GetMaxHealthAdditive() =>  m_CharacterInfo.m_RankManager.m_Rank * I_HealthPerRank + m_CharacterInfo.F_MaxHealthAdditive+(m_Enhance>= enum_PlayerCharacterEnhance.Health?GameConst.I_PlayerEnhanceMaxHealthAdditive:0f);
+    public float GetMaxArmorAdditive() => m_CharacterInfo.m_RankManager.m_Rank * I_ArmorPerRank + m_CharacterInfo.F_MaxArmorAdditive+(m_Enhance>=enum_PlayerCharacterEnhance.Armor?GameConst.I_PlayerEnhanceMaxArmorAddtive:0f);
 
     protected override CharacterExpireManager GetEntityInfo()
     {
@@ -75,6 +79,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
     public  EntityCharacterPlayer OnPlayerActivate(CGameProgressSave _battleSave)
     {
         OnEntityActivate(enum_EntityFlag.Player);
+        m_Enhance = _battleSave.m_Enhance;
         UIManager.Instance.DoBindings(this, OnMovementDelta, null, OnMainDown, OnSubDown, OnAbilityDown);
 
         m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, _battleSave.m_Health >= 0 ? _battleSave.m_Health : I_MaxHealth);
@@ -88,6 +93,12 @@ public class EntityCharacterPlayer : EntityCharacterBase
             ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon2));
         OnSwapWeapon(true);
         return this;
+    }
+
+    public override void OnPoolSpawn()
+    {
+        base.OnPoolSpawn();
+        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
     }
     public override void OnPoolRecycle()
     {
@@ -113,6 +124,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_Interact = null;
         OnInteractStatus();
         UIManager.Instance.RemoveBindings();
+        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
     }
 
     public void PlayAttackTriggering(bool attacking) => m_Animator.Attacking(attacking);
@@ -207,7 +219,6 @@ public class EntityCharacterPlayer : EntityCharacterBase
         }
     }
 
-    protected virtual float CalculateMovementSpeedBase() => F_MovementSpeed;
     protected virtual float CalculateMovementSpeedMultiple()=> m_aimingMovementReduction ? (1 - GameConst.F_AimMovementReduction * m_CharacterInfo.F_AimMovementStrictMultiply) : 1f;
     protected virtual Quaternion GetCharacterRotation() => m_CharacterRotation;
     protected virtual Vector3 CalculateMoveDirection(Vector2 axisInput) => Vector3.Normalize(CameraController.CameraXZRightward * axisInput.x + CameraController.CameraXZForward * axisInput.y);
@@ -350,14 +361,13 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
         TargetTick(deltaTime);
         
-        m_BaseMovementSpeed = CalculateMovementSpeedBase() * CalculateMovementSpeedMultiple();
         if (m_AimingTarget)
             m_CharacterRotation = Quaternion.LookRotation(TCommon.GetXZLookDirection(tf_Head.position, m_AimingTarget.tf_Head.position),Vector3.up); 
         else  if (m_MoveAxisInput != Vector2.zero)
             m_CharacterRotation = Quaternion.LookRotation(m_MoveAxisInput.x * CameraController.CameraXZRightward + m_MoveAxisInput.y * CameraController.CameraXZForward,Vector3.up);
 
         Vector3 moveDirection = CalculateMoveDirection(m_MoveAxisInput);
-        float finalMovementSpeed = m_CharacterInfo.GetMovementSpeed;
+        float finalMovementSpeed = m_CharacterInfo.GetCharacterMovementSpeed();
         m_Controller.Move(moveDirection * finalMovementSpeed * deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, GetCharacterRotation(), deltaTime * GameConst.I_PlayerRotationSmoothParam);
         m_Animator.SetRun(new Vector2(Vector3.Dot(transform.right, moveDirection), Vector3.Dot(transform.forward, moveDirection)), m_CharacterInfo.m_MovementSpeedMultiply,m_Aiming);
@@ -427,6 +437,12 @@ public class EntityCharacterPlayer : EntityCharacterBase
         float amount = base.OnReceiveDamageAmount(damageInfo, direction);
         GameManagerBase.Instance.SetEffect_Impact(transform.InverseTransformDirection(direction));
         return amount;
+    }
+
+    void OnStageStart()
+    {
+        if (m_Enhance >= enum_PlayerCharacterEnhance.StageCoin)
+            m_CharacterInfo.OnCoinsGain(GameConst.I_PlayerEnhanceStageStartCoin);
     }
     #endregion
     #region Indicator

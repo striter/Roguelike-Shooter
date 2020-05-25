@@ -6,29 +6,31 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIGI_CharacterSelectItem : UIT_GridItem,IGridHighlight {
-    Text m_Name;
-    Transform m_Highlight;
+    Transform m_Selected,m_Normal;
+    Image m_Image;
+    Action<int> OnButtonClick;
     public override void OnInitItem()
     {
         base.OnInitItem();
-        m_Name = rtf_Container.Find("Name").GetComponent<Text>();
-        m_Highlight = rtf_Container.Find("Highlight");
+        m_Normal = rtf_Container.Find("Normal");
+        m_Image = rtf_Container.Find("Image").GetComponent<Image>();
+        m_Selected = rtf_Container.Find("Selected");
+        GetComponent<Button>().onClick.AddListener(() => { OnButtonClick(m_Identity); });
     }
 
     public override void OnAddItem(int identity)
     {
         base.OnAddItem(identity);
-        m_Name.text = ((enum_PlayerCharacter)identity).ToString();
+        m_Image.sprite = UIManager.Instance.m_CharacterSprites[((enum_PlayerCharacter)identity).GetIconSprite()]; 
     }
 
-    public void AttachSelectButton(Action<int> OnButtonClick)
-    {
-        GetComponentInChildren<Button>().onClick.AddListener(()=> { OnButtonClick(m_Identity); });
-    }
+    public void AttachSelectButton(Action<int> OnButtonClick)=>this.OnButtonClick = OnButtonClick;
 
     public void OnHighlight(bool highlight)
     {
-        m_Highlight.SetActivate(highlight);
+        m_Selected.SetActivate(highlight);
+        m_Normal.SetActivate(!highlight);
+        m_Image.color = TCommon.ColorAlpha(Color.white, highlight ? 1f : .6f);
     }
 
 }
