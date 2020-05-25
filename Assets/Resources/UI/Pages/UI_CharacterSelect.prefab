@@ -3072,9 +3072,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u8BE5\u89D2\u8272\u6210\u957F\u5DF2\u8FBE\u5230\u4E0A\u9650"
-  B_AutoLocalize: 0
-  S_AutoLocalizeKey: 
+  m_Text: XXXXXXXXXXXXXX
+  B_AutoLocalize: 1
+  S_AutoLocalizeKey: UI_CharacterSelect_MaxEnhance
   m_characterSpacing: 2
 --- !u!114 &114966085199121750
 MonoBehaviour:
@@ -4403,10 +4403,10 @@ RectTransform:
   m_Father: {fileID: 224809610501496310}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 90, y: -90}
-  m_SizeDelta: {x: 180, y: 180}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224782809695214140
 RectTransform:
