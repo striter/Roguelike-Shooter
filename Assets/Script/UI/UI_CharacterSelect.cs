@@ -55,17 +55,15 @@ public class UI_CharacterSelect : UIPage {
         m_CharacterConfirmBtn = new UIC_Button(m_Character.Find("ConfirmBtn"),OnCharacterButtonClick);
 
         m_CharacterSelectGrid = new UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem>(rtf_Container.Find("CharacterSelect/Viewport/Content"),OnCharacterSelect);
-        TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelectGrid.AddItem((int)character); });
     }
 
     public void Play(InteractCampCharacterSelect characterSelect)
     {
         CampManager.Instance.RecycleLocalCharacter();
         m_ModelViewer = characterSelect;
-
         m_SelectCharacter = enum_PlayerCharacter.Invalid;
-        m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
         m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
+        UpdateAllCharacterInfo();
     }
     protected override void OnHideFinished()
     {
@@ -81,14 +79,21 @@ public class UI_CharacterSelect : UIPage {
             return;
         m_SelectCharacter = character;
         m_ModelViewer.ShowCharacter(m_SelectCharacter);
-        UpdateInfo();
+        UpdateSelectedInfo();
     }
     private void Update()
     {
         m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.transform.position,2f);
     }
 
-    void UpdateInfo()
+    void UpdateAllCharacterInfo()
+    {
+        m_CharacterSelectGrid.ClearGrid();
+        TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelectGrid.AddItem((int)character); });
+        m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
+    }
+
+    void UpdateSelectedInfo()
     {
         EntityCharacterPlayer _model = m_ModelViewer.m_CharacterModel;
         PlayerCharacterCultivateSaveData cultivateData = GameDataManager.m_CharacterData.GetCharacterCultivateDetail(m_SelectCharacter);
@@ -136,19 +141,20 @@ public class UI_CharacterSelect : UIPage {
         m_CharacterConfirmBtn.SetInteractable(unlocked&&!equipping);
     }
 
+
     void OnAttributeButtonClick()
     {
         if(GameDataManager.CanCharacterUnlock(m_SelectCharacter))
         {
             GameDataManager.DoUnlockCharacter(m_SelectCharacter);
-            UpdateInfo();
+            UpdateAllCharacterInfo();
             return;
         }
 
         if(GameDataManager.CanEnhanceCharacter(m_SelectCharacter))
         {
             GameDataManager.DoEnhanceCharacter(m_SelectCharacter);
-            UpdateInfo();
+            UpdateAllCharacterInfo();
             return;
         }
     }
@@ -158,7 +164,7 @@ public class UI_CharacterSelect : UIPage {
         if (GameDataManager.CheckCharacterEquipping(m_SelectCharacter) || !GameDataManager.CheckCharacterUnlocked(m_SelectCharacter))
             return;
         GameDataManager.DoSwitchCharacter(m_SelectCharacter);
-        UpdateInfo();
+        UpdateAllCharacterInfo();
     }
 
 

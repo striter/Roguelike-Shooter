@@ -193,7 +193,7 @@ SpriteAtlas:
   - icon_video
   - icon_damage
   - icon_Life
-  - icon_Armor
+  - icon_armor
   - icon_score
   - icon_weapon
   - icon_time

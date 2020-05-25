@@ -305,7 +305,7 @@ namespace GameSetting
         public void SetAbilityInfo(enum_PlayerCharacter character)
         {
             m_AbilityIntro.formatText(character.GetAbilityDetailLocalizeKey(), string.Format("<color=#FE9E00FF>{0}</color>", "?"), string.Format("<color=#FE9E00FF>{0}</color>", "¿"));
-            m_AbilityTitle.text = character.GetNameLocalizeKey().GetKeyLocalized();
+            m_AbilityTitle.localizeKey = character.GetAbilityNameLocalizeKey();
             m_AbilityImage.sprite = UIManager.Instance.m_CommonSprites[character.GetAbilitySprite()];
         }
     }
