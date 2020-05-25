@@ -149,7 +149,7 @@ namespace GameSetting
         public const float F_PlayerEnhanceMovementSpeedAdditive = .5f;
         public const int I_PlayerEnhanceStartWeaponEnhanceAdditive = 1;
         public const int I_PlayerEnhanceStageStartCoin = 20;
-        public const float F_PlayerEnhanceCriticalRateAdditive = 5f;
+        public const float F_PlayerEnhanceCriticalRateAdditive = .05f;
         public const int I_PlayerEnhanceDropWeaponEnhanceAdditive = 1;
 
         #endregion
