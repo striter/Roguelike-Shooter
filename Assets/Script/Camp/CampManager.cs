@@ -34,7 +34,7 @@ public class CampManager : GameManagerBase
     {
         base.Start();
         InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
-        OnSwitchCharacter(GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_CharacterData.m_CharacterSelected,tf_PlayerStart.position,tf_PlayerStart.rotation));
+        OnSetCharacter(GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_CharacterData.m_CharacterSelected,tf_PlayerStart.position,tf_PlayerStart.rotation));
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
@@ -45,13 +45,10 @@ public class CampManager : GameManagerBase
         m_LocalPlayer.DoRecycle();
     }
 
-    public void OnSwitchCharacter(EntityCharacterPlayer character)
+    public void OnSetCharacter(EntityCharacterPlayer character)
     {
         m_LocalPlayer = character.OnPlayerActivate(new CGameProgressSave());
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
-
-        if (GameDataManager.CheckCharacterUnlocked(character.m_Character))
-            GameDataManager.DoSwitchCharacter(character.m_Character);
     }
 
     protected override void Update()

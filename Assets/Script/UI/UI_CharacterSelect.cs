@@ -151,12 +151,11 @@ public class UI_CharacterSelect : UIPage {
     }
 
 
-
     protected override void OnCancelBtnClick()
     {
         base.OnCancelBtnClick();
         m_ModelViewer.ShowCharacter(GameDataManager.m_CharacterData.m_CharacterSelected);
-        CampManager.Instance.OnSwitchCharacter(m_ModelViewer.m_CharacterModel);
+        CampManager.Instance.OnSetCharacter(m_ModelViewer.m_CharacterModel);
     }
 
 }
