@@ -61,13 +61,12 @@ public class UI_CharacterSelect : UIPage {
     {
         CampManager.Instance.RecycleLocalCharacter();
         m_ModelViewer = characterSelect;
-        m_SelectCharacter = enum_PlayerCharacter.Invalid;
         m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
-        UpdateAllCharacterInfo();
+        UpdateAllCharacterInfo(GameDataManager.m_CharacterData.m_CharacterSelected);
     }
     private void Update()
     {
-        m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.transform.position, 2f);
+        m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.tf_Head.position, 2f);
     }
     protected override void OnHideFinished()
     {
@@ -76,11 +75,13 @@ public class UI_CharacterSelect : UIPage {
         CameraController.Instance.m_Effect.RemoveCameraEffect<PE_FocalDepth>();
     }
 
-    void UpdateAllCharacterInfo()
+    void UpdateAllCharacterInfo(enum_PlayerCharacter highlightCharacter)
     {
         m_CharacterSelectGrid.ClearGrid();
         TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelectGrid.AddItem((int)character); });
-        m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
+
+        m_SelectCharacter = enum_PlayerCharacter.Invalid;
+        m_CharacterSelectGrid.OnItemClick((int)highlightCharacter);
     }
 
     void OnCharacterSelect(int charcterIndex)
@@ -147,14 +148,14 @@ public class UI_CharacterSelect : UIPage {
         if(GameDataManager.CanCharacterUnlock(m_SelectCharacter))
         {
             GameDataManager.DoUnlockCharacter(m_SelectCharacter);
-            UpdateAllCharacterInfo();
+            UpdateAllCharacterInfo(m_SelectCharacter);
             return;
         }
 
         if(GameDataManager.CanEnhanceCharacter(m_SelectCharacter))
         {
             GameDataManager.DoEnhanceCharacter(m_SelectCharacter);
-            UpdateAllCharacterInfo();
+            UpdateAllCharacterInfo(m_SelectCharacter);
             return;
         }
     }
@@ -164,8 +165,7 @@ public class UI_CharacterSelect : UIPage {
         if (GameDataManager.CheckCharacterEquipping(m_SelectCharacter) || !GameDataManager.CheckCharacterUnlocked(m_SelectCharacter))
             return;
         GameDataManager.DoSwitchCharacter(m_SelectCharacter);
-        m_SelectCharacter = enum_PlayerCharacter.Invalid;
-        UpdateAllCharacterInfo();
+        UpdateAllCharacterInfo(m_SelectCharacter);
     }
 
 

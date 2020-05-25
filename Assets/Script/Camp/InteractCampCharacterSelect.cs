@@ -27,6 +27,9 @@ public class InteractCampCharacterSelect : InteractCampBase {
 
     public void ShowCharacter(enum_PlayerCharacter character)
     {
+        if (m_CharacterModel && character == m_CharacterModel.m_Character)
+            return;
+
         if (m_CharacterModel)
             m_CharacterModel.DoRecycle();
 
