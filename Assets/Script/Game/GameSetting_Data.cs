@@ -458,12 +458,12 @@ namespace GameSetting
         {
             m_GameSeed = DateTime.Now.ToLongTimeString();
             m_GameDifficulty = difficulty;
-
             m_TimeElapsed = 0;
             m_Keys = 0;
             m_TotalExp = 0;
             m_Health = -1;
             m_Character = character;
+            m_Enhance = enhance;
             m_Perks = new List<PerkSaveData>();
             m_Weapon1 = weapon1;
             m_Weapon2 = weapon2;
@@ -517,7 +517,7 @@ namespace GameSetting
 
         public CPlayerCharactersCultivateData()
         {
-            m_CharacterSelected = enum_PlayerCharacter.Railer;
+            m_CharacterSelected = enum_PlayerCharacter.Beth;
             m_CharacterDetail = new Dictionary<enum_PlayerCharacter, PlayerCharacterCultivateSaveData>() { { enum_PlayerCharacter.Beth, new PlayerCharacterCultivateSaveData(true, enum_PlayerCharacterEnhance.Armor)} };
         }
 
