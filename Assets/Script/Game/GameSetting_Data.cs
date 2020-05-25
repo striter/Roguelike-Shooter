@@ -203,11 +203,12 @@ namespace GameSetting
         #endregion
 
         #region CharacterData
-        public static void SwitchCharacter(enum_PlayerCharacter character)
+        public static bool CheckCharacterEquipping(enum_PlayerCharacter character) => m_CharacterData.m_CharacterSelected == character;
+        public static void DoSwitchCharacter(enum_PlayerCharacter character)
         {
-            if (!CheckCharacterUnlocked(character))
+            if (CheckCharacterEquipping(character)&&CheckCharacterUnlocked(character))
             {
-                Debug.LogError("Can't Change To Locked Character!");
+                Debug.LogError("Can't Change To Invalid Character!");
                 return;
             }
 
@@ -215,7 +216,7 @@ namespace GameSetting
             TGameData<CPlayerCharactersCultivateData>.Save();
         }
 
-        public static bool CheckCharacterUnlocked(enum_PlayerCharacter character) => !m_CharacterData.GetCharacterCultivateDetail(character).m_Unlocked;
+        public static bool CheckCharacterUnlocked(enum_PlayerCharacter character) => m_CharacterData.GetCharacterCultivateDetail(character).m_Unlocked;
         public static float GetCharacterUnlockPrice(enum_PlayerCharacter character)
         {
             if (!GameConst.m_CharacterUnlockCost.ContainsKey(character))
@@ -225,7 +226,7 @@ namespace GameSetting
             }
             return GameConst.m_CharacterUnlockCost[character];
         }
-        public static bool CanCharacterUnlock(enum_PlayerCharacter character) => !CheckCharacterUnlocked(character) &&CanUseCredit(GetCharacterUnlockPrice(character));
+        public static bool CanCharacterUnlock(enum_PlayerCharacter character) => CheckCharacterUnlocked(character) &&CanUseCredit(GetCharacterUnlockPrice(character));
         public static void DoUnlockCharacter(enum_PlayerCharacter character)
         {
             if (!CanCharacterUnlock(character))
@@ -248,7 +249,7 @@ namespace GameSetting
                 return 0;
             }
             enum_PlayerCharacterEnhance enhance = m_CharacterData.GetCharacterCultivateDetail(character).m_Enhance;
-            if (GameConst.m_CharacterEnhanceCost.ContainsKey(enhance))
+            if (!GameConst.m_CharacterEnhanceCost.ContainsKey(enhance))
             {
                 Debug.LogError("Invalid Character Enhance From Dic!" + enhance);
                 return 0;

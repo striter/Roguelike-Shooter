@@ -130,7 +130,6 @@ public class UI_CharacterSelect : UIPage {
         if(GameDataManager.CanCharacterUnlock(m_SelectCharacter))
         {
             GameDataManager.DoUnlockCharacter(m_SelectCharacter);
-            GameDataManager.SwitchCharacter(m_SelectCharacter);
             UpdateInfo();
             return;
         }
@@ -138,7 +137,6 @@ public class UI_CharacterSelect : UIPage {
         if(GameDataManager.CanEnhanceCharacter(m_SelectCharacter))
         {
             GameDataManager.DoEnhanceCharacter(m_SelectCharacter);
-            GameDataManager.SwitchCharacter(m_SelectCharacter);
             UpdateInfo();
             return;
         }
@@ -146,7 +144,10 @@ public class UI_CharacterSelect : UIPage {
 
     void OnCharacterButtonClick()
     {
-
+        if (GameDataManager.CheckCharacterEquipping(m_SelectCharacter) || !GameDataManager.CheckCharacterUnlocked(m_SelectCharacter))
+            return;
+        GameDataManager.DoSwitchCharacter(m_SelectCharacter);
+        UpdateInfo();
     }
 
 
