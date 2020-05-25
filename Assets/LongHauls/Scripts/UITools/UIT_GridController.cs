@@ -131,7 +131,11 @@ public class UIT_GridControlledSingleSelect<T> : UIT_GridControllerGridItem<T> w
         GetItem(m_Selecting).OnHighlight(true);
         OnItemSelect(index);
     }
-
+    public override void ClearGrid()
+    {
+        base.ClearGrid();
+        m_Selecting = -1;
+    }
     public void ClearHighlight()
     {
         if (m_Selecting == -1)

@@ -18,6 +18,7 @@ public class UIGI_CharacterSelectItem : UIT_GridItem,IGridHighlight {
         m_Selected = rtf_Container.Find("Selected").GetComponent<Image>();
         m_Equipping = rtf_Container.Find("Equipping");
         GetComponent<Button>().onClick.AddListener(() => { OnButtonClick(m_Identity); });
+        m_Image.material = new Material(m_Image.material);
     }
 
     public override void OnAddItem(int identity)
@@ -31,7 +32,6 @@ public class UIGI_CharacterSelectItem : UIT_GridItem,IGridHighlight {
         Color colorAlpha = TCommon.ColorAlpha(Color.white, unlocked ? 1f : .6f);
         m_Normal.color = colorAlpha;
         m_Image.color = colorAlpha;
-        m_Selected.color = colorAlpha;
         m_Image.material.SetVector("_BSC", unlocked ?Vector4.one:new Vector4(.6f,0f,1f));
     }
 

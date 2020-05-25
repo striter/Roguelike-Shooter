@@ -65,11 +65,22 @@ public class UI_CharacterSelect : UIPage {
         m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
         UpdateAllCharacterInfo();
     }
+    private void Update()
+    {
+        m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.transform.position, 2f);
+    }
     protected override void OnHideFinished()
     {
         base.OnHideFinished();
         m_FocalDepth = null;
         CameraController.Instance.m_Effect.RemoveCameraEffect<PE_FocalDepth>();
+    }
+
+    void UpdateAllCharacterInfo()
+    {
+        m_CharacterSelectGrid.ClearGrid();
+        TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelectGrid.AddItem((int)character); });
+        m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
     }
 
     void OnCharacterSelect(int charcterIndex)
@@ -80,17 +91,6 @@ public class UI_CharacterSelect : UIPage {
         m_SelectCharacter = character;
         m_ModelViewer.ShowCharacter(m_SelectCharacter);
         UpdateSelectedInfo();
-    }
-    private void Update()
-    {
-        m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.transform.position,2f);
-    }
-
-    void UpdateAllCharacterInfo()
-    {
-        m_CharacterSelectGrid.ClearGrid();
-        TCommon.TraversalEnum((enum_PlayerCharacter character) => { m_CharacterSelectGrid.AddItem((int)character); });
-        m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
     }
 
     void UpdateSelectedInfo()
@@ -164,6 +164,7 @@ public class UI_CharacterSelect : UIPage {
         if (GameDataManager.CheckCharacterEquipping(m_SelectCharacter) || !GameDataManager.CheckCharacterUnlocked(m_SelectCharacter))
             return;
         GameDataManager.DoSwitchCharacter(m_SelectCharacter);
+        m_SelectCharacter = enum_PlayerCharacter.Invalid;
         UpdateAllCharacterInfo();
     }
 
