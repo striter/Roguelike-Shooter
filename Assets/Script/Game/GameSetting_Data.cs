@@ -226,7 +226,7 @@ namespace GameSetting
             }
             return GameConst.m_CharacterUnlockCost[character];
         }
-        public static bool CanCharacterUnlock(enum_PlayerCharacter character) => CheckCharacterUnlocked(character) &&CanUseCredit(GetCharacterUnlockPrice(character));
+        public static bool CanCharacterUnlock(enum_PlayerCharacter character) => !CheckCharacterUnlocked(character) &&CanUseCredit(GetCharacterUnlockPrice(character));
         public static void DoUnlockCharacter(enum_PlayerCharacter character)
         {
             if (!CanCharacterUnlock(character))
@@ -248,7 +248,7 @@ namespace GameSetting
                 Debug.LogError("Invlaid Character Enhance!");
                 return 0;
             }
-            enum_PlayerCharacterEnhance enhance = m_CharacterData.GetCharacterCultivateDetail(character).m_Enhance;
+            enum_PlayerCharacterEnhance enhance = m_CharacterData.GetCharacterCultivateDetail(character).NextEnhance();
             if (!GameConst.m_CharacterEnhanceCost.ContainsKey(enhance))
             {
                 Debug.LogError("Invalid Character Enhance From Dic!" + enhance);
@@ -636,7 +636,7 @@ namespace GameSetting
             return this;
         }
 
-        public bool CanEnhance() => m_Unlocked&&m_Enhance < enum_PlayerCharacterEnhance.Max;
+        public bool CanEnhance() => m_Unlocked&&m_Enhance < enum_PlayerCharacterEnhance.Max-1;
         public enum_PlayerCharacterEnhance NextEnhance() => m_Enhance + 1;
     }
     #endregion

@@ -293,7 +293,7 @@ namespace GameSetting
             m_Entity = entity;
             m_HealthMultiplier = 1f;
         }
-        public void OnActivate(float baseHealth, float startArmor,float startHealth)
+        public virtual void OnActivate(float baseHealth, float startArmor,float startHealth)
         {
             base.OnActivate(baseHealth);
             OnSetHealth(startHealth);
@@ -422,6 +422,12 @@ namespace GameSetting
         public override float m_MaxArmor => base.m_MaxArmor + m_MaxArmorAdditive;
         public EntityPlayerHealth(EntityCharacterBase entity, Action<enum_HealthChangeMessage> _OnHealthChanged) : base(entity,_OnHealthChanged)
         {
+        }
+        public override void OnActivate(float baseHealth, float startArmor, float startHealth)
+        {
+            base.OnActivate(baseHealth, startArmor, startHealth);
+            m_MaxHealthAdditive = 0;
+            m_MaxArmorAdditive = 0;
         }
         public void OnMaxChange(float maxHealthAdd,float maxArmorAdd)
         {
