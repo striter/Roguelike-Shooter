@@ -104,7 +104,7 @@ public class UIC_GameStatus : UIControlBase {
     {
         m_CoinLerp.SetLerpValue(_playerInfo.m_Coins);
         m_Keys.text = _playerInfo.m_Keys.ToString();
-        m_RankAmount.text = _playerInfo.m_RankManager.m_Rank.ToString();
+        m_RankAmount.text = string.Format("Lv.{0}", _playerInfo.m_RankManager.m_Rank.ToString());
         m_RankLerp.SetLerpValue(_playerInfo.m_RankManager.m_ExpCurRankScale+_playerInfo.m_RankManager.m_Rank);
     }
 
