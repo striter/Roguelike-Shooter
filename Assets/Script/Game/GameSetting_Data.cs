@@ -259,12 +259,12 @@ namespace GameSetting
         public static bool CanEnhanceCharacter(enum_PlayerCharacter character) => CheckCharacterEnhancable(character)&&CanUseCredit(GetCharacterEnhancePrice(character));
         public static void DoEnhanceCharacter(enum_PlayerCharacter character)
         {
-            if(CanEnhanceCharacter(character))
+            if(!CanEnhanceCharacter(character))
             {
                 Debug.LogError("Can't Enhance A Invalid Character!");
                 return;
             }
-            OnCreditStatus(GetCharacterEnhancePrice(character));
+            OnCreditStatus(-GetCharacterEnhancePrice(character));
             m_CharacterData.DoEnhance(character);
             TGameData<CPlayerCharactersCultivateData>.Save();
         } 

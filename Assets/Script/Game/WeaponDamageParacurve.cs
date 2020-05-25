@@ -21,4 +21,8 @@ public class WeaponDamageParacurve : WeaponDamageBase {
         OnAmmoCost();
         OnAttackAnim(animDuration);
     }
+    protected override void OnKeyAnim()
+    {
+        //Do Nothing
+    }
 }
