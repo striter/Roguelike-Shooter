@@ -29,6 +29,7 @@ public class UI_CharacterSelect : UIPage {
 
     InteractCampCharacterSelect m_ModelViewer;
     enum_PlayerCharacter m_SelectCharacter;
+    PE_FocalDepth m_FocalDepth;
     protected override void Init()
     {
         base.Init();
@@ -64,8 +65,14 @@ public class UI_CharacterSelect : UIPage {
 
         m_SelectCharacter = enum_PlayerCharacter.Invalid;
         m_CharacterSelectGrid.OnItemClick((int)GameDataManager.m_CharacterData.m_CharacterSelected);
+        m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
     }
-
+    protected override void OnHideFinished()
+    {
+        base.OnHideFinished();
+        m_FocalDepth = null;
+        CameraController.Instance.m_Effect.RemoveCameraEffect<PE_FocalDepth>();
+    }
 
     void OnCharacterSelect(int charcterIndex)
     {
@@ -75,6 +82,10 @@ public class UI_CharacterSelect : UIPage {
         m_SelectCharacter = character;
         m_ModelViewer.ShowCharacter(m_SelectCharacter);
         UpdateInfo();
+    }
+    private void Update()
+    {
+        m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.transform.position,2f);
     }
 
     void UpdateInfo()

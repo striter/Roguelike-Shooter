@@ -67,7 +67,7 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
         }, 1f, 0f, F_AnimDuration, OnHideFinished, false));
     }
 
-    void OnHideFinished()
+    protected virtual void OnHideFinished()
     {
         OnInteractFinished?.Invoke(false);
         OnPageExit(this);

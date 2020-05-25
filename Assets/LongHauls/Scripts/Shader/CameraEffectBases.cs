@@ -509,11 +509,12 @@ public class PE_FocalDepth : PostEffectBase
         m_Blur = new PE_Blurs();
         m_Blur.InitEffect(_manager);
     }
-    public void SetEffect(int downSample=2)
+    public PE_FocalDepth SetEffect(int downSample=2)
     {
         m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur,2, 3, downSample);
         m_TempTexture = RenderTexture.GetTemporary(m_Manager.m_Camera.scaledPixelHeight >> downSample, m_Manager.m_Camera.scaledPixelWidth >> downSample);
         m_Material.SetTexture("_BlurTex",m_TempTexture);
+        return this;
     }
     public void SetFocalTarget(Vector3 focalTarget, float focalWidth)
     {
