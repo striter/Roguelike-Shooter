@@ -9,18 +9,21 @@ public class InteractCampCharacterSelect : InteractCampBase {
     Transform m_CharacterPos;
 
     public EntityCharacterPlayer m_CharacterModel { get; private set; }
-    float rotation = 0;
+    float m_YawRotation, m_YawOrigin;
+    bool m_RotateDraging;
 
     protected override void Awake()
     {
         base.Awake();
         m_CharacterPos = transform.Find("CharacterPos");
         m_CameraPos = transform.Find("CameraPos");
+        m_YawOrigin = m_CharacterPos.rotation.eulerAngles.y;
     }
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
+        m_CharacterModel = null;
         CampManager.Instance.OnCharacterSelectInteract(this);
         return true;
     }
@@ -33,13 +36,35 @@ public class InteractCampCharacterSelect : InteractCampBase {
         if (m_CharacterModel)
             m_CharacterModel.DoRecycle();
 
-        rotation = m_CameraPos.rotation.eulerAngles.y;
+        m_YawRotation = m_YawOrigin;
         m_CharacterModel = GameObjectManager.SpawnPlayerCharacter(character,m_CharacterPos.position,m_CharacterPos.rotation);
+    }
+    private void Update()
+    {
+        if (!m_CharacterModel)
+            return;
+
+        if (m_RotateDraging)
+        {
+            float offset = Mathf.Abs(m_YawOrigin - m_YawRotation);
+            int deltaMultiply = 1+(int)offset / 360;
+            float delta = Time.deltaTime * 120f*deltaMultiply;
+
+            if (offset <= delta)
+                m_YawRotation = m_YawOrigin;
+            else
+                m_YawRotation = m_YawRotation + (m_YawRotation > m_YawOrigin ? -1 : 1) * delta;
+        }
+        else
+        {
+            m_RotateDraging = false;
+        }
+        m_CharacterModel.transform.rotation = Quaternion.Euler(0, m_YawRotation, 0);
     }
 
     public void RotateCharacter(Vector2 delta)
     {
-        rotation += delta.x;
-        m_CharacterModel.transform.rotation = Quaternion.Euler(0,rotation,0);
+        m_YawRotation += delta.x / 5f;
+        m_RotateDraging = true;
     }
 }

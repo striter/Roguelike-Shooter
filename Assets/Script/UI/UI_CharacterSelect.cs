@@ -10,6 +10,8 @@ public class UI_CharacterSelect : UIPage {
     Text m_AttributeHealth, m_AttributeArmor, m_AttributeMovement, m_AttributeCritical;
     UIC_WeaponInfoName m_AttributeWeapon;
 
+    UIT_EventTriggerListener m_DragContainer;
+
     Transform m_AttributeStatus;
     Transform m_AttributeMaxEnhance;
     UIT_TextExtend m_AttributeUpgradeTitle;
@@ -54,6 +56,8 @@ public class UI_CharacterSelect : UIPage {
         m_CharacterAbility = new UIC_CharacterAbility(m_Character.Find("Ability"));
         m_CharacterConfirmBtn = new UIC_Button(m_Character.Find("ConfirmBtn"),OnCharacterButtonClick);
 
+        m_DragContainer = rtf_Container.Find("DragContainer").GetComponent<UIT_EventTriggerListener>();
+
         m_CharacterSelectGrid = new UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem>(rtf_Container.Find("CharacterSelect/Viewport/Content"),OnCharacterSelect);
     }
 
@@ -61,6 +65,7 @@ public class UI_CharacterSelect : UIPage {
     {
         CampManager.Instance.RecycleLocalCharacter();
         m_ModelViewer = characterSelect;
+        m_DragContainer.D_OnDragDelta = m_ModelViewer.RotateCharacter;
         m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
         UpdateAllCharacterInfo(GameDataManager.m_CharacterData.m_CharacterSelected);
     }
@@ -119,7 +124,7 @@ public class UI_CharacterSelect : UIPage {
         {
             showStatusButton = true;
             showUpgradeTitle = true;
-            m_AttributeUpgradeTitle.text = cultivateData.NextEnhance().GetIntroLocalizeKey();
+            m_AttributeUpgradeTitle.localizeKey = cultivateData.NextEnhance().GetIntroLocalizeKey();
             m_AttributeButtonTitle.localizeKey = "UI_CharacterSelect_Enhance";
             m_AttributeButtonAmount.text = GameDataManager.GetCharacterEnhancePrice(m_SelectCharacter).ToString();
         }
@@ -131,8 +136,8 @@ public class UI_CharacterSelect : UIPage {
         m_AttributeUpgradeTitle.SetActivate(showUpgradeTitle);
         m_AttributeMaxEnhance.SetActivate(maxEnhance);
 
-        m_CharacterName.localizeKey = m_SelectCharacter.GetNameLocalizeKey();
-        m_CharacterIntro.localizeKey = m_SelectCharacter.GetIntroLocalizeKey();
+        m_CharacterName.localizeKey = _model.GetNameLocalizeKey();
+        m_CharacterIntro.localizeKey = _model.GetIntroLocalizeKey();
         m_CharacterAbility.SetAbilityInfo(m_SelectCharacter);
         m_CharacterEnhanceGrid.ClearGrid();
         for (int i = 0; i < (int)cultivateData.m_Enhance; i++)

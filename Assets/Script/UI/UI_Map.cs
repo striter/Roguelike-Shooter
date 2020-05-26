@@ -21,7 +21,7 @@ public class UI_Map : UIPage {
             m_LocationsGrid = new UIT_GridControllerGridItem<UIGI_MapLocations>(m_Map_Origin_Base.transform.Find("LocationsGrid"));
             this.OnLocationClick = OnLocationClick;
             m_EventTrigger = transform.GetComponent<UIT_EventTriggerListener>();
-            m_EventTrigger.OnDragDelta = OnMapDrag;
+            m_EventTrigger.D_OnDragDelta = OnMapDrag;
             m_EventTrigger.OnWorldClick = OnMapClick;
         }
         public override void OnPlay()

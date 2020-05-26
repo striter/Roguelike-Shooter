@@ -123,7 +123,7 @@ public class UIT_EventTriggerListener : EventTrigger
 
     #region Drag
     public Action<bool, Vector2> D_OnDragStatus;
-    public Action<Vector2> D_OnDrag, OnDragDelta;
+    public Action<Vector2> D_OnDrag, D_OnDragDelta;
     public bool m_Dragging { get; private set; }
     public override void OnBeginDrag(PointerEventData eventData)
     {
@@ -135,7 +135,7 @@ public class UIT_EventTriggerListener : EventTrigger
     {
         base.OnDrag(eventData);
         D_OnDrag?.Invoke(eventData.position);
-        OnDragDelta?.Invoke(eventData.delta);
+        D_OnDragDelta?.Invoke(eventData.delta);
     }
     public override void OnEndDrag(PointerEventData eventData)
     {
