@@ -19,10 +19,10 @@ namespace GameSetting
 
         public const int I_WeaponInfoMaxTag = 5;
 
-        public const float F_WeaponInfoScore1Max = 300;
-        public const float F_WeaponInfoScore2Max = 15;
-        public const float F_WeaponInfoScore3Max = 10;
-        public const float F_WeaponInfoScore4Max = 20;
+        public const float F_WeaponInfoScore1Max = 150;
+        public const float F_WeaponInfoScore2Max = 12;
+        public const float F_WeaponInfoScore3Max = 30;
+        public const float F_WeaponInfoScore4Max = 12;
     }
 
     public static class UIExpression

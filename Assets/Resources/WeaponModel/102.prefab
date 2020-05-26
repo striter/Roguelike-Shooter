@@ -209,6 +209,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   F_FireRate: 0.6
-  F_StoreDuration: 2
+  F_StoreDuration: 1
   I_StoreIndicatorIndex: 39002
   I_StoreSuccesfulParticlesIndex: 29001
