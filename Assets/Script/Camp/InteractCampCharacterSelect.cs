@@ -47,25 +47,25 @@ public class InteractCampCharacterSelect : InteractCampBase {
 
         if (m_RotateDraging)
         {
+            m_RotateDraging = false;
+        }
+        else
+        {
             float offset = Mathf.Abs(m_YawOrigin - m_YawRotation);
-            int deltaMultiply = offset>360?10:1;
-            float delta = Time.deltaTime * 60f*deltaMultiply;
+            int deltaMultiply = offset > 360 ? 10 : 1;
+            float delta = Time.deltaTime * 90f * deltaMultiply;
 
             if (offset <= delta)
                 m_YawRotation = m_YawOrigin;
             else
                 m_YawRotation = m_YawRotation + (m_YawRotation > m_YawOrigin ? -1 : 1) * delta;
         }
-        else
-        {
-            m_RotateDraging = false;
-        }
         m_CharacterModel.transform.rotation = Quaternion.Euler(0, m_YawRotation, 0);
     }
 
     public void RotateCharacter(Vector2 delta)
     {
-        m_YawRotation += delta.x / (m_YawRotation > 360 ? 2f : 5f);
+        m_YawRotation += delta.x / (m_YawRotation > 360 ? 1f : 5f);
         m_RotateDraging = true;
     }
 }
