@@ -7,15 +7,13 @@ using UnityEngine.UI;
 public class InteractCampSwitchDifficulty : InteractCampBase {
     public override enum_Interaction m_InteractType => enum_Interaction.CampDifficulty;
     Text m_Text;
-    protected override void Awake()
+    public override void Init()
     {
-        base.Awake();
+        base.Init();
         m_Text = GetComponentInChildren<Text>();
-    }
-    private void Start()
-    {
         m_Text.text = (GameDataManager.m_GameData.m_BattleDifficulty).ToString();
     }
+
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);

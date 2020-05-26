@@ -25,6 +25,7 @@ public class CampManager : GameManagerBase
         base.Awake();
         tf_PlayerStart = transform.Find("PlayerStart");
         tf_CameraAttach = transform.Find("CameraAttach");
+        transform.Find("Interactions").GetComponentsInChildren<InteractCampBase>().Traversal((InteractCampBase interact) => { interact.Init(); });
     }
     protected override void OnDestroy()
     {

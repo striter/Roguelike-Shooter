@@ -11,10 +11,10 @@ public class InteractCampCharacterSelect : InteractCampBase {
     public EntityCharacterPlayer m_CharacterModel { get; private set; }
     float m_YawRotation, m_YawOrigin,m_YawRotationSpeed;
     bool m_RotateDraging;
-
-    protected override void Awake()
+    PE_FocalDepth m_FocalDepth;
+    public override void Init()
     {
-        base.Awake();
+        base.Init();
         m_CharacterPos = transform.Find("CharacterPos");
         m_CameraPos = transform.Find("CameraPos");
         m_YawOrigin = m_CharacterPos.rotation.eulerAngles.y;
@@ -25,10 +25,11 @@ public class InteractCampCharacterSelect : InteractCampBase {
         base.OnInteractedContinousCheck(_interactor);
         m_CharacterModel = null;
         CampManager.Instance.OnCharacterSelectInteract(this);
+        m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
         return true;
     }
 
-    public void ShowCharacter(enum_PlayerCharacter character)
+    public void OnGenerateCharacter(enum_PlayerCharacter character)
     {
         if (m_CharacterModel && character == m_CharacterModel.m_Character)
             return;
@@ -40,11 +41,19 @@ public class InteractCampCharacterSelect : InteractCampBase {
         m_CharacterModel = GameObjectManager.SpawnPlayerCharacter(character,m_CharacterPos.position,m_CharacterPos.rotation);
     }
 
+    public void OnCharacterSelected()
+    {
+        m_CharacterModel = null;
+        m_FocalDepth = null;
+        CameraController.Instance.m_Effect.RemoveCameraEffect<PE_FocalDepth>();
+    }
+
     private void Update()
     {
         if (!m_CharacterModel)
             return;
 
+        m_FocalDepth.SetFocalTarget(m_CharacterModel.tf_Head.position, 2f);
         float delta = Time.deltaTime * 60f;
         if (Mathf.Abs(m_YawRotationSpeed) <= delta)
             m_YawRotationSpeed = 0;
@@ -58,6 +67,5 @@ public class InteractCampCharacterSelect : InteractCampBase {
     public void RotateCharacter(Vector2 delta)
     {
         m_YawRotationSpeed += delta.x/50f;
-        
     }
 }

@@ -5,7 +5,7 @@ using System;
 using GameSetting;
 
 public class InteractCampBase : InteractBase {
-    protected virtual void Awake()
+    public virtual void Init()
     {
         base.Play();
     }

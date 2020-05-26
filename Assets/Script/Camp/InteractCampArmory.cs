@@ -6,9 +6,9 @@ using UnityEngine;
 public class InteractCampArmory : InteractCampBase {
     public override enum_Interaction m_InteractType => enum_Interaction.CampArmory;
     Transform m_CameraPos;
-    protected override void Awake()
+    public override void Init()
     {
-        base.Awake();
+        base.Init();
         m_CameraPos = transform.Find("CameraPos");
     }
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)

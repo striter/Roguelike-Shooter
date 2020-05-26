@@ -31,7 +31,6 @@ public class UI_CharacterSelect : UIPage {
 
     InteractCampCharacterSelect m_ModelViewer;
     enum_PlayerCharacter m_SelectCharacter;
-    PE_FocalDepth m_FocalDepth;
     protected override void Init()
     {
         base.Init();
@@ -66,20 +65,9 @@ public class UI_CharacterSelect : UIPage {
         CampManager.Instance.RecycleLocalCharacter();
         m_ModelViewer = characterSelect;
         m_DragContainer.D_OnDragDelta = m_ModelViewer.RotateCharacter;
-        m_FocalDepth = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FocalDepth>().SetEffect(2);
         UpdateAllCharacterInfo(GameDataManager.m_CharacterData.m_CharacterSelected);
     }
-    private void Update()
-    {
-        m_FocalDepth.SetFocalTarget(m_ModelViewer.m_CharacterModel.tf_Head.position, 2f);
-    }
-    protected override void OnHideFinished()
-    {
-        base.OnHideFinished();
-        m_FocalDepth = null;
-        CameraController.Instance.m_Effect.RemoveCameraEffect<PE_FocalDepth>();
-    }
-
+    
     void UpdateAllCharacterInfo(enum_PlayerCharacter highlightCharacter)
     {
         m_CharacterSelectGrid.ClearGrid();
@@ -95,7 +83,7 @@ public class UI_CharacterSelect : UIPage {
         if (m_SelectCharacter == character)
             return;
         m_SelectCharacter = character;
-        m_ModelViewer.ShowCharacter(m_SelectCharacter);
+        m_ModelViewer.OnGenerateCharacter(m_SelectCharacter);
         UpdateSelectedInfo();
     }
 
@@ -173,12 +161,11 @@ public class UI_CharacterSelect : UIPage {
         UpdateAllCharacterInfo(m_SelectCharacter);
     }
 
-
-    protected override void OnCancelBtnClick()
+    protected override void OnHideFinished()
     {
-        base.OnCancelBtnClick();
-        m_ModelViewer.ShowCharacter(GameDataManager.m_CharacterData.m_CharacterSelected);
+        base.OnHideFinished();
+        m_ModelViewer.OnGenerateCharacter(GameDataManager.m_CharacterData.m_CharacterSelected);
         CampManager.Instance.OnSetCharacter(m_ModelViewer.m_CharacterModel);
+        m_ModelViewer.OnCharacterSelected();
     }
-
 }
