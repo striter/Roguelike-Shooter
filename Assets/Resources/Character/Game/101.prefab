@@ -1052,7 +1052,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 330
+  I_MaxHealth: 275
   F_MovementSpeed: 7
   F_CriticalRate: 0
   F_BaseDamage: 10
