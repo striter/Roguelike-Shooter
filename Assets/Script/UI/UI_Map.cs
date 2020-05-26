@@ -32,7 +32,7 @@ public class UI_Map : UIPage {
             UpdateMapRotation(m_MapRotationBase);
 
             m_LocationsGrid.ClearGrid();
-            GameManager.Instance.m_StageInteracts.Traversal((int interactIndex, InteractGameBase interactData) =>
+            BattleManager.Instance.m_StageInteracts.Traversal((int interactIndex, InteractBattleBase interactData) =>
             {
                 UIGI_MapLocations locations = m_LocationsGrid.AddItem(interactIndex);
                 locations.Play(interactData);
@@ -117,8 +117,8 @@ public class UI_Map : UIPage {
         base.OnPlay(doAnim, OnPageExit);
         m_Map.OnPlay();
         m_LocationInfo.SetActivate(false);
-        m_Stage.localizeKey = GameManager.Instance.m_GameProgress.m_Stage.GetLocalizeKey();
-        m_Style.localizeKey = GameManager.Instance.m_GameProgress.m_GameStyle.GetLocalizeKey();
+        m_Stage.localizeKey = BattleManager.Instance.m_BattleProgress.m_Stage.GetLocalizeKey();
+        m_Style.localizeKey = BattleManager.Instance.m_BattleProgress.m_GameStyle.GetLocalizeKey();
     }
 
     private void Update()
@@ -132,7 +132,7 @@ public class UI_Map : UIPage {
         if (chunkIndex == -1)
             return;
 
-        InteractGameBase chunk = GameManager.Instance.m_StageInteracts[chunkIndex];
+        InteractBattleBase chunk = BattleManager.Instance.m_StageInteracts[chunkIndex];
         m_LocationName.localizeKey = chunk.GetUITitleKey();
         m_LocationIntro.localizeKey = chunk.GetUIIntroKey();
         m_LocationInfo.SetActivate(true);

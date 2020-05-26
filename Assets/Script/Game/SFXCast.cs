@@ -119,7 +119,7 @@ public class SFXCast : SFXDamageBase {
                     continue;
                 case enum_HitCheck.Entity:
                     HitCheckEntity entity = hitCheck as HitCheckEntity;
-                    if (entityHitted.Contains(entity.m_Attacher) || !GameManager.B_CanSFXDamageEntity(entity, m_SourceID))
+                    if (entityHitted.Contains(entity.m_Attacher) || !BattleManager.B_CanSFXDamageEntity(entity, m_SourceID))
                         continue;
                     OnHitEntityDealtDamage(entity, hits[i].point, Vector3.Normalize(transform.position - hitCheck.transform.position));
                     entityHitted.Add(entity.m_Attacher);
@@ -183,7 +183,7 @@ public class SFXCast : SFXDamageBase {
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying &&BattleManager.Instance&&!BattleManager.Instance.B_PhysicsDebugGizmos)
             return;
         Gizmos.color = EDITOR_GizmosColor();
         Gizmos_Extend.DrawArrow(CastTransform.position,Quaternion.LookRotation(CastTransform.forward),new Vector3(V4_CastInfo.x/10,V4_CastInfo.y/10,F_CastLength / 4));

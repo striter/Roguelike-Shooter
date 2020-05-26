@@ -32,7 +32,7 @@ public class UIGI_VisualizeHealth : UIT_GridItem {
         m_AttachEntity = _attachTo;
         OnHide();
 
-        ExpireGameCharacterBase elitePerk = _attachTo.m_ControllType == enum_EntityType.GameEntity ? (_attachTo as EntityCharacterGameAI).m_Perk : null;
+        ExpireBattleCharacterBase elitePerk = _attachTo.m_ControllType == enum_EntityType.BattleEntity ? (_attachTo as EntityCharacterBattleAI).m_Perk : null;
         bool isElite = elitePerk!=null&&elitePerk.IsElitePerk();
         m_EliteExpire.SetActivate(isElite);
         m_Elite.SetActivate(isElite);

@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityCharacterGameBase : EntityCharacterBase {
+public class EntityCharacterBattle : EntityCharacterBase {
 
-    public override enum_EntityType m_ControllType => enum_EntityType.GameEntity;
+    public override enum_EntityType m_ControllType => enum_EntityType.BattleEntity;
     public float F_BaseDamage;
     public float F_Spread;
     public int m_SpawnerEntityID { get; private set; }
     public bool m_IsSubEntity => m_SpawnerEntityID != -1;
-    public ExpireGameCharacterBase m_Perk { get; private set; }
+    public ExpireBattleCharacterBase m_Perk { get; private set; }
 
-    public EntityCharacterGameBase OnCharacterGameActivate(enum_EntityFlag _flag, ExpireGameCharacterBase perk, int _spawnerID = -1)
+    public EntityCharacterBattle OnCharacterBattleActivate(enum_EntityFlag _flag, ExpireBattleCharacterBase perk, int _spawnerID = -1)
     {
         m_Perk = perk;
         m_SpawnerEntityID = _spawnerID;

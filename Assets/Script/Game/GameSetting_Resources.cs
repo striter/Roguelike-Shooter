@@ -53,10 +53,10 @@ public partial class TResources
     public static AtlasLoader GetUIAtlas_Weapon() => new AtlasLoader(Load<SpriteAtlas>(ConstPath.S_UI_Atlas_Weapon));
     #endregion
     #region GamePrefab
-    public static GameRenderData[] GetRenderData(enum_GameStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
+    public static GameRenderData[] GetRenderData(enum_BattleStyle levelStype) => LoadAll<GameRenderData>(ConstPath.S_ChunkRender + levelStype);
     public static LevelChunkData GetChunkData(string name) => Load<LevelChunkData>(ConstPath.S_ChunkData + "/" + name);
     public static LevelChunkData[] GetChunkDatas() => LoadAll<LevelChunkData>(ConstPath.S_ChunkData);
-    public static TileItemBase[] GetChunkTiles(enum_GameStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile + _levelStyle);
+    public static TileItemBase[] GetChunkTiles(enum_BattleStyle _levelStyle) => LoadAll<TileItemBase>(ConstPath.S_ChunkTile + _levelStyle);
     public static TileItemBase[] GetChunkEditorTiles() => LoadAll<TileItemBase>(ConstPath.S_ChunkTileEditor);
 
     public static SFXDamageBase GetDamageSource(int index) => Load<SFXDamageBase>(ConstPath.S_SFXWeapon + index.ToString());
@@ -64,15 +64,15 @@ public partial class TResources
     public static SFXBase[] GetAllEffectSFX() => LoadAll<SFXBase>(ConstPath.S_SFXEffects);
 
     public static EntityCharacterPlayer GetPlayerCharacter(enum_PlayerCharacter character) => Load<EntityCharacterPlayer>(ConstPath.S_PlayerCharacter + (int)character);
-    public static EntityCharacterGameBase GetGameCharacter(int index) => Load<EntityCharacterGameBase>(ConstPath.S_GameCharacter + index);
+    public static EntityCharacterBattle GetGameCharacter(int index) => Load<EntityCharacterBattle>(ConstPath.S_GameCharacter + index);
     public static WeaponBase GetPlayerWeapon(enum_PlayerWeaponIdentity weapon) => Load<WeaponBase>(ConstPath.S_PlayerWeapon + (int)weapon);
-    public static InteractGameBase GetInteract(enum_Interaction type) => Load<InteractGameBase>(ConstPath.S_InteractCommon + type);
+    public static InteractBattleBase GetInteract(enum_Interaction type) => Load<InteractBattleBase>(ConstPath.S_InteractCommon + type);
     #endregion
     #region Audio
-    public static AudioClip GetGameBGM(enum_GameMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM + music);
-    public static AudioClip GetGameBGM_Styled(enum_GameMusic music, enum_GameStyle style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM + style + "_" + music);
+    public static AudioClip GetGameBGM(enum_BattleMusic music) => Load<AudioClip>(ConstPath.S_Audio_GameBGM + music);
+    public static AudioClip GetGameBGM_Styled(enum_BattleMusic music, enum_BattleStyle style) => Load<AudioClip>(ConstPath.S_Audio_GameBGM + style + "_" + music);
     public static AudioClip GetCampBGM(enum_CampMusic music) => Load<AudioClip>(ConstPath.S_Audio_CampBGM + music);
-    public static AudioClip GetGameClip(enum_GameVFX vfx) => Load<AudioClip>(ConstPath.S_GameAudio_VFX + vfx.ToString());
+    public static AudioClip GetGameClip(enum_BattleVFX vfx) => Load<AudioClip>(ConstPath.S_GameAudio_VFX + vfx.ToString());
     #endregion
 
 }

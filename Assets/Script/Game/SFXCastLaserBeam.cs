@@ -52,7 +52,7 @@ public class SFXCastLaserBeam : SFXCast {
         RaycastHit[] hits = OnCastCheck(GameLayer.Mask.I_ProjectileMask);
         for (int i = 0; i < hits.Length; i++)
         {
-            if (!GameManager.B_CanSFXHitTarget(hits[i].collider.Detect(), m_SourceID))
+            if (!BattleManager.B_CanSFXHitTarget(hits[i].collider.Detect(), m_SourceID))
                 continue;
 
             Vector3 offsetPoint = hits[i].point;

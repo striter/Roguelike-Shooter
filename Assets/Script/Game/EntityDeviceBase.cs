@@ -5,7 +5,7 @@ using GameSetting;
 using UnityEngine;
 
 public class EntityDeviceBase : EntityCharacterBase {
-    public override enum_EntityType m_ControllType => enum_EntityType.GameDevice; 
+    public override enum_EntityType m_ControllType => enum_EntityType.BattleDevice; 
     EntityDetector m_Detect;
     ParticleSystem[] m_Particles;
     public ObjectPoolListComponent<EntityCharacterBase, LineRenderer> m_Connections { get; private set; }
@@ -63,7 +63,7 @@ public class EntityDeviceBase : EntityCharacterBase {
         {
             default:break;
             case enum_EntityType.Player:
-            case enum_EntityType.GameEntity:
+            case enum_EntityType.BattleEntity:
                 {
                     EntityCharacterBase target = entity.m_Attacher as EntityCharacterBase;
                     if (!CanConnectTarget(target))

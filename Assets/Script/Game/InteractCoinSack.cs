@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractCoinSack : InteractGameBase {
+public class InteractCoinSack : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.CoinSack;
     int m_CoinCount;
     public InteractCoinSack Play( int coinCount)

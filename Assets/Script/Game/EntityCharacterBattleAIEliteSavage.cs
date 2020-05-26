@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class EntityCharacterGameAIEliteSavage : EntityCharacterGameAIElite {
+public class EntityCharacterBattleAIEliteSavage : EntityCharacterBattleAIElite {
     public float F_AttackMoveMultiply = 2f;
     public override float GetBaseMovementSpeed() => base.GetBaseMovementSpeed()*m_AttackMoveMultiply;
     float m_AttackMoveMultiply = 1f;

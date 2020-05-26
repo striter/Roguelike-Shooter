@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class EntityCharacterGameAIElite : EntityCharacterGameAI {
+public class EntityCharacterBattleAIElite : EntityCharacterBattleAI {
     TimerBase m_BuffCounter = new TimerBase(GameConst.F_EliteBuffTimerDurationWhenFullHealth), m_IndicateCounter=new TimerBase(2f);
     EliteBuffCombine m_Buff;
     bool m_Indicating;

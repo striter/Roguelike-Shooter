@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractBloodShrine : InteractGameBase {
+public class InteractBloodShrine : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.BloodShrine;
     public int I_MuzzleSuccess;
     int m_TryCount;

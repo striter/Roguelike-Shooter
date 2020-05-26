@@ -34,7 +34,7 @@ namespace GameSetting
         public static CGameSave m_GameData => TGameData<CGameSave>.Data;
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
         public static CPlayerCharactersCultivateData m_CharacterData => TGameData<CPlayerCharactersCultivateData>.Data;
-        public static CGameProgressSave m_GameProgressData => TGameData<CGameProgressSave>.Data;
+        public static CBattleSave m_GameProgressData => TGameData<CBattleSave>.Data;
 
         public static bool m_Inited { get; private set; } = false;
         public static void Init()
@@ -52,33 +52,39 @@ namespace GameSetting
             TGameData<CGameSave>.Init();
             TGameData<CPlayerCharactersCultivateData>.Init();
             TGameData<CArmoryData>.Init();
-            TGameData<CGameProgressSave>.Init();
+            TGameData<CBattleSave>.Init();
 
             InitArmoryGameWeaponUnlocked();
         }
 
         #region GameSave
-        public static void OnNewGame()
+        public static void OnNewBattle()
         {
-            TGameData<CGameProgressSave>.Reset();
-            TGameData<CGameProgressSave>.Save();
+            TGameData<CBattleSave>.Reset();
+            TGameData<CBattleSave>.Save();
+            m_GameData.m_BattleResume = true;
+            TGameData<CGameSave>.Save();
         }
 
-        public static void StageFinishSaveData(GameManager game )
+        public static void OnBattleStageSave(BattleManager game)
         {
-            m_GameProgressData.Adjust(game.m_LocalPlayer, game.m_GameProgress, game.m_GameBattle);
-            TGameData<CGameProgressSave>.Save();
+            m_GameProgressData.Adjust(game.m_LocalPlayer, game.m_BattleProgress, game.m_BattleEntity);
+            TGameData<CBattleSave>.Save();
         }
-
+        
         public static void OnGameResult(bool win, int credit)
         {
-            if (win)
-                m_GameData.UnlockDifficulty();
-            OnCreditStatus(credit);
-
-            TGameData<CGameProgressSave>.Reset();
-            TGameData<CGameProgressSave>.Save();
+            m_GameData.m_BattleResume = false;
+            if (win&& m_GameData.m_BattleDifficulty == m_GameData.m_DifficultyUnlocked && m_GameData.m_DifficultyUnlocked != enum_BattleDifficulty.Hard)
+            {
+                m_GameData. m_DifficultyUnlocked++;
+                m_GameData.m_BattleDifficulty++;
+            }
+            m_GameData.BattleFinish(win);
+            m_GameData.f_Credits += credit;
+            TGameData<CGameSave>.Save();
         }
+
         #endregion
 
         #region GameData
@@ -92,14 +98,14 @@ namespace GameSetting
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCurrencyStatus);
         }
 
-        public static enum_GameDifficulty OnCampDifficultySwitch()
+        public static enum_BattleDifficulty OnCampDifficultySwitch()
         {
-            m_GameData.m_GameDifficulty ++;
-            if (m_GameData.m_GameDifficulty > m_GameData.m_DifficultyUnlocked)
-                m_GameData.m_GameDifficulty =  enum_GameDifficulty.Normal;
+            m_GameData.m_BattleDifficulty ++;
+            if (m_GameData.m_BattleDifficulty > m_GameData.m_DifficultyUnlocked)
+                m_GameData.m_BattleDifficulty =  enum_BattleDifficulty.Normal;
 
             TGameData<CGameSave>.Save();
-            return m_GameData.m_GameDifficulty;
+            return m_GameData.m_BattleDifficulty;
         }
 
         public static bool OnDailyRewardRequire()
@@ -140,7 +146,7 @@ namespace GameSetting
             });
         }
 
-        public static WeaponSaveData RandomUnlockedWeaponData(enum_Rarity rarity,enum_GameStage stage, System.Random random = null)
+        public static WeaponSaveData RandomUnlockedWeaponData(enum_Rarity rarity,enum_BattleStage stage, System.Random random = null)
         {
             if (!m_GameWeaponUnlocked.ContainsKey(rarity))
                 rarity = enum_Rarity.Ordinary;
@@ -327,7 +333,7 @@ namespace GameSetting
 
         #region Enermy Perk Data
        public const int m_DefaultEnermyPerkIdentity= 20000;
-        static Dictionary<int, ExpireGameCharacterBase> m_AllEnermyPerks = new Dictionary<int, ExpireGameCharacterBase>();
+        static Dictionary<int, ExpireBattleCharacterBase> m_AllEnermyPerks = new Dictionary<int, ExpireBattleCharacterBase>();
         static Dictionary<int, Type> m_AllGameCharcterPerkTypes = new Dictionary<int, Type>();
         static List<int> m_AvailableEnermyPerks = new List<int>();
         public static void InitEnermyPerks()
@@ -335,7 +341,7 @@ namespace GameSetting
             m_AllEnermyPerks.Clear();
             m_AllGameCharcterPerkTypes.Clear();
             m_AvailableEnermyPerks.Clear();
-            TReflection.TraversalAllInheritedClasses(((Type type, ExpireGameCharacterBase perk) => {
+            TReflection.TraversalAllInheritedClasses(((Type type, ExpireBattleCharacterBase perk) => {
                 m_AllEnermyPerks.Add(perk.m_Index, perk);
                 m_AllGameCharcterPerkTypes.Add(perk.m_Index, perk.GetType());
                 if (perk.m_Index == m_DefaultEnermyPerkIdentity)
@@ -344,9 +350,9 @@ namespace GameSetting
             }),0,0);
         }
 
-        public static ExpireGameCharacterBase RandomEnermyPerk(int minutesPassed,enum_GameDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireGameCharacterBase>(m_AllGameCharcterPerkTypes[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity], GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
-        public static ExpireGameCharacterBase DefaultGameCharacterPerk(float healthMultiplier,float damageMultiplier) => TReflection.CreateInstance<ExpireGameCharacterBase>(m_AllGameCharcterPerkTypes[m_DefaultEnermyPerkIdentity], healthMultiplier, damageMultiplier);
-        public static bool IsElitePerk(this ExpireGameCharacterBase perk) => perk.m_Index != m_DefaultEnermyPerkIdentity;
+        public static ExpireBattleCharacterBase RandomEnermyPerk(int minutesPassed,enum_BattleDifficulty difficulty,bool isElite)=>TReflection.CreateInstance<ExpireBattleCharacterBase>(m_AllGameCharcterPerkTypes[isElite ? m_AvailableEnermyPerks.RandomItem() : m_DefaultEnermyPerkIdentity], GameExpression.GetEnermyMaxHealthMultiplier(minutesPassed, difficulty),GameExpression.GetEnermyDamageMultilier(minutesPassed,difficulty));
+        public static ExpireBattleCharacterBase DefaultGameCharacterPerk(float healthMultiplier,float damageMultiplier) => TReflection.CreateInstance<ExpireBattleCharacterBase>(m_AllGameCharcterPerkTypes[m_DefaultEnermyPerkIdentity], healthMultiplier, damageMultiplier);
+        public static bool IsElitePerk(this ExpireBattleCharacterBase perk) => perk.m_Index != m_DefaultEnermyPerkIdentity;
         #endregion
 
         #region ExcelData
@@ -384,35 +390,39 @@ namespace GameSetting
             return buff;
         }
 
-        public static List<SEnermyGenerate> GetEnermyGenerate(enum_GameStage stage,enum_GameDifficulty difficulty)=> SheetProperties<SEnermyGenerate>.GetPropertiesList(((int)difficulty-1)*5+((int)stage-1));
+        public static List<SEnermyGenerate> GetEnermyGenerate(enum_BattleStage stage,enum_BattleDifficulty difficulty)=> SheetProperties<SEnermyGenerate>.GetPropertiesList(((int)difficulty-1)*5+((int)stage-1));
         #endregion
     }
     #region Structs
     #region SaveData
     public class CGameSave : ISave
     {
+        public bool m_BattleResume;
+        public enum_BattleDifficulty m_BattleDifficulty;
+        public enum_BattleDifficulty m_DifficultyUnlocked;
         public float f_Credits;
-        public enum_GameDifficulty m_GameDifficulty;
-        public enum_GameDifficulty m_DifficultyUnlocked;
         public int m_LastDailyRewardStamp;
+
         public CGameSave()
         {
             f_Credits = 100;
-            m_GameDifficulty =  enum_GameDifficulty.Normal;
-            m_DifficultyUnlocked =  enum_GameDifficulty.Normal;
+            m_BattleDifficulty =  enum_BattleDifficulty.Normal;
+            m_DifficultyUnlocked =  enum_BattleDifficulty.Normal;
             m_LastDailyRewardStamp = -1;
+            m_BattleResume = false;
         }
 
-        public void UnlockDifficulty()
+        public void BattleFinish(bool win)
         {
-            if (m_GameDifficulty != m_DifficultyUnlocked)
+            if (!win)
                 return;
-
-            if (m_DifficultyUnlocked == enum_GameDifficulty.Hard)
+            if (m_BattleDifficulty != m_DifficultyUnlocked)
+                return;
+            if (m_DifficultyUnlocked == enum_BattleDifficulty.Hard)
                 return;
 
             m_DifficultyUnlocked++;
-            m_GameDifficulty++;
+            m_BattleDifficulty++;
         }
 
         public bool CheckDailyReward()
@@ -429,12 +439,12 @@ namespace GameSetting
         }
     }
 
-    public class CGameProgressSave : ISave
+    public class CBattleSave : ISave
     {
         public string m_GameSeed;
-        public enum_GameDifficulty m_GameDifficulty;
+        public enum_BattleDifficulty m_GameDifficulty;
 
-        public enum_GameStage m_Stage;
+        public enum_BattleStage m_Stage;
         public float m_TimeElapsed;
         public float m_Health;
         public int m_Keys;
@@ -447,14 +457,14 @@ namespace GameSetting
 
         public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked;
 
-        public CGameProgressSave()
+        public CBattleSave()
         {
             enum_PlayerCharacter characterSelected = GameDataManager.m_CharacterData.m_CharacterSelected;
             enum_PlayerCharacterEnhance playerEnhance = GameDataManager.m_CharacterData.GetCharacterCultivateDetail(characterSelected).m_Enhance;
-            SetData(GameDataManager.m_GameData.m_GameDifficulty, characterSelected, playerEnhance, WeaponSaveData.New(GameConst.m_CharacterStartWeapon[characterSelected], playerEnhance >= enum_PlayerCharacterEnhance.StartWeapon ? 1 : 0), WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid));
+            SetData(GameDataManager.m_GameData.m_BattleDifficulty, characterSelected, playerEnhance, WeaponSaveData.New(GameConst.m_CharacterStartWeapon[characterSelected], playerEnhance >= enum_PlayerCharacterEnhance.StartWeapon ? 1 : 0), WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid));
         }
 
-        public CGameProgressSave SetData(enum_GameDifficulty difficulty, enum_PlayerCharacter character,enum_PlayerCharacterEnhance enhance, WeaponSaveData weapon1,WeaponSaveData weapon2)
+        public CBattleSave SetData(enum_BattleDifficulty difficulty, enum_PlayerCharacter character,enum_PlayerCharacterEnhance enhance, WeaponSaveData weapon1,WeaponSaveData weapon2)
         {
             m_GameSeed = DateTime.Now.ToLongTimeString();
             m_GameDifficulty = difficulty;
@@ -467,12 +477,12 @@ namespace GameSetting
             m_Perks = new List<PerkSaveData>();
             m_Weapon1 = weapon1;
             m_Weapon2 = weapon2;
-            m_Stage = enum_GameStage.Rookie;
+            m_Stage = enum_BattleStage.Rookie;
             m_ArmoryBlueprintsUnlocked = new List<enum_PlayerWeaponIdentity>();
             return this;
         }
 
-        public void Adjust(EntityCharacterPlayer _player, GameProgressManager _level,GameBattleManager _battle)
+        public void Adjust(EntityCharacterPlayer _player, BattleProgressManager _level,BattleEntityManager _battle)
         {
             m_TimeElapsed = _battle.m_TimeElapsed;
             m_Stage = _level.m_Stage;

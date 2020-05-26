@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractPickup : InteractGameBase {
+public class InteractPickup : InteractBattleBase {
 
     protected override bool B_SelfRecycleOnInteract => true;
     float m_MoveSpeed;

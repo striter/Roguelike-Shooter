@@ -10,7 +10,8 @@ public class CampManager : GameManagerBase
         base.AddConsoleBinding();
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Plus, "100", (string value) => { OnCreditStatus(int.Parse(value)); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Credit", KeyCode.Minus, "-50", (string value) => { OnCreditStatus(int.Parse(value)); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Plus,OnStartGameInteract);
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Enter Game", KeyCode.Alpha9, ()=>OnBattleStart(true));
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Resume Game", KeyCode.Alpha0, () => OnBattleStart(false));
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Unlock Weapon Blueprint", KeyCode.None, enum_Rarity.Ordinary, (enum_Rarity rarity) => { GameDataManager.UnlockArmoryBlueprint(rarity); });
     }
     #endregion
@@ -33,7 +34,7 @@ public class CampManager : GameManagerBase
     protected override void Start()
     {
         base.Start();
-        InitGameEffects( enum_GameStyle.Invalid,GameRenderData.Default());
+        InitGameEffects( enum_BattleStyle.Invalid,GameRenderData.Default());
         OnSetCharacter(GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_CharacterData.m_CharacterSelected,tf_PlayerStart.position,tf_PlayerStart.rotation));
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
@@ -47,7 +48,7 @@ public class CampManager : GameManagerBase
 
     public void OnSetCharacter(EntityCharacterPlayer character)
     {
-        m_LocalPlayer = character.OnPlayerActivate(new CGameProgressSave());
+        m_LocalPlayer = character.OnPlayerActivate(new CBattleSave());
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
 
@@ -57,14 +58,15 @@ public class CampManager : GameManagerBase
         tf_CameraAttach.position = m_LocalPlayer.transform.position;
     }
 
-    public void OnStartGameInteract()
+    public void OnBattleStart(bool resume)
     {
         OnPortalEnter(1f, tf_CameraAttach, () => {
-            GameDataManager.OnNewGame();
-            LoadingManager.Instance.ShowLoading(enum_GameStage.Rookie);
+            if (resume) GameDataManager.OnNewBattle();
+            LoadingManager.Instance.ShowLoading(enum_BattleStage.Rookie);
             SwitchScene( enum_Scene.Game);
         });
     }
+
 
     public void OnArmoryInteract(Transform cameraPos)
     {

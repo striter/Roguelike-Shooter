@@ -33,7 +33,7 @@ namespace TGameSave
         {
             if (m_Data == null)
                 Debug.LogError("Please Check File First!" + typeof(T).ToString());
-            Task.Run(()=> { SaveFile(m_Data); });
+             Task.Run(()=> { SaveFile(m_Data); });
         }
 
         public static void Reset() => m_Data = new T();

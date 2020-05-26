@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkSelect : InteractGameBase
+public class InteractPerkSelect : InteractBattleBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkSelect;
     List<int> m_PerkIDs;

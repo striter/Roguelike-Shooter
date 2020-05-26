@@ -5,7 +5,7 @@ using GameSetting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InteractSignalTower : InteractGameBase {
+public class InteractSignalTower : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.SignalTower;
     public Transform m_Canvas { get; private set; }
     public Transform m_PortalPos { get; private set; }

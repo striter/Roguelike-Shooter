@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractWeaponRecycle : InteractGameBase {
+public class InteractWeaponRecycle : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponRecycle;
     public new InteractWeaponRecycle Play()
     {

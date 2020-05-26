@@ -13,12 +13,12 @@ public class AudioManager : AudioManagerBase
     }
     static float m_volumeMultiply = 1f;
     public override float m_BGVolume => base.m_BGVolume * m_volumeMultiply;
-    Dictionary<enum_GameVFX, AudioClip> m_GameClips = new Dictionary<enum_GameVFX, AudioClip>();
-    public AudioClip GetGameSFXClip(enum_GameVFX sfx) => m_GameClips[sfx];
+    Dictionary<enum_BattleVFX, AudioClip> m_GameClips = new Dictionary<enum_BattleVFX, AudioClip>();
+    public AudioClip GetGameSFXClip(enum_BattleVFX sfx) => m_GameClips[sfx];
     public override void Init()
     {
         base.Init();
-        TCommon.TraversalEnum((enum_GameVFX audio) => { m_GameClips.Add(audio, TResources.GetGameClip(audio)); });
+        TCommon.TraversalEnum((enum_BattleVFX audio) => { m_GameClips.Add(audio, TResources.GetGameClip(audio)); });
         TBroadCaster<enum_BC_UIStatus>.Add<float>(enum_BC_UIStatus.UI_PageOpen, OnPageOpen);
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_PageClose, OnPageClose);
         OptionsDataManager.event_OptionChanged += OnOptionChanged;

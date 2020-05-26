@@ -30,7 +30,7 @@ public class EntityDeviceBuffApllier : EntityDeviceBase {
         {
             switch (entity.m_ControllType)
             {
-                case enum_EntityType.GameEntity:
+                case enum_EntityType.BattleEntity:
                     entity.m_HitCheck.TryHit(new DamageInfo(m_EntityID).AddBuffInfo(m_AllyBuff));
                     break;
                 case enum_EntityType.Player:

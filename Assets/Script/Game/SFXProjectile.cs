@@ -34,8 +34,8 @@ public class SFXProjectile : SFXDamageBase
     protected virtual void PlayIndicator(float duration) => m_Indicator.PlayUncontrolled(base.m_SourceID, duration);
     protected Vector3 m_CenterPos => F_Height > F_Radius * 2 ? transform.position + transform.forward * F_Height / 2 : transform.position + transform.forward * F_Radius;
     protected List<int> m_EntityHitted = new List<int>();
-    protected bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && GameManager.B_CanSFXHitTarget(hitCheck, m_SourceID);
-    protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && GameManager.B_CanSFXDamageEntity(_entity, m_SourceID);
+    protected bool CanHitTarget(HitCheckBase hitCheck) => !m_EntityHitted.Contains(hitCheck.I_AttacherID) && BattleManager.B_CanSFXHitTarget(hitCheck, m_SourceID);
+    protected bool CanDamageEntity(HitCheckEntity _entity) => !m_EntityHitted.Contains(_entity.I_AttacherID) && BattleManager.B_CanSFXDamageEntity(_entity, m_SourceID);
     public virtual void Play(DamageInfo damageInfo ,Vector3 direction, Vector3 targetPosition )
     {
         base.PlaySFX (damageInfo.m_EntityID, F_PlayDuration(transform.position, targetPosition), F_PlayDelay,true);
@@ -154,7 +154,7 @@ public class SFXProjectile : SFXDamageBase
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying &&BattleManager.Instance&&!BattleManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         Gizmos.color = EDITOR_GizmosColor();

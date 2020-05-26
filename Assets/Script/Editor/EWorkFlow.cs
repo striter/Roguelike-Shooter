@@ -28,11 +28,11 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
             return;
         }
 
-        enum_GameStyle style = LevelChunkEditor.Instance.m_EditStyle;
+        enum_BattleStyle style = LevelChunkEditor.Instance.m_EditStyle;
         GameRenderData[] customizations = TResources.GetRenderData(style);
         Light directionalLight = LevelChunkEditor.Instance.m_DirectionalLight;
         Camera camera = CameraController.Instance.m_Camera;
-        if(style== enum_GameStyle.Invalid)
+        if(style== enum_BattleStyle.Invalid)
         {
             GUILayout.TextArea("Set Style In Edit Style View Mode");
             GUILayout.EndVertical();
@@ -115,7 +115,7 @@ public class EWorkFlow_StyleColorCustomization : EditorWindow
         GUILayout.EndVertical();
     }
 
-    static void SaveCustomization(GameRenderData data,enum_GameStyle selectingStyleType,string dataName)
+    static void SaveCustomization(GameRenderData data,enum_BattleStyle selectingStyleType,string dataName)
     {
         string dataFolder = TResources.ConstPath.S_ChunkRender + "/" + selectingStyleType;
         string targetPath = dataFolder + "/"+dataName + ".asset";

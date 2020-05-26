@@ -23,7 +23,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Add<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Add<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterGameAI>(enum_BC_UIStatus.UI_OnWillAIAttack,OnWillAIAttack);
+        TBroadCaster<enum_BC_UIStatus>.Add<EntityCharacterBattleAI>(enum_BC_UIStatus.UI_OnWillAIAttack,OnWillAIAttack);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup,OnPlayerPickupAmount);
     }
     protected override void OnDestroy()
@@ -32,7 +32,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityActivate, OnEntityActivate);
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, OnEntityRecycle);
         TBroadCaster<enum_BC_GameStatus>.Remove<DamageInfo, EntityCharacterBase, float>(enum_BC_GameStatus.OnCharacterHealthChange, OnCharacterHealthChange);
-        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterGameAI>(enum_BC_UIStatus.UI_OnWillAIAttack, OnWillAIAttack);
+        TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterBattleAI>(enum_BC_UIStatus.UI_OnWillAIAttack, OnWillAIAttack);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup, OnPlayerPickupAmount);
     }
 
@@ -40,7 +40,7 @@ public class UIC_GameNumericVisualize : UIControlBase
     {
         switch(entity.m_ControllType)
         {
-            case enum_EntityType.GameEntity:
+            case enum_EntityType.BattleEntity:
                 return true;
         }
         return false;
@@ -75,6 +75,6 @@ public class UIC_GameNumericVisualize : UIControlBase
     
     void OnPlayerPickupAmount(InteractPickup pickup)=> m_PickupGrid.AddItem(visualize++).Play(pickup,m_PickupGrid.RemoveItem);
     
-    void OnWillAIAttack(EntityCharacterGameAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
+    void OnWillAIAttack(EntityCharacterBattleAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
 
 }

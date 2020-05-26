@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkLottery : InteractGameBase {
+public class InteractPerkLottery : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkLottery;
     int m_perkID;
     public InteractPerkLottery Play(float price,int perkID)

@@ -1,13 +1,13 @@
 ﻿using System;
 using GameSetting;
 
-public class InteractCampGameEnter : InteractCampBase
+public class InteractCampBattleEnter : InteractCampBase
 {
-    public override enum_Interaction m_InteractType => enum_Interaction.CampGameEnter;
+    public override enum_Interaction m_InteractType => enum_Interaction.CampBattleEnter;
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        CampManager.Instance.OnStartGameInteract();
+        CampManager.Instance.OnBattleStart(true);
         return false;
     }
 }

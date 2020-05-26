@@ -14,7 +14,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
     public override enum_EntityType m_ControllType => enum_EntityType.Player;
     public virtual enum_PlayerCharacter m_Character => enum_PlayerCharacter.Invalid;
-    protected override enum_GameVFX m_DamageClip => enum_GameVFX.PlayerDamage;
+    protected override enum_BattleVFX m_DamageClip => enum_BattleVFX.PlayerDamage;
 
     public Transform tf_WeaponAim { get; private set; }
     protected Transform tf_WeaponHoldRight, tf_WeaponHoldLeft;
@@ -76,7 +76,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_Controller = GetComponent<CharacterController>();
     }
 
-    public  EntityCharacterPlayer OnPlayerActivate(CGameProgressSave _battleSave)
+    public  EntityCharacterPlayer OnPlayerActivate(CBattleSave _battleSave)
     {
         OnEntityActivate(enum_EntityFlag.Player);
         m_Enhance = _battleSave.m_Enhance;
@@ -208,7 +208,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
         if (damageInfo.m_EntityID == m_EntityID)
         {
-            if(amountApply>0&& GameManager.Instance.EntityOpposite(this, damageEntity))
+            if(amountApply>0&& BattleManager.Instance.EntityOpposite(this, damageEntity))
             {
                 if (damageInfo.m_IdentityType == enum_DamageIdentity.PlayerWeapon && damageInfo.m_IdentityID == m_WeaponCurrent.m_WeaponID)
                     m_WeaponCurrent.OnDealtDamage(amountApply);
@@ -310,7 +310,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_Animator.OnActivate(m_WeaponCurrent.E_Anim);
         if (m_AimAssist) m_AimAssist.Recycle();
         m_AimAssist = GameObjectManager.SpawnSFX<SFXAimAssist>(101, tf_WeaponAim.position, tf_Weapon.forward);
-        m_AimAssist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_ProjectileMask, (Collider collider) => { return GameManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
+        m_AimAssist.Play(m_EntityID, tf_WeaponAim, tf_WeaponAim, GameConst.F_AimAssistDistance, GameLayer.Mask.I_ProjectileMask, (Collider collider) => { return BattleManager.B_CanSFXHitTarget(collider.Detect(), m_EntityID); });
         OnUIWeaponStatus();
     }
 
@@ -378,7 +378,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_TargetCheckTimer.Tick(deltaTime);
         if (m_AimingTarget == null || !m_AimingTarget.m_TargetAvailable || !m_TargetCheckTimer.m_Timing)
         {
-            m_AimingTarget =GameManager.Instance?GameManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase):null;
+            m_AimingTarget =BattleManager.Instance?BattleManager.Instance.GetNeariesCharacter(this, false, true,  GameConst.F_PlayerAutoAimRangeBase):null;
             m_TargetCheckTimer.Replay();
         }
     }
@@ -486,7 +486,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
             RevivePlayer();
             return;
         }
-        GameManager.Instance.CheckPlayerRevive(RevivePlayer);
+        BattleManager.Instance.CheckPlayerRevive(RevivePlayer);
     }
     void RevivePlayer()
     {
@@ -504,7 +504,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
     CapsuleCollider hitBox;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying && GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying && BattleManager.Instance&&!BattleManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         if (!hitBox)

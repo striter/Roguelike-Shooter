@@ -14,7 +14,7 @@ public class UIGI_MapLocations : UIT_GridItem {
         m_EventIcon = rtf_Container.Find("Icon").GetComponent<Image>();
     }
 
-    public void Play(InteractGameBase gameChunk)
+    public void Play(InteractBattleBase gameChunk)
     {
         m_EventIcon.sprite = GameUIManager.Instance.m_CommonSprites[gameChunk.m_InteractType.GetInteractIcon()];
     }
