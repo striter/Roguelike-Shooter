@@ -39,6 +39,7 @@ public class InteractCampCharacterSelect : InteractCampBase {
         m_YawRotation = m_YawOrigin;
         m_CharacterModel = GameObjectManager.SpawnPlayerCharacter(character,m_CharacterPos.position,m_CharacterPos.rotation);
     }
+
     private void Update()
     {
         if (!m_CharacterModel)
@@ -47,8 +48,8 @@ public class InteractCampCharacterSelect : InteractCampBase {
         if (m_RotateDraging)
         {
             float offset = Mathf.Abs(m_YawOrigin - m_YawRotation);
-            int deltaMultiply = 1+(int)offset / 360;
-            float delta = Time.deltaTime * 120f*deltaMultiply;
+            int deltaMultiply = offset>360?10:1;
+            float delta = Time.deltaTime * 60f*deltaMultiply;
 
             if (offset <= delta)
                 m_YawRotation = m_YawOrigin;
@@ -64,7 +65,7 @@ public class InteractCampCharacterSelect : InteractCampBase {
 
     public void RotateCharacter(Vector2 delta)
     {
-        m_YawRotation += delta.x / 5f;
+        m_YawRotation += delta.x / (m_YawRotation > 360 ? 2f : 5f);
         m_RotateDraging = true;
     }
 }
