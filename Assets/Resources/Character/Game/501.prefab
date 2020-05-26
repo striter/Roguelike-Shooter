@@ -951,14 +951,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 220
-  I_DefaultArmor: 0
-  F_MovementSpeed: 6
-  F_AttackSpread: 0
+  I_MaxHealth: 330
+  F_MovementSpeed: 7
+  F_CriticalRate: 0
+  F_BaseDamage: 15
+  F_Spread: 0
   E_AnimatorIndex: 20
   F_AIChaseRange: 1
   F_AIAttackRange: 5
-  F_BaseDamage: 15
   I_BuffApplyOnHit: 0
   F_AttackRate: 0
   F_AttackDuration:

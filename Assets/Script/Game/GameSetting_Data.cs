@@ -501,8 +501,8 @@ namespace GameSetting
 
         public CArmoryData()
         {
-            m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.UMP45, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.AKM, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.FrostWand };
-            m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Flamer };
+            m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.SpawnerBlastTurret, enum_PlayerWeaponIdentity.UZI, enum_PlayerWeaponIdentity.LavaWand, enum_PlayerWeaponIdentity.Bow, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.BloodThirster, enum_PlayerWeaponIdentity.Grenade, enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.MultishotBow, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.Driller };
+            m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.Flamer };
         }
 
         public void DataRecorrect()
