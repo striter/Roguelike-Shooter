@@ -45,16 +45,15 @@ namespace GameSetting
             Properties<SBuff>.Init();
             SheetProperties<SEnermyGenerate>.Init();
 
+            TGameData<CPlayerCharactersCultivateData>.Init();
+            TGameData<CArmoryData>.Init();
+            TGameData<CGameSave>.Init();
+
             InitPlayerPerks();
             InitEnermyPerks();
             InitArmory();
 
-            TGameData<CGameSave>.Init();
-            TGameData<CPlayerCharactersCultivateData>.Init();
-            TGameData<CArmoryData>.Init();
             TGameData<CBattleSave>.Init();
-
-            InitArmoryGameWeaponUnlocked();
         }
 
         #region GameSave
@@ -131,9 +130,10 @@ namespace GameSetting
                     return;
                 m_AvailableWeapons.Add(weapon.m_Weapon, weapon);
             });
+            CheckArmoryUnlocked();
         }
 
-        static void InitArmoryGameWeaponUnlocked()
+        static void CheckArmoryUnlocked()
         {
             m_GameWeaponUnlocked.Clear();
             m_AvailableWeapons.Traversal((SWeaponInfos weapon) =>
@@ -146,12 +146,14 @@ namespace GameSetting
             });
         }
 
-        public static WeaponSaveData RandomUnlockedWeaponData(enum_Rarity rarity,enum_BattleStage stage, System.Random random = null)
+        public static WeaponSaveData RandomUnlockedWeaponData(enum_Rarity rarity, enum_BattleStage stage, System.Random random = null) => RandomUnlockedWeaponData(rarity, GameConst.m_StageWeaponEnhanceLevel[stage].RandomPercentage(0, random), random);
+        public static WeaponSaveData RandomUnlockedWeaponData(enum_Rarity rarity, int enhance,System.Random random=null)
         {
             if (!m_GameWeaponUnlocked.ContainsKey(rarity))
                 rarity = enum_Rarity.Ordinary;
-            return WeaponSaveData.New(m_GameWeaponUnlocked[rarity].RandomItem(random), GameConst.m_StageWeaponEnhanceLevel[stage].RandomPercentage(0,random));
+            return WeaponSaveData.New(m_GameWeaponUnlocked[rarity].RandomItem(random),enhance);
         }
+        public static WeaponSaveData CharacterStartWeaponData(enum_PlayerCharacter character, int enhance) => WeaponSaveData.New(GameConst.m_CharacterStartWeapon[character],enhance);
 
         public static int GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[GetWeaponProperties(weapon).m_Rarity];
         public static bool CanArmoryUnlock(enum_PlayerWeaponIdentity weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
@@ -176,7 +178,7 @@ namespace GameSetting
             m_ArmoryData.m_WeaponBlueprints.Remove(weapon);
             m_ArmoryData.m_WeaponsUnlocked.Add(weapon);
             TGameData<CArmoryData>.Save();
-            InitArmoryGameWeaponUnlocked();
+            CheckArmoryUnlocked();
         }
 
         public static enum_PlayerWeaponIdentity UnlockArmoryBlueprint(enum_Rarity _spawnRarity)
@@ -201,7 +203,7 @@ namespace GameSetting
             {
                 m_ArmoryData.m_WeaponBlueprints.Add(bluePrint);
                 TGameData<CArmoryData>.Save();
-                InitArmoryGameWeaponUnlocked();
+                CheckArmoryUnlocked();
             }
 
             return bluePrint;
@@ -461,7 +463,7 @@ namespace GameSetting
         {
             enum_PlayerCharacter characterSelected = GameDataManager.m_CharacterData.m_CharacterSelected;
             enum_PlayerCharacterEnhance playerEnhance = GameDataManager.m_CharacterData.GetCharacterCultivateDetail(characterSelected).m_Enhance;
-            SetData(GameDataManager.m_GameData.m_BattleDifficulty, characterSelected, playerEnhance, WeaponSaveData.New(GameConst.m_CharacterStartWeapon[characterSelected], playerEnhance >= enum_PlayerCharacterEnhance.StartWeapon ? 1 : 0), WeaponSaveData.New(enum_PlayerWeaponIdentity.Invalid));
+            SetData(GameDataManager.m_GameData.m_BattleDifficulty, characterSelected, playerEnhance, GameDataManager.CharacterStartWeaponData(characterSelected, playerEnhance >= enum_PlayerCharacterEnhance.StartWeapon ? 1 : 0), WeaponSaveData.New( enum_PlayerWeaponIdentity.Invalid));
         }
 
         public CBattleSave SetData(enum_BattleDifficulty difficulty, enum_PlayerCharacter character,enum_PlayerCharacterEnhance enhance, WeaponSaveData weapon1,WeaponSaveData weapon2)
