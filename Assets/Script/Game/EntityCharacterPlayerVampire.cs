@@ -46,7 +46,6 @@ public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
         m_AssassinCooldownTimer.Replay();
         m_AssassinAttackTimer.Replay();
         m_CharacterSkinEffect.SetCloak(true,0f,F_AbilityAttackDuration);
-        m_CharacterInfo.OnAbilityTrigger();
     }
 
     protected override void OnAliveTick(float deltaTime)
@@ -66,6 +65,7 @@ public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
             if (!m_AssassinAttackTimer.m_Timing)
             {
                 OnAssassinBlow();
+                m_CharacterInfo.OnAbilityTrigger();
             }
         }
 

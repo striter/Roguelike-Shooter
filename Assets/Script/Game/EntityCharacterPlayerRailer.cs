@@ -45,6 +45,7 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
         if (m_ShotStorage == m_MaxShotStorage)
             m_ShotRestoreTimer.Replay();
         m_ShotStorage -=1;
+        m_CharacterInfo.OnAbilityTrigger();
     }
 
     protected override void OnAliveTick(float deltaTime)
