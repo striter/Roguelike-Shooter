@@ -9,7 +9,7 @@ public class InteractCampCharacterSelect : InteractCampBase {
     Transform m_CharacterPos;
 
     public EntityCharacterPlayer m_CharacterModel { get; private set; }
-    float m_YawRotation, m_YawOrigin;
+    float m_YawRotation, m_YawOrigin,m_YawRotationSpeed;
     bool m_RotateDraging;
 
     protected override void Awake()
@@ -45,27 +45,19 @@ public class InteractCampCharacterSelect : InteractCampBase {
         if (!m_CharacterModel)
             return;
 
-        if (m_RotateDraging)
-        {
-            m_RotateDraging = false;
-        }
+        float delta = Time.deltaTime * 60f;
+        if (Mathf.Abs(m_YawRotationSpeed) <= delta)
+            m_YawRotationSpeed = 0;
         else
-        {
-            float offset = Mathf.Abs(m_YawOrigin - m_YawRotation);
-            int deltaMultiply = offset > 360 ? 10 : 1;
-            float delta = Time.deltaTime * 90f * deltaMultiply;
+            m_YawRotationSpeed -= Mathf.Sign(m_YawRotationSpeed) * delta;
 
-            if (offset <= delta)
-                m_YawRotation = m_YawOrigin;
-            else
-                m_YawRotation = m_YawRotation + (m_YawRotation > m_YawOrigin ? -1 : 1) * delta;
-        }
+        m_YawRotation += m_YawRotationSpeed;
         m_CharacterModel.transform.rotation = Quaternion.Euler(0, m_YawRotation, 0);
     }
 
     public void RotateCharacter(Vector2 delta)
     {
-        m_YawRotation += delta.x / (m_YawRotation > 360 ? 1f : 5f);
-        m_RotateDraging = true;
+        m_YawRotationSpeed += delta.x/50f;
+        
     }
 }
