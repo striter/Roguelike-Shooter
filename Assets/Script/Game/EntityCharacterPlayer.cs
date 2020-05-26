@@ -94,12 +94,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         OnSwapWeapon(true);
         return this;
     }
-
-    public override void OnPoolSpawn()
-    {
-        base.OnPoolSpawn();
-        TBroadCaster<enum_BC_GameStatus>.Add(enum_BC_GameStatus.OnStageStart, OnStageStart);
-    }
+    
     public override void OnPoolRecycle()
     {
         base.OnPoolRecycle();
@@ -124,7 +119,6 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_Interact = null;
         OnInteractStatus();
         UIManager.Instance.RemoveBindings();
-        TBroadCaster<enum_BC_GameStatus>.Remove(enum_BC_GameStatus.OnStageStart, OnStageStart);
     }
 
     public void PlayAttackTriggering(bool attacking) => m_Animator.Attacking(attacking);
@@ -438,12 +432,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
         GameManagerBase.Instance.SetEffect_Impact(transform.InverseTransformDirection(direction));
         return amount;
     }
-
-    void OnStageStart()
-    {
-        if (m_Enhance >= enum_PlayerCharacterEnhance.StageCoin)
-            m_CharacterInfo.OnCoinsGain(GameConst.I_PlayerEnhanceStageStartCoin);
-    }
+    
     #endregion
     #region Indicator
 
