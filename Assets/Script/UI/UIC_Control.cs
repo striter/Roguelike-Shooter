@@ -101,7 +101,7 @@ public class UIC_Control : UIControlBase {
             OnSettingClick();
             return;
         }
-        UIManager.Instance.ShowPage<UI_Options>(true,true, 0f).SetInGame(GameManagerBase.Instance.B_InGame);
+        UIManager.Instance.ShowPage<UI_Options>(true,true, 0f).SetInGame(GameManagerBase.Instance.B_InBattle);
     }
 
     Action OnSettingClick;

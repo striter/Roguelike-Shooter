@@ -8,7 +8,7 @@ using System;
 using TPhysics;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EntityCharacterGameAI : EntityCharacterGameBase {
+public class EntityCharacterBattleAI : EntityCharacterBattle {
     #region Preset
     public enum_EnermyAnim E_AnimatorIndex= enum_EnermyAnim.Invalid;
     public float F_AIChaseRange;
@@ -187,7 +187,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
         if (m_TargetingTimer.m_Timing)
             return m_Target;
 
-        m_Target = GameManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
+        m_Target = BattleManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
         m_TargetingTimer.SetTimerDuration(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
         return m_Target;
     }
@@ -342,7 +342,7 @@ public class EntityCharacterGameAI : EntityCharacterGameBase {
     CapsuleCollider hitbox;
     private void OnDrawGizmos()
     {
-        if (UnityEditor.EditorApplication.isPlaying &&GameManager.Instance&&!GameManager.Instance.B_PhysicsDebugGizmos)
+        if (UnityEditor.EditorApplication.isPlaying &&BattleManager.Instance&&!BattleManager.Instance.B_PhysicsDebugGizmos)
             return;
 
         if(!hitbox)

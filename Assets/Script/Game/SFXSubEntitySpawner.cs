@@ -23,7 +23,7 @@ public class SFXSubEntitySpawner : SFXDamageBase {
     protected override void OnPlay()
     {
         base.OnPlay();
-        GameManager.Instance.m_GameBattle.GenerateGameCharacter(I_EntitySpawnID, m_Spawner.m_Flag, m_targetPos, false, m_Spawner.m_EntityID);
+        BattleManager.Instance.m_BattleEntity.GenerateGameCharacter(I_EntitySpawnID, m_Spawner.m_Flag, m_targetPos, false, m_Spawner.m_EntityID);
     }
 
 }

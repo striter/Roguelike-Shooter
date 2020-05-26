@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractHealShrine : InteractGameBase {
+public class InteractHealShrine : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.HealShrine;
     protected override bool OnTryInteractCheck(EntityCharacterPlayer _interactor)=> !_interactor.m_Health.m_HealthFull&& base.OnTryInteractCheck(_interactor);
     int m_TryCount;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractSafeCrack : InteractGameBase {
+public class InteractSafeCrack : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.SafeCrack;
     public new InteractSafeCrack Play()
     {
@@ -26,7 +26,7 @@ public class InteractSafeCrack : InteractGameBase {
 
         int weaponCount = GameConst.RI_EventSafeWeaponCount.Random();
         for (int i = 0; i < weaponCount; i++)
-            GameManager.Instance.SpawnRandomUnlockedWeapon(transform.position + TCommon.RandomXZCircle(), Quaternion.identity,GameConst.D_EventSafeWeaponRate);
+            BattleManager.Instance.SpawnRandomUnlockedWeapon(transform.position + TCommon.RandomXZCircle(), Quaternion.identity,GameConst.D_EventSafeWeaponRate);
         return false;
     }
 

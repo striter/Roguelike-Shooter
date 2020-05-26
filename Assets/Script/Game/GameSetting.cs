@@ -71,7 +71,7 @@ namespace GameSetting
         public const int I_DangerzoneDamage = 50;
         public const float F_DangerzoneResetDuration = 2f;
 
-        public static Dictionary<enum_GameEventType, float> D_GameEventRate = new Dictionary<enum_GameEventType, float>() { {enum_GameEventType.CoinsSack,17.5f }, { enum_GameEventType.HealthpackTrade, 7.5f }, { enum_GameEventType.WeaponTrade, 0f }, { enum_GameEventType.WeaponReforge, 5f }, { enum_GameEventType.WeaponVendor, 25f }, { enum_GameEventType.WeaponRecycle, 0f }, { enum_GameEventType.PerkLottery, 22.5f }, { enum_GameEventType.PerkSelect, 5f }, { enum_GameEventType.PerkShrine, 10f }, { enum_GameEventType.BloodShrine, 5f }, { enum_GameEventType.HealShrine, 0f }, { enum_GameEventType.SafeBox, 2.5f }, };
+        public static Dictionary<enum_BattleEvent, float> D_GameEventRate = new Dictionary<enum_BattleEvent, float>() { {enum_BattleEvent.CoinsSack,17.5f }, { enum_BattleEvent.HealthpackTrade, 7.5f }, { enum_BattleEvent.WeaponTrade, 0f }, { enum_BattleEvent.WeaponReforge, 5f }, { enum_BattleEvent.WeaponVendor, 25f }, { enum_BattleEvent.WeaponRecycle, 0f }, { enum_BattleEvent.PerkLottery, 22.5f }, { enum_BattleEvent.PerkSelect, 5f }, { enum_BattleEvent.PerkShrine, 10f }, { enum_BattleEvent.BloodShrine, 5f }, { enum_BattleEvent.HealShrine, 0f }, { enum_BattleEvent.SafeBox, 2.5f }, };
 
         public static RangeInt RI_CoinsSackAmount = new RangeInt(6, 4);
         public const int I_EventMedpackPrice = 0;
@@ -104,13 +104,13 @@ namespace GameSetting
         public static readonly RangeInt RI_EventSafePerkCount = new RangeInt(1, 1);
         public static readonly Dictionary<enum_Rarity, int> D_EventSafePerkRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 25 }, { enum_Rarity.Advanced, 40 }, { enum_Rarity.Rare, 25 }, { enum_Rarity.Epic, 10 } };
 
-        public static readonly Dictionary<enum_GameStage, Dictionary<int, float>> m_StageWeaponEnhanceLevel = new Dictionary<enum_GameStage, Dictionary<int, float>>()
+        public static readonly Dictionary<enum_BattleStage, Dictionary<int, float>> m_StageWeaponEnhanceLevel = new Dictionary<enum_BattleStage, Dictionary<int, float>>()
         {
-            {enum_GameStage.Rookie,new Dictionary<int, float>(){ {1,20 },{2,5 } } },
-            {enum_GameStage.Militia,new Dictionary<int, float>(){ { 1,30},{2,10 },{3,5 } } },
-            {enum_GameStage.Veteran,new Dictionary<int, float>(){ {1,35 },{2,25 },{3,15 },{4,5 } } },
-            {enum_GameStage.Elite,new Dictionary<int, float>(){ {1,20 },{2,30 },{3,25f },{ 4,10},{ 5,2.5f} } },
-            {enum_GameStage.Ranger,new Dictionary<int, float>(){ {1,15 },{2,35 },{3,25 },{ 4,15} ,{ 5,5} } },
+            {enum_BattleStage.Rookie,new Dictionary<int, float>(){ {1,20 },{2,5 } } },
+            {enum_BattleStage.Militia,new Dictionary<int, float>(){ { 1,30},{2,10 },{3,5 } } },
+            {enum_BattleStage.Veteran,new Dictionary<int, float>(){ {1,35 },{2,25 },{3,15 },{4,5 } } },
+            {enum_BattleStage.Elite,new Dictionary<int, float>(){ {1,20 },{2,30 },{3,25f },{ 4,10},{ 5,2.5f} } },
+            {enum_BattleStage.Ranger,new Dictionary<int, float>(){ {1,15 },{2,35 },{3,25 },{ 4,15} ,{ 5,5} } },
         };
         #endregion        
         public static class AI
@@ -167,8 +167,8 @@ namespace GameSetting
         public static float F_GameVFXVolume(int vfxVolumeTap) => vfxVolumeTap / 10f;
         public static float F_GameMusicVolume(int musicVolumeTap) => musicVolumeTap / 10f;
 
-        public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_GameDifficulty difficulty) => minutePassed * GameConst.F_EnermyMaxHealthMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyMaxHealthMultiplierPerDifficultyAboveNormal;
-        public static float GetEnermyDamageMultilier(int minutesPassed, enum_GameDifficulty difficulty) => minutesPassed * GameConst.F_EnermyDamageMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyDamageMultiplierPerDifficultyAboveNormal;
+        public static float GetEnermyMaxHealthMultiplier(int minutePassed, enum_BattleDifficulty difficulty) => minutePassed * GameConst.F_EnermyMaxHealthMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyMaxHealthMultiplierPerDifficultyAboveNormal;
+        public static float GetEnermyDamageMultilier(int minutesPassed, enum_BattleDifficulty difficulty) => minutesPassed * GameConst.F_EnermyDamageMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyDamageMultiplierPerDifficultyAboveNormal;
 
         #region Interacts
         public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+1f * tryCount;
@@ -748,7 +748,7 @@ namespace GameSetting
         }
 
         #region Interact
-        public void SetInfoData(CGameProgressSave _battleSave)
+        public void SetInfoData(CBattleSave _battleSave)
         {
             m_Coins = 0;
             m_Keys = _battleSave.m_Keys;
@@ -1027,7 +1027,7 @@ namespace GameSetting
         public virtual float F_Cast_Melee_SizeMultiply => 0f;
     }
 
-    public class ExpireGameCharacterBase:EntityExpireBase
+    public class ExpireBattleCharacterBase:EntityExpireBase
     {
         public override enum_ExpireType m_ExpireType => enum_ExpireType.EnermyElite;
         public virtual float m_MaxHealthMultiplierAdditive => m_GameBaseMaxHealthMultiplier;
@@ -1036,7 +1036,7 @@ namespace GameSetting
         protected float m_GameBaseMaxHealthMultiplier = 0;
         protected float m_GameBaseDamageMultiplier = 0;
 
-        public ExpireGameCharacterBase(float baseMaxHealthMultiplier,float baseDamageMultiplier)
+        public ExpireBattleCharacterBase(float baseMaxHealthMultiplier,float baseDamageMultiplier)
         {
             m_GameBaseDamageMultiplier = baseDamageMultiplier;
             m_GameBaseMaxHealthMultiplier = baseMaxHealthMultiplier;

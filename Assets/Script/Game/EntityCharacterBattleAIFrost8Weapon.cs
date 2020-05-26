@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityCharacterGameAIFrost8Weapon : EntityCharacterGameAI
+public class EntityCharacterBattleAIFrost8Weapon : EntityCharacterBattleAI
 {
     ModelBlink m_Blink;
     float timeElapsed;

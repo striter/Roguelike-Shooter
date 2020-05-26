@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractBonfire : InteractGameBase {
+public class InteractBonfire : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.Bonfire;
     TSpecialClasses.ParticleControlBase m_FireParticles;
     Transform tf_Light;

@@ -27,8 +27,8 @@ public class EntityCharacterBase : EntityBase
     public new EntityHealth m_Health=>base.m_Health as EntityHealth;
     protected override HealthBase GetHealthManager()=> new EntityHealth(this, OnUIHealthChanged);
     TimerBase m_DeadCounter = new TimerBase(GameConst.F_EntityDeadFadeTime,true);
-    protected virtual enum_GameVFX m_DamageClip => enum_GameVFX.EntityDamage;
-    protected virtual enum_GameVFX m_ReviveClip => enum_GameVFX.PlayerRevive;
+    protected virtual enum_BattleVFX m_DamageClip => enum_BattleVFX.EntityDamage;
+    protected virtual enum_BattleVFX m_ReviveClip => enum_BattleVFX.PlayerRevive;
 
     public override void OnPoolInit(int _identity, Action<int, MonoBehaviour> _OnRecycle)
     {

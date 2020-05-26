@@ -23,7 +23,7 @@ public class SFXCastDetect : SFXCastDetonate {
 
     void OnDetect(HitCheckEntity entity, bool enter)
     {
-        if (enter&& GameManager.B_CanSFXDamageEntity(entity, m_SourceID))
+        if (enter&& BattleManager.B_CanSFXDamageEntity(entity, m_SourceID))
             OnDetectEntity();
     }
 

@@ -11,16 +11,16 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     #region Test
     protected virtual void AddConsoleBinding()
     {
-        UIT_MobileConsole.Instance.InitConsole((bool show) => { TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.GameBase, show ? .1f : 1f); });
+        UIT_MobileConsole.Instance.InitConsole((bool show) => { TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.Base, show ? .1f : 1f); });
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Clear Console", KeyCode.None, UIT_MobileConsole.Instance.ClearConsoleLog);
     }
     #endregion
-    public virtual bool B_InGame => false;
+    public virtual bool B_InBattle => false;
     public Light m_DirectionalLight { get; private set; }
     protected override void Awake()
     {
         base.Awake();
-        LoadingManager.OnOtherSceneEnter(B_InGame? enum_Scene.Game: enum_Scene.Camp);
+        LoadingManager.OnOtherSceneEnter(B_InBattle? enum_Scene.Game: enum_Scene.Camp);
         TBroadCaster<enum_BC_GameStatus>.Init();
         TBroadCaster<enum_BC_UIStatus>.Init();
         GameIdentificationManager.Init();
@@ -34,7 +34,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
     {
         AudioManagerBase.Instance.Init();
         GameObjectManager.RegisterGameObjects();
-        UIManager.Activate(B_InGame);
+        UIManager.Activate(B_InBattle);
         TimeScaleController<enum_GameTimeScaleType>.Clear();
 
         AddConsoleBinding();
@@ -78,7 +78,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     PE_BloomSpecific m_Bloom;
     PE_DepthSSAO m_DepthSSAO;
-    protected void InitGameEffects(enum_GameStyle _levelStyle, GameRenderData renderData)
+    protected void InitGameEffects(enum_BattleStyle _levelStyle, GameRenderData renderData)
     {
         renderData.DataInit(m_DirectionalLight, CameraController.Instance.m_Camera);
         CameraController.Instance.m_Effect.RemoveAllPostEffect();
@@ -88,10 +88,10 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         CameraController.Instance.m_Effect.SetMainTextureCamera(true);
         switch (_levelStyle)
         {
-            case  enum_GameStyle.Undead:
+            case  enum_BattleStyle.Undead:
                 //CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepthNoise>().SetEffect<PE_FogDepthNoise>(TCommon.ColorAlpha(Color.white, .3f), .5f, -2, -3).SetEffect(TResources.GetNoiseTex(), .4f, 2f);
                 break;
-            case enum_GameStyle.Frost:
+            case enum_BattleStyle.Frost:
                 CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_FogDepth>().SetEffect<PE_FogDepth>(Color.white, .5f, -2, 3);
                 break;
         }
@@ -170,12 +170,12 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
 
     #region TimeScale
     TimerBase m_DurationTimeScale = new TimerBase();
-    public void SetBaseTimeScale(float timeScale = 1f) => TimeScaleController< enum_GameTimeScaleType>.SetScale( enum_GameTimeScaleType.GameBase, timeScale);
-    public void SetExtraTimeScale(float timeScale = 1f) => TimeScaleController<enum_GameTimeScaleType>.SetScale( enum_GameTimeScaleType.GameExtra, timeScale);
+    public void SetBaseTimeScale(float timeScale = 1f) => TimeScaleController< enum_GameTimeScaleType>.SetScale( enum_GameTimeScaleType.Base, timeScale);
+    public void SetExtraTimeScale(float timeScale = 1f) => TimeScaleController<enum_GameTimeScaleType>.SetScale( enum_GameTimeScaleType.Extra, timeScale);
     public void SetDurationTimeScale(float duration)
     {
         m_DurationTimeScale.SetTimerDuration(duration);
-        TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.GameImpact, .12f);
+        TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.Impact, .12f);
     }
     void TimeScaleTick()
     {
@@ -184,7 +184,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         {
             m_DurationTimeScale.Tick(unscaledDeltaTime);
             if (!m_DurationTimeScale.m_Timing)
-                TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.GameImpact, 1f);
+                TimeScaleController<enum_GameTimeScaleType>.SetScale(enum_GameTimeScaleType.Impact, 1f);
         }
         TimeScaleController<enum_GameTimeScaleType>.Tick();
     }
@@ -247,11 +247,11 @@ public static class GameObjectManager
         m_GameInteractTypes.Clear();
         TCommon.TraversalEnum((enum_Interaction enumValue) =>
         {
-            if (enumValue <= enum_Interaction.GameBegin || enumValue >= enum_Interaction.GameEnd)
+            if (enumValue <= enum_Interaction.BattleBegin || enumValue >= enum_Interaction.BattleEnd)
                 return;
-            InteractGameBase gameInteract = TResources.GetInteract(enumValue);
+            InteractBattleBase gameInteract = TResources.GetInteract(enumValue);
             m_GameInteractTypes.Add(gameInteract.GetType(), gameInteract.m_InteractType);
-            ObjectPoolManager<enum_Interaction, InteractGameBase>.Register(enumValue, gameInteract, 1);
+            ObjectPoolManager<enum_Interaction, InteractBattleBase>.Register(enumValue, gameInteract, 1);
         });
     }
     static void RegisterPlayerCharacter(enum_PlayerCharacter character)
@@ -274,7 +274,7 @@ public static class GameObjectManager
         ObjectPoolManager<int, SFXBase>.RecycleAll();
         ObjectPoolManager<int, SFXDamageBase>.RecycleAll();
         ObjectPoolManager<int, EntityBase>.RecycleAll();
-        ObjectPoolManager<enum_Interaction, InteractGameBase>.RecycleAll();
+        ObjectPoolManager<enum_Interaction, InteractBattleBase>.RecycleAll();
         ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.RecycleAll();
     }
 
@@ -283,7 +283,7 @@ public static class GameObjectManager
         ObjectPoolManager<int, SFXBase>.Destroy();
         ObjectPoolManager<int, SFXDamageBase>.Destroy();
         ObjectPoolManager<int, EntityBase>.Destroy();
-        ObjectPoolManager<enum_Interaction, InteractGameBase>.Destroy();
+        ObjectPoolManager<enum_Interaction, InteractBattleBase>.Destroy();
         ObjectPoolManager<enum_PlayerWeaponIdentity, WeaponBase>.Destroy();
     }
     #endregion
@@ -299,10 +299,10 @@ public static class GameObjectManager
         return entity;
     }
 
-    public static EntityCharacterGameBase SpawnGameCharcter(int poolIndex, Vector3 toPosition, Quaternion toRot)
+    public static EntityCharacterBattle SpawnGameCharcter(int poolIndex, Vector3 toPosition, Quaternion toRot)
     {
         RegisterAICharacter(poolIndex);
-        return SpawnEntity<EntityCharacterGameBase>(poolIndex, toPosition, toRot); 
+        return SpawnEntity<EntityCharacterBattle>(poolIndex, toPosition, toRot); 
     }
 
     public static EntityCharacterPlayer SpawnPlayerCharacter(enum_PlayerCharacter character, Vector3 position, Quaternion rotation)
@@ -378,15 +378,15 @@ public static class GameObjectManager
     }
     #endregion
     #region Interact
-    public static T SpawnInteract<T>(Vector3 pos, Quaternion rot,Transform trans=null) where T : InteractGameBase
+    public static T SpawnInteract<T>(Vector3 pos, Quaternion rot,Transform trans=null) where T : InteractBattleBase
     {
         Type targetType = typeof(T);
         if (!m_GameInteractTypes.ContainsKey(targetType))
             Debug.LogError("None Type Registed!" + targetType);
-        return ObjectPoolManager<enum_Interaction, InteractGameBase>.Spawn(m_GameInteractTypes[targetType], trans==null? TF_Interacts:trans, pos, rot) as T;
+        return ObjectPoolManager<enum_Interaction, InteractBattleBase>.Spawn(m_GameInteractTypes[targetType], trans==null? TF_Interacts:trans, pos, rot) as T;
     } 
-    public static void RecycleInteract(InteractGameBase target) => ObjectPoolManager<enum_Interaction, InteractGameBase>.Recycle(target.m_InteractType, target);
-    public static void TraversalAllInteracts(Action<InteractGameBase> action) => ObjectPoolManager<enum_Interaction, InteractGameBase>.TraversalAllActive(action);
+    public static void RecycleInteract(InteractBattleBase target) => ObjectPoolManager<enum_Interaction, InteractBattleBase>.Recycle(target.m_InteractType, target);
+    public static void TraversalAllInteracts(Action<InteractBattleBase> action) => ObjectPoolManager<enum_Interaction, InteractBattleBase>.TraversalAllActive(action);
     #endregion
     #endregion
 }

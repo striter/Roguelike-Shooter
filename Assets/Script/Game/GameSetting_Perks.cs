@@ -463,13 +463,13 @@ namespace GameSetting_CharacterPlayerPerks_10000
 
 namespace GameSetting_CharacterGamePerks_20000
 {
-    public class EB20000_Default:ExpireGameCharacterBase
+    public class EB20000_Default:ExpireBattleCharacterBase
     {
         public override int m_Index => GameDataManager.m_DefaultEnermyPerkIdentity;
         public EB20000_Default(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 
-    public class EB20001:ExpireGameCharacterBase
+    public class EB20001:ExpireBattleCharacterBase
     {
         public override int m_Index => 20001;
         public override int m_EffectIndex => 40014;
@@ -482,7 +482,7 @@ namespace GameSetting_CharacterGamePerks_20000
         public EB20001(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 
-    public class EB20002 : ExpireGameCharacterBase
+    public class EB20002 : ExpireBattleCharacterBase
     {
         public override int m_Index => 20002;
         public override int m_EffectIndex => 40002;
@@ -490,7 +490,7 @@ namespace GameSetting_CharacterGamePerks_20000
         public EB20002(float baseMaxHealthMultiplier, float baseDamageMultiplier) : base(baseMaxHealthMultiplier, baseDamageMultiplier) { }
     }
 
-    public class EB20003 : ExpireGameCharacterBase
+    public class EB20003 : ExpireBattleCharacterBase
     {
         public override int m_Index => 20003;
         public override int m_EffectIndex => 40001;

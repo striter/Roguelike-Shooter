@@ -51,7 +51,7 @@ namespace GameSetting
     #endregion
 
     #region GameEnum
-    public enum enum_GameStage {
+    public enum enum_BattleStage {
         Invalid = -1,
         Rookie = 1,
         Militia = 2,
@@ -60,7 +60,7 @@ namespace GameSetting
         Elite = 5,
     }
 
-    public enum enum_GameDifficulty
+    public enum enum_BattleDifficulty
     {
         Invalid=-1,
         Normal=1,
@@ -68,14 +68,14 @@ namespace GameSetting
         Hell=3,
     }
 
-    public enum enum_GamePortalType
+    public enum enum_BattlePortalTye
     {
         Invalid = -1,
         StageEnd,
-        GameWin,
+        BattleWin,
     }
 
-    public enum enum_GameEventType
+    public enum enum_BattleEvent
     {
         Invalid=-1,
         CoinsSack=1,
@@ -92,26 +92,26 @@ namespace GameSetting
         SafeBox=12,
     }
 
-    public enum enum_EntityType { Invalid = -1, None = 1, Player = 2, GameEntity = 3,GameDevice=4, }
+    public enum enum_EntityType { Invalid = -1, None = 1, Player = 2, BattleEntity = 3,BattleDevice=4, }
 
     public enum enum_EntityFlag { Invalid = -1, None = 0, Player = 1, Enermy = 2, Neutal = 3, }
 
     public enum enum_HitCheck { Invalid = -1, Static = 1, Entity = 2, Dynamic = 3, Interact = 4, }
 
-    public enum enum_GameStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
+    public enum enum_BattleStyle { Invalid = -1, Forest = 1, Desert = 2, Frost = 3, Horde = 4, Undead = 5, }
     
     public enum enum_Interaction
     {
         Invalid = -1,
-        GameBegin,
+        BattleBegin,
         Bonfire, WeaponReforge,WeaponRecycle,SafeCrack,CoinSack, WeaponVendorMachine,
         PickupCoin, PickupHealth, PickupHealthPack, PickupArmor, PerkPickup, PickupWeapon,PickupKey,
         TradeContainer, PerkSelect,PerkLottery,PerkShrine,BloodShrine,HealShrine,
         PickupArmoryBlueprint,
         SignalTower, Portal,
-        GameEnd,
+        BattleEnd,
 
-        CampBegin, CampGameEnter, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd,
+        CampBegin, CampBattleEnter,CampBattleResume, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd,
     }
 
     public enum enum_DamageIdentity { Invalid=-1,Default,Environment,Expire,PlayerWeapon,PlayerAbility, }
@@ -164,9 +164,9 @@ namespace GameSetting
         SheildDrain=601,
     }
 
-    public enum enum_GameTimeScaleType { Invalid=-1,GameBase,GameExtra,GameImpact}
+    public enum enum_GameTimeScaleType { Invalid=-1,Base,Extra,Impact}
 
-    public enum enum_GameVFX
+    public enum enum_BattleVFX
     {
         Invalid = -1,
 
@@ -177,7 +177,7 @@ namespace GameSetting
     }
 
 
-    public enum enum_GameMusic { Invalid = -1, StyledStart = 1, Relax, StyledEnd = 10, Fight }
+    public enum enum_BattleMusic { Invalid = -1, StyledStart = 1, Relax, StyledEnd = 10, Fight }
 
     public enum enum_CampMusic { Invalid = -1, Relax = 0, }
 
@@ -204,18 +204,18 @@ namespace GameSetting
 
         public static bool IsInteractExpire(this enum_ExpireType type) =>  type == enum_ExpireType.Perk;
 
-        public static bool IsGameInteract(this enum_Interaction interact) => interact > enum_Interaction.GameBegin && interact < enum_Interaction.GameEnd;
+        public static bool IsBattleInteract(this enum_Interaction interact) => interact > enum_Interaction.BattleBegin && interact < enum_Interaction.BattleEnd;
 
-        public static enum_ChunkPortalType GetPortalType(this enum_GamePortalType eventType)
+        public static enum_ChunkPortalType GetPortalType(this enum_BattlePortalTye eventType)
         {
             switch (eventType)
             {
                 default:
                     Debug.LogError("Invalid Convertions Here!"+ eventType);
                     return enum_ChunkPortalType.Invalid;
-                case enum_GamePortalType.StageEnd:
+                case enum_BattlePortalTye.StageEnd:
                     return enum_ChunkPortalType.Event;
-                case enum_GamePortalType.GameWin:
+                case enum_BattlePortalTye.BattleWin:
                     return enum_ChunkPortalType.Reward;
             }
         

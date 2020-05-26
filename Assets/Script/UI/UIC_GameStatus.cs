@@ -125,20 +125,20 @@ public class UIC_GameStatus : UIControlBase {
 
     private void Update()
     {
-        if (GameManager.Instance.m_GameLoading)
+        if (BattleManager.Instance.m_GameLoading)
             return;
 
         float deltaTime = Time.deltaTime;
 
         m_CoinLerp.TickDelta(deltaTime);
         m_RankLerp.TickDelta(deltaTime);
-        m_Map.MinimapUpdate(GameManager.Instance.m_LocalPlayer);
+        m_Map.MinimapUpdate(BattleManager.Instance.m_LocalPlayer);
 
-        int secondPassed= (int)GameManager.Instance.m_GameBattle.m_TimeElapsed;
+        int secondPassed= (int)BattleManager.Instance.m_BattleEntity.m_TimeElapsed;
         if (m_TimeValueChecker.Check(secondPassed))
             m_Time.text = TTime.TTimeTools.GetMinuteSecond(m_TimeValueChecker.value1);
 
-        int minutePassed = GameManager.Instance.m_GameBattle.m_MinutesElapsed;
+        int minutePassed = BattleManager.Instance.m_BattleEntity.m_MinutesElapsed;
         if (m_MinuteValueCheck.Check(minutePassed))
         {
             Color color = m_ProgressRampSample.GetPixel((int)(m_ProgressRampSample.width * ((float)minutePassed / UIConst.I_GameProgressDifficultyColorRampMaxMinutes)), 1);
@@ -174,7 +174,7 @@ public class UIC_GameStatus : UIControlBase {
             UpdateMapRotation(GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw));
 
             m_Locations.ClearGrid();
-            GameManager.Instance.m_StageInteracts.Traversal((InteractGameBase interactData) =>
+            BattleManager.Instance.m_StageInteracts.Traversal((InteractBattleBase interactData) =>
             {
                 Image image = m_Locations.AddItem(m_Locations.m_Count);
                 image.sprite = GameUIManager.Instance.m_CommonSprites[interactData.m_InteractType.GetInteractIcon()];

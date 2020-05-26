@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityCharacterGameForestExtra : EntityCharacterGameBase {
+public class EntityCharacterBattleForestExtra : EntityCharacterBattle {
 
     [Range(0, 90)]
     public int I_SpreadAngleEach = 30;

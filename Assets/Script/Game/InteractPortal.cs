@@ -5,11 +5,11 @@ using System;
 using LevelSetting;
 using System.Collections.Generic;
 
-public class InteractPortal : InteractGameBase
+public class InteractPortal : InteractBattleBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.Portal;
-    enum_GamePortalType m_PortalEvent = enum_GamePortalType.Invalid;
-    Action<enum_GamePortalType> OnPortalInteract;
+    enum_BattlePortalTye m_PortalEvent = enum_BattlePortalTye.Invalid;
+    Action<enum_BattlePortalTye> OnPortalInteract;
     public override string GetUITitleKey() => m_PortalEvent.GetLocalizeNameKey();
     public override string GetUIIntroKey() => m_PortalEvent.GetLocalizeIntroKey();
     public override bool B_InteractOnTrigger => false;
@@ -23,7 +23,7 @@ public class InteractPortal : InteractGameBase
         });
     }
 
-    public InteractPortal Play(enum_GamePortalType eventType, Action<enum_GamePortalType> _OnPortalInteract)
+    public InteractPortal Play(enum_BattlePortalTye eventType, Action<enum_BattlePortalTye> _OnPortalInteract)
     {
         base.Play();
         m_PortalEvent = eventType;

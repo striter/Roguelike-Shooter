@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractPerkShrine : InteractGameBase {
+public class InteractPerkShrine : InteractBattleBase {
     public override enum_Interaction m_InteractType => enum_Interaction.PerkShrine;
     int m_TryCount;
     float m_BaseTradePrice;

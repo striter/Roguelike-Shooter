@@ -44,7 +44,7 @@ public class UI_PlayerDetail : UIPage
     public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
     {
         base.OnPlay(doAnim, OnPageExit);
-        m_Player = GameManager.Instance.m_LocalPlayer;
+        m_Player = BattleManager.Instance.m_LocalPlayer;
         m_WeaponSelect.ClearGrid();
         if (m_Player.m_Weapon1)
             m_WeaponSelect.AddItem(0).Init(m_Player.m_Weapon1.m_WeaponInfo.m_Weapon);

@@ -21,7 +21,7 @@ public class GameUIManager : UIManager {
         PreloadPage<UI_GameResult>();
     }
 
-    public void OnGameFinished(GameProgressManager level, Action _OnButtonClick)
+    public void OnGameFinished(BattleProgressManager level, Action _OnButtonClick)
     {
         cvs_Camera.gameObject.SetActivate(false);
         ShowPage<UI_GameResult>(true).Play(level.m_GameWin,_OnButtonClick);

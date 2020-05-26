@@ -74,7 +74,7 @@ public class UIC_PlayerInteract : UIControlBase
         int tradePrice = -1;
         if (m_Interact != null)
         {
-            tradePrice = m_Interact.m_InteractType.IsGameInteract()?(m_Interact as InteractGameBase) .m_TradePrice:0;
+            tradePrice = m_Interact.m_InteractType.IsBattleInteract()?(m_Interact as InteractBattleBase) .m_TradePrice:0;
             switch (m_Interact.m_InteractType)
             {
                 default:

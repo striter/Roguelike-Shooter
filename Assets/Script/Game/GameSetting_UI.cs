@@ -129,10 +129,10 @@ namespace GameSetting
         public static string GetIntroLocalizeKey(this EntityCharacterBase character) => "Character_Intro_" + character.m_Identity;
         public static string GetAbilityNameLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_Name_" + character;
         public static string GetAbilityDetailLocalizeKey(this enum_PlayerCharacter character) => "Character_Ability_Detail_" + character;
-        public static string GetLocalizeKey(this enum_GameStage stage) => "Game_Stage_" + stage;
-        public static string GetLocalizeKey(this enum_GameStyle style) => "Game_Style_" + style;
-        public static string GetLocalizeNameKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Name";
-        public static string GetLocalizeIntroKey(this enum_GamePortalType type) => "UI_Level_" + type + "_Intro";
+        public static string GetLocalizeKey(this enum_BattleStage stage) => "Game_Stage_" + stage;
+        public static string GetLocalizeKey(this enum_BattleStyle style) => "Game_Style_" + style;
+        public static string GetLocalizeNameKey(this enum_BattlePortalTye type) => "UI_Level_" + type + "_Name";
+        public static string GetLocalizeIntroKey(this enum_BattlePortalTye type) => "UI_Level_" + type + "_Intro";
         public static string GetNameLocalizeKey(this enum_PlayerWeaponIdentity weapon) => "Weapon_Name_" + weapon;
         public static string GetIntroLocalizeKey(this enum_PlayerWeaponIdentity weapon) => "Weapon_Intro_" + weapon;
         public static string GetTitleLocalizeKey(this enum_Interaction interact) => "UI_Interact_" + interact + "_Title";
@@ -267,7 +267,7 @@ namespace GameSetting
 
         public virtual void OnPlay()
         {
-            m_Player.Play(GameManager.Instance.m_LocalPlayer);
+            m_Player.Play(BattleManager.Instance.m_LocalPlayer);
             m_Map_Origin_Base.texture = GameLevelManager.Instance.m_MapTexture;
             m_Map_Origin_Base.SetNativeSize();
             m_Map_Origin_Base_Fog.texture = GameLevelManager.Instance.m_FogTexture;

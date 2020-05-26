@@ -59,7 +59,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
     }
 
     #region Generate
-    public IEnumerator Generate(enum_GameStyle style, System.Random random, Action<Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>>> OnGenerateEditorObjects)
+    public IEnumerator Generate(enum_BattleStyle style, System.Random random, Action<Dictionary<enum_ObjectEventType, List<ChunkGameObjectData>>> OnGenerateEditorObjects)
     {
         m_PlayerMinimapUpdateCheckAxis = -TileAxis.One;
         m_PlayerQuadrantActivateCheckAxis = -TileAxis.One;

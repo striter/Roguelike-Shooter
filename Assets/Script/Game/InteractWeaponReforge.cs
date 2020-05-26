@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GameSetting;
 using UnityEngine;
 
-public class InteractWeaponReforge : InteractGameBase
+public class InteractWeaponReforge : InteractBattleBase
 {
     public override enum_Interaction m_InteractType => enum_Interaction.WeaponReforge;
     public enum_PlayerWeaponIdentity m_Weapon { get; private set; }
