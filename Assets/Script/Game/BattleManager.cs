@@ -207,7 +207,7 @@ public class BattleManager : GameManagerBase
 
         //Spawn Enhance Item
         enum_PlayerCharacterEnhance enhance = m_LocalPlayer.m_Enhance;
-        if (enhance >= enum_PlayerCharacterEnhance.DropWeapon && m_BattleProgress.m_Stage == enum_BattleStage.Rookie)
+        if (m_BattleProgress.m_Stage == enum_BattleStage.Rookie)
             GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(playerSpawn.m_Pos + TCommon.RandomXZCircle() * 3f), playerSpawn.m_Rot).Play(GameDataManager.RandomUnlockedWeaponData(GameConst.m_CharacterRandomStartWeaponRarities.RandomPercentage(enum_Rarity.Ordinary, m_BattleProgress.m_Random), m_LocalPlayer.m_Enhance >= enum_PlayerCharacterEnhance.DropWeapon ? 1 : 0));
         if (enhance >= enum_PlayerCharacterEnhance.StageCoin)
                 GameObjectManager.SpawnInteract<InteractPickupCoin>(NavigationManager.NavMeshPosition(playerSpawn.m_Pos + TCommon.RandomXZCircle() * 3f), playerSpawn.m_Rot).Play(GameConst.I_PlayerEnhanceStageStartCoin);
