@@ -25,7 +25,6 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
     {
         base.Init();
         rtf_Container = transform.Find("Container") as RectTransform;
-        rtf_Container.localScale = Vector2.one * UIManagerBase.Instance.m_fittedScale;
         img_Background = transform.Find("Background").GetComponent<Image>();
         btn_WholeCancel = img_Background.GetComponent<Button>();
         Transform containerCancel = rtf_Container.Find("BtnCancel");
