@@ -449,7 +449,7 @@ public class BattleManager : GameManagerBase
         if(character.m_ControllType== enum_EntityType.BattleEntity)
             SpawnCharacterDeadDrops(character as EntityCharacterBattle);
 
-        CheckTransmitCharacterKilled(character.m_EntityID);
+        CheckTransmitCharacterKilled(character);
     }
 
     void OnEntityRecycle(EntityBase entity)
