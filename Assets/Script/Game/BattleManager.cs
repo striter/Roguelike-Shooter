@@ -289,9 +289,9 @@ public class BattleManager : GameManagerBase
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameTransmitEliteStatus, GetCharacter(m_BattleEntity.m_TransmitEliteID));
     }
 
-    void CheckTransmitCharacterKilled(int characterID)
+    void CheckTransmitCharacterKilled(EntityCharacterBase character)
     {
-        if (!m_BattleEntity.OnEnermyKilledCheckTransmitFinish(characterID))
+        if (!m_BattleEntity.OnEnermyKilledCheckTransmitFinish(character))
             return;
         TBroadCaster<enum_BC_GameStatus>.Trigger<EntityCharacterBase>(enum_BC_GameStatus.OnGameTransmitEliteStatus, null);
     }
@@ -661,12 +661,13 @@ public class BattleEntityManager
         m_TransmitSignalTower.OnTransmitSet(true);
     }
     
-    public bool OnEnermyKilledCheckTransmitFinish(int enermyID)
+    public bool OnEnermyKilledCheckTransmitFinish(EntityCharacterBase character)
     {
-        m_EnermyKilled++;
-        if (enermyID != m_TransmitEliteID)
-            return false;
+        if(character.m_Flag== enum_EntityFlag.Enermy)
+            m_EnermyKilled++;
 
+        if (character.m_EntityID != m_TransmitEliteID)
+            return false;
         m_TransmitEliteID = -1;
         return true;
     }
