@@ -71,28 +71,31 @@ namespace GameSetting
             TGameData<CBattleSave>.Save();
         }
         
-        public static void OnGameResult(bool win, int credit)
+        public static void OnGameResult( BattleProgressManager progress,BattleEntityManager entity)
         {
             m_GameData.m_BattleResume = false;
-            if (win&& m_GameData.m_BattleDifficulty == m_GameData.m_DifficultyUnlocked && m_GameData.m_DifficultyUnlocked != enum_BattleDifficulty.Hard)
+            if (progress .m_GameWin&& m_GameData.m_BattleDifficulty == m_GameData.m_DifficultyUnlocked && m_GameData.m_DifficultyUnlocked != enum_BattleDifficulty.Hard)
             {
                 m_GameData. m_DifficultyUnlocked++;
                 m_GameData.m_BattleDifficulty++;
             }
-            m_GameData.BattleFinish(win);
-            m_GameData.f_Credits += credit;
+
+            float stageCredit = ((int)progress.m_Stage-1) *GameConst.F_GameResultCreditStageBase;
+            float killCredit = entity.m_EnermyKilled *GameConst.F_GameResultCreditEnermyKilledBase;
+            float difficultyBonus = (1f+((int)entity.m_Difficulty-1) *GameConst.F_GameResultCreditDifficultyBonus);
+            m_GameData.m_Credit += (stageCredit+killCredit)*difficultyBonus;
             TGameData<CGameSave>.Save();
         }
 
         #endregion
 
         #region GameData
-        public static bool CanUseCredit(float credit) => m_GameData.f_Credits >= credit;
+        public static bool CanUseCredit(float credit) => m_GameData.m_Credit >= credit;
         public static void OnCreditStatus(float credit)
         {
             if (credit == 0)
                 return;
-            m_GameData.f_Credits += credit;
+            m_GameData.m_Credit += credit;
             TGameData<CGameSave>.Save();
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCurrencyStatus);
         }
@@ -156,7 +159,7 @@ namespace GameSetting
         public static WeaponSaveData CharacterStartWeaponData(enum_PlayerCharacter character, int enhance) => WeaponSaveData.New(GameConst.m_CharacterStartWeapon[character],enhance);
 
         public static int GetArmoryUnlockPrice(enum_PlayerWeaponIdentity weapon) => GameConst.m_ArmoryBlueprintUnlockPrice[GetWeaponProperties(weapon).m_Rarity];
-        public static bool CanArmoryUnlock(enum_PlayerWeaponIdentity weapon) => m_GameData.f_Credits >= GetArmoryUnlockPrice(weapon);
+        public static bool CanArmoryUnlock(enum_PlayerWeaponIdentity weapon) => m_GameData.m_Credit >= GetArmoryUnlockPrice(weapon);
         public static void OnArmoryUnlock(enum_PlayerWeaponIdentity weapon)
         {
             if (!m_ArmoryData.m_WeaponBlueprints.Contains(weapon))
@@ -402,30 +405,18 @@ namespace GameSetting
         public bool m_BattleResume;
         public enum_BattleDifficulty m_BattleDifficulty;
         public enum_BattleDifficulty m_DifficultyUnlocked;
-        public float f_Credits;
+        public float m_Credit;
         public int m_LastDailyRewardStamp;
 
         public CGameSave()
         {
-            f_Credits = 100;
+            m_Credit = 100;
             m_BattleDifficulty =  enum_BattleDifficulty.Normal;
             m_DifficultyUnlocked =  enum_BattleDifficulty.Normal;
             m_LastDailyRewardStamp = -1;
             m_BattleResume = false;
         }
 
-        public void BattleFinish(bool win)
-        {
-            if (!win)
-                return;
-            if (m_BattleDifficulty != m_DifficultyUnlocked)
-                return;
-            if (m_DifficultyUnlocked == enum_BattleDifficulty.Hard)
-                return;
-
-            m_DifficultyUnlocked++;
-            m_BattleDifficulty++;
-        }
 
         public bool CheckDailyReward()
         {
@@ -444,7 +435,7 @@ namespace GameSetting
     public class CBattleSave : ISave
     {
         public string m_GameSeed;
-        public enum_BattleDifficulty m_GameDifficulty;
+        public enum_BattleDifficulty m_BattleDifficulty;
 
         public enum_BattleStage m_Stage;
         public float m_TimeElapsed;
@@ -458,7 +449,7 @@ namespace GameSetting
         public List<PerkSaveData> m_Perks;
 
         public List<enum_PlayerWeaponIdentity> m_ArmoryBlueprintsUnlocked;
-
+        public int m_EnermyKilled;
         public CBattleSave()
         {
             enum_PlayerCharacter characterSelected = GameDataManager.m_CharacterData.m_CharacterSelected;
@@ -468,8 +459,9 @@ namespace GameSetting
 
         public CBattleSave SetData(enum_BattleDifficulty difficulty, enum_PlayerCharacter character,enum_PlayerCharacterEnhance enhance, WeaponSaveData weapon1,WeaponSaveData weapon2)
         {
+            m_EnermyKilled = 0;
             m_GameSeed = DateTime.Now.ToLongTimeString();
-            m_GameDifficulty = difficulty;
+            m_BattleDifficulty = difficulty;
             m_TimeElapsed = 0;
             m_Keys = 0;
             m_TotalExp = 0;
@@ -487,6 +479,8 @@ namespace GameSetting
         public void Adjust(EntityCharacterPlayer _player, BattleProgressManager _level,BattleEntityManager _battle)
         {
             m_TimeElapsed = _battle.m_TimeElapsed;
+            m_EnermyKilled = _battle.m_EnermyKilled;
+
             m_Stage = _level.m_Stage;
 
             m_Character = _player.m_Character;

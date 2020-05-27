@@ -291,7 +291,7 @@ public class BattleManager : GameManagerBase
 
     void CheckTransmitCharacterKilled(int characterID)
     {
-        if (!m_BattleEntity.CheckTransmitEliteKilled(characterID))
+        if (!m_BattleEntity.OnEnermyKilledCheckTransmitFinish(characterID))
             return;
         TBroadCaster<enum_BC_GameStatus>.Trigger<EntityCharacterBase>(enum_BC_GameStatus.OnGameTransmitEliteStatus, null);
     }
@@ -315,12 +315,13 @@ public class BattleManager : GameManagerBase
                 Debug.LogError("Invalid Portal Here!"+ portalType);
                 break;
             case enum_BattlePortalTye.StageEnd:
-                m_BattleProgress.NextStage();
+                m_BattleProgress.StageFnished();
                 SetBaseTimeScale(.1f);
                 GameDataManager.OnBattleStageSave(this);
                 OnPortalEnter(1f, tf_CameraAttach, LoadStage);
                 break;
             case enum_BattlePortalTye.BattleWin:
+                m_BattleProgress.StageFnished();
                 OnGameFinished(true);
                 break;
           }
@@ -342,8 +343,7 @@ public class BattleManager : GameManagerBase
     void OnGameFinished(bool win)
     {
         m_BattleProgress.GameFinished(win);
-        GameDataManager.OnGameResult(m_BattleProgress.m_GameWin,100);
-        Debug.Log("Blueprint Unlocked:"+ TDataConvert.Convert(m_BattleProgress.m_ArmoryBlueprintsUnlocked));
+        GameDataManager.OnGameResult(m_BattleProgress,m_BattleEntity);
         GameUIManager.Instance.OnGameFinished(m_BattleProgress, OnGameExit);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
@@ -597,7 +597,7 @@ public class BattleProgressManager
     {
         m_Random = new System.Random((m_GameSeed + m_Stage.ToString()).GetHashCode());
     }
-    public void NextStage() => m_Stage++;
+    public void StageFnished() => m_Stage++;
     public void GameFinished(bool win) => m_GameWin = win;
     public enum_BattlePortalTye GetNextStageGenerate() => m_FinalStage ? enum_BattlePortalTye.BattleWin : enum_BattlePortalTye.StageEnd;
 
@@ -620,6 +620,7 @@ public class BattleEntityManager
     bool m_Transmiting=false;
     public bool m_TransmitEliteAlive => m_TransmitEliteID > 0;
     public int m_TransmitEliteID { get; private set; } = -1;
+    public int m_EnermyKilled { get; private set; } = 0;
     TimerBase m_TransmitTimer=new TimerBase(GameConst.F_SignalTowerTransmitDuration);
 
     public enum_BattleDifficulty m_Difficulty { get; private set; }
@@ -630,7 +631,8 @@ public class BattleEntityManager
         m_Manager = manager;
         m_TimeElapsed = _battleSave.m_TimeElapsed;
         m_MinutesElapsed = (int)(m_TimeElapsed / 60f);
-        m_Difficulty = _battleSave.m_GameDifficulty;
+        m_Difficulty = _battleSave.m_BattleDifficulty;
+        m_EnermyKilled = _battleSave.m_EnermyKilled;
     }
 
     public void Init(List<Vector3> _spawnPoints, enum_BattleStage stage,InteractSignalTower signalTower)
@@ -658,9 +660,10 @@ public class BattleEntityManager
         m_TransmitTimer.Replay();
         m_TransmitSignalTower.OnTransmitSet(true);
     }
-
-    public bool CheckTransmitEliteKilled(int enermyID)
+    
+    public bool OnEnermyKilledCheckTransmitFinish(int enermyID)
     {
+        m_EnermyKilled++;
         if (enermyID != m_TransmitEliteID)
             return false;
 

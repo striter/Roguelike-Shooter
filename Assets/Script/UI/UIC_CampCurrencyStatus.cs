@@ -13,7 +13,7 @@ public class UIC_CampCurrencyStatus : UIControlBase {
     {
         base.Init();
         m_Credit = transform.Find("Credit/Data").GetComponent<Text>();
-        m_CreditLerp = new ValueLerpSeconds(GameDataManager.m_GameData.f_Credits, 100f,1f,(float value)=> { m_Credit.text = string.Format("{0:N2}",value); });
+        m_CreditLerp = new ValueLerpSeconds(GameDataManager.m_GameData.m_Credit, 100f,1f,(float value)=> { m_Credit.text = string.Format("{0:N2}",value); });
         OnCampStatus();
         TBroadCaster<enum_BC_UIStatus>.Add(enum_BC_UIStatus.UI_CampCurrencyStatus, OnCampStatus);
     }
@@ -28,7 +28,7 @@ public class UIC_CampCurrencyStatus : UIControlBase {
     }
     void OnCampStatus()
     {
-        m_CreditLerp.SetLerpValue(GameDataManager.m_GameData.f_Credits);
+        m_CreditLerp.SetLerpValue(GameDataManager.m_GameData.m_Credit);
     }
 
 }

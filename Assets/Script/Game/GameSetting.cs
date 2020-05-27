@@ -153,6 +153,9 @@ namespace GameSetting
         public const float F_PlayerEnhanceCriticalRateAdditive = .05f;
         public const int I_PlayerEnhanceDropWeaponEnhanceAdditive = 1;
 
+        public const float F_GameResultCreditStageBase = 500f;
+        public const float F_GameResultCreditEnermyKilledBase = 1f;
+        public const float F_GameResultCreditDifficultyBonus = .2f;
         #endregion
     }
 
