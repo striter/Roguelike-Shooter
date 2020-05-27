@@ -8,7 +8,7 @@
 		SubShader
 		{
 			Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
-
+			Cull Back
 			CGINCLUDE
 
 			#include "../CommonLightingInclude.cginc"
@@ -19,7 +19,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			UNITY_INSTANCING_BUFFER_START(Props)
-			UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+				UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
 			UNITY_INSTANCING_BUFFER_END(Props)
 
 			struct a2fDV
@@ -77,7 +77,7 @@
 				UNITY_SETUP_INSTANCE_ID(v);
 				v2fs o;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
-					return o;
+				return o;
 			}
 
 			fixed4 ShadowFragment(v2fs i) :SV_TARGET

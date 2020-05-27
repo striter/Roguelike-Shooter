@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 081334a023db2704db167d2dfc323270, type: 3}
-    totalSpriteSurfaceArea: 1702411
+    totalSpriteSurfaceArea: 1732670
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -41,21 +41,21 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dc0c7f26276c212429747ea0c67ee87d, type: 3}
   - {fileID: 21300000, guid: 006ea73e2bf56dc4e959b2bc4171da77, type: 3}
   - {fileID: 21300000, guid: d3693ba12401d8c4cac8765412e6c015, type: 3}
+  - {fileID: 21300000, guid: 4dc5bd00e18560b47bf49bbdf0f97d80, type: 3}
   - {fileID: 21300000, guid: adc8678505b475a4ba593e5cbf58f7fc, type: 3}
   - {fileID: 21300000, guid: 249492817eec55c42a4d2580c032ff78, type: 3}
   - {fileID: 21300000, guid: e37970e04c0d4914eb37edca06c779ff, type: 3}
-  - {fileID: 21300000, guid: 8d075ecdfcda10a4f97f8dcc20ec9543, type: 3}
   - {fileID: 21300000, guid: 50a27b304cb3072499f7c426c6bfe073, type: 3}
   - {fileID: 21300000, guid: e632b06f76869104c903d83accb219a4, type: 3}
   - {fileID: 21300000, guid: 3149cb800216b9b42b49823951103c3c, type: 3}
   - {fileID: 21300000, guid: e2ea6798788e5e2458b78567d5ab8b4e, type: 3}
   - {fileID: 21300000, guid: 2c591be845d1f7845bad7a62d55e44ba, type: 3}
   - {fileID: 21300000, guid: ab90529173c2faa4188d2d7f4a1207c4, type: 3}
-  - {fileID: 21300000, guid: d363cd23557dd01419f0dc61db48324b, type: 3}
+  - {fileID: 21300000, guid: 47aef263fd1ba054dad8abb626cd7a94, type: 3}
+  - {fileID: 21300000, guid: 466bb6c67e761e841b5980d644b9239f, type: 3}
+  - {fileID: 21300000, guid: dff2d01fd7bbfe14c9264bce44b56a92, type: 3}
   - {fileID: 21300000, guid: 86b71b5e29d8abe468841d6e521a3b7f, type: 3}
   - {fileID: 21300000, guid: 1a0efb1eea613644fb4aaf215439ce85, type: 3}
-  - {fileID: 21300000, guid: 972c02c8f10410d40a3bcc0840743004, type: 3}
-  - {fileID: 21300000, guid: 24d8f013a58a8124593e62fc57e6ada9, type: 3}
   - {fileID: 21300000, guid: 6c373eed2ec2e17438b1cdb4765988bd, type: 3}
   - {fileID: 21300000, guid: b4c028231d32f0644a24c929ba91f1b4, type: 3}
   - {fileID: 21300000, guid: 7ceaf2a444de1a34587c0071f5f5d8ca, type: 3}
@@ -69,21 +69,21 @@ SpriteAtlas:
   - gamestatus_map_bg
   - result_title_win_CN
   - result_bg
+  - gamestatus_progress_bg
   - gamestatus_eliteHealthBG
   - detail_perk_background
   - gamestatus_eliteHealth
-  - gamestatus_time_bg
   - gamestatus_currency_bg
   - detail_select_weapon
   - gamestatus_mission_bg
   - gamestatus_EXP
   - gamestatus_EXP_bg
   - detail_select_perk
-  - visualize_healthElite
+  - visualize_backgroundHP
+  - visualize_normalHP
+  - visualize_eliteHP
   - NumericIcon_StartAttack
   - gamestatus_eliteHealthNameBG
-  - visualize_healthBG
-  - visualize_HealthNormal
   - NumericIcon_Coin
   - NumericIcon_Armor
   - NumericIcon_Health
