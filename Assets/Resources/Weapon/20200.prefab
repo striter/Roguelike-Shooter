@@ -52,7 +52,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   E_ProjectileType: 2
-  F_Speed: 7
+  RI_CountExtension:
+    start: 3
+    length: 0
+  F_OffsetExtension: 3
+  F_Speed: 10
   B_Penetrate: 0
   AC_MuzzleClip: {fileID: 8300000, guid: 9528b634918d7ec4bb5df8246b2859a5, type: 3}
   I_TrailIndex: 70201
@@ -61,7 +65,3 @@ MonoBehaviour:
   I_IndicatorIndex: 0
   F_Radius: 0.1
   F_Height: 0.5
-  RI_CountExtension:
-    start: 3
-    length: 0
-  F_OffsetExtension: 3
