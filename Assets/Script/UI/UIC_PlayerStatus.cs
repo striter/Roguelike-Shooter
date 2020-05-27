@@ -131,7 +131,7 @@ public class UIC_PlayerStatus : UIControlBase
             if (weaponInfo == null || !m_AmmoUpdate.Check(weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount))
                 return;
 
-            m_AmmoAmount.text = string.Format("<Size=18>{0}</Size><Color=#E3E3E380> / {1}</Color>", weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount);
+            m_AmmoAmount.text = string.Format("<Size=24>{0}</Size><Color=#E3E3E380> / {1}</Color>", weaponInfo.m_AmmoLeft, weaponInfo.m_ClipAmount);
 
             if (m_AmmoGrid.m_Count != weaponInfo.m_ClipAmount)
             {
