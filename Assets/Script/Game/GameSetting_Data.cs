@@ -524,7 +524,7 @@ namespace GameSetting
         public CPlayerCharactersCultivateData()
         {
             m_CharacterSelected = enum_PlayerCharacter.Beth;
-            m_CharacterDetail = new Dictionary<enum_PlayerCharacter, PlayerCharacterCultivateSaveData>() { { enum_PlayerCharacter.Beth, new PlayerCharacterCultivateSaveData(true, enum_PlayerCharacterEnhance.Armor)} };
+            m_CharacterDetail = new Dictionary<enum_PlayerCharacter, PlayerCharacterCultivateSaveData>() { { enum_PlayerCharacter.Beth, new PlayerCharacterCultivateSaveData(true, enum_PlayerCharacterEnhance.None)} };
         }
 
         public void ChangeSelectedCharacter(enum_PlayerCharacter character) => m_CharacterSelected = character;
