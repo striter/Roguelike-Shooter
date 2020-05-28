@@ -109,7 +109,7 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
 
                 bool subGenerateSuccessful = false;
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 0; i++)
                 {
                     bool generateSuccessful = false;
                     mainConnectionChunks.TraversalRandomBreak((ChunkGenerateData mainChunk) =>

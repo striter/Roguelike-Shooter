@@ -7,6 +7,10 @@ namespace LevelSetting
 {
     public static class LevelConst
     {
+        public const int I_TileSize = 2;
+        public const int I_QuadranteTileSize = 12;
+
+        public static readonly Dictionary<enum_TileObjectType, int> m_ChunkRestriction = new Dictionary<enum_TileObjectType, int>() { { enum_TileObjectType.EConnection, 4 }, { enum_TileObjectType.EMainEvent3x3, 3 }, { enum_TileObjectType.ERandomEvent3x3, -1 }, { enum_TileObjectType.EEnermySpawn, -1 } };
         #region UI
         public const int I_UIMinimapSize = 8;
         public const int I_UIMapScale = 8;
@@ -30,12 +34,6 @@ namespace LevelSetting
         public static readonly Color C_MapTerrainPlaneColor = TCommon.GetHexColor("797979FF");
 
         #endregion
-        public const int I_TileSize = 2;
-        public const int I_QuadranteTileSize = 12;
-
-        public static readonly Vector3 V3_TileUnitCenterOffset = new TileAxis(1, 1).ToPosition() / 2;
-
-        public static readonly Dictionary<enum_TileObjectType, int> m_ChunkRestriction = new Dictionary<enum_TileObjectType, int>() { {enum_TileObjectType.EConnection,4 },{enum_TileObjectType.EMainEvent3x3,3 },{enum_TileObjectType.ERandomEvent3x3,-1 },{ enum_TileObjectType.EEnermySpawn, -1 } };
 
     }
 
