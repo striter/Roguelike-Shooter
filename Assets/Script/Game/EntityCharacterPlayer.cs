@@ -200,16 +200,13 @@ public class EntityCharacterPlayer : EntityCharacterBase
         if (damageEntity.m_EntityID == m_EntityID && amountApply > 0)
             m_ArmorRegenTimer.Replay();
 
-        if (damageInfo.m_EntityID == m_EntityID)
+        if (amountApply > 0 && BattleManager.Instance.EntityOpposite(this, damageEntity))
         {
-            if(amountApply>0&& BattleManager.Instance.EntityOpposite(this, damageEntity))
-            {
-                if (damageInfo.m_IdentityType == enum_DamageIdentity.PlayerWeapon && damageInfo.m_IdentityID == m_WeaponCurrent.m_WeaponID)
-                    m_WeaponCurrent.OnDealtDamage(amountApply);
+            if (damageInfo.m_IdentityType == enum_DamageIdentity.PlayerWeapon && damageInfo.m_IdentityID == m_WeaponCurrent.m_WeaponID)
+                m_WeaponCurrent.OnDealtDamage(amountApply);
 
-                if (damageEntity.m_IsDead)
-                    m_CharacterInfo.OnKilledEnermy(damageInfo,damageEntity);
-            }
+            if (damageEntity.m_IsDead)
+                m_CharacterInfo.OnKilledEnermy(damageInfo, damageEntity);
         }
     }
 
