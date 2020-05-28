@@ -41,12 +41,12 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         public Queue<Y> m_DeactiveQueue = new Queue<Y>();
         public List<Y> m_ActiveList = new List<Y>();
 
-        public Y NewItem(T identity, Action<T, MonoBehaviour> OnRecycle)
+        public Y NewItem(T identity,Vector3 position,Quaternion rotation,  Action<T, MonoBehaviour> OnRecycle)
         {
-            Y item = GameObject.Instantiate(m_spawnItem, tf_PoolSpawn); 
-            item.SetActivate(false);
+            Y item = GameObject.Instantiate(m_spawnItem,position,rotation, tf_PoolSpawn); 
             item.name = m_spawnItem.name + "_" + (m_DeactiveQueue.Count + m_ActiveList.Count).ToString();
             item.OnPoolInit(identity, OnRecycle);
+            item.SetActivate(false);
             return item;
         }
 
@@ -85,9 +85,9 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         ItemPoolInfo info = d_ItemInfos[identity];
         info.m_spawnItem = registerItem;
         for (int i = 0; i < poolStartAmount; i++)
-            info.m_DeactiveQueue.Enqueue(info.NewItem(identity, SelfRecycle));
+            info.m_DeactiveQueue.Enqueue(info.NewItem(identity,Vector3.zero,Quaternion.identity, SelfRecycle));
     }
-    public static Y Spawn(T identity, Transform toTrans, Vector3 toPos, Quaternion rot)
+    public static Y Spawn(T identity, Transform toTrans, Vector3 pos, Quaternion rot)
     {
         if (!d_ItemInfos.ContainsKey(identity))
         {
@@ -97,16 +97,20 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
         ItemPoolInfo info = d_ItemInfos[identity];
         Y item;
         if (info.m_DeactiveQueue.Count > 0)
+        {
             item = info.m_DeactiveQueue.Dequeue();
+            item.transform.position = pos;
+            item.transform.rotation = rot;
+        }
         else
-            item = info.NewItem(identity, SelfRecycle);
+        {
+            item = info.NewItem(identity, pos, rot, SelfRecycle);
+        }
 
+        item.transform.SetParent(toTrans == null ? tf_PoolSpawn : toTrans);
+        item.SetActivate(true);
         info.m_ActiveList.Add(item);
         item.OnPoolSpawn();
-        item.transform.SetParentResetTransform(toTrans == null ? tf_PoolSpawn : toTrans);
-        item.transform.position = toPos;
-        item.transform.rotation = rot;
-        item.SetActivate(true);
         return item;
     }
     static void SelfRecycle(T identity, MonoBehaviour obj) => Recycle(identity, obj as Y);

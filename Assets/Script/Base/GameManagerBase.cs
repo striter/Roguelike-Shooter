@@ -256,14 +256,14 @@ public static class GameObjectManager
         int characterIndex = (int)character;
         if (ObjectPoolManager<int, EntityBase>.Registed(characterIndex))
             return;
-        ObjectPoolManager<int, EntityBase>.Register(characterIndex,TResources.GetPlayerCharacter(character),1);
+        ObjectPoolManager<int, EntityBase>.Register(characterIndex,TResources.GetPlayerCharacter(character),0);
     }
     static void RegisterAICharacter(int characterIndex)
     {
         if (ObjectPoolManager<int, EntityBase>.Registed(characterIndex))
             return;
 
-        ObjectPoolManager<int, EntityBase>.Register(characterIndex, TResources.GetGameCharacter(characterIndex), 1);
+        ObjectPoolManager<int, EntityBase>.Register(characterIndex, TResources.GetGameCharacter(characterIndex), 0);
     }
 
     public static void Recycle()
