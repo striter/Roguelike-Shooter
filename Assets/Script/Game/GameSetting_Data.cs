@@ -410,7 +410,7 @@ namespace GameSetting
 
         public CGameSave()
         {
-            m_Credit = 100;
+            m_Credit = 1000000;
             m_BattleDifficulty =  enum_BattleDifficulty.Normal;
             m_DifficultyUnlocked =  enum_BattleDifficulty.Normal;
             m_LastDailyRewardStamp = -1;
