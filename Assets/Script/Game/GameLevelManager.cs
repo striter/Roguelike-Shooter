@@ -108,7 +108,8 @@ public class GameLevelManager : SingletonMono<GameLevelManager>, ICoroutineHelpe
                     continue;
                 ConnectGameData(gameChunkGenerate[0], mainConnectionChunks);
 
-                bool subGenerateSuccessful = false;
+                //Generate Sub Chunks
+                bool subGenerateSuccessful = true;
                 for (int i = 0; i < 0; i++)
                 {
                     bool generateSuccessful = false;
