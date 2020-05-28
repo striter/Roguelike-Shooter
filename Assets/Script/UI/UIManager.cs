@@ -43,7 +43,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
 
         m_Camera = transform.Find("UICamera").GetComponent<Camera>();
         m_Effect = m_Camera.GetComponent<CameraEffectManager>();
-        m_BlurBG = m_Effect.GetOrAddCameraEffect<CB_GenerateTransparentOverlayTexture>().SetOpaqueBlurTextureEnabled(false);
+        m_BlurBG = m_Effect.GetOrAddCameraEffect<CB_GenerateTransparentOverlayTexture>().SetOpaqueBlurTextureEnabled(false,2f,3,4);
 
         m_PlayerStatus = ShowControls<UIC_PlayerStatus>();
         m_UIControl = ShowControls<UIC_Control>();

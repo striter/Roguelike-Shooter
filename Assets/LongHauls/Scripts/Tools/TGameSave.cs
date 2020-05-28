@@ -10,14 +10,16 @@ namespace TGameSave
 {
     public interface ISave
     {
+        bool DataCrypt();
         void DataRecorrect();
     }
+    
     public static class TGameData<T> where T : class, ISave, new()
     {
+        const string m_DataCryptKey = "StriteRTestCrypt";
+
         static T m_Data = null;
         static FieldInfo[] m_fieldInfo = null;
-
-        public static void Init() => CheckFile();
 
         public static T Data
         {
@@ -47,7 +49,7 @@ namespace TGameSave
         static XmlElement temp_Element;
         static XmlNode temp_SubNode;
 
-        static void CheckFile()
+        public static void Init()
         {
             m_fieldInfo = typeof(T).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -87,10 +89,12 @@ namespace TGameSave
             try
             {
                 T temp = new T();
+                bool dataCrypt = temp.DataCrypt();
                 for (int i = 0; i < m_fieldInfo.Length; i++)
                 {
-                    string data = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name).InnerText;
-                    m_fieldInfo[i].SetValue(temp, TDataConvert.Convert(m_fieldInfo[i].FieldType, data));
+                    string readData = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name).InnerText;
+                    if (dataCrypt) readData = TDataCrypt.EasyCryptData(readData, m_DataCryptKey);
+                    m_fieldInfo[i].SetValue(temp, TDataConvert.Convert(m_fieldInfo[i].FieldType, readData));
                 }
 
                 temp.DataRecorrect();
@@ -105,10 +109,13 @@ namespace TGameSave
 
         static void SaveFile(T data)
         {
+            bool dataCrypt = data.DataCrypt();
             for (int i = 0; i < m_fieldInfo.Length; i++)
             {
                 temp_SubNode = m_ParentNode.SelectSingleNode(m_fieldInfo[i].Name);
-                temp_SubNode.InnerText = TDataConvert.Convert(m_fieldInfo[i].GetValue(data));
+                string saveData = TDataConvert.Convert(m_fieldInfo[i].GetValue(data));
+                if (dataCrypt) saveData = TDataCrypt.EasyCryptData(saveData,m_DataCryptKey);
+                temp_SubNode.InnerText = saveData;
                 m_ParentNode.AppendChild(temp_SubNode);
             }
             m_Doc.Save(s_FilePath);

@@ -241,4 +241,17 @@ public static class TDataConvert
     }
     #endregion
 }
+
+public static class TDataCrypt
+{
+    public static string EasyCryptData(string data, string key)
+    {
+        byte[] bdata = Encoding.UTF8.GetBytes(data);
+        byte[] bkey = Encoding.UTF8.GetBytes(key);
+        for (int i = 0; i < bdata.Length; i++)
+            bdata[i] ^= bkey[i % key.Length];
+        return Encoding.UTF8.GetString(bdata);
+    }
+}
+
 #endregion

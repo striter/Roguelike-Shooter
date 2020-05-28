@@ -427,6 +427,7 @@ namespace GameSetting
             return true;
         }
 
+        public bool DataCrypt() => true;
         public void DataRecorrect()
         {
         }
@@ -495,6 +496,7 @@ namespace GameSetting
             m_ArmoryBlueprintsUnlocked = _level.m_ArmoryBlueprintsUnlocked;
         }
 
+        public bool DataCrypt() => true;
         void ISave.DataRecorrect()
         {
         }
@@ -511,6 +513,7 @@ namespace GameSetting
             m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.Flamer };
         }
 
+        public bool DataCrypt() => true;
         public void DataRecorrect()
         {
         }
@@ -563,6 +566,7 @@ namespace GameSetting
             m_CharacterDetail[character] = m_CharacterDetail[character].Enhance();
         }
 
+        public bool DataCrypt() => true;
         public void DataRecorrect()
         {
         }
@@ -591,6 +595,7 @@ namespace GameSetting
             m_VFXVolumeTap = 10;
         }
 
+        public bool DataCrypt() => false;
         void ISave.DataRecorrect()
         {
         }
