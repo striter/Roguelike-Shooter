@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShaderTestAreaScan : MonoBehaviour
+public class ShaderTestDepthAreaScan : MonoBehaviour
 {
     public Color m_ScanColor;
     public float m_Width=1f;

@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
 		_RenderTex("Render",2D) = "white"{}
 	}
 	

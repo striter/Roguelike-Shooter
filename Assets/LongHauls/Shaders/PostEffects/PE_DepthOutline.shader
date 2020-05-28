@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
 		_EdgeColor("Edge Color",Color) = (1,1,1,1)
 		_DepthBias("Depth Bias",Range(0,0.01))=.001
 		_SampleDistance("Sample Distance",Float) = 1

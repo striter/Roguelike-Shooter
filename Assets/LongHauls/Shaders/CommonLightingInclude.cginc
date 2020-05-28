@@ -1,8 +1,6 @@
 ﻿#ifndef COMMONLIGHTING_INCLUDE
 #define COMMONLIGHTING_INCLUDE
 
-//Diffuse Base
-
 float _Lambert;
 float4 _ShadowColor;
 float GetDiffuse(float3 normal, float3 lightDir)
@@ -22,6 +20,4 @@ float3 GetDiffuseAddColor(float3 lightCol,float atten,float diffuse)
 {
 	return lightCol * diffuse*atten;
 }
-
-
 #endif

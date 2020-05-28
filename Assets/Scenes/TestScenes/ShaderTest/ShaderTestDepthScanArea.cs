@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShaderTestTestScanArea : MonoBehaviour
+public class ShaderTestDepthScanArea : MonoBehaviour
 {
     public Color fillColor =Color.grey;
     public Color edgeColor = Color.blue;

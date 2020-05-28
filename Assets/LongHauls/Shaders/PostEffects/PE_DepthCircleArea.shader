@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex("Texture", 2D) = "white" {}
 		_FillColor("_Fill Color",Color)=(1,1,1,1)
 		_FillTexture("_Fill Texture",2D)="White"{}
 		_TextureScale("_Texture Scale",float)=1

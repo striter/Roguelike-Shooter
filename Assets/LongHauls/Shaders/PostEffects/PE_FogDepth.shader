@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
 		_FogDensity("Fog Density",Float) = 1
 		_FogColor("Fog Color",Color) = (1,1,1,1)
 		_FogStart("Fog Start",Float) = 0

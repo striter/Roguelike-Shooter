@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
 		_Bloom("Bloom",2D)="white"{}
 		_LuminanceThreshold("Luminance Threshold",Range(0,1)) = .5
 		_LuminanceMultiple("Luminance Multiple",Range(1,20)) = 10

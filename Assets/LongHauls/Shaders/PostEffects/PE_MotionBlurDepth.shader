@@ -2,8 +2,8 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
-	_BlurSize("Blur Size",Range(0,1))=1
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
+		_BlurSize("Blur Size",Range(0,1))=1
 	}
 	SubShader
 	{

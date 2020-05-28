@@ -2,6 +2,7 @@
 {
 	Properties
 	{
+		[PreRenderData]_MainTex("Main Texture",2D)="white"{}
 	}
 	SubShader
 	{

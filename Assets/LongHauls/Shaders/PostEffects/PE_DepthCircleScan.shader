@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
 		_Texture(" Scan Texture",2D) = "white"{}
 		_TextureScale("Scan Tex Scale",float)=15
 		_Color("Scan Color",Color)=(1,1,1,1)

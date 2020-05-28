@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_MainTex ("Texture", 2D) = "white" {}
+		[PreRenderData]_MainTex ("Texture", 2D) = "white" {}
 		_Brightness("Brightness",Range(0,3)) = 1
 		_Saturation("Saturation", Range(0, 3)) = 1
 		_Contrast("Contrast", Range(0, 3)) = 1

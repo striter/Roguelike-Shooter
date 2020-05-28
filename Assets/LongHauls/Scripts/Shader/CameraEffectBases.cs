@@ -14,7 +14,6 @@ public enum enum_CameraEffectSorting
 public class CameraEffectBase
 {
     public virtual enum_CameraEffectSorting m_Sorting => enum_CameraEffectSorting.Invalid;
-    public virtual bool m_DepthRequire => true;
     public virtual bool m_DepthFrustumCornors => false;
     public virtual bool m_DoGraphicBlitz => false;
     protected CameraEffectManager m_Manager { get; private set; }
@@ -33,6 +32,7 @@ public class CameraEffectBase
         m_Manager = _manager;
         m_Enabled = true;
     }
+    public virtual void SetEnable(bool enable) => m_Enabled = enable;
     public virtual void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         Graphics.Blit(source, destination);
@@ -273,7 +273,6 @@ public class PE_ViewNormal : PostEffectBase
 }
 public class PE_ViewDepth : PostEffectBase
 {
-    public override bool m_DepthRequire => true;
 }
 public class PE_BSC : PostEffectBase {      //Brightness Saturation Contrast
     
@@ -458,7 +457,6 @@ public class PE_MotionBlur : PostEffectBase     //Camera Motion Blur ,Easiest
 }
 public class PE_MotionBlurDepth:PE_MotionBlur
 {
-    public override bool m_DepthRequire => true;
     private Matrix4x4 mt_CurVP;
     public override void InitEffect(CameraEffectManager _manager)
     {
@@ -476,7 +474,6 @@ public class PE_MotionBlurDepth:PE_MotionBlur
 }
 public class PE_FogDepth : PostEffectBase
 {
-    public override bool m_DepthRequire => true;
     public override bool m_DepthFrustumCornors => true;
     public T SetEffect<T>(Color _fogColor,  float _fogDensity = .5f, float _fogYStart = -1f, float _fogYEnd = 5f) where T:PE_FogDepth
     {
@@ -500,7 +497,6 @@ public class PE_FogDepthNoise : PE_FogDepth
 }
 public class PE_FocalDepth : PostEffectBase
 {
-    public override bool m_DepthRequire => true;
     public PE_Blurs m_Blur { get; private set; }
     RenderTexture m_TempTexture;
     public override void InitEffect(CameraEffectManager _manager)
@@ -538,7 +534,6 @@ public class PE_FocalDepth : PostEffectBase
 }
 public class PE_DepthOutline:PostEffectBase
 {
-    public override bool m_DepthRequire => true;
     public void SetEffect(Color _edgeColor, float _sampleDistance = 1f, float _depthBias=.001f)
     {
         m_Material.SetColor("_EdgeColor", _edgeColor);
@@ -611,7 +606,6 @@ public class PE_BloomSpecific : PostEffectBase //Need To Bind Shader To Specific
 
 public class PE_DepthCircleScan : PostEffectBase
 {
-    public override bool m_DepthRequire => true;
     public override bool m_DepthFrustumCornors => true;
     readonly int ID_Origin = Shader.PropertyToID("_Origin");
     readonly int ID_Color = Shader.PropertyToID("_Color");
@@ -645,7 +639,6 @@ public class PE_DepthCircleScan : PostEffectBase
 
 public class PE_DepthCircleArea:PostEffectBase
 {
-    public override bool m_DepthRequire => true;
     public override bool m_DepthFrustumCornors => true;
 
     readonly int ID_Origin = Shader.PropertyToID("_Origin");
@@ -689,13 +682,11 @@ public class PE_DepthCircleArea:PostEffectBase
 
 public class PE_DepthSSAO : PostEffectBase
 {
-    public override bool m_DepthRequire => true;
     static readonly Vector4[] m_DepthSampleArray= new Vector4[16] {
             new Vector3( 0.5381f, 0.1856f,-0.4319f),  new Vector3( 0.1379f, 0.2486f, 0.4430f),new Vector3( 0.3371f, 0.5679f,-0.0057f),  new Vector3(-0.6999f,-0.0451f,-0.0019f),
             new Vector3( 0.0689f,-0.1598f,-0.8547f),  new Vector3( 0.0560f, 0.0069f,-0.1843f),new Vector3(-0.0146f, 0.1402f, 0.0762f),  new Vector3( 0.0100f,-0.1924f,-0.0344f),
             new Vector3(-0.3577f,-0.5301f,-0.4358f),  new Vector3(-0.3169f, 0.1063f, 0.0158f),new Vector3( 0.0103f,-0.5869f, 0.0046f),  new Vector3(-0.0897f,-0.4940f, 0.3287f),
             new Vector3( 0.7119f,-0.0154f,-0.0918f),  new Vector3(-0.0533f, 0.0596f,-0.5411f),new Vector3( 0.0352f,-0.0631f, 0.5460f),  new Vector3(-0.4776f, 0.2847f,-0.0271f)};
-    public void SetAOEnable(bool enable)=>m_Enabled = enable;
     public override bool m_DoGraphicBlitz => false;
     
     public PE_DepthSSAO SetEffect(Color aoColor, float strength = 1f, float texelRadius = 15f, float _fallOff = 0.002f, Texture _noiseTex = null, int _sampleCount = 16)
@@ -712,5 +703,55 @@ public class PE_DepthSSAO : PostEffectBase
         return this;
     }
 }
+public enum enum_CameraEffectQuality
+{
+    Invalid=-1,
+    Normal,
+    Medium,
+    High,
+}
+public class PE_DepthGodRay:PostEffectBase
+{
+    public Light m_LightTarget { get; private set; }
 
+    static readonly int ID_LightScreenPos = Shader.PropertyToID("_LightScreenPos");
+    static readonly int ID_LightColor = Shader.PropertyToID("_LightColor");
+    static readonly int ID_Attenuation = Shader.PropertyToID("_Attenuation");
+    static readonly int ID_BaseAttenuation = Shader.PropertyToID("_BaseAttenuation");
+
+    string[] m_QualityKeywords = new string[3] {"QUALITY_NORMAL","QUALITY_MEDIUNM","QUALITY_HIGH" }; 
+
+    public PE_DepthGodRay SetEffect(Light _light)
+    {
+        m_LightTarget = _light;
+        if (_light.type != LightType.Directional)
+            Debug.LogError("Can Only Set Directional Light!");
+        return this;
+    } 
+
+    public PE_DepthGodRay SetQuality(enum_CameraEffectQuality quality)
+    {
+        for (int i = 0; i < 3; i++)
+            if ((int)quality == i)
+                m_Material.EnableKeyword(m_QualityKeywords[i]);
+            else
+                m_Material.DisableKeyword(m_QualityKeywords[i]);
+        return this;
+    }
+
+    public PE_DepthGodRay SetBaseAttenuation(float _baseAttenuation)
+    {
+        m_Material.SetFloat(ID_BaseAttenuation, _baseAttenuation);
+        return this;
+    } 
+
+    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        m_Material.SetVector(ID_LightScreenPos, -m_Manager.m_Camera.WorldToViewportPoint(m_Manager.m_Camera.transform.position - m_LightTarget.transform.forward * m_Manager.m_Camera.farClipPlane));
+        m_Material.SetVector(ID_LightColor, m_LightTarget.color);
+        m_Material.SetFloat(ID_Attenuation, m_LightTarget.intensity);
+        base.OnRenderImage(source, destination);
+    }
+
+}
 #endregion
