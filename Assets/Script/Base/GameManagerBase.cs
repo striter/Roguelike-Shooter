@@ -71,9 +71,6 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
         TimeScaleTick();
     }
 
-    protected void OnPortalEnter(float duration,Transform vortexTarget, Action OnEnter)=>SetPostEffect_Vortex(true, vortexTarget, 1f,OnEnter);
-
-    protected void OnPortalExit(float duration,Transform vortexTarget)=> SetPostEffect_Vortex(false, vortexTarget, 1f);
     #region Game Effect
 
     PE_BloomSpecific m_Bloom;
@@ -107,7 +104,7 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
             m_Bloom.m_Blur.SetEffect(PE_Blurs.enum_BlurType.GaussianBlur, 2, 10, 2);
         else
             m_Bloom.m_Blur.SetEffect( PE_Blurs.enum_BlurType.Invalid);
-        m_DepthSSAO.SetAOEnable(OptionsDataManager.m_OptionsData.m_Effect>=  enum_Option_Effect.High);
+        m_DepthSSAO.SetEnable(OptionsDataManager.m_OptionsData.m_Effect>=  enum_Option_Effect.High);
         m_Bloom.SetBloomEnable(OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.Normal, OptionsDataManager.m_OptionsData.m_Effect >= enum_Option_Effect.High);
     }
 
@@ -129,18 +126,18 @@ public class GameManagerBase : SingletonMono<GameManagerBase>,ICoroutineHelperCl
              CameraController.Instance.m_Effect.RemoveCameraEffect<PE_Bloom>));
     }
 
-    private void SetPostEffect_Vortex(bool on,Transform target,float duration,Action OnEnter=null)
+    protected void PlayPostEffect_Vortex(bool on,Transform target,float duration,Action OnFinish=null)
     {
         PE_DistortVortex vortex = CameraController.Instance.m_Effect.GetOrAddCameraEffect<PE_DistortVortex>();
         vortex.SetTexture(TResources.m_NoiseTex);
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) =>
          {
              vortex.SetDistort(CameraController.Instance.m_Camera.WorldToViewportPoint(target.position),value);
-         },on?0:1,on?1:0, duration,()=> {
-             CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>();
-             OnEnter?.Invoke();
-         } ,false));
+         },on?0:1,on?1:0, duration,OnFinish,false));
     }
+
+    protected void RemovePostEffect_Vortex()=> CameraController.Instance.m_Effect.RemoveCameraEffect<PE_DistortVortex>();
+
     public void SetEffect_Shake(float amount)
     {
         TPSCameraController.Instance.AddShake(amount*GameConst.F_DamageImpactMultiply);

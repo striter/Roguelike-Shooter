@@ -135,7 +135,7 @@ public class BattleManager : GameManagerBase
         m_GameLoading = false;
         CameraController.MainCamera.enabled = true;
         LoadingManager.Instance.EndLoading();
-        OnPortalExit(1f, tf_CameraAttach);
+        PlayPostEffect_Vortex(false,tf_CameraAttach,1f,RemovePostEffect_Vortex);
         OnStageStart();
     }
 
@@ -309,20 +309,22 @@ public class BattleManager : GameManagerBase
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnStageFinished);
 
-        switch(portalType)
+        SetBaseTimeScale(.1f);
+        switch (portalType)
         {
             default:
                 Debug.LogError("Invalid Portal Here!"+ portalType);
                 break;
             case enum_BattlePortalTye.StageEnd:
                 m_BattleProgress.StageFnished();
-                SetBaseTimeScale(.1f);
                 GameDataManager.OnBattleStageSave(this);
-                OnPortalEnter(1f, tf_CameraAttach, LoadStage);
+                SetBaseTimeScale(0f);
+                PlayPostEffect_Vortex(true, tf_CameraAttach, 1f, () => { RemovePostEffect_Vortex(); LoadStage(); });
                 break;
             case enum_BattlePortalTye.BattleWin:
                 m_BattleProgress.StageFnished();
-                OnGameFinished(true);
+                SetBaseTimeScale(0f);
+                PlayPostEffect_Vortex(true, tf_CameraAttach, 1f, () => { OnGameFinished(true); });
                 break;
           }
     }
@@ -351,7 +353,7 @@ public class BattleManager : GameManagerBase
     public void OnGameExit()
     {
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameExit);
-        LoadingManager.Instance.ShowLoading(m_BattleProgress.m_Stage);
+        LoadingManager.Instance.ShowLoading( enum_BattleStage.Invalid);
         SwitchScene(enum_Scene.Camp, () => { LoadingManager.Instance.EndLoading(); return true; });
     }
     #endregion

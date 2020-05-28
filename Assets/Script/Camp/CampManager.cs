@@ -61,7 +61,7 @@ public class CampManager : GameManagerBase
 
     public void OnBattleStart(bool resume)
     {
-        OnPortalEnter(1f, tf_CameraAttach, () => {
+        PlayPostEffect_Vortex(true, tf_CameraAttach, 1f, () => {
             if (resume) GameDataManager.OnNewBattle();
             LoadingManager.Instance.ShowLoading(enum_BattleStage.Rookie);
             SwitchScene( enum_Scene.Game);
