@@ -710,48 +710,4 @@ public enum enum_CameraEffectQuality
     Medium,
     High,
 }
-public class PE_DepthGodRay:PostEffectBase
-{
-    public Light m_LightTarget { get; private set; }
-
-    static readonly int ID_LightScreenPos = Shader.PropertyToID("_LightScreenPos");
-    static readonly int ID_LightColor = Shader.PropertyToID("_LightColor");
-    static readonly int ID_Attenuation = Shader.PropertyToID("_Attenuation");
-    static readonly int ID_BaseAttenuation = Shader.PropertyToID("_BaseAttenuation");
-
-    string[] m_QualityKeywords = new string[3] {"QUALITY_NORMAL","QUALITY_MEDIUNM","QUALITY_HIGH" }; 
-
-    public PE_DepthGodRay SetEffect(Light _light)
-    {
-        m_LightTarget = _light;
-        if (_light.type != LightType.Directional)
-            Debug.LogError("Can Only Set Directional Light!");
-        return this;
-    } 
-
-    public PE_DepthGodRay SetQuality(enum_CameraEffectQuality quality)
-    {
-        for (int i = 0; i < 3; i++)
-            if ((int)quality == i)
-                m_Material.EnableKeyword(m_QualityKeywords[i]);
-            else
-                m_Material.DisableKeyword(m_QualityKeywords[i]);
-        return this;
-    }
-
-    public PE_DepthGodRay SetBaseAttenuation(float _baseAttenuation)
-    {
-        m_Material.SetFloat(ID_BaseAttenuation, _baseAttenuation);
-        return this;
-    } 
-
-    public override void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        m_Material.SetVector(ID_LightScreenPos, -m_Manager.m_Camera.WorldToViewportPoint(m_Manager.m_Camera.transform.position - m_LightTarget.transform.forward * m_Manager.m_Camera.farClipPlane));
-        m_Material.SetVector(ID_LightColor, m_LightTarget.color);
-        m_Material.SetFloat(ID_Attenuation, m_LightTarget.intensity);
-        base.OnRenderImage(source, destination);
-    }
-
-}
 #endregion
