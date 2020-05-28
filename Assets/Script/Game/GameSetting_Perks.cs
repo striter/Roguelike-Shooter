@@ -62,7 +62,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     public class P10006 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10006;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override float Value1 => 10f;
         public override void OnBeforeDealtDamage(EntityCharacterBase receiver, DamageInfo info)
         {
@@ -393,7 +393,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     {
         public override int m_Index => 10029;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
-        public override float Value1 => 5f;
+        public override float Value1 => 3f;
         public override float Value2 => 50f;
         float expireBaseDamage = 0;
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
