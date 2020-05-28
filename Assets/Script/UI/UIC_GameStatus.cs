@@ -46,7 +46,7 @@ public class UIC_GameStatus : UIControlBase {
         transform.Find("EquipmentButton").GetComponent<Button>().onClick.AddListener(OnEquipmentBtnClick);
 
         m_Mission = transform.Find("Mission");
-        m_MissionData = m_Mission.Find("Text").GetComponent<UIT_TextExtend>();
+        m_MissionData = m_Mission.GetComponent<UIT_TextExtend>();
 
         m_Currency = transform.Find("Currency");
         m_Coins = m_Currency.Find("CoinData").GetComponent<Text>();
