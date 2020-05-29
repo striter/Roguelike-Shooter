@@ -15,7 +15,7 @@ namespace GameSetting
 
         public const float F_EnermyMaxHealthMultiplierPerMinutePassed=.1f;
         public const float F_EnermyMaxHealthMultiplierPerDifficultyAboveNormal = .25f;
-        public const float F_EnermyDamageMultiplierPerMinutePassed = .1f;
+        public const float F_EnermyDamageMultiplierPerMinutePassed = .2f;
         public const float F_EnermyDamageMultiplierPerDifficultyAboveNormal = .25f;
 
         public const float F_EnermyEliteGenerateBase = 5f;
