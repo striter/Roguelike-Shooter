@@ -1234,7 +1234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1367,7 +1367,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_Confirm
+  m_Text: "\u66F4\u6362\u89D2\u8272"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Confirm
   m_characterSpacing: 12
@@ -1617,7 +1617,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1734,7 +1734,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1754,7 +1754,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_Health
+  m_Text: "\u751F\u547D"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Health
   m_characterSpacing: 3
@@ -1942,7 +1942,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.89019614, g: 0.89019614, b: 0.89019614, a: 1}
+  m_Color: {r: 0.89019614, g: 0.89019614, b: 0.89019614, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2025,7 +2025,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_Character_Select
+  m_Text: "\u89D2\u8272\u9009\u62E9"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_Character_Select
   m_characterSpacing: 8
@@ -2156,7 +2156,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: XXXX
+  m_Text: "\u5F53\u524D\u89D2\u8272"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Equipping
   m_characterSpacing: 1
@@ -2198,7 +2198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2218,7 +2218,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_Weapon
+  m_Text: "\u6B66\u5668\u5F3A\u5316"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Weapon
   m_characterSpacing: 3
@@ -2346,7 +2346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2447,7 +2447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2467,7 +2467,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_Movement
+  m_Text: "\u79FB\u901F"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Movement
   m_characterSpacing: 3
@@ -2587,7 +2587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2740,7 +2740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2760,7 +2760,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_Armor
+  m_Text: "\u62A4\u7532"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Armor
   m_characterSpacing: 3
@@ -3028,7 +3028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -3048,7 +3048,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_Critical
+  m_Text: "\u66B4\u51FB"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_Critical
   m_characterSpacing: 3
@@ -3227,7 +3227,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: UI_CharacterSelect_MaxEnhance
+  m_Text: "\u6EE1\u7EA7"
   B_AutoLocalize: 1
   S_AutoLocalizeKey: UI_CharacterSelect_MaxEnhance
   m_characterSpacing: 2
