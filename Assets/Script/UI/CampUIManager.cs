@@ -12,6 +12,9 @@ public class CampUIManager : UIManager {
         base.Init();
         Instance = this;
         m_Coins = ShowControls<UIC_CampCurrencyStatus>(false);
+
+        PreloadPage<UI_Armory>();
+        PreloadPage<UI_CharacterSelect>();
     }
 
     public T ShowCoinsPage<T>(bool animate,bool blurBG, Action OnPageExit,float bulletTime = 1f) where T : UIPage

@@ -4,6 +4,7 @@ public class UI_Revive : UIPage
 {
     Action OnRevive,OnCancel;
     Button btn_Revive;
+    bool m_Canceled = false;
     protected override void Init()
     {
         base.Init();
@@ -15,17 +16,27 @@ public class UI_Revive : UIPage
     {
         OnRevive = _OnRevive;
         OnCancel = _OnCancel;
+        m_Canceled = false;
     }
 
     void OnReviveBtnClick()
     {
-        OnRevive();
+        m_Canceled = false;
         base.OnCancelBtnClick();
     }
 
     protected override void OnCancelBtnClick()
     {
-        OnCancel();
+        m_Canceled = true;
         base.OnCancelBtnClick();
+    }
+
+    public override void OnStop()
+    {
+        base.OnStop();
+        if (m_Canceled)
+            OnCancel();
+        else
+            OnRevive();
     }
 }

@@ -10,12 +10,11 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
     private RectTransform tf_OverlayPage, tf_CameraPage, tf_OverlayControl, tf_CameraControl, tf_MessageBox;
     Transform m_PageStorage;
     public List<UIPageBase> m_Pages = new List<UIPageBase>();
-
     Dictionary<Type, UIPageBase> m_PageStored = new Dictionary<Type, UIPageBase>();
-
     public int I_PageCount => m_Pages.Count;
     public bool m_PageOpening => I_PageCount > 0;
     public bool CheckPageOpening<T>() where T : UIPageBase => m_Pages.Count > 0 && m_Pages.Find(p => p.GetType() == typeof(T));
+
     public Dictionary<UIControlBase, int> m_ControlSiblings { get; private set; } = new Dictionary<UIControlBase, int>();
 
     protected virtual void Init()
@@ -90,15 +89,18 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         OnAdjustPageSibling();
         return page ;
     }
+    
     protected virtual void OnPageExit(UIPageBase page)
     {
         page.SetActivate(false);
         page.transform.SetParent(m_PageStorage);
+        page.OnStop();
 
         m_Pages.Remove(page);
         OnAdjustPageSibling();
     }
     #endregion
+
     #region MessageBox
     protected virtual void OnMessageBoxExit() => OnAdjustPageSibling();
     protected T ShowMessageBox<T>() where T : UIMessageBoxBase

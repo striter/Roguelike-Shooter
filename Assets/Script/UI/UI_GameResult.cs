@@ -26,7 +26,7 @@ public class UI_GameResult : UIPage {
     }
     public void Play(bool win,Action _OnButtonClick)
     {
-        m_ResultTitle.sprite = GameUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(win, OptionsDataManager.m_OptionsData.m_Region)];
+        m_ResultTitle.sprite = BattleUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(win, OptionsDataManager.m_OptionsData.m_Region)];
         OnButtonClick = _OnButtonClick;
     }
     protected override void OnCancelBtnClick()

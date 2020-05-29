@@ -40,7 +40,7 @@ public class UIC_GameStatus : UIControlBase {
     {
         base.Init();
         m_Minimap = transform.Find("Minimap");
-        m_Minimap.GetComponent<Button>().onClick.AddListener(() => { GameUIManager.Instance.ShowPage<UI_Map>(true, true, .1f); });
+        m_Minimap.GetComponent<Button>().onClick.AddListener(() => { BattleUIManager.Instance.ShowPage<UI_Map>(true, true, .1f); });
         m_Map = new UIC_Minimap(m_Minimap.Find("Map"));
 
         transform.Find("EquipmentButton").GetComponent<Button>().onClick.AddListener(OnEquipmentBtnClick);
@@ -177,7 +177,7 @@ public class UIC_GameStatus : UIControlBase {
             BattleManager.Instance.m_StageInteracts.Traversal((InteractBattleBase interactData) =>
             {
                 Image image = m_Locations.AddItem(m_Locations.m_Count);
-                image.sprite = GameUIManager.Instance.m_CommonSprites[interactData.m_InteractType.GetInteractIcon()];
+                image.sprite = BattleUIManager.Instance.m_CommonSprites[interactData.m_InteractType.GetInteractIcon()];
                 image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(interactData.transform.position);
                 image.transform.rotation = Quaternion.identity;
             });

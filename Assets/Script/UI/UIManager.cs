@@ -23,7 +23,7 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         GameObject uiObj = TResources.InstantiateUIManager();
         UIManager manager = null;
         if (inGame)
-            manager = uiObj.AddComponent<GameUIManager>();
+            manager = uiObj.AddComponent<BattleUIManager>();
         else
             manager = uiObj.AddComponent<CampUIManager>();
         manager.Init();
@@ -77,9 +77,6 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     protected override void OnPageExit(UIPageBase page)
     {
         base.OnPageExit(page);
-        if (m_PageOpening)
-            return;
-
         SetBlurBackground(false);
         GameManagerBase.Instance.SetBaseTimeScale(1f);
         TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PageClose);

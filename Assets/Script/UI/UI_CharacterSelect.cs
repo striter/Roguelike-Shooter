@@ -60,6 +60,14 @@ public class UI_CharacterSelect : UIPage {
         m_CharacterSelectGrid = new UIT_GridControlledSingleSelect<UIGI_CharacterSelectItem>(rtf_Container.Find("CharacterSelect/Viewport/Content"),OnCharacterSelect);
     }
 
+    public override void OnStop()
+    {
+        base.OnStop();
+        m_ModelViewer.OnGenerateCharacter(GameDataManager.m_CharacterData.m_CharacterSelected);
+        CampManager.Instance.OnSetCharacter(m_ModelViewer.m_CharacterModel);
+        m_ModelViewer.OnCharacterSelected();
+    }
+
     public void Play(InteractCampCharacterSelect characterSelect)
     {
         CampManager.Instance.RecycleLocalCharacter();
@@ -161,11 +169,4 @@ public class UI_CharacterSelect : UIPage {
         UpdateAllCharacterInfo(m_SelectCharacter);
     }
 
-    protected override void OnHideFinished()
-    {
-        base.OnHideFinished();
-        m_ModelViewer.OnGenerateCharacter(GameDataManager.m_CharacterData.m_CharacterSelected);
-        CampManager.Instance.OnSetCharacter(m_ModelViewer.m_CharacterModel);
-        m_ModelViewer.OnCharacterSelected();
-    }
 }

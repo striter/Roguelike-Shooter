@@ -27,7 +27,7 @@ public class InteractBonfire : InteractBattleBase {
     {
         base.OnInteractedContinousCheck(_interactor);
         m_Interactor = _interactor;
-        GameUIManager.Instance.ShowPage<UI_BonfireSelection>(true,true, 0f).Play(OnBonfireSelect);
+        BattleUIManager.Instance.ShowPage<UI_BonfireSelection>(true,true, 0f).Play(OnBonfireSelect);
         return false;
     }
 

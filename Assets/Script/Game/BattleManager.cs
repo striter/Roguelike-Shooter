@@ -42,7 +42,7 @@ public class BattleManager : GameManagerBase
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Interact", KeyCode.F9, enum_BattleEvent.CoinsSack, (enum_BattleEvent eventType) => { GenerateStageInteract(eventType, new ChunkGameObjectData(GameLevelManager.Instance.GetPlayerAtQuadrant().m_Identity, enum_TileObjectType.Invalid, NavigationManager.NavMeshPosition(m_LocalPlayer.transform.position + Vector3.forward * 2), Quaternion.identity),0f); });
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Rank Exp", KeyCode.F10, "10", (string value) => { m_LocalPlayer.m_CharacterInfo.OnExpReceived(int.Parse(value)); });
-        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None, () => GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!GameUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
+        UIT_MobileConsole.Instance.AddConsoleBinding().Play("Toggle HealthBar", KeyCode.None, () => BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.SetActivate(!BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().m_HealthGrid.transform.gameObject.activeSelf));
 
         UIT_MobileConsole.Instance.AddConsoleBinding().Play("Test", KeyCode.None, () => {
             SpawnRandomUnlockedWeapon(m_LocalPlayer.transform.position + m_LocalPlayer.transform.forward * 2, Quaternion.identity, new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 40 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 20 }, { enum_Rarity.Epic, 10 } }, null, m_BattleProgress.m_Random);
@@ -335,7 +335,7 @@ public class BattleManager : GameManagerBase
         if (!m_FreeRevived)
         {
             m_FreeRevived = true;
-            GameUIManager.Instance.ShowPage<UI_Revive>(true, true, 0f).Play(_OnRevivePlayer,OnGameFail);
+            BattleUIManager.Instance.ShowPage<UI_Revive>(true, true, 0f).Play(_OnRevivePlayer,OnGameFail);
             return;
         }
         OnGameFail();
@@ -346,7 +346,7 @@ public class BattleManager : GameManagerBase
     {
         m_BattleProgress.GameFinished(win);
         GameDataManager.OnGameResult(m_BattleProgress,m_BattleEntity);
-        GameUIManager.Instance.OnGameFinished(m_BattleProgress, OnGameExit);
+        BattleUIManager.Instance.OnGameFinished(m_BattleProgress, OnGameExit);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnGameFinish, win);
     }
 

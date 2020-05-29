@@ -21,7 +21,7 @@ public class UIGI_DetailPerkSelect : UIT_GridItem,IGridHighlight {
 
     public void Init(ExpirePlayerPerkBase expirePerk)
     {
-        m_Image.sprite = GameUIManager.Instance.m_ExpireSprites[expirePerk.m_Index.ToString()];
+        m_Image.sprite = BattleUIManager.Instance.m_ExpireSprites[expirePerk.m_Index.ToString()];
         bool stacked = expirePerk.m_Stack > 1;
         m_Count.SetActivate(stacked);
         if (stacked)

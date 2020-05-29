@@ -14,7 +14,6 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
 
     Action<UIPageBase> OnPageExit;
     protected Image img_Background;
-    protected Action<bool> OnInteractFinished;
     bool m_Animating;
     public const float F_AnimDuration = .25f;
     protected Button btn_ContainerCancel,btn_WholeCancel;
@@ -52,24 +51,24 @@ public class UIPageBase : UIComponentBase,ICoroutineHelperClass
         , 0f, 1f, F_AnimDuration, null, false));
     }
 
+    public virtual void OnStop()
+    {
+
+    }
+
     protected virtual void OnCancelBtnClick()
     {
         if (btn_ContainerCancel) btn_ContainerCancel.enabled = false;
         if (btn_WholeCancel) btn_WholeCancel.enabled = false;
         if (!m_Animating)
         {
-            OnHideFinished();
+            OnPageExit(this);
             return;
         }
         this.StartSingleCoroutine(0, TIEnumerators.ChangeValueTo((float value) => {
             rtf_Container.anchoredPosition = Vector2.Lerp(m_AnimateStartPos, m_AnimateEndPos, value);
-        }, 1f, 0f, F_AnimDuration, OnHideFinished, false));
+        }, 1f, 0f, F_AnimDuration,()=> { OnPageExit(this); }, false));
     }
 
-    protected virtual void OnHideFinished()
-    {
-        OnInteractFinished?.Invoke(false);
-        OnPageExit(this);
-    }
 
 }

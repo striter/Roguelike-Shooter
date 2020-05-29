@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameUIManager : UIManager {
-    public static new GameUIManager Instance;
+public class BattleUIManager : UIManager {
+    public static new BattleUIManager Instance;
     public AtlasLoader m_InGameSprites { get; private set; }
     protected override void Init()
     {
