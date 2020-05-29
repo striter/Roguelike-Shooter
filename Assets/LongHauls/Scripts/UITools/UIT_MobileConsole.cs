@@ -141,6 +141,7 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
         m_LogQueue.Enqueue(tempLog);
         switch (type)
         {
+            case LogType.Exception:
             case LogType.Error: m_ErrorCount++; break;
             case LogType.Warning: m_WarningCount++; break;
             case LogType.Log: m_LogCount++; break;
