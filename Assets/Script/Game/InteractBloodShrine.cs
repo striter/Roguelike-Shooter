@@ -19,7 +19,7 @@ public class InteractBloodShrine : InteractBattleBase {
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(_interactor.m_Health.m_CurrentHealth*m_damageHealthScale, enum_DamageType.True));
+        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(_interactor.m_Health.m_CurrentHealth*m_damageHealthScale, enum_DamageType.Health,true));
         m_TryCount++;
         m_damageHealthScale = GameExpression.GetBloodShrineHealthCostMultiple(m_TryCount);
         int amount = GameConst.RI_BloodShrintCoinsAmount.Random();

@@ -326,7 +326,7 @@ namespace GameSetting
             if (amountApply == 0)
                 return amountApply;
             enum_HealthChangeMessage message = enum_HealthChangeMessage.Invalid;
-            if (damageInfo.m_DamageType == enum_DamageType.True)
+            if (damageInfo.m_TrueDamage)
             {
                 damageReduction = 1;
                 healEnhance = 1;
@@ -339,7 +339,6 @@ namespace GameSetting
                 amountApply *= damageReduction;
                 switch (damageInfo.m_DamageType)
                 {
-                    case enum_DamageType.True:
                     case enum_DamageType.Basic:
                         {
                             float healthDamage = amountApply - m_CurrentArmor;
@@ -395,7 +394,6 @@ namespace GameSetting
                             message = enum_HealthChangeMessage.ReceiveArmor;
                         }
                         break;
-                    case enum_DamageType.True:
                     case enum_DamageType.Health:
                         {
                             amountApply *= healEnhance;
@@ -467,6 +465,7 @@ namespace GameSetting
         public float m_DamageMultiply { get; private set; } = 0;
         public float m_DamageCriticalMultipy { get; private set; } = 0;
         public enum_DamageType m_DamageType { get; private set; } = enum_DamageType.Invalid;
+        public bool m_TrueDamage { get; private set; } = false;
 
         public List<SBuff> m_BaseBuffApply { get; private set; } = new List<SBuff>();
 
@@ -477,10 +476,11 @@ namespace GameSetting
             m_IdentityID = identityID;
         }
 
-        public DamageInfo SetDamage(float damage,enum_DamageType type= enum_DamageType.Basic)
+        public DamageInfo SetDamage(float damage, enum_DamageType type = enum_DamageType.Basic, bool trueDamage = false)
         {
             m_DamageBase = damage;
             m_DamageType = type;
+            m_TrueDamage = trueDamage;
             return this;
         }
 

@@ -126,7 +126,7 @@ namespace GameSetting
 
     public enum enum_HealthChangeMessage { Invalid = -1, Default = 0, DamageHealth = 1, ReceiveHealth = 2, DamageArmor = 3, ReceiveArmor = 4 }
 
-    public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3,True=4, }
+    public enum enum_DamageType { Invalid = -1, Basic = 1, Armor = 2, Health = 3, }
     
     public enum enum_ExpireType { Invalid = -1, PresetBuff = 1,  Perk = 2,EnermyElite=4, }
 
