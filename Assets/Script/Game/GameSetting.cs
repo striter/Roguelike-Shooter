@@ -161,7 +161,7 @@ namespace GameSetting
 
     public static class GameExpression
     {
-        public static int GetPlayerRankUpExp(int curRank) => 50 + curRank * 50;
+        public static int GetPlayerRankUpExp(int curRank) => 100 + curRank * 50;
         public static int GetPlayerWeaponIndex(int weaponIndex) =>weaponIndex * 10;
         public static int GetPlayerExtraWeaponIndex(int weaponIndex) => weaponIndex * 10+5;
         public static int GetPlayerPerkSFXWeaponIndex(int weaponIndex) => 100000 + weaponIndex * 10;

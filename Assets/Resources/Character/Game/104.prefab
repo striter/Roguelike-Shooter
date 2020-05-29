@@ -931,13 +931,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 240
-  I_DefaultArmor: 0
   F_MovementSpeed: 5
-  F_AttackSpread: 4
+  F_CriticalRate: 0
+  F_BaseDamage: 15
+  F_Spread: 0
   E_AnimatorIndex: 110
   F_AIChaseRange: 14
   F_AIAttackRange: 20
-  F_BaseDamage: 10
   I_BuffApplyOnHit: 0
   F_AttackRate: 2
   F_AttackDuration:
