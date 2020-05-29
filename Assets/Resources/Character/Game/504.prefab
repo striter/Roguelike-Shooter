@@ -932,11 +932,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 260
   F_MovementSpeed: 5
+  F_CriticalRate: 0
   F_BaseDamage: 30
   F_Spread: 5
   E_AnimatorIndex: 110
   F_AIChaseRange: 15
-  F_AIAttackRange: 22
+  F_AIAttackRange: 20
   I_BuffApplyOnHit: 0
   F_AttackRate: 0.5
   F_AttackDuration:

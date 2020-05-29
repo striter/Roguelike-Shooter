@@ -51,9 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b8d0e07754fa9b4685464e140e598ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  E_ProjectileType: 2
+  E_ProjectileType: 1
   RI_CountExtension:
-    start: 3
+    start: 1
     length: 0
   F_OffsetExtension: 3
   F_Speed: 10

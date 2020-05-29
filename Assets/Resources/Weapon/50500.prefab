@@ -56,7 +56,7 @@ MonoBehaviour:
     start: 3
     length: 2
   F_OffsetExtension: 14
-  F_Speed: 8
+  F_Speed: 11
   B_Penetrate: 1
   AC_MuzzleClip: {fileID: 8300000, guid: e596ed31788206242946d7fc0be00d41, type: 3}
   I_TrailIndex: 70502

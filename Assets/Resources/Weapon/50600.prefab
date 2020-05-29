@@ -255,7 +255,7 @@ MonoBehaviour:
   E_AreaType: 1
   V4_CastInfo: {x: 5.7, y: 0, z: 0, w: 0}
   I_ImpactIndex: 0
-  F_DelayDuration: 3
+  F_DelayDuration: 2
   I_DelayIndicatorIndex: 30006
   B_CameraShake: 0
 --- !u!198 &198378333027693098
