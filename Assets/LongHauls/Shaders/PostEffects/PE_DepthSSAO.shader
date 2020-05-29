@@ -11,7 +11,7 @@
 			Pass
 			{
 				CGPROGRAM
-				#pragma vertex vert
+				#pragma vertex vert_img
 				#pragma fragment frag
 
 				#include "UnityCG.cginc"
@@ -25,19 +25,6 @@
 			float _Strength;
 			float _FallOff;
 			float4 _AOColor;
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
-
-			v2f vert (appdata_img v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.texcoord;
-				return o;
-			}
 
 			float Get01Depth(float2 uv)
 			{
@@ -62,7 +49,7 @@
 				return normalize(cross(p1, p2));
 			}
 
-			fixed4 frag (v2f i) : SV_Target
+			fixed4 frag (v2f_img i) : SV_Target
 			{
 				float3 normal = normal_from_depth( i.uv);
 				float3 random = tex2D(_NoiseTex, i.uv*10).rgb;

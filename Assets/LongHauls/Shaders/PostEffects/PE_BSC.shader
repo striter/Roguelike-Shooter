@@ -15,7 +15,7 @@
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
+			#pragma vertex vert_img
 			#pragma fragment frag
 			#include "../CommonInclude.cginc"
 			#include "UnityCG.cginc"
@@ -25,21 +25,8 @@
 			fixed _Saturation;
 			fixed _Contrast;
 
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
-
-			v2f vert (appdata_img v)
-			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.texcoord;
-				return o;
-			}
 			
-			fixed4 frag (v2f i) : SV_Target
+			fixed4 frag (v2f_img i) : SV_Target
 			{
 				fixed3 col = tex2D(_MainTex, i.uv).rgb*_Brightness;
 				

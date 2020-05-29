@@ -27,21 +27,16 @@
 	half _LuminanceMultiple;
 	half _LuminanceThreshold;
 
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
 
-			v2f vertExtractBright(appdata_img v)
+			v2f_img vertExtractBright(appdata_img v)
 			{
-				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				v2f_img o;
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.uv = v.texcoord;
 				return o;
 			}
 
-			fixed4  fragExtractBright(v2f i):SV_TARGET
+			fixed4  fragExtractBright(v2f_img i):SV_TARGET
 			{
 				fixed4 c = tex2D(_MainTex,i.uv);
 				fixed val = clamp((luminance(c) - _LuminanceThreshold)*_LuminanceMultiple, 0, 1);
