@@ -931,7 +931,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 240
   F_MovementSpeed: 5
-  F_BaseDamage: 20
+  F_CriticalRate: 0
+  F_BaseDamage: 30
   F_Spread: 5
   E_AnimatorIndex: 152
   F_AIChaseRange: 13

@@ -955,7 +955,7 @@ MonoBehaviour:
   I_MaxHealth: 240
   F_MovementSpeed: 5
   F_CriticalRate: 0
-  F_BaseDamage: 0
+  F_BaseDamage: 10
   F_Spread: 0
   E_AnimatorIndex: 113
   F_AIChaseRange: 16
