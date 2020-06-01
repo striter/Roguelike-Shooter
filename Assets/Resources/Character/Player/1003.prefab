@@ -1023,9 +1023,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 200
   F_MovementSpeed: 7
+  F_CriticalRate: 0
   I_HealthPerRank: 10
   I_DefaultArmor: 25
-  I_ArmorPerRank: 10
+  I_ArmorPerRank: 5
   I_ShotProjectileID: 9000
   F_ShotRestoreCoolDown: 6
   I_BaseShotStorage: 1

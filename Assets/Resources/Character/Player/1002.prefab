@@ -1056,16 +1056,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   I_MaxHealth: 150
   F_MovementSpeed: 7
+  F_CriticalRate: 0
   I_HealthPerRank: 10
   I_DefaultArmor: 20
-  I_ArmorPerRank: 10
-  F_AssasinTriggerCooldown: 1
-  F_AssassinttackRange: 17
-  F_AssassinAttackDuration: 0.2
-  F_FinishBlowRate: 0
+  I_ArmorPerRank: 5
+  F_AbilityCooldown: 1
+  F_AbilityAttackRange: 8
+  F_AbilityAttackDuration: 0.2
+  F_AbilityBaseDamage: 20
   F_AbilityDamagePerStack: 200
   I_MaxAbilityDamageStack: 50
-  F_AssassinDamageStackResetDuration: 20
+  F_AbilityStackResetDuration: 20
+  F_AbilityKillsHealPercent: 0.1
+  F_AbilityKillsHealPercentAdditivePerRank: 0.01
 --- !u!135 &135432215870104796
 SphereCollider:
   m_ObjectHideFlags: 1
