@@ -13,7 +13,11 @@ public class CampUIManager : UIManager {
         base.Init();
         Instance = this;
         m_Coins = ShowControls<UIC_CampCurrencyStatus>(false);
-        m_GameProgress = ShowControls<UIC_GameProgress>();
+        if (m_firstEntry)
+        {
+            m_GameProgress = ShowControls<UIC_GameProgress>();
+            m_firstEntry = false;
+        }
 
         PreloadPage<UI_Armory>();
         PreloadPage<UI_CharacterSelect>();

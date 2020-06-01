@@ -17,6 +17,8 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
     public AtlasLoader m_ExpireSprites { get; private set; }
     public AtlasLoader m_WeaponSprites { get; private set; }
     public AtlasLoader m_CharacterSprites { get; private set; }
+    //是否是第一次进入
+    public static bool m_firstEntry = true;
     protected CB_GenerateTransparentOverlayTexture m_BlurBG { get; private set; }
     public static void Activate(bool inGame)
     {
@@ -51,10 +53,13 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_Indicate = ShowControls<UIC_Indicates>();
         PreloadPage<UI_Options>();
 
-        m_PlayerStatus.gameObject.SetActivate(false);
-        m_UIControl.gameObject.SetActivate(false);
-        m_Interact.gameObject.SetActivate(false);
-        m_Indicate.gameObject.SetActivate(false);
+        if (m_firstEntry)
+        {
+            m_PlayerStatus.gameObject.SetActivate(false);
+            m_UIControl.gameObject.SetActivate(false);
+            m_Interact.gameObject.SetActivate(false);
+            m_Indicate.gameObject.SetActivate(false);
+        }
     }
 
     public void DisplayUI()
