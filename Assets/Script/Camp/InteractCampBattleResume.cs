@@ -8,7 +8,7 @@ public class InteractCampBattleResume : InteractCampBase {
     public override void Init()
     {
         base.Init();
-        transform.SetActivate(GameDataManager.m_GameData.m_BattleResume);
+        //transform.SetActivate(GameDataManager.m_GameData.m_BattleResume);
     }
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)

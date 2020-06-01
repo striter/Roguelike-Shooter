@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CampUIManager : UIManager {
     public static new CampUIManager Instance { get; private set; }
+    UIC_GameProgress m_GameProgress;
     UIControlBase m_Coins, m_OverlayControl;
     Action OnCampPageExit;
     protected override void Init()
@@ -12,6 +13,7 @@ public class CampUIManager : UIManager {
         base.Init();
         Instance = this;
         m_Coins = ShowControls<UIC_CampCurrencyStatus>(false);
+        m_GameProgress = ShowControls<UIC_GameProgress>();
 
         PreloadPage<UI_Armory>();
         PreloadPage<UI_CharacterSelect>();

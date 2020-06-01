@@ -49,8 +49,20 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_UIControl = ShowControls<UIC_Control>();
         m_Interact = ShowControls<UIC_PlayerInteract>();
         m_Indicate = ShowControls<UIC_Indicates>();
-
         PreloadPage<UI_Options>();
+
+        m_PlayerStatus.gameObject.SetActivate(false);
+        m_UIControl.gameObject.SetActivate(false);
+        m_Interact.gameObject.SetActivate(false);
+        m_Indicate.gameObject.SetActivate(false);
+    }
+
+    public void DisplayUI()
+    {
+        m_PlayerStatus.gameObject.SetActivate(true);
+        m_UIControl.gameObject.SetActivate(true);
+        m_Interact.gameObject.SetActivate(true);
+        m_Indicate.gameObject.SetActivate(true);
     }
 
     protected override void OnDestroy()

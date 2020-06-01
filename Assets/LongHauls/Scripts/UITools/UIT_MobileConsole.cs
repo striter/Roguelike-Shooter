@@ -151,6 +151,8 @@ public class UIT_MobileConsole : SingletonMono<UIT_MobileConsole> {
     }
     void UpdateLogUI()
     {
+        if (!m_LogText)
+            return;
         if (!m_ConsoleOpening)
         {
             m_LogText.text = string.Format("<color=#FFFFFF>Errors:{0},Warnings:{1},Logs:{2}</color>",m_ErrorCount,m_WarningCount, m_LogCount);

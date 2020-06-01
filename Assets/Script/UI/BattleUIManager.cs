@@ -11,6 +11,7 @@ public class BattleUIManager : UIManager {
     {
         Instance = this;
         base.Init();
+        UIManager.Instance.DisplayUI();
         m_InGameSprites = TResources.GetUIAtlas_InGame();
         ShowControls<UIC_GameNumericVisualize>();
         ShowControls<UIC_GameStatus>();

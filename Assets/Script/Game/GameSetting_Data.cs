@@ -35,6 +35,10 @@ namespace GameSetting
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
         public static CPlayerCharactersCultivateData m_CharacterData => TGameData<CPlayerCharactersCultivateData>.Data;
         public static CBattleSave m_GameProgressData => TGameData<CBattleSave>.Data;
+        /// <summary>
+        /// 当前选择true=新游戏   false=继续游戏
+        /// </summary>
+        public static bool m_BattleResume = false;
 
         public static bool m_Inited { get; private set; } = false;
         public static void Init()
