@@ -27,7 +27,26 @@ public class InteractPerkSelect : InteractBattleBase
     {
         base.OnInteractedContinousCheck(_interactor);
         m_Particles.Stop();
-        BattleUIManager.Instance.ShowPage<UI_PerkSelect>(true,true, .5f).Show(m_PerkIDs,_interactor.m_CharacterInfo.OnActionPerkAcquire);
+        Vector3[] v3List = new Vector3[3] { new Vector3 (-1.5f,0), new Vector3(1.5f, 0), new Vector3(0, 0, 1.5f) };
+        int num = 0;
+        InteractPerkPickup[] interactPerkPickupList = new InteractPerkPickup[3];
+        m_PerkIDs.Traversal((int perk) => {
+            interactPerkPickupList[num]=GameObjectManager.SpawnInteract<InteractPerkPickup>(transform.position+ v3List[num], Quaternion.identity).Play(perk);
+            num++;
+        });
+
+        for (int i = 0; i < interactPerkPickupList.Length; i++)
+        {
+            interactPerkPickupList[i].m_interactPerkPickupList = new List<InteractPerkPickup> ();
+            for (int j = 0; j < interactPerkPickupList.Length; j++)
+            {
+                if (i != j)
+                {
+                    interactPerkPickupList[i].m_interactPerkPickupList.Add(interactPerkPickupList[j]);
+                }
+            }
+        }
+        //BattleUIManager.Instance.ShowPage<UI_PerkSelect>(true,true, .5f).Show(m_PerkIDs,_interactor.m_CharacterInfo.OnActionPerkAcquire);
         return false;
     }
 }

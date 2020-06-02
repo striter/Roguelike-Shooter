@@ -74,7 +74,11 @@ public class UIC_GameNumericVisualize : UIControlBase
     }
     
     void OnPlayerPickupAmount(InteractPickup pickup)=> m_PickupGrid.AddItem(visualize++).Play(pickup,m_PickupGrid.RemoveItem);
-    
+    public void OnDeductMoney(float  moneyNum)
+    {
+        m_PickupGrid.AddItem(visualize++).PlayNew(moneyNum, m_PickupGrid.RemoveItem);
+    }
+
     void OnWillAIAttack(EntityCharacterBattleAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
 
 }

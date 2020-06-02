@@ -44,10 +44,28 @@ public class UIGI_VisualizePickup : UIT_GridItem {
         m_Projection.text = text;
         OnAnimFinished = _OnAnimFinished;
     }
+    /// <summary>
+    /// 扣钱
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="_OnAnimFinished"></param>
+    public void PlayNew(float num, Action<int> _OnAnimFinished)
+    {
+        m_Animation.Play(true);
+        m_pickupPos = BattleManager.Instance.m_LocalPlayer.transform .position; //new Vector3(113.8f, 0, 45.3f);
+        rtf_RectTransform.SetWorldViewPortAnchor(m_pickupPos, CameraController.MainCamera);
+        m_Image.sprite = BattleUIManager.Instance.m_InGameSprites["NumericIcon_Coin"];
+        m_Amount.color = TCommon.GetHexColor("FFCC1FFF");
 
+
+        string text = string.Format("-{0}", num);
+        m_Amount.text = text;
+        m_Projection.text = text;
+        OnAnimFinished = _OnAnimFinished;
+    }
     void OnAnimFinish()
     {
-        OnAnimFinished(m_Identity);
+            OnAnimFinished(m_Identity);
     }
 
     private void Update()

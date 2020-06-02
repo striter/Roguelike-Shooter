@@ -26,7 +26,6 @@ public class InteractPerkShrine : InteractBattleBase {
         if (rarity != enum_Rarity.Invalid)
         {
 
-            base.OnInteractedContinousCheck(_interactor);
             GameObjectManager.SpawnInteract<InteractPerkPickup>(transform.position, Quaternion.identity).Play(GameDataManager.RandomPlayerPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks)).PlayDropAnim(NavigationManager.NavMeshPosition(transform.position + TCommon.RandomXZCircle() * 4f));
 
             //_interactor.m_CharacterInfo.OnActionPerkAcquire(GameDataManager.RandomPlayerPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));

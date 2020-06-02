@@ -33,19 +33,28 @@ public class UI_Armory : UIPage {
         enum_PlayerWeaponIdentity firstAvailableWeapon = enum_PlayerWeaponIdentity.Invalid;
         m_ArmoryGrid.ClearGrid();
 
-        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(false, OnWeaponClick).OnHighlight(false); });
-        GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) => { if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid) firstAvailableWeapon = weapon; m_ArmoryGrid.AddItem((int)weapon).Play(true, OnWeaponClick).OnHighlight(false); });
+        GameDataManager.m_ArmoryData.m_WeaponBlueprints.Traversal((enum_PlayerWeaponIdentity weapon) => {
+            //Debug.Log(weapon.ToString()+GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(weapon));
+            if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid)
+                firstAvailableWeapon = weapon;
+                m_ArmoryGrid.AddItem((int)weapon).Play(false, OnWeaponClick).OnHighlight(false);
+        });
+        //GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Traversal((enum_PlayerWeaponIdentity weapon) => {
+        //    Debug.Log(weapon.ToString() + GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(weapon));
+        //    if (firstAvailableWeapon == enum_PlayerWeaponIdentity.Invalid && !GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(weapon))
+        //        firstAvailableWeapon = weapon;
+        //        m_ArmoryGrid.AddItem((int)weapon).Play(true, OnWeaponClick).OnHighlight(false); });
         return firstAvailableWeapon;
     }
 
 
     void OnWeaponClick(enum_PlayerWeaponIdentity weapon)
     {
-        if (m_SelectingWeapon != enum_PlayerWeaponIdentity.Invalid)
+        if (m_SelectingWeapon != enum_PlayerWeaponIdentity.Invalid&& m_ArmoryGrid.GetItem((int)m_SelectingWeapon)!=null)
             m_ArmoryGrid.GetItem((int)m_SelectingWeapon).OnHighlight(false);
         m_SelectingWeapon = weapon;
         m_ArmoryGrid.GetItem((int)m_SelectingWeapon).OnHighlight(true);
-
+        Debug.Log("@@"+weapon.ToString() + GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(weapon));
         bool m_Unlocked = GameDataManager.m_ArmoryData.m_WeaponsUnlocked.Contains(m_SelectingWeapon);
         if(!m_Unlocked)
             m_Price.text = GameDataManager.GetArmoryUnlockPrice(m_SelectingWeapon).ToString();
@@ -56,8 +65,9 @@ public class UI_Armory : UIPage {
     void OnUnlockButtonClick()
     {
         GameDataManager.OnArmoryUnlock(m_SelectingWeapon);
-        InitArmory();
-        OnWeaponClick(m_SelectingWeapon);
+        OnWeaponClick(InitArmory());
+        //InitArmory();
+        //OnWeaponClick(m_SelectingWeapon);
     }
 
 }

@@ -1000,7 +1000,15 @@ public static class TimeScaleController<T> where T:struct
     static float GetLowestScale()
     {
         float scale = 1f;
-        m_TimeScales.Traversal((float value) => { if (scale > value) scale = value; });
+        m_TimeScales.Traversal((float value) => 
+        {
+            if (scale > value)
+                scale = value;
+        });
+        if (scale == 0.2f)
+        {
+            Debug.Log(scale);
+        }
         return scale;
     }
 
@@ -1010,6 +1018,7 @@ public static class TimeScaleController<T> where T:struct
         if (!m_TimeScales.ContainsKey(scaleIndex))
             m_TimeScales.Add(scaleIndex,1f);
         m_TimeScales[scaleIndex] = scale;
+        Debug.Log("@@"+ m_TimeScales[scaleIndex]);
     }
     static ValueChecker<float> m_BulletTimeChecker = new ValueChecker<float>(1f);
 

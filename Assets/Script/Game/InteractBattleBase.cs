@@ -38,12 +38,15 @@ public class InteractBattleBase : InteractBase,IObjectPoolStaticBase<enum_Intera
     {
         base.OnInteractedContinousCheck(_interactor);
 
-        if (m_TradePrice > 0)
-            _interactor.m_CharacterInfo.OnCoinsCost(m_TradePrice);
-        if (m_KeyRequire > 0)
-            _interactor.m_CharacterInfo.OnKeyCost(m_KeyRequire);
+        if (_interactor != null)
+        {
+            if (m_TradePrice > 0)
+                _interactor.m_CharacterInfo.OnCoinsCost(m_TradePrice);
+            if (m_KeyRequire > 0)
+                _interactor.m_CharacterInfo.OnKeyCost(m_KeyRequire);
 
-        GameObjectManager.PlayMuzzle(_interactor.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
+            GameObjectManager.PlayMuzzle(_interactor.m_EntityID, transform.position, transform.up, I_MuzzleOnInteract, AC_OnInteract);
+        }
         if (B_SelfRecycleOnInteract)
         {
             SetInteractable(false);

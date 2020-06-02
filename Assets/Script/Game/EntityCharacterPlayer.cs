@@ -439,7 +439,7 @@ public class EntityCharacterPlayer : EntityCharacterBase
     }
     protected void OnInteractStatus()
     {
-        GameManagerBase.Instance.SetExtraTimeScale(m_Interact==null?1f:.2f);
+        //GameManagerBase.Instance.SetExtraTimeScale(m_Interact==null?1f:.2f);
         TBroadCaster<enum_BC_UIStatus>.Trigger( enum_BC_UIStatus.UI_PlayerInteractUpdate,this);
     }
     protected void OnUIWeaponStatus()

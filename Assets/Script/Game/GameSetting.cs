@@ -879,6 +879,7 @@ namespace GameSetting
         public void OnCoinsCost(float price)
         {
             m_Coins -= price;
+            BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().OnDeductMoney(price);
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate,this);
         }
         public void OnCoinsGain(float coinAmount)
