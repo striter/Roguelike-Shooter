@@ -1007,7 +1007,7 @@ public static class TimeScaleController<T> where T:struct
         });
         if (scale == 0.2f)
         {
-            Debug.Log(scale);
+            //Debug.Log(scale);
         }
         return scale;
     }
@@ -1018,7 +1018,7 @@ public static class TimeScaleController<T> where T:struct
         if (!m_TimeScales.ContainsKey(scaleIndex))
             m_TimeScales.Add(scaleIndex,1f);
         m_TimeScales[scaleIndex] = scale;
-        Debug.Log("@@"+ m_TimeScales[scaleIndex]);
+        //Debug.Log("@@"+ m_TimeScales[scaleIndex]);
     }
     static ValueChecker<float> m_BulletTimeChecker = new ValueChecker<float>(1f);
 
