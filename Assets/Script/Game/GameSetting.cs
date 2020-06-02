@@ -89,8 +89,8 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkLotteryRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
         public const int I_EventPerkSelectPrice = 15;
         public static readonly Dictionary<enum_Rarity, int> D_EventPerkSelectRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 55 }, { enum_Rarity.Advanced, 30 }, { enum_Rarity.Rare, 10 }, { enum_Rarity.Epic, 5 } };
-        public const int I_PerkShrineTradePrice = 5;
-        public const int I_PerkShrineTryCountMax = 3;
+        public const int I_PerkShrineTradePrice = 2;
+        public const int I_PerkShrineTryCountMax = 10086;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 30 }, { enum_Rarity.Advanced, 12 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 3 } };
         public const int I_BloodShrineTryCountMax = 1;
         public static readonly RangeInt RI_BloodShrintCoinsAmount = new RangeInt(10, 20);
@@ -175,7 +175,7 @@ namespace GameSetting
         public static float GetEnermyDamageMultilier(int minutesPassed, enum_BattleDifficulty difficulty) => minutesPassed * GameConst.F_EnermyDamageMultiplierPerMinutePassed + ((int)difficulty - 1) * GameConst.F_EnermyDamageMultiplierPerDifficultyAboveNormal;
 
         #region Interacts
-        public static float GetPerkShrinePriceMultiply(int tryCount) => 1f+1f * tryCount;
+        public static float GetPerkShrinePriceMultiply(int tryCount) => 1f * tryCount;
         public static float GetHealShrinePriceMultiply(int tryCount) => 1f + .1f * tryCount;
         public static float GetBloodShrineHealthCostMultiple(int count) => .5f + .05f * count;
         #endregion

@@ -25,8 +25,13 @@ public class InteractPerkShrine : InteractBattleBase {
         enum_Rarity rarity = TCommon.RandomPercentage(GameConst.D_PerkShrineRate, enum_Rarity.Invalid);
         if (rarity != enum_Rarity.Invalid)
         {
-            _interactor.m_CharacterInfo.OnActionPerkAcquire(GameDataManager.RandomPlayerPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));
-            GameObjectManager.PlayMuzzle(-1,_interactor.transform.position,Vector3.up, I_MuzzleSuccess);
+
+            base.OnInteractedContinousCheck(_interactor);
+            GameObjectManager.SpawnInteract<InteractPerkPickup>(transform.position, Quaternion.identity).Play(GameDataManager.RandomPlayerPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks)).PlayDropAnim(NavigationManager.NavMeshPosition(transform.position + TCommon.RandomXZCircle() * 4f));
+
+            //_interactor.m_CharacterInfo.OnActionPerkAcquire(GameDataManager.RandomPlayerPerk(rarity, _interactor.m_CharacterInfo.m_ExpirePerks));
+            //GameObjectManager.PlayMuzzle(-1, _interactor.transform.position, Vector3.up, I_MuzzleSuccess);
+            return false;
         }
         return m_TryCount < GameConst.I_PerkShrineTryCountMax;
     }

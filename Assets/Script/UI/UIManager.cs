@@ -70,6 +70,11 @@ public class UIManager :UIManagerBase,ICoroutineHelperClass
         m_Indicate.gameObject.SetActivate(true);
     }
 
+    public void closeControlsUI(UIControlBase control)
+    {
+        closeControls(control);
+        Destroy(control.gameObject);
+    }
     protected override void OnDestroy()
     {
         base.OnDestroy();

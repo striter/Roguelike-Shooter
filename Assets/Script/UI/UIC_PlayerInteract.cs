@@ -118,6 +118,10 @@ public class UIC_PlayerInteract : UIControlBase
                     isCommon = true;
                     SetInteractData(targetInteract);
                     break;
+                //case enum_Interaction.PerkShrine:
+                //    isPerk = true;
+                //    //SetPerkInfo(GameDataManager.GetPlayerPerkData((targetInteract as InteractPerkPickup).m_PerkID));
+                //    break;
             }
         }
         m_CommonData.SetActivate(isCommon);

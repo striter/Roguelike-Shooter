@@ -29,6 +29,6 @@ public class UIC_GameProgress : UIControlBase
         }
         else
             CampManager.Instance.OnBattleStart(false);
-        Destroy(this.gameObject); 
+        UIManager.Instance.closeControlsUI(this);
     }
 }

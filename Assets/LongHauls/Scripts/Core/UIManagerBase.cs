@@ -119,6 +119,11 @@ public class UIManagerBase : SingletonMono<UIManagerBase> {
         return control;
     }
 
+    public void closeControls(UIControlBase control)
+    {
+        m_ControlSiblings.Remove(control);
+    }
+
     protected void SetControlViewMode(UIControlBase control, bool overlay)
     {
         if (!m_ControlSiblings.ContainsKey(control))
