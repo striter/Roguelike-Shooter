@@ -63,5 +63,5 @@ MonoBehaviour:
   I_MuzzleIndex: 0
   I_ImpactIndex: 0
   I_IndicatorIndex: 0
-  F_Radius: 0.2
+  F_Radius: 1
   F_Height: 0
