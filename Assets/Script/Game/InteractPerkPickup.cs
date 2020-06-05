@@ -15,6 +15,20 @@ public class InteractPerkPickup : InteractPickup {
         base.Play();
         m_PerkID = _perkID;
         m_interactPerkPickupList = null;
+        ExpirePlayerPerkBase perk = GameDataManager.GetPlayerPerkData(_perkID);
+
+        if (m_visualizeItem != null)
+        {
+            m_visualizeItem.Play(TLocalization.GetKeyLocalized(perk.GetNameLocalizeKey()),
+            this);
+        }
+        else
+        {
+            Debug.Log("创建" + TLocalization.GetKeyLocalized(perk.GetNameLocalizeKey()));
+            BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().CreateItemInformation(TLocalization.GetKeyLocalized(perk.GetNameLocalizeKey()),
+                    this);
+        }
+
         return this;
     }
 

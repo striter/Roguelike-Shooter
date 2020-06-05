@@ -24,7 +24,9 @@ public class UIC_Control : UIControlBase {
         transform.Find("Main").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnMainButtonDown;
         transform.Find("Sub").GetComponent<UIT_EventTriggerListener>().OnPressStatus = OnSubButtonDown;
 
-        transform.Find("Settings").GetComponent<Button>().onClick.AddListener(OnSettingBtnClick);
+        Button button = transform.Find("Settings").GetComponent<Button>();
+        button.onClick.AddListener(OnSettingBtnClick);
+        button.SetActivate(false);
         m_Settings = transform.Find("Settings/Image").GetComponent<Image>();
 
         m_weapon1Btn = new ControlMainButton(transform.Find("Main"));

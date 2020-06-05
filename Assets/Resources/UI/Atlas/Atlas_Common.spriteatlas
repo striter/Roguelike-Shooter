@@ -29,7 +29,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 22abbe43a09835c4191e84d699beb0f0, type: 3}
-    totalSpriteSurfaceArea: 2576778
+    totalSpriteSurfaceArea: 2843976
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -54,10 +54,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 05ba41a082cc1a74288fcc4bf6947a85, type: 3}
   - {fileID: 21300000, guid: 8280ce86eddc22949910b22674ac779c, type: 3}
   - {fileID: 21300000, guid: 01ef3718fbcf89c408d0987fff8ff2d5, type: 3}
+  - {fileID: 21300000, guid: ab27074118daeff4caaf72fb9a5b4143, type: 3}
+  - {fileID: 21300000, guid: 4eb955835fb6a6343848953ff00f58a9, type: 3}
   - {fileID: 21300000, guid: 3ef877bc6e0d2984a9bc434e40e037ce, type: 3}
   - {fileID: 21300000, guid: 3a56b431fa4e03340882f4e72bca4609, type: 3}
   - {fileID: 21300000, guid: 234f89eb50c2edc4e8048a6047a34cb5, type: 3}
   - {fileID: 21300000, guid: 8d752d68d59a02a42b68e58fc4ee5c90, type: 3}
+  - {fileID: 21300000, guid: bc3f9a69cca799843b283fd54a62b640, type: 3}
   - {fileID: 21300000, guid: 71917017662df5d4cb55e4dba0929204, type: 3}
   - {fileID: 21300000, guid: 873f6ee8629a62a4584701274dba416f, type: 3}
   - {fileID: 21300000, guid: 149e2cecb8f07c544a062ec19ac1c490, type: 3}
@@ -74,7 +77,16 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fb63df05d2d74bb49bf0e78b9147bd7b, type: 3}
   - {fileID: 21300000, guid: 389b60b53720261438d8fdcd07fc2234, type: 3}
   - {fileID: 21300000, guid: 9047f140630863245ae8f4d97a50502d, type: 3}
+  - {fileID: 21300000, guid: 3b7656f91224681449549f8ee1ddd241, type: 3}
+  - {fileID: 21300000, guid: 8a87ac2e010df2346b72a96e9388e4bb, type: 3}
+  - {fileID: 21300000, guid: 4c464ad8728bb3947923d43d89ba9d82, type: 3}
+  - {fileID: 21300000, guid: f9b47197bf0713d4db39757063dcb9c5, type: 3}
+  - {fileID: 21300000, guid: c880e74f7854f1b4aaec6f1cdfc0aabb, type: 3}
   - {fileID: 21300000, guid: 541ee0b71e107cc45867c0f4d1489104, type: 3}
+  - {fileID: 21300000, guid: c4f287d69514f85409c9a30dab49f1d6, type: 3}
+  - {fileID: 21300000, guid: a56fac9d98aa327458be0462ec0a6cf5, type: 3}
+  - {fileID: 21300000, guid: c24ed70ef487d724bbd06a7ec0e7d909, type: 3}
+  - {fileID: 21300000, guid: 3a46dd896c0b0ee4fb1ecd037912a6a2, type: 3}
   - {fileID: 21300000, guid: bd1c0690faaedc04b8bbda27351be635, type: 3}
   - {fileID: 21300000, guid: e084e15498c9b5d45ac18967796c1be8, type: 3}
   - {fileID: 21300000, guid: ecc74ae687658124aae36b926f4912fc, type: 3}
@@ -82,6 +94,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bc835d0ed1221564a8210bf74fb869d6, type: 3}
   - {fileID: 21300000, guid: b92a8144eeeddd0408c816fa246b198c, type: 3}
   - {fileID: 21300000, guid: baba3317718e4fc45befa1421e27a1b2, type: 3}
+  - {fileID: 21300000, guid: 5402d3ac7a8bafc4d813d766cdba7be0, type: 3}
+  - {fileID: 21300000, guid: e17b0ef065730994fa5db9e624e5e373, type: 3}
   - {fileID: 21300000, guid: 6dcdd36f006109a4baf2e7f1e9e38414, type: 3}
   - {fileID: 21300000, guid: d40acf7a523f9124e830b23c072f7d9e, type: 3}
   - {fileID: 21300000, guid: 5cc0d0a5c7b3ff74196918e81035e228, type: 3}
@@ -93,6 +107,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 25e465ce24e47e84488b8788608e1391, type: 3}
   - {fileID: 21300000, guid: e1604c0f100f04d479ee61de639e1ae6, type: 3}
   - {fileID: 21300000, guid: a0e4044850dc94f4ea77c05d26531154, type: 3}
+  - {fileID: 21300000, guid: 0a7d9da3d9ad1334fa8389c1fab410d8, type: 3}
   - {fileID: 21300000, guid: ffa5d357c7dd26b459d6fcb7886cd0f3, type: 3}
   - {fileID: 21300000, guid: 363bf8e3fa0ee3a459a372dbed9f6a32, type: 3}
   - {fileID: 21300000, guid: 68cf86bf99060f94f9d26f8b91fba42a, type: 3}
@@ -103,6 +118,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e31910eada068664eaf61fcda1721a85, type: 3}
   - {fileID: 21300000, guid: eefdd652272d2684cbfdc70bf20d1d05, type: 3}
   - {fileID: 21300000, guid: 8b66b0559d1136245865a87da4359ce2, type: 3}
+  - {fileID: 21300000, guid: 335855df39a2f294e8e1eec30dcf1d91, type: 3}
   - {fileID: 21300000, guid: f6394b6c20c1f7b43b05bc98afa92688, type: 3}
   - {fileID: 21300000, guid: c08fb8623df6ada478d2261bfca4d369, type: 3}
   - {fileID: 21300000, guid: cd726ee8cd2f8dc41950534b10406863, type: 3}
@@ -115,6 +131,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: fc9516c7cbae83744bdeda41467239b9, type: 3}
   - {fileID: 21300000, guid: ecf5205912130214393bc27cfbe19041, type: 3}
   - {fileID: 21300000, guid: 1d1cbd9d970e66944b59ae6da5ccd634, type: 3}
+  - {fileID: 21300000, guid: ce569dadbc91e76499bb1badb723a0a2, type: 3}
   - {fileID: 21300000, guid: 42c8ac79d9254264b8c9785a333d591a, type: 3}
   - {fileID: 21300000, guid: 18652a05e50450b4a8aea0d594f8ec36, type: 3}
   - {fileID: 21300000, guid: 9c9d65350fda00e43aae5964ee01b62f, type: 3}
@@ -140,10 +157,13 @@ SpriteAtlas:
   - UI_common_circle
   - control_ability_bottom_cooldown
   - control_ability_bottom_activate
+  - select_equip
+  - icon_equip_test
   - interact_background_bottom
   - setting_label_selected
   - status_level_bg
   - status_bottom
+  - btn_Options_bottom
   - Interact_Icon_Portal
   - Interact_Icon_SignalTower
   - icon_stage
@@ -160,7 +180,16 @@ SpriteAtlas:
   - control_ability_Beth
   - control_main_interact
   - bottom_black
+  - icon_fps_60
+  - icon_fps_30
+  - icon_Joystick_move
+  - icon_Joystick_locked
+  - display_coins_bg
   - weaponinfo_progress
+  - icon_display_high
+  - icon_display_low
+  - icon_display_medium
+  - btn_setting_bottomNew
   - UI_common_black60
   - UI_common_darkgray50_line
   - UI_common_darkgray60
@@ -168,6 +197,8 @@ SpriteAtlas:
   - bottom_darkgray
   - icon_setting
   - icon_caution
+  - icon_sound
+  - icon_BGM
   - icon_info
   - btn_close
   - icon_enemy
@@ -179,6 +210,7 @@ SpriteAtlas:
   - setting_x11_on
   - icon_loading_0
   - icon_failure
+  - icon_home
   - UI_common_black80
   - status_life_light
   - status_armor_light
@@ -189,6 +221,7 @@ SpriteAtlas:
   - UI_Common_Angle
   - icon_score2
   - icon_close
+  - icon_closeNew
   - icon_hp
   - icon_video
   - icon_weapon
@@ -201,6 +234,7 @@ SpriteAtlas:
   - control_bottom_bg
   - UI_common_angle_gray
   - buff_level_blank
+  - line_70
   - setting_common_bottom
   - UI_Common_White
   - btn_close_strip

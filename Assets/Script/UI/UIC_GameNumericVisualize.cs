@@ -9,6 +9,7 @@ public class UIC_GameNumericVisualize : UIControlBase
     public UIT_GridControllerGridItem<UIGI_VisualizeDamage> m_DamageGrid { get; private set; }
     public  UIT_GridControllerGridItem<UIGI_VisualizePickup> m_PickupGrid { get; private set; }
     public UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate> m_AttackIndicateGrid { get; private set; }
+    public UIT_GridControllerGridItem<UIGI_VisualizeItem> m_ItemGrid { get; private set; }
     protected override void Init()
     {
         base.Init();
@@ -16,6 +17,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         m_DamageGrid = new UIT_GridControllerGridItem<UIGI_VisualizeDamage>(transform.Find("DamageGrid"));
         m_PickupGrid = new UIT_GridControllerGridItem<UIGI_VisualizePickup>(transform.Find("PickupGrid"));
         m_AttackIndicateGrid = new UIT_GridControllerGridItem<UIGI_VisualizeAttackIndicate>(transform.Find("AttackIndicateGrid"));
+        m_ItemGrid = new UIT_GridControllerGridItem<UIGI_VisualizeItem>(transform.Find("m_ItemGrid"));
     }
 
     private void Start()
@@ -35,6 +37,7 @@ public class UIC_GameNumericVisualize : UIControlBase
         TBroadCaster<enum_BC_UIStatus>.Remove<EntityCharacterBattleAI>(enum_BC_UIStatus.UI_OnWillAIAttack, OnWillAIAttack);
         TBroadCaster<enum_BC_UIStatus>.Add<InteractPickup>(enum_BC_UIStatus.UI_PlayerInteractPickup, OnPlayerPickupAmount);
     }
+
 
     bool b_showEntityHealthInfo(EntityBase entity)
     {
@@ -78,7 +81,10 @@ public class UIC_GameNumericVisualize : UIControlBase
     {
         m_PickupGrid.AddItem(visualize++).PlayNew(moneyNum, m_PickupGrid.RemoveItem);
     }
-
+    public void CreateItemInformation(string name, InteractBattleBase interctBase)
+    {
+        m_ItemGrid.AddItem(visualize++).Play(name, interctBase);
+    }
     void OnWillAIAttack(EntityCharacterBattleAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
 
 }

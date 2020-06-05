@@ -17,6 +17,7 @@ public class InteractBase : MonoBehaviour
         m_InteractCheck = GetComponent<HitCheckInteract>();
         m_InteractCheck.Init();
         SetInteractable(E_InteractOnEnable);
+        //Debug.Log("创建" + m_InteractCheck.name);
     }
 
     protected virtual bool OnTryInteractCheck(EntityCharacterPlayer _interactor) => true;

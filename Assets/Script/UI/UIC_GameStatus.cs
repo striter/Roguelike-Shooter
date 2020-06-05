@@ -90,8 +90,14 @@ public class UIC_GameStatus : UIControlBase {
         TBroadCaster<enum_BC_GameStatus>.Remove<EntityBase>(enum_BC_GameStatus.OnEntityRecycle, m_Map.OnEntityRecycle);
         TBroadCaster<enum_BC_UIStatus>.Remove<PlayerExpireManager>(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, OnCurrencyUpdate);
     }
-
-    void OnEquipmentBtnClick()=> UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f);
+    //bool m_suspend = false;
+    void OnEquipmentBtnClick()
+    {
+        //GameManagerBase.Instance.SetExtraTimeScale(m_suspend ? 1 : 0);
+        UIManager.Instance.ShowPage<UI_Options>(true, true, 0f).SetInGame(GameManagerBase.Instance.B_InBattle);
+        //m_suspend = !m_suspend;
+    }
+    //UIManager.Instance.ShowPage<UI_PlayerDetail>(true, true, 0f);
 
     void OnStageStart()
     {
@@ -135,10 +141,14 @@ public class UIC_GameStatus : UIControlBase {
         m_Map.MinimapUpdate(BattleManager.Instance.m_LocalPlayer);
 
         int secondPassed= (int)BattleManager.Instance.m_BattleEntity.m_TimeElapsed;
-        if (m_TimeValueChecker.Check(secondPassed))
-            m_Time.text = TTime.TTimeTools.GetMinuteSecond(m_TimeValueChecker.value1);
-
         int minutePassed = BattleManager.Instance.m_BattleEntity.m_MinutesElapsed;
+        if (m_TimeValueChecker.Check(secondPassed))
+        {
+            m_Time.text = TTime.TTimeTools.GetMinuteSecond(m_TimeValueChecker.value1);
+            Color color = m_ProgressRampSample.GetPixel((int)(m_ProgressRampSample.width * ((float)minutePassed / UIConst.I_GameProgressDifficultyColorRampMaxMinutes)), 1);
+            m_Time.color = color;
+        }
+
         if (m_MinuteValueCheck.Check(minutePassed))
         {
             Color color = m_ProgressRampSample.GetPixel((int)(m_ProgressRampSample.width * ((float)minutePassed / UIConst.I_GameProgressDifficultyColorRampMaxMinutes)), 1);

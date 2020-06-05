@@ -9,6 +9,7 @@ public class InteractBattleBase : InteractBase,IObjectPoolStaticBase<enum_Intera
     protected virtual bool B_SelfRecycleOnInteract => false;
     public AudioClip AC_OnPlay, AC_OnInteract;
     public int I_MuzzleOnInteract;
+    public UIGI_VisualizeItem m_visualizeItem;
 
 
     public int m_TradePrice { get; private set; } = -1;
@@ -27,6 +28,25 @@ public class InteractBattleBase : InteractBase,IObjectPoolStaticBase<enum_Intera
         m_KeyRequire = -1;
         if (AC_OnPlay)
             AudioManager.Instance.Play3DClip(-1, AC_OnPlay, false, transform.position);
+
+        if (m_InteractType != enum_Interaction.PickupWeapon
+            && m_InteractType != enum_Interaction.PickupCoin
+            && m_InteractType != enum_Interaction.TradeContainer
+            && m_InteractType != enum_Interaction.PerkPickup)
+        {
+            if (m_visualizeItem != null)
+            {
+                m_visualizeItem.Play(TLocalization.GetKeyLocalized(GetUITitleKey()),
+                this);
+            }
+            else
+            {
+                Debug.Log("创建" + TLocalization.GetKeyLocalized(GetUITitleKey()) + "*****" + m_InteractType);
+                BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().CreateItemInformation(TLocalization.GetKeyLocalized(GetUITitleKey()),
+                    this);
+            }
+            
+        }
     }
 
 

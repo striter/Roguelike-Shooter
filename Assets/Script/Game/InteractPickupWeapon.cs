@@ -21,6 +21,17 @@ public class InteractPickupWeapon : InteractPickup {
         m_Weapon = GameObjectManager.SpawnWeapon(data,tf_ModelContainer);
         m_Weapon.transform.localPosition = Vector3.zero;
         m_Weapon.transform.localRotation = Quaternion.identity;
+        if (m_visualizeItem != null)
+        {
+            m_visualizeItem.Play(TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()),
+            this);
+        }
+        else
+        {
+            Debug.Log("创建" + TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()));
+            BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().CreateItemInformation(TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()),
+                this);
+        }
         return this;
     }
 
@@ -31,6 +42,12 @@ public class InteractPickupWeapon : InteractPickup {
         if (!m_Weapon)
             return false;
         m_Weapon.transform.SetParentResetTransform(tf_ModelContainer);
+
+        if (m_visualizeItem != null)
+        {
+            m_visualizeItem.Play(TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()),
+            this);
+        }
         return true;
     }
 }

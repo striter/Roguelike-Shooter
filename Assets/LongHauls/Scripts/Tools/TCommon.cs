@@ -33,7 +33,6 @@ public static class TCommonUI
         rect .anchorMin = Vector2.Lerp(rect.anchorMin, viewPortAnchor, lerpParam);
         rect.anchorMax = Vector2.Lerp(rect.anchorMin, viewPortAnchor, lerpParam);
     }
-    
     public static void ReparentRestretchUI(this RectTransform rect,Transform targetTrans)
     {
         rect.SetParent(targetTrans);
