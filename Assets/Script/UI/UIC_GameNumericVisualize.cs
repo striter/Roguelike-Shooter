@@ -83,7 +83,7 @@ public class UIC_GameNumericVisualize : UIControlBase
     }
     public void CreateItemInformation(string name, InteractBattleBase interctBase)
     {
-        m_ItemGrid.AddItem(visualize++).Play(name, interctBase);
+        //m_ItemGrid.AddItem(visualize++).Play(name, interctBase);
     }
     void OnWillAIAttack(EntityCharacterBattleAI ai)=>m_AttackIndicateGrid.AddItem(visualize++).Play(ai.transform,m_AttackIndicateGrid.RemoveItem);
 
