@@ -956,7 +956,7 @@ MonoBehaviour:
   I_MaxHealth: 3000
   F_MovementSpeed: 5
   F_CriticalRate: 0
-  F_BaseDamage: 15
+  F_BaseDamage: 20
   F_Spread: 7
   E_AnimatorIndex: 161
   F_AIChaseRange: 14
@@ -964,10 +964,10 @@ MonoBehaviour:
   I_BuffApplyOnHit: 0
   F_AttackRate: 0.1
   F_AttackDuration:
-    start: 4
+    start: 3
     length: 1
   F_AttackTimes:
-    start: 60
+    start: 20
     length: 0
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 100
