@@ -412,7 +412,7 @@ MonoBehaviour:
   F_AimSpread: 2
   B_MultiShotAvailable: 1
   I_PelletsPerShot: 4
-  F_PelletSpreadAngle: 3
+  F_PelletSpreadAngle: 4
 --- !u!114 &114936212185041642
 MonoBehaviour:
   m_ObjectHideFlags: 1
