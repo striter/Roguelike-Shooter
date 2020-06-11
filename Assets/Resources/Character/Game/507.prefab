@@ -1099,12 +1099,12 @@ MonoBehaviour:
   F_BaseDamage: 40
   F_Spread: 0
   E_AnimatorIndex: 10
-  F_AIChaseRange: 1
+  F_AIChaseRange: 0
   F_AIAttackRange: 6
   I_BuffApplyOnHit: 0
   F_AttackRate: 0
   F_AttackDuration:
-    start: 2
+    start: 1
     length: 1
   F_AttackTimes:
     start: 1
