@@ -679,7 +679,7 @@ Transform:
   m_GameObject: {fileID: 1419280467194282}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 26.185936, y: 0, z: -4.76265}
-  m_LocalScale: {x: 1.5, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4162988258429294}
   - {fileID: 4362941677780708}
@@ -1026,11 +1026,11 @@ MonoBehaviour:
   I_BuffApplyOnHit: 0
   F_AttackRate: 0.5
   F_AttackDuration:
-    start: 5
+    start: 3
     length: 1
   F_AttackTimes:
-    start: 8
-    length: 4
+    start: 3
+    length: 2
   F_AttackRotateParam: 1
   I_AttackPreAimPercentage: 0
   B_AttackMove: 0
