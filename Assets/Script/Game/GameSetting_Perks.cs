@@ -202,7 +202,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
         public override int m_Index => 10016;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
         public override int m_MaxStack => 1;
-        public override float Value1 => 50f;
+        public override float Value1 => 30f;
         float m_CurrentDamage = 0;
         public override void OnDealtDamage(EntityCharacterBase receiver, DamageInfo info, float applyAmount)
         {
