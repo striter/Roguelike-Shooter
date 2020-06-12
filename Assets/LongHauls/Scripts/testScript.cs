@@ -21,20 +21,23 @@ public class testScript : MonoBehaviour
     {
         if (GUI.Button(new Rect(0, 0, 50, 50), ""))
         {
-            CampUIManager.Instance.ShowCoinsPage<UI_DailyTasks>(true, true, ResetPlayerCamera, .1f);
-            //GameDataManager. OnCreditStatus(500f);
-            //GameManagerBase.Instance.SetExtraTimeScale(10);
-            //BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().OnDeductMoney(50);
-            //if(BattleManager.Instance)
-            //BattleManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
-            //else
-            //    CampManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
-        }
+            //GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(enum_PlayerWeaponIdentity.M82A1, 5));
+
+        //GameDataManager.m_CGameShopData.Random();
+        //CampUIManager.Instance.ShowCoinsPage<UI_DailyTasks>(true, true, ResetPlayerCamera, .1f);
+        //GameDataManager. OnCreditStatus(500f);
+        //GameManagerBase.Instance.SetExtraTimeScale(10);
+        //BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().OnDeductMoney(50);
+        //if(BattleManager.Instance)
+        //BattleManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
+        //else
+        //    CampManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
+    }
         if (GUI.Button(new Rect(50, 0, 50, 50), ""))
         {
-            GameDataManager.m_GameTaskData.RandomTask();
+            //GameDataManager.m_GameTaskData.RandomTask();
             //GameDataManager.OnCGameTask(50);
-            //GameDataManager.OnDiamondsStatus(500);
+            GameDataManager.OnDiamondsStatus(50000);
             //GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_GameProgressData.m_Character, Vector3.zero, new Quaternion(0,0,0,0)).OnPlayerActivate(GameDataManager.m_GameProgressData);
         }
     }

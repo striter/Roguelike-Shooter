@@ -27,20 +27,43 @@ public class UIGI_Commodity : UIT_GridItem, IGridHighlight
     {
         m_button.onClick.AddListener(OnClick);
     }
-
+    int m_timeNew = 0;
+    float m_relativeTime = 0;
+    float m_timer=0;
+    private void Update()
+    {
+        if (m_commodity!=null && m_commodity.m_type == enum_CommodityType.LuckDraw)
+        {
+            if (m_relativeTime == 0)
+            {
+                m_relativeTime = Time.time;
+                m_timer = Time.time;
+            }
+            if (Time.time- m_relativeTime > 1)
+            {
+                m_relativeTime = Time.time;
+                int time = m_timeNew - (int)(m_relativeTime-m_timer);
+                m_timeRemaining.text = string.Format("{0}：{1}：{2}", string.Format("{0:d2}", time / 3600), string.Format("{0:d2}", time % 3600 / 60), string.Format("{0:d2}", time % 60));
+            }
+        }
+    }
     public void OnPlay(Commodity data)
     {
+        m_relativeTime = 0;
         m_commodity = data;
         m_name.localizeKey= data.m_name;
-        m_introduce.text = TLocalization.GetKeyLocalized(data.m_introduction);
         m_picture.overrideSprite = data.m_sprite;
         //设置剩余时间
         if (data.m_type == enum_CommodityType.LuckDraw)
         {
+            m_introduce.text =string.Format(TLocalization.GetKeyLocalized(data.m_introduction), TLocalization.GetKeyLocalized("Character_Name_" + GameDataManager.m_CGameShopData.m_roleId));
             m_timeRemaining.SetActivate(true);
+            m_timeNew = TimeRemaining();
+            m_timeRemaining.text = string.Format("{0}：{1}：{2}", string.Format("{0:d2}", m_timeNew / 3600), string.Format("{0:d2}", m_timeNew % 3600 / 60), string.Format("{0:d2}", m_timeNew % 60));
         }
         else
         {
+            m_introduce.text = TLocalization.GetKeyLocalized(data.m_introduction);
             m_timeRemaining.SetActivate(false);
         }
         //设置购买按钮样式
@@ -100,6 +123,10 @@ public class UIGI_Commodity : UIT_GridItem, IGridHighlight
     void OnClick()
     {
         UI_ShoppingMall.Instance.Purchase(m_commodity);
+    }
+    int TimeRemaining()
+    {
+        return ((23 - DateTime.Now.Hour) * 3600) + ((59 - DateTime.Now.Minute) * 60) + (60 - DateTime.Now.Second);
     }
     public void AttachSelectButton(Action<int> OnButtonClick) => this.OnButtonClick = OnButtonClick;
     public void OnHighlight(bool highlight)

@@ -118,6 +118,20 @@ public class UI_ShoppingMall : UIPage
     List<Prize> m_prizeList = new List<Prize> ();
     UIGI_TreasureChest[] m_treasureChestList = new UIGI_TreasureChest[m_treasureMaiCont];
 
+    public static CPlayerCharactersCultivateData m_CharacterData => TGameData<CPlayerCharactersCultivateData>.Data;
+    /// <summary>
+    /// 礼包角色
+    /// </summary>
+    enum_PlayerCharacter m_giftPackRole;
+    /// <summary>
+    /// 礼包武器
+    /// </summary>
+    enum_PlayerWeaponIdentity m_weapon;
+    /// <summary>
+    /// 礼包武器图纸
+    /// </summary>
+    enum_PlayerWeaponIdentity m_weaponDrawing;
+
     [SerializeField] GameObject m_purchaseGoldCoinsObj;
     [SerializeField] Text m_introduce;
     [SerializeField] Image m_picture;
@@ -134,6 +148,7 @@ public class UI_ShoppingMall : UIPage
     [SerializeField] Text m_numNew;
     [SerializeField] public Animator m_animator;
     [SerializeField] GameObject m_treasureChestObj;
+    [SerializeField] GameObject m_unableToOperateObj;
 
     Prize m_prize;
     Commodity m_commodity;
@@ -183,10 +198,7 @@ public class UI_ShoppingMall : UIPage
     public override void OnPlay(bool doAnim, Action<UIPageBase> OnPageExit)
     {
         base.OnPlay(doAnim, OnPageExit);
-
-        EntityCharacterPlayer characterModel = TResources.GetPlayerCharacter((enum_PlayerCharacter)GameDataManager.m_CGameShopData.m_roleId);
-        Debug.Log(TLocalization.GetKeyLocalized(characterModel.GetNameLocalizeKey()));
-
+        GameDataManager.m_GameTaskData.RandomTask();
         for (int i = 0; i < m_commodityList.Length; i++)
         {
             m_commodityList[i].m_price = int.Parse(TLocalization.GetKeyLocalized(string.Format("UI_Commodity_Price{0}", i)));
@@ -223,6 +235,7 @@ public class UI_ShoppingMall : UIPage
         {
             m_prizeList = Shuffle(m_prizeList);
             m_treasureChestObj.SetActive(true);
+            m_unableToOperateObj.SetActive(false);
             for (int i = 0; i < m_treasureChestList.Length; i++)
             {
                 m_treasureChestList[i].OnPlay(m_prizeList[i]);
@@ -232,12 +245,32 @@ public class UI_ShoppingMall : UIPage
         {
             m_gi_commodityList[0].transform.SetAsLastSibling();
             GameDataManager.m_CGameShopData.m_Vip=1;
+            m_gi_commodityList[0].OnPlay(m_commodityList[0]);
             ItemAcquisition();
         }
         else if (data.m_type == enum_CommodityType.Novice)
         {
+            m_giftPackRole = GameDataManager.RandomPlayerCharacter();
+            if (m_giftPackRole == enum_PlayerCharacter.Invalid)
+            {
+                //当角色全满的时候新手礼包换成金币
+                m_commodity = new Commodity();
+                m_commodity.m_type = enum_CommodityType.GoldCoin;
+                m_commodity.m_name = "UI_Commodity_NameNew";
+                m_commodity.m_sprite = LoadSourceSprite("UI/Texter/icon_5");
+                m_commodity.m_introduction = "UI_Commodity_IntroduceNew";
+                m_commodity.m_num = 5000;
+                m_commodity.m_price = 0;
+            }
+            else
+            {
+                m_commodity.m_name = string.Format("Character_Name_{0}", (int)m_giftPackRole);
+                m_CharacterData.DoUnlock(m_giftPackRole);
+                TGameData<CPlayerCharactersCultivateData>.Save();
+            }
             m_gi_commodityList[1].transform.SetAsLastSibling();
             GameDataManager.m_CGameShopData.m_NoviceGiftBag = 1;
+            m_gi_commodityList[1].OnPlay(m_commodityList[1]);
             ItemAcquisition();
         }
     }
@@ -258,11 +291,20 @@ public class UI_ShoppingMall : UIPage
     /// </summary>
     void ItemAcquisition()
     {
+        m_buttonNew.gameObject.SetActive(true);
         m_ItemAcquisitionObj.SetActive(true);
         if (m_prize!=null)
         {
-            m_pictureNew.overrideSprite = m_prize.m_sprite;
-            m_numNew.text = TLocalization.GetKeyLocalized(m_prize.m_Name);
+            if (m_prize.m_type == enum_CommodityType.Arms|| m_prize.m_type == enum_CommodityType.Drawing)
+            {
+                m_numNew.text = m_prize.m_Name;
+                m_pictureNew.sprite = m_prize.m_sprite;
+            }
+            else
+            {
+                m_numNew.text = TLocalization.GetKeyLocalized(m_prize.m_Name);
+                m_pictureNew.overrideSprite = m_prize.m_sprite;
+            }
         }
         else
         {
@@ -276,30 +318,34 @@ public class UI_ShoppingMall : UIPage
                 m_numNew.text = TLocalization.GetKeyLocalized(m_commodity.m_name);
             }
         }
+        m_pictureNew.SetNativeSize();
     }
     void OnClick()
     {
-        GameDataManager.OnCreditStatus(m_commodity.m_num);
-        GameDataManager.OnDiamondsStatus(-m_commodity.m_price);
-        m_purchaseGoldCoinsObj.SetActive(false );
-        ItemAcquisition();
+        if (GameDataManager.OnDiamondsStatus(-m_commodity.m_price))
+        {
+            GameDataManager.OnCreditStatus(m_commodity.m_num);
+            GameDataManager.OnDiamondsStatus(-m_commodity.m_price);
+            m_purchaseGoldCoinsObj.SetActive(false);
+            ItemAcquisition();
+        }
     }
     /// <summary>
     /// 抽奖开始
     /// </summary>
     void OnClickNew()
     {
-        //for (int i = 0; i < m_treasureChestList.Length; i++)
-        //{
-        //    m_treasureChestList[i].transform.localPosition = new Vector3(415 * i, 0);
-        //}
-        m_randomNumber = 0;
-        m_coordinate = 3735;
-        m_animator.SetBool("End", true);
-        m_animator.SetBool("PlayLottery", false);
-        Invoke("Delay",0.5F);
-        m_prizeList = Shuffle(m_prizeList);
-        GameDataManager.OnDiamondsStatus(-200);
+        if (GameDataManager.OnDiamondsStatus(-200))
+        {
+            m_randomNumber = 0;
+            m_coordinate = 3735;
+            m_animator.SetBool("End", true);
+            m_animator.SetBool("PlayLottery", false);
+            Invoke("Delay", 0.5F);
+            m_prizeList = Shuffle(m_prizeList);
+            m_buttonNew.gameObject.SetActive(false);
+            m_unableToOperateObj.SetActive(true);
+        }
     }
     /// <summary>
     /// 活动宝箱奖品
@@ -307,6 +353,7 @@ public class UI_ShoppingMall : UIPage
     /// <param name="prize"></param>
     public void AwardWinning(Prize data)
     {
+        m_unableToOperateObj.SetActive(false );
         m_prize = data;
         if (data.m_type == enum_CommodityType.GoldCoin)
         {
@@ -316,8 +363,51 @@ public class UI_ShoppingMall : UIPage
         {
             GameDataManager.OnDiamondsStatus(data.m_num);
         }
+        else if (data.m_type == enum_CommodityType.Role)
+        {
+            enum_PlayerCharacter m_roleId = (enum_PlayerCharacter)GameDataManager.m_CGameShopData.m_roleId;
+            if (m_roleId == enum_PlayerCharacter.Invalid || GameDataManager.CheckCharacterUnlocked(m_roleId))
+            {
+                //当角色全满的时候抽到大奖成金币
+                m_commodity = new Commodity();
+                m_commodity.m_type = enum_CommodityType.GoldCoin;
+                m_commodity.m_name = "UI_Commodity_NameNew";
+                m_commodity.m_sprite = LoadSourceSprite("UI/Texter/icon_5");
+                m_commodity.m_introduction = "UI_Commodity_IntroduceNew";
+                m_commodity.m_num = 5000;
+                m_commodity.m_price = 0;
+                m_prize = null;
+            }
+            else
+            {
+                m_CharacterData.DoUnlock((enum_PlayerCharacter)GameDataManager.m_CGameShopData.m_roleId);
+                TGameData<CPlayerCharactersCultivateData>.Save();
+            }
+        }
+        else if (data.m_type == enum_CommodityType.Arms)
+        {
+            m_weapon = GameDataManager.RandomWeapon();
+            SWeaponInfos weaponInfo = GameDataManager.GetWeaponProperties(m_weapon);
+            Prize prize = new Prize();
+            prize.m_Name = string.Format("<color=#{0}>{1}</color>",weaponInfo.m_Rarity.GetUIColor(), TLocalization.GetKeyLocalized(m_weapon.GetNameLocalizeKey()));
+            prize.m_sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(true)];
+            m_prize = prize;
 
-        ItemAcquisition();
+            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(m_weapon, 5));
+        }
+        else if (data.m_type == enum_CommodityType.Drawing)
+        {
+            m_weaponDrawing = GameDataManager.RandomWeaponDrawing();
+            SWeaponInfos weaponInfo = GameDataManager.GetWeaponProperties(m_weaponDrawing);
+            Prize prize = new Prize();
+            prize.m_Name = string.Format("<color=#{0}>{1}</color>", weaponInfo.m_Rarity.GetUIColor(), TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
+            prize.m_sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(false)];
+            m_prize = prize;
+
+            GameDataManager.UnlockArmoryBlueprint(weaponInfo.m_Rarity);
+            TGameData<CArmoryData>.Save();
+        }
+        Invoke("ItemAcquisition",0.5f);
     }
     void Delay()
     {

@@ -151,26 +151,34 @@ namespace GameSetting
         /// 金币改变
         /// </summary>
         /// <param name="credit"></param>
-        public static void OnCreditStatus(float credit)
+        public static bool OnCreditStatus(float credit)
         {
             if (credit == 0)
-                return;
+                return false;
+            if ((m_GameData.m_Diamonds + credit) < 0)
+                return false;
+
             m_GameData.m_Credit += credit;
             TGameData<CGameSave>.Save();
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCurrencyStatus);
+            return true;
         }
         public static bool CanUseDiamonds(float diamonds) => m_GameData.m_Diamonds >= diamonds;
         /// <summary>
         /// 钻石改变
         /// </summary>
         /// <param name="diamonds"></param>
-        public static void OnDiamondsStatus(float diamonds)
+        public static bool OnDiamondsStatus(float diamonds)
         {
             if (diamonds == 0)
-                return;
+                return false ;
+
+            if ((m_GameData.m_Diamonds + diamonds) < 0)
+                return false;
             m_GameData.m_Diamonds += diamonds;
             TGameData<CGameSave>.Save();
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDiamondsStatus);
+            return true;
         }
 
         public static enum_BattleDifficulty OnCampDifficultySwitch()
@@ -299,7 +307,68 @@ namespace GameSetting
             m_CharacterData.ChangeSelectedCharacter(character);
             TGameData<CPlayerCharactersCultivateData>.Save();
         }
+        /// <summary>
+        /// 随机获取一个没有的角色
+        /// </summary>
+        public static enum_PlayerCharacter RandomPlayerCharacter()
+        {
+            List<enum_PlayerCharacter> PlayerCharacter = new List<enum_PlayerCharacter>();
+            enum_PlayerCharacter[] PlayerCharacterList = Enum.GetValues(typeof(enum_PlayerCharacter)) as enum_PlayerCharacter[];
 
+            for (int i = 0; i < PlayerCharacterList.Length; i++)
+            {
+                if (PlayerCharacterList[i] != enum_PlayerCharacter.Invalid && !CheckCharacterUnlocked(PlayerCharacterList[i]))
+                {
+                    PlayerCharacter.Add(PlayerCharacterList[i]);
+                }
+            }
+            if (PlayerCharacter.Count <= 0)
+                return enum_PlayerCharacter.Invalid;
+            System.Random random = new System.Random();
+            return  PlayerCharacter[random.Next(0, PlayerCharacter.Count)];
+        }
+
+        /// <summary>
+        /// 随机获取一个武器
+        /// </summary>
+        public static enum_PlayerWeaponIdentity RandomWeapon()
+        {
+            List<enum_PlayerWeaponIdentity> PlayerWeapon = new List<enum_PlayerWeaponIdentity>();
+            enum_PlayerWeaponIdentity[] PlayerWeaponList = Enum.GetValues(typeof(enum_PlayerWeaponIdentity)) as enum_PlayerWeaponIdentity[];
+
+            for (int i = 0; i < PlayerWeaponList.Length; i++)
+            {
+                if (PlayerWeaponList[i] != enum_PlayerWeaponIdentity.Invalid)
+                {
+                    PlayerWeapon.Add(PlayerWeaponList[i]);
+                }
+            }
+            if (PlayerWeapon.Count <= 0)
+                return enum_PlayerWeaponIdentity.Invalid;
+            System.Random random = new System.Random();
+            return PlayerWeapon[random.Next(0, PlayerWeapon.Count)];
+        }
+
+        /// <summary>
+        /// 随机获取一个未拥有的武器图纸
+        /// </summary>
+        public static enum_PlayerWeaponIdentity RandomWeaponDrawing()
+        {
+            List<enum_PlayerWeaponIdentity> PlayerWeapon = new List<enum_PlayerWeaponIdentity>();
+            enum_PlayerWeaponIdentity[] PlayerWeaponList = Enum.GetValues(typeof(enum_PlayerWeaponIdentity)) as enum_PlayerWeaponIdentity[];
+
+            for (int i = 0; i < PlayerWeaponList.Length; i++)
+            {
+                if (PlayerWeaponList[i] != enum_PlayerWeaponIdentity.Invalid|| (!m_ArmoryData.m_WeaponsUnlocked.Contains(PlayerWeaponList[i])&& !m_ArmoryData.m_WeaponBlueprints.Contains(PlayerWeaponList[i])))
+                {
+                    PlayerWeapon.Add(PlayerWeaponList[i]);
+                }
+            }
+            if (PlayerWeapon.Count <= 0)
+                return enum_PlayerWeaponIdentity.Invalid;
+            System.Random random = new System.Random();
+            return PlayerWeapon[random.Next(0, PlayerWeapon.Count)];
+        }
         public static bool CheckCharacterUnlocked(enum_PlayerCharacter character) => m_CharacterData.GetCharacterCultivateDetail(character).m_Unlocked;
         public static float GetCharacterUnlockPrice(enum_PlayerCharacter character)
         {
@@ -541,6 +610,7 @@ namespace GameSetting
         public CGameSave()
         {
             m_Credit = 1000000;
+            m_Diamonds = 5000;
             m_BattleDifficulty =  enum_BattleDifficulty.Normal;
             m_DifficultyUnlocked =  enum_BattleDifficulty.Normal;
             m_LastDailyRewardStamp = -1;
@@ -634,6 +704,9 @@ namespace GameSetting
 
     public class CArmoryData : ISave
     {
+        /// <summary>
+        /// 解锁武器
+        /// </summary>
         public List<enum_PlayerWeaponIdentity> m_WeaponsUnlocked;
         public List<enum_PlayerWeaponIdentity> m_WeaponBlueprints;
 
@@ -795,7 +868,6 @@ namespace GameSetting
         /// </summary>
         public void RandomTask()
         {
-            GameDataManager.m_CGameShopData.Random();
             if (m_preservation == 0 || !IsTodayTimeBySpan(m_preservation))
             {
                 m_goldCoinTask = UnityEngine.Random.Range(0, 7);
@@ -817,7 +889,7 @@ namespace GameSetting
                 m_getWeapons = 0;
                 GameDataManager.InitializeTask();
                 //商品刷新
-                //GameDataManager.m_CGameShopData.Random();
+                GameDataManager.m_CGameShopData.Random();
             }
         }
         //public CGameTask()
@@ -912,10 +984,7 @@ namespace GameSetting
 
         public void Random()
         {
-            enum_PlayerCharacter[] PlayerCharacter = Enum.GetValues(typeof(enum_PlayerCharacter)) as enum_PlayerCharacter[];
-            System.Random random = new System.Random();
-            enum_PlayerCharacter PlayerCharacterNew = PlayerCharacter[random.Next(0, PlayerCharacter.Length)];
-            m_roleId = (int) PlayerCharacterNew;
+            m_roleId = (int)GameDataManager.RandomPlayerCharacter();
             Debug.Log(m_roleId);
             TGameData<CGameShop>.Save();
         }
