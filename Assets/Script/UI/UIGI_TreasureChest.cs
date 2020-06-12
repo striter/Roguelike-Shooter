@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameSetting;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -46,7 +47,15 @@ public class UIGI_TreasureChest : UIT_GridItem, IGridHighlight
     public void OnPlay(Prize data)
     {
         m_data = data;
-        m_name.text = TLocalization.GetKeyLocalized(data.m_Name);
+        if (data.m_type == enum_CommodityType.Role)
+        {
+            data.m_Name = string.Format("Character_Name_{0}", GameDataManager.m_CGameShopData.m_roleId);
+            m_name.text = TLocalization.GetKeyLocalized("Character_Name_" + GameDataManager.m_CGameShopData.m_roleId);
+        }
+        else
+        {
+            m_name.text = TLocalization.GetKeyLocalized(data.m_Name);
+        }
         m_picture.overrideSprite = data.m_sprite;
     }
     public void SetLocation(Vector3 pos,int posId)

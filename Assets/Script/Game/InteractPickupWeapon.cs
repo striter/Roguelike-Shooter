@@ -29,8 +29,8 @@ public class InteractPickupWeapon : InteractPickup {
         else
         {
             Debug.Log("创建" + TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()));
-            BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().CreateItemInformation(TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()),
-                this);
+            //BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().CreateItemInformation(TLocalization.GetKeyLocalized(m_Weapon.m_WeaponInfo.m_Weapon.GetNameLocalizeKey()),
+            //   this);
         }
         return this;
     }
