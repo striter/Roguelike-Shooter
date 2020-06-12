@@ -120,7 +120,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     public class P10011 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10011;
-        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
+        public override enum_Rarity m_Rarity => enum_Rarity.Rare;
         public override void OnReceiveHealing(DamageInfo info, float applyAmount)
         {
             base.OnReceiveHealing(info, applyAmount);
@@ -219,8 +219,8 @@ namespace GameSetting_CharacterPlayerPerks_10000
     {
         public override int m_Index => 10017;
         public override enum_Rarity m_Rarity => enum_Rarity.Epic;
-        public override float Value1 => 3f;
-        public override float Value2 => 5f;
+        public override float Value1 => 1f;
+        public override float Value2 => 1f;
         TimerBase m_HealTimer = new TimerBase(3f, true);
         public override void OnTick(float deltaTime)
         {
@@ -362,7 +362,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     {
         public override int m_Index => 10025;
         public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
-        public override float Value1 => 5f;
+        public override float Value1 => 10f;
         public override void OnKillEnermy(DamageInfo info, EntityCharacterBase target)
         {
             base.OnKillEnermy(info, target);
@@ -428,7 +428,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     {
         public override int m_Index => 10031;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
-        public override float Value1 => 3;
+        public override float Value1 => 2;
         public override int I_Projectile_Multi_PelletsAdditive => (int)Value1 * m_Stack;
         public P10031(PerkSaveData saveData) : base(saveData) { }
     }
