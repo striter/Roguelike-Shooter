@@ -22,6 +22,7 @@ public class CampUIManager : UIManager {
         PreloadPage<UI_Armory>();
         PreloadPage<UI_CharacterSelect>();
         PreloadPage<UI_DailyTasks>();
+        PreloadPage<UI_ShoppingMall>();
     }
 
     public T ShowCoinsPage<T>(bool animate,bool blurBG, Action OnPageExit,float bulletTime = 1f) where T : UIPage

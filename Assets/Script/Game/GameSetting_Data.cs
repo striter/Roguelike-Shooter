@@ -73,6 +73,7 @@ namespace GameSetting
         public static CPlayerCharactersCultivateData m_CharacterData => TGameData<CPlayerCharactersCultivateData>.Data;
         public static CBattleSave m_GameProgressData => TGameData<CBattleSave>.Data;
         public static CGameTask m_GameTaskData => TGameData<CGameTask>.Data;
+        public static CGameShop m_CGameShopData => TGameData<CGameShop>.Data;
         /// <summary>
         /// 当前选择true=新游戏   false=继续游戏
         /// </summary>
@@ -102,6 +103,7 @@ namespace GameSetting
             TGameData<CArmoryData>.Init();
             TGameData<CGameSave>.Init();
             TGameData<CGameTask>.Init();
+            TGameData<CGameShop>.Init();
 
             InitPlayerPerks();
             InitEnermyPerks();
@@ -145,6 +147,10 @@ namespace GameSetting
 
         #region GameData
         public static bool CanUseCredit(float credit) => m_GameData.m_Credit >= credit;
+        /// <summary>
+        /// 金币改变
+        /// </summary>
+        /// <param name="credit"></param>
         public static void OnCreditStatus(float credit)
         {
             if (credit == 0)
@@ -154,6 +160,10 @@ namespace GameSetting
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCurrencyStatus);
         }
         public static bool CanUseDiamonds(float diamonds) => m_GameData.m_Diamonds >= diamonds;
+        /// <summary>
+        /// 钻石改变
+        /// </summary>
+        /// <param name="diamonds"></param>
         public static void OnDiamondsStatus(float diamonds)
         {
             if (diamonds == 0)
@@ -785,6 +795,7 @@ namespace GameSetting
         /// </summary>
         public void RandomTask()
         {
+            GameDataManager.m_CGameShopData.Random();
             if (m_preservation == 0 || !IsTodayTimeBySpan(m_preservation))
             {
                 m_goldCoinTask = UnityEngine.Random.Range(0, 7);
@@ -805,6 +816,8 @@ namespace GameSetting
                 m_passTheGateNew = 0;
                 m_getWeapons = 0;
                 GameDataManager.InitializeTask();
+                //商品刷新
+                //GameDataManager.m_CGameShopData.Random();
             }
         }
         //public CGameTask()
@@ -865,7 +878,53 @@ namespace GameSetting
         }
 
     }
+    /// <summary>
+    /// 商店记录
+    /// </summary>
+    public class CGameShop : ISave
+    {
+        int m_vip;
+        public int m_Vip 
+        {
+            get {
+                return m_vip;
+            }
+            set {
+                m_vip = value;
+                TGameData<CGameShop>.Save();
+            }
+        }
+        public int m_noviceGiftBag = 0;
+        public int m_NoviceGiftBag
+        {
+            get
+            {
+                return m_noviceGiftBag;
+            }
+            set
+            {
+                m_noviceGiftBag = value;
+                TGameData<CGameShop>.Save();
+            }
+        }
 
+        public int m_roleId;
+
+        public void Random()
+        {
+            enum_PlayerCharacter[] PlayerCharacter = Enum.GetValues(typeof(enum_PlayerCharacter)) as enum_PlayerCharacter[];
+            System.Random random = new System.Random();
+            enum_PlayerCharacter PlayerCharacterNew = PlayerCharacter[random.Next(0, PlayerCharacter.Length)];
+            m_roleId = (int) PlayerCharacterNew;
+            Debug.Log(m_roleId);
+            TGameData<CGameShop>.Save();
+        }
+
+        public bool DataCrypt() => false;
+        void ISave.DataRecorrect()
+        {
+        }
+    }
 
     public struct WeaponSaveData : IDataConvert
     {
