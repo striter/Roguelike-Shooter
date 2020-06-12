@@ -488,7 +488,7 @@ MonoBehaviour:
   B_MultiShotAvailable: 1
   I_PelletsPerShot: 1
   F_PelletSpreadAngle: 2
-  m_ExtraShotAdditiveStoreSuccessful: 2
+  m_ExtraShotAdditiveStoreSuccessful: 3
 --- !u!114 &114745134643471812
 MonoBehaviour:
   m_ObjectHideFlags: 1

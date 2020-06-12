@@ -354,4 +354,4 @@ MonoBehaviour:
   F_AimSpread: 2
   B_MultiShotAvailable: 1
   I_PelletsPerShot: 5
-  F_PelletSpreadAngle: 2
+  F_PelletSpreadAngle: 3
