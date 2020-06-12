@@ -44,7 +44,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     public class P10004 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10004;
-        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
+        public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
         public override float Value1 => 10f;
         public override float m_CriticalRateAdditive => Value1 / 100f * m_Stack;
         public P10004(PerkSaveData saveData) : base(saveData) { }
@@ -54,7 +54,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
     {
         public override int m_Index => 10005;
         public override enum_Rarity m_Rarity => enum_Rarity.Rare;
-        public override float Value1 => 100f;
+        public override float Value1 => 50f;
         public override float m_CriticalHitMultiplyAdditive => Value1 / 100f * m_Stack;
         public P10005(PerkSaveData saveData) : base(saveData) { }
     }
@@ -312,8 +312,8 @@ namespace GameSetting_CharacterPlayerPerks_10000
     {
         public override int m_Index => 10022;
         public override enum_Rarity m_Rarity => enum_Rarity.Advanced;
-        public override float Value1 => 50f;
-        public override float Value2 => 2f;
+        public override float Value1 => 30f;
+        public override float Value2 => 3f;
         public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f * m_Stack : 0;
         TimerBase m_Timer;
         public override void OnTick(float deltaTime)
