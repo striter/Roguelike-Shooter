@@ -56,7 +56,16 @@ public class UIGI_Commodity : UIT_GridItem, IGridHighlight
         //设置剩余时间
         if (data.m_type == enum_CommodityType.LuckDraw)
         {
-            m_introduce.text =string.Format(TLocalization.GetKeyLocalized(data.m_introduction), TLocalization.GetKeyLocalized("Character_Name_" + GameDataManager.m_CGameShopData.m_roleId));
+            enum_PlayerCharacter playe = (enum_PlayerCharacter)GameDataManager.m_CGameShopData.m_roleId;
+            if (playe == enum_PlayerCharacter.Invalid)
+            {
+                m_picture.overrideSprite = UI_ShoppingMall.Instance.LoadSourceSprite("UI/Texter/icon_5");
+                m_introduce.text = m_introduce.text = string.Format(TLocalization.GetKeyLocalized(data.m_introduction), TLocalization.GetKeyLocalized("UI_Commodity_IntroduceNew"));
+            }
+            else
+            {
+                m_introduce.text = string.Format(TLocalization.GetKeyLocalized(data.m_introduction), TLocalization.GetKeyLocalized("Character_Name_" + GameDataManager.m_CGameShopData.m_roleId));
+            }
             m_timeRemaining.SetActivate(true);
             m_timeNew = TimeRemaining();
             m_timeRemaining.text = string.Format("{0}：{1}：{2}", string.Format("{0:d2}", m_timeNew / 3600), string.Format("{0:d2}", m_timeNew % 3600 / 60), string.Format("{0:d2}", m_timeNew % 60));

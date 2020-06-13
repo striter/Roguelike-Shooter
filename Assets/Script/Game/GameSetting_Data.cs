@@ -359,9 +359,13 @@ namespace GameSetting
 
             for (int i = 0; i < PlayerWeaponList.Length; i++)
             {
-                if (PlayerWeaponList[i] != enum_PlayerWeaponIdentity.Invalid|| (!m_ArmoryData.m_WeaponsUnlocked.Contains(PlayerWeaponList[i])&& !m_ArmoryData.m_WeaponBlueprints.Contains(PlayerWeaponList[i])))
+                if (PlayerWeaponList[i] != enum_PlayerWeaponIdentity.Invalid&&(!m_ArmoryData.m_WeaponsUnlocked.Contains(PlayerWeaponList[i])&& !m_ArmoryData.m_WeaponBlueprints.Contains(PlayerWeaponList[i])))
                 {
-                    PlayerWeapon.Add(PlayerWeaponList[i]);
+                    SWeaponInfos weaponInfo = GetWeaponProperties(PlayerWeaponList[i]);
+                    if (!weaponInfo.m_Hidden)
+                    {
+                        PlayerWeapon.Add(PlayerWeaponList[i]);
+                    }
                 }
             }
             if (PlayerWeapon.Count <= 0)

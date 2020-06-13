@@ -233,6 +233,16 @@ public class UI_ShoppingMall : UIPage
         }
         else if (data.m_type == enum_CommodityType.LuckDraw)
         {
+            enum_PlayerCharacter playe = (enum_PlayerCharacter)GameDataManager.m_CGameShopData.m_roleId;
+            if (playe == enum_PlayerCharacter.Invalid)
+            {
+                Prize prize = new Prize();
+                prize.m_Name = "UI_Prize_NameNew";
+                prize.m_sprite = LoadSourceSprite("UI/Texter/icon_5");
+                prize.m_type = enum_CommodityType.GoldCoin;
+                prize.m_num = 5000;
+                m_prizeList[7] = prize;
+            }
             m_prizeList = Shuffle(m_prizeList);
             m_treasureChestObj.SetActive(true);
             m_unableToOperateObj.SetActive(false);
@@ -240,11 +250,12 @@ public class UI_ShoppingMall : UIPage
             {
                 m_treasureChestList[i].OnPlay(m_prizeList[i]);
             }
+
         }
         else if (data.m_type == enum_CommodityType.VIP)
         {
             m_gi_commodityList[0].transform.SetAsLastSibling();
-            GameDataManager.m_CGameShopData.m_Vip=1;
+            GameDataManager.m_CGameShopData.m_Vip = 1;
             m_gi_commodityList[0].OnPlay(m_commodityList[0]);
             ItemAcquisition();
         }

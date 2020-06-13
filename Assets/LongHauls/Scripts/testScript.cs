@@ -21,18 +21,28 @@ public class testScript : MonoBehaviour
     {
         if (GUI.Button(new Rect(0, 0, 50, 50), ""))
         {
+
+            enum_PlayerWeaponIdentity m_weaponDrawing = GameDataManager.RandomWeaponDrawing();
+            Debug.Log( TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
+
+
+            //enum_PlayerWeaponIdentity m_weaponDrawing = enum_PlayerWeaponIdentity.DE;
+            //Debug.Log(TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
+            //SWeaponInfos weaponInfo = GameDataManager.GetWeaponProperties(m_weaponDrawing);
+
+            //GameDataManager.UnlockArmoryBlueprint(weaponInfo.m_Rarity);
             //GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(enum_PlayerWeaponIdentity.M82A1, 5));
 
-        //GameDataManager.m_CGameShopData.Random();
-        //CampUIManager.Instance.ShowCoinsPage<UI_DailyTasks>(true, true, ResetPlayerCamera, .1f);
-        //GameDataManager. OnCreditStatus(500f);
-        //GameManagerBase.Instance.SetExtraTimeScale(10);
-        //BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().OnDeductMoney(50);
-        //if(BattleManager.Instance)
-        //BattleManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
-        //else
-        //    CampManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
-    }
+            //GameDataManager.m_CGameShopData.Random();
+            //CampUIManager.Instance.ShowCoinsPage<UI_DailyTasks>(true, true, ResetPlayerCamera, .1f);
+            //GameDataManager. OnCreditStatus(500f);
+            //GameManagerBase.Instance.SetExtraTimeScale(10);
+            //BattleUIManager.Instance.GetComponentInChildren<UIC_GameNumericVisualize>().OnDeductMoney(50);
+            //if(BattleManager.Instance)
+            //BattleManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
+            //else
+            //    CampManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
+        }
         if (GUI.Button(new Rect(50, 0, 50, 50), ""))
         {
             //GameDataManager.m_GameTaskData.RandomTask();
