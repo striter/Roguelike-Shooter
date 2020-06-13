@@ -415,8 +415,9 @@ public class UI_ShoppingMall : UIPage
             prize.m_sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(false)];
             m_prize = prize;
 
-            GameDataManager.UnlockArmoryBlueprint(weaponInfo.m_Rarity);
+            GameDataManager.m_ArmoryData.m_WeaponBlueprints.Add(m_weaponDrawing);
             TGameData<CArmoryData>.Save();
+
         }
         Invoke("ItemAcquisition",0.5f);
     }
