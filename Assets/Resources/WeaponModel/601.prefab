@@ -488,8 +488,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   E_Anim: 3001
   B_AttachLeft: 0
-  I_ClipAmount: 20
-  F_RefillTime: 0.5
+  I_ClipAmount: 10
+  F_RefillTime: 1
   I_IndicatorIndex: 30008
-  F_HealthDrainPerBlock: 5
-  F_HealthDrainAddivePerEnhance: 1
+  F_HealthDrainPerBlock: 3
+  F_HealthDrainAddivePerEnhance: 0.5

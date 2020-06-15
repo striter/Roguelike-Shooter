@@ -314,10 +314,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275d93242000a1d47972944c1cd255ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  I_MaxHealth: 200
+  I_MaxHealth: 300
   F_MovementSpeed: 0
   F_CriticalRate: 0
-  F_BaseDamage: 30
+  F_BaseDamage: 40
   F_Spread: 1
   E_AnimatorIndex: -1
   F_AIChaseRange: 0
