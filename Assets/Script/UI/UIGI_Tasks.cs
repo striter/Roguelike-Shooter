@@ -102,7 +102,7 @@ public class UIGI_Tasks : MonoBehaviour {
                     {
                         isComplete = true;
                     }
-                    str =  data.m_num1;
+                    str =  data.m_num1.ToString();
                     break;
             }
             if (isComplete)
