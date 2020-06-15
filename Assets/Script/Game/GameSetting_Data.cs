@@ -79,6 +79,17 @@ namespace GameSetting
         public static bool m_BattleResume = false;
 
         public static bool m_Inited { get; private set; } = false;
+        public static void InitializeTask()
+        {
+            m_killMonsters=0;
+            m_PassTheGate=0;
+            m_getGoldCoins=0;
+            m_killBoss=0;
+            m_portal=0;
+            m_passTheGate=0;
+            m_passTheGateNew=0;
+            m_getWeapons = 0;
+        }
         public static void Init()
         {
             if (m_Inited) return;
@@ -360,6 +371,7 @@ namespace GameSetting
             m_GameTaskData.m_getWeapons = m_getWeapons;
             TGameData<CGameTask>.Save();
             //Debug.Log(m_GameTaskData.m_killMonsters);
+            InitializeTask();
         }
         #endregion
 
@@ -792,6 +804,7 @@ namespace GameSetting
                 m_passTheGate = 0;
                 m_passTheGateNew = 0;
                 m_getWeapons = 0;
+                GameDataManager.InitializeTask();
             }
         }
         //public CGameTask()

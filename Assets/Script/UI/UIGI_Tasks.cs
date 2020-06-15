@@ -128,7 +128,7 @@ public class UIGI_Tasks : MonoBehaviour {
             }
             else
             {
-                if (id == 5)
+                if (id == 105)
                 {
                     if (m_gameTask.m_passTheGateNew > 0)
                     {
