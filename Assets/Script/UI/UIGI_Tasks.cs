@@ -105,6 +105,8 @@ public class UIGI_Tasks : MonoBehaviour {
                     str = string.Format("{0}/{1}", m_gameTask.m_getWeapons, data.m_num1);
                     break;
             }
+            if (isComplete)
+                str = string.Format("{0}/{1}", data.m_num1, data.m_num1);
             if (id < 100)
             {
                 if (id == 5)
@@ -173,6 +175,8 @@ public class UIGI_Tasks : MonoBehaviour {
                 m_received.SetActive(true);
                 m_receiveBut.SetActivate(false);
             }
+            string str = string.Format("{0}/{1}", m_gameTask.m_advertisementCollection, m_data.m_num2);
+            m_taskContent.text = string.Format(TLocalization.GetKeyLocalized("UI_Task_Advertisement"), m_data.m_num1, str);
         }
         else
         {
