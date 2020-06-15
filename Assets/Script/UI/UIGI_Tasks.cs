@@ -102,7 +102,7 @@ public class UIGI_Tasks : MonoBehaviour {
                     {
                         isComplete = true;
                     }
-                    str = string.Format("{0}/{1}", m_gameTask.m_getWeapons, data.m_num1);
+                    str =  data.m_num1;
                     break;
             }
             if (isComplete)
