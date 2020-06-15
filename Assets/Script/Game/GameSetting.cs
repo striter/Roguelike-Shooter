@@ -42,7 +42,7 @@ namespace GameSetting
 
         public const float F_PlayerArmorRegenDuration = 5f;
         public const float F_PlayerArmorRegenPerSec = 5f;
-        public const float F_PlayerWeaponFireReloadPause = 0.1f; //武器恢复间隔时间
+        public const float F_PlayerWeaponFireReloadPause = 1f; //武器恢复间隔时间
         public const float F_PlayerAutoAimRangeBase = 16f; //自动锁定敌人范围
         public const int I_PlayerRotationSmoothParam = 10;     //Camera Smooth Param For Player 10 is suggested
         public const int I_PlayerEnermyKillExpGain = 20;
