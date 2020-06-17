@@ -725,7 +725,7 @@ namespace GameSetting
 
         public CArmoryData()
         {
-            m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.SpawnerBlastTurret, enum_PlayerWeaponIdentity.UZI, enum_PlayerWeaponIdentity.LavaWand, enum_PlayerWeaponIdentity.Bow, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.BloodThirster, enum_PlayerWeaponIdentity.Grenade, enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.MultishotBow, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.Driller };
+            m_WeaponsUnlocked = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.P92, enum_PlayerWeaponIdentity.HealPotion, enum_PlayerWeaponIdentity.SpawnerBlastTurret, enum_PlayerWeaponIdentity.UZI, enum_PlayerWeaponIdentity.LavaWand, enum_PlayerWeaponIdentity.Bow, enum_PlayerWeaponIdentity.Kar98, enum_PlayerWeaponIdentity.S686, enum_PlayerWeaponIdentity.BloodThirster, enum_PlayerWeaponIdentity.Grenade, enum_PlayerWeaponIdentity.HeavySword, enum_PlayerWeaponIdentity.Minigun, enum_PlayerWeaponIdentity.Railgun, enum_PlayerWeaponIdentity.XM1014, enum_PlayerWeaponIdentity.Crossbow, enum_PlayerWeaponIdentity.MultishotBow, enum_PlayerWeaponIdentity.Flamer, enum_PlayerWeaponIdentity.Bouncer, enum_PlayerWeaponIdentity.RocketLauncher, enum_PlayerWeaponIdentity.Katana, enum_PlayerWeaponIdentity.HammerOfDawn, enum_PlayerWeaponIdentity.DestroyerWand, enum_PlayerWeaponIdentity.Driller };
             m_WeaponBlueprints = new List<enum_PlayerWeaponIdentity>() { enum_PlayerWeaponIdentity.Flamer };
         }
 
