@@ -16,7 +16,7 @@ public class InteractWeaponVendorMachine : InteractBattleBase {
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        BattleManager.Instance.SpawnRandomUnlockedWeapon(transform.position + TCommon.RandomXZCircle(), Quaternion.identity,GameConst.D_EventWeaponVendorMachineRate);
+        BattleManager.Instance.SpawnRandomUnlockedWeapon(transform.position + TCommon.RandomXZCircle(), Quaternion.identity,GameConst.D_EventWeaponVendorMachineRate).PlayDropAnim(NavigationManager.NavMeshPosition(transform.position + TCommon.RandomXZCircle() * 4f)); ;
         m_TryCount++;
         return m_TryCount<=GameConst.I_EventWeaponVendorTryCount;
     }

@@ -128,11 +128,11 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, float> m_ArmoryBlueprintGameDropRarities = new Dictionary<enum_Rarity, float>() { { enum_Rarity.Ordinary, 10f }, { enum_Rarity.Advanced, 5f }, { enum_Rarity.Rare, 3f }, { enum_Rarity.Epic, 2f } };
         public static readonly Dictionary<enum_Rarity, int> m_ArmoryBlueprintUnlockPrice = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 1000 }, { enum_Rarity.Advanced, 1500 }, { enum_Rarity.Rare, 3000 }, { enum_Rarity.Epic, 5000} };
 
-        public static readonly Dictionary<enum_PlayerCharacter, enum_PlayerWeaponIdentity> m_CharacterStartWeapon = new Dictionary<enum_PlayerCharacter, enum_PlayerWeaponIdentity>() { { enum_PlayerCharacter.Beth,enum_PlayerWeaponIdentity.UMP45},{ enum_PlayerCharacter.Vampire,enum_PlayerWeaponIdentity.PoisonWand},{ enum_PlayerCharacter.Railer,enum_PlayerWeaponIdentity.RailPistol}, { enum_PlayerCharacter.RailerNew, enum_PlayerWeaponIdentity.PoisonWand } };
+        public static readonly Dictionary<enum_PlayerCharacter, enum_PlayerWeaponIdentity> m_CharacterStartWeapon = new Dictionary<enum_PlayerCharacter, enum_PlayerWeaponIdentity>() { { enum_PlayerCharacter.Beth,enum_PlayerWeaponIdentity.UMP45},{ enum_PlayerCharacter.Vampire,enum_PlayerWeaponIdentity.PoisonWand},{ enum_PlayerCharacter.Railer,enum_PlayerWeaponIdentity.RailPistol}, { enum_PlayerCharacter.Machinist, enum_PlayerWeaponIdentity.Flamer } };
         public static readonly Dictionary<enum_Rarity, int> m_CharacterRandomStartWeaponRarities = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 50 } };
 
         public static readonly Dictionary<enum_PlayerCharacter, float> m_CharacterUnlockCost = new Dictionary<enum_PlayerCharacter, float>() {
-            { enum_PlayerCharacter.Beth,5000 },{ enum_PlayerCharacter.Railer,6000},{ enum_PlayerCharacter.Vampire,7000},{ enum_PlayerCharacter.RailerNew,9999}
+            { enum_PlayerCharacter.Beth,5000 },{ enum_PlayerCharacter.Railer,6000},{ enum_PlayerCharacter.Vampire,7000},{ enum_PlayerCharacter.Machinist,9999}
         };
 
         public static readonly Dictionary<enum_PlayerCharacterEnhance, int> m_CharacterEnhanceCost = new Dictionary<enum_PlayerCharacterEnhance, int>() {

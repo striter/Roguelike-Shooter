@@ -187,8 +187,11 @@ public class EntityCharacterBattleAI : EntityCharacterBattle {
         if (m_TargetingTimer.m_Timing)
             return m_Target;
 
-        m_Target = BattleManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
-        m_TargetingTimer.SetTimerDuration(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
+        if (BattleManager.Instance)
+        {
+            m_Target = BattleManager.Instance.GetNeariesCharacter(this, m_Weapon.B_TargetAlly, false);
+            m_TargetingTimer.SetTimerDuration(m_Target ? GameConst.AI.F_AIReTargetCheckParam : GameConst.AI.F_AITargetCheckParam);
+        }
         return m_Target;
     }
     

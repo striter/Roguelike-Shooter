@@ -17,13 +17,16 @@ public class testScript : MonoBehaviour
 	void Update () {
 		
 	}
+    int[] m_idLis = new int[] { 101, 102, 103, 104, 105, 201, 202, 203, 301, 302, 303, 401, 402, 403 };
     private void OnGUI()
     {
         if (GUI.Button(new Rect(0, 0, 50, 50), ""))
         {
-            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(enum_PlayerWeaponIdentity.SheildDrain, 5));
+            int num = Random.Range(0, 14);
 
-            GameDataManager.m_CGameDrawWeaponData.AddWeapon(enum_PlayerWeaponIdentity.SheildDrain, NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f)) ;
+            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New((enum_PlayerWeaponIdentity)m_idLis[num], 0), GameDataManager.m_CGameDrawWeaponData.m_currentValue);
+
+            GameDataManager.m_CGameDrawWeaponData.AddWeapon((enum_PlayerWeaponIdentity)m_idLis[num], NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f)) ;
             //enum_PlayerWeaponIdentity m_weaponDrawing = GameDataManager.RandomWeaponDrawing();
             //Debug.Log( TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
 
@@ -49,7 +52,10 @@ public class testScript : MonoBehaviour
         {
             for (int i = 0; i < 10; i++)
             {
-                GameObjectManager.SpawnInteract<InteractPickupWeapon>(GameDataManager.m_CGameDrawWeaponData.GetWeaponPos(i), Quaternion.identity).Play(WeaponSaveData.New(GameDataManager.m_CGameDrawWeaponData.GetWeapon(i), 5));
+                if (GameDataManager.m_CGameDrawWeaponData.GetWeapon(i) != enum_PlayerWeaponIdentity.Invalid)
+                {
+                    GameObjectManager.SpawnInteract<InteractPickupWeapon>(GameDataManager.m_CGameDrawWeaponData.GetWeaponPos(i), Quaternion.identity).Play(WeaponSaveData.New(GameDataManager.m_CGameDrawWeaponData.GetWeapon(i), 0),i);
+                }
             }
             //GameDataManager.m_GameTaskData.RandomTask();
             //GameDataManager.OnCGameTask(50);

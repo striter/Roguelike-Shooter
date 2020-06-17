@@ -170,7 +170,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4991228344696976}
-  - component: {fileID: 114037038372918392}
+  - component: {fileID: 114195725355221254}
   - component: {fileID: 143119992385054218}
   - component: {fileID: 195356000126195976}
   m_Layer: 10
@@ -1010,7 +1010,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114037038372918392
+--- !u!114 &114195725355221254
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1018,23 +1018,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1333480194626894}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f47cdcc8f15f7468846323b81def8f, type: 3}
+  m_Script: {fileID: 11500000, guid: 87159354e4cf8664ca0c3c953f2c90ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   I_MaxHealth: 200
-  F_MovementSpeed: 7
+  F_MovementSpeed: 15
   F_CriticalRate: 0
   I_HealthPerRank: 10
-  I_DefaultArmor: 25
+  I_DefaultArmor: 30
   I_ArmorPerRank: 5
-  I_ShotProjectileID: 9000
-  F_ShotRestoreCoolDown: 6
-  I_BaseShotStorage: 1
-  I_ExtraShotStorageRankStep: 100
-  F_AbilityDamageBase: 250
-  F_AbilityDamageExtraMultiply: 1
-  F_AbilityDamageRankMultiply: 50
-  F_AbilityCriticalRateMultiply: 1
+  F_AbilityCoolDown: 3
+  F_RollSpeedMultiple: 1.8
+  F_RollDuration: 0.5
+  P_RollFinishClipRestore: 0
+  P_RollFinishFireRateExtraMultiply: 100
+  P_RollFinishFireRateRankMultiply: 10
+  F_RollFinishFireRateDuration: 1.5
+  m_SpawnParticleIndex: 19205
+  m_HealthMultiplierPerEnhance: 0.2
+  m_DamageMultiplierPerEnhance: 0.2
 --- !u!114 &114336263026090444
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1090,7 +1092,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.4
-  m_Height: 2.4
+  m_Height: 3.5
   m_Direction: 1
   m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!137 &137607446536946132

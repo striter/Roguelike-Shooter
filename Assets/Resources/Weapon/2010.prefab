@@ -56,12 +56,11 @@ MonoBehaviour:
   E_CastTarget: -1
   I_CastParticleIndex: 39001
   B_CastForward: 0
-  F_Damage: 20.8
   I_TickCount: 1
   F_Tick: 0
-  I_BuffApplyOnCast: 0
   E_AreaType: 2
-  V4_CastInfo: {x: 1, y: 1, z: 4, w: 0}
+  V4_CastInfo: {x: 1, y: 1, z: 13, w: 0}
+  I_ImpactIndex: 0
   F_DelayDuration: 0
   I_DelayIndicatorIndex: 0
   B_CameraShake: 0

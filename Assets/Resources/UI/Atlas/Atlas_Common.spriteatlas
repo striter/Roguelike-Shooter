@@ -227,7 +227,7 @@ SpriteAtlas:
   - icon_weapon
   - icon_atk
   - icon_Life
-  - icon_Armor
+  - icon_armor
   - icon_time
   - icon_score
   - icon_perk

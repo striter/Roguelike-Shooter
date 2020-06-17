@@ -404,7 +404,9 @@ public class UI_ShoppingMall : UIPage
             prize.m_sprite = UIManager.Instance.m_WeaponSprites[weaponInfo.m_Weapon.GetSprite(true)];
             m_prize = prize;
 
-            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(m_weapon, 5));
+            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(m_weapon, 0));
+            //本地记录武器数据
+            GameDataManager.m_CGameDrawWeaponData.AddWeapon(m_weapon, NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f));
         }
         else if (data.m_type == enum_CommodityType.Drawing)
         {

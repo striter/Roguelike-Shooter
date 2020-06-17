@@ -34,10 +34,13 @@ public class UI_Map : UIPage {
             m_LocationsGrid.ClearGrid();
             BattleManager.Instance.m_StageInteracts.Traversal((int interactIndex, InteractBattleBase interactData) =>
             {
-                UIGI_MapLocations locations = m_LocationsGrid.AddItem(interactIndex);
-                locations.Play(interactData);
-                locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(interactData.transform.position);
-                locations.transform.rotation = Quaternion.identity;
+                if (interactData.m_InteractEnable || interactData.m_InteractType == enum_Interaction.SignalTower)
+                {
+                    UIGI_MapLocations locations = m_LocationsGrid.AddItem(interactIndex);
+                    locations.Play(interactData);
+                    locations.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(interactData.transform.position);
+                    locations.transform.rotation = Quaternion.identity;
+                }
             });
 
             m_MapOffsetBase = m_Player.rectTransform.anchoredPosition;

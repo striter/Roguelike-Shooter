@@ -90,14 +90,14 @@ public class EntityCharacterPlayer : EntityCharacterBase
         ///携带武器进入战斗场景
         if (GameDataManager.m_bearArmsList[0] != enum_PlayerWeaponIdentity.Invalid)
         {
-            ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[0], 5)));
+            ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[0], 0)));
             GameDataManager.m_bearArmsList[0] = enum_PlayerWeaponIdentity.Invalid;
         }
         else
             ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
         if (GameDataManager.m_bearArmsList[1] != enum_PlayerWeaponIdentity.Invalid)
         {
-            ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[1], 5)));
+            ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[1], 0)));
             GameDataManager.m_bearArmsList[1] = enum_PlayerWeaponIdentity.Invalid;
         }
         else

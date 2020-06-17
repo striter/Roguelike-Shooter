@@ -137,7 +137,7 @@ namespace GameSetting
 
     public enum enum_EffectType { Invalid = -1, HeadAttach = 1, FeetAttach = 2, WeaponMesh = 3, }
 
-    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Vampire=1002,Railer=1003, RailerNew = 1004 ,}
+    public enum enum_PlayerCharacter { Invalid = -1, Beth = 1001,Vampire=1002,Railer=1003, Machinist = 1004 ,}
     
     public enum enum_PlayerCharacterEnhance {Invalid=-1,None=0,Health,Armor,MovementSpeed,StartWeapon,StageCoin,Critical,Ability,DropWeapon, Max, }
 

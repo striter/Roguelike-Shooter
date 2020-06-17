@@ -1012,7 +1012,7 @@ namespace GameSetting
     /// </summary>
     public class CGameDrawWeapon : ISave
     {
-        int m_currentValue = 0;
+        public int m_currentValue = 0;
         //记录掉落的武器
         public enum_PlayerWeaponIdentity m_weapon0 = enum_PlayerWeaponIdentity.Invalid;
         public enum_PlayerWeaponIdentity m_weapon1 = enum_PlayerWeaponIdentity.Invalid;
@@ -1054,9 +1054,14 @@ namespace GameSetting
         /// </summary>
         /// <param name="identity"></param>
         /// <param name="pos"></param>
-        public void AddWeapon(enum_PlayerWeaponIdentity identity ,Vector3 pos)
+        public void AddWeapon(enum_PlayerWeaponIdentity identity ,Vector3 pos,int storageNumber=-1)
         {
-            switch (m_currentValue)
+            int num;
+            if (storageNumber != -1)
+                num = storageNumber;
+            else
+                num = m_currentValue;
+            switch (num)
             {
                 case 0:
                     m_weapon0 = identity;
@@ -1118,13 +1123,60 @@ namespace GameSetting
         }
 
         /// <summary>
+        /// 删除武器储存
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <param name="pos"></param>
+        public void DeleteWeapon(enum_PlayerWeaponIdentity identity,int id)
+        {
+            switch (id)
+            {
+                case 0:
+                    m_weapon0 = identity;
+                    break;
+                case 1:
+                    m_weapon1 = identity;
+                    break;
+                case 2:
+                    m_weapon2 = identity;
+                    break;
+                case 3:
+                    m_weapon3 = identity;
+                    break;
+                case 4:
+                    m_weapon4 = identity;
+                    break;
+                case 5:
+                    m_weapon5 = identity;
+                    break;
+                case 6:
+                    m_weapon6 = identity;
+                    break;
+                case 7:
+                    m_weapon7 = identity;
+                    break;
+                case 8:
+                    m_weapon8 = identity;
+                    break;
+                case 9:
+                    m_weapon9 = identity;
+                    break;
+            }
+            m_currentValue++;
+            if (m_currentValue > 9)
+            {
+                m_currentValue = 0;
+            }
+            TGameData<CGameDrawWeapon>.Save();
+        }
+        /// <summary>
         /// 获取武器储存
         /// </summary>
         /// <param name="identity"></param>
         /// <param name="pos"></param>
         public enum_PlayerWeaponIdentity GetWeapon(int id)
         {
-            switch (m_currentValue)
+            switch (id)
             {
                 case 0:
                     return m_weapon0;
@@ -1156,7 +1208,7 @@ namespace GameSetting
         /// <param name="pos"></param>
         public Vector3 GetWeaponPos(int id)
         {
-            switch (m_currentValue)
+            switch (id)
             {
                 case 0:
                     return new Vector3(m_weaponPosX0, 0, m_weaponPosZ0);
@@ -1180,6 +1232,19 @@ namespace GameSetting
                     return new Vector3(m_weaponPosX9, 0, m_weaponPosZ9);
             }
             return Vector3.zero;
+        }
+        /// <summary>
+        /// 创建保存的武器
+        /// </summary>
+        public void CreatingWeapons()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                if (GetWeapon(i) != enum_PlayerWeaponIdentity.Invalid)
+                {
+                    GameObjectManager.SpawnInteract<InteractPickupWeapon>(GetWeaponPos(i), Quaternion.identity).Play(WeaponSaveData.New(GetWeapon(i), 0), i);
+                }
+            }
         }
         public bool DataCrypt() => false;
         void ISave.DataRecorrect()

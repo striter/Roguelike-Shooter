@@ -40,6 +40,7 @@ public class CampManager : GameManagerBase
         AttachPlayerCamera(tf_CameraAttach);
         CampAudioManager.Instance.PlayBGM(enum_CampMusic.Relax);
         TBroadCaster<enum_BC_GameStatus>.Trigger(enum_BC_GameStatus.OnCampStart);
+        GameDataManager.m_CGameDrawWeaponData.CreatingWeapons();
     }
 
     public void RecycleLocalCharacter()

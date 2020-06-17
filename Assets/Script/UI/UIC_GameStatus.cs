@@ -165,6 +165,12 @@ public class UIC_GameStatus : UIControlBase {
             m_EliteHealthLerp.SetLerpValue(m_Elite.m_Health.F_HealthMaxScale);
             m_EliteHealthAmount.text = string.Format("{0} / {1}", m_Elite.m_Health.m_CurrentHealth, m_Elite.m_Health.m_MaxHealth);
         }
+
+        for (int i = 0; i < BattleManager.Instance.m_StageInteracts.Count; i++)
+        {
+            if (!BattleManager.Instance.m_StageInteracts[i].m_InteractEnable&& BattleManager.Instance.m_StageInteracts[i].m_InteractType!= enum_Interaction.SignalTower&& m_Map.m_imagelist[i].gameObject.activeInHierarchy)
+                m_Map.m_imagelist[i].SetActivate(false);
+        }
     }
 
 
@@ -177,7 +183,7 @@ public class UIC_GameStatus : UIControlBase {
             m_Enermys = new UIT_GridControllerGridItem<UIGI_MapEntityLocation>(m_Map_Origin_Base.transform.Find("EnermyGrid"));
             m_Locations = new UIT_GridControllerComponent<Image>(m_Map_Origin_Base.transform.Find("LocationGrid"));
         }
-
+        public List<Image> m_imagelist = new List<Image>();
         public override void OnPlay()
         {
             base.OnPlay();
@@ -190,6 +196,7 @@ public class UIC_GameStatus : UIControlBase {
                 image.sprite = BattleUIManager.Instance.m_CommonSprites[interactData.m_InteractType.GetInteractIcon()];
                 image.rectTransform.anchoredPosition = GameLevelManager.Instance.GetOffsetPosition(interactData.transform.position);
                 image.transform.rotation = Quaternion.identity;
+                m_imagelist.Add(image);
             });
         }
 
