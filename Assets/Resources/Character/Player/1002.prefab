@@ -1060,15 +1060,15 @@ MonoBehaviour:
   I_HealthPerRank: 10
   I_DefaultArmor: 20
   I_ArmorPerRank: 5
-  F_AbilityCooldown: 1
-  F_AbilityAttackRange: 8
+  F_AbilityCooldown: 8
+  F_AbilityAttackRange: 16
   F_AbilityAttackDuration: 0.2
-  F_AbilityBaseDamage: 100
+  F_AbilityBaseDamage: 200
   F_AbilityDamagePerStack: 0
   I_MaxAbilityDamageStack: 0
   F_AbilityStackResetDuration: 20
-  F_AbilityKillsHealPercent: 0.1
-  F_AbilityKillsHealPercentAdditivePerRank: 0.01
+  F_AbilityKillsHealPercent: 0.25
+  F_AbilityKillsHealPercentAdditivePerRank: 0
 --- !u!135 &135432215870104796
 SphereCollider:
   m_ObjectHideFlags: 1
