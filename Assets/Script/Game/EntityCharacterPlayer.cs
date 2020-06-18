@@ -78,8 +78,8 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
     public  EntityCharacterPlayer OnPlayerActivate(CBattleSave _battleSave)
     {
-        OnEntityActivate(enum_EntityFlag.Player);
         m_Enhance = _battleSave.m_Enhance;
+        OnEntityActivate(enum_EntityFlag.Player);
         UIManager.Instance.DoBindings(this, OnMovementDelta, null, OnMainDown, OnSubDown, OnAbilityDown);
 
         m_Health.OnActivate(I_MaxHealth, I_DefaultArmor, _battleSave.m_Health >= 0 ? _battleSave.m_Health : I_MaxHealth);
@@ -88,14 +88,14 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_CharacterRotation = transform.rotation;
         m_Agent.enabled = true;
         ///携带武器进入战斗场景
-        if (GameDataManager.m_bearArmsList[0] != enum_PlayerWeaponIdentity.Invalid)
+        if (BattleManager.Instance && GameDataManager.m_bearArmsList[0] != enum_PlayerWeaponIdentity.Invalid)
         {
             ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[0], 0)));
             GameDataManager.m_bearArmsList[0] = enum_PlayerWeaponIdentity.Invalid;
         }
         else
             ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
-        if (GameDataManager.m_bearArmsList[1] != enum_PlayerWeaponIdentity.Invalid)
+        if (BattleManager.Instance && GameDataManager.m_bearArmsList[1] != enum_PlayerWeaponIdentity.Invalid)
         {
             ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[1], 0)));
             GameDataManager.m_bearArmsList[1] = enum_PlayerWeaponIdentity.Invalid;
@@ -222,6 +222,9 @@ public class EntityCharacterPlayer : EntityCharacterBase
             if (damageEntity.m_IsDead)
             {
                 m_CharacterInfo.OnKilledEnermy(damageInfo, damageEntity);
+                m_CharacterInfo.OnKilledEnermys(damageInfo, damageEntity);
+                //BattleManager.Instance.m_LocalPlayer.m_CharacterInfo.OnAccelerate(1f);
+                Debug.Log(BattleManager.Instance.m_LocalPlayer.m_CharacterInfo.m_MovementSpeedMultiply);
                 if (damageEntity.m_Identity == 107 || damageEntity.m_Identity == 207 || damageEntity.m_Identity == 306
                     || damageEntity.m_Identity == 407 || damageEntity.m_Identity == 507)
                 {

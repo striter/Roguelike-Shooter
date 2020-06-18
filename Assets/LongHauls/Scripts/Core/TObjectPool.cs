@@ -89,6 +89,7 @@ public class ObjectPoolManager<T, Y> : ObjectPoolManager where Y : MonoBehaviour
     }
     public static Y Spawn(T identity, Transform toTrans, Vector3 pos, Quaternion rot)
     {
+        //Debug.Log(identity);
         if (!d_ItemInfos.ContainsKey(identity))
         {
             Debug.LogError("PoolManager:" + typeof(T).ToString() + "," + typeof(Y).ToString() + " Error! Null Identity:" + identity + "Registed");

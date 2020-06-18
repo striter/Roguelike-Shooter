@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using LevelSetting;
+using GameSetting_CharacterPlayerPerks_10000;
+
 namespace GameSetting
 {
     #region For Designers Use
@@ -684,6 +686,10 @@ namespace GameSetting
             m_CriticalRateAdditive += expire.m_CriticalRateAdditive;
             m_CriticalDamageMultiply += expire.m_CriticalHitMultiplyAdditive;
         }
+        public  void OnAccelerate(float movementSpeedMultiply)
+        {
+            m_MovementSpeedMultiply += movementSpeedMultiply;
+        }
         protected virtual void AfterInfoSet()
         {
             if (m_DamageReceiveMultiply < 0) m_DamageReceiveMultiply = 0;
@@ -735,6 +741,7 @@ namespace GameSetting
         public float DoStoreRateTick(float deltaTime) => deltaTime * F_Projectile_Store_TickMultiply;
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
+        public P10009 m_SkillAcceleration;
         public Dictionary<int, ExpirePlayerPerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePlayerPerkBase>();
         public float m_Coins { get; private set; } = 0;
         public int m_Keys { get; private set; } = 0;
@@ -768,6 +775,13 @@ namespace GameSetting
         {
             m_ExpireInteracts.Traversal((ExpirePlayerBase expire) => { expire.OnKillEnermy(info,target); });
             OnExpReceived(GameConst.I_PlayerEnermyKillExpGain);
+        }
+        public void OnKilledEnermys(DamageInfo info, EntityCharacterBase target)
+        {
+            if (m_SkillAcceleration == null)
+                m_SkillAcceleration = new P10009(PerkSaveData.New(10099));
+
+            //m_SkillAcceleration.OnKillEnermy(info, target);
         }
 
         public void OnActionPerkAcquire(int perkID)

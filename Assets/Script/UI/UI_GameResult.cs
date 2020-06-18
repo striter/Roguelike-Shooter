@@ -8,9 +8,11 @@ public class UI_GameResult : UIPage {
     Action OnButtonClick;
     Image m_ResultTitle;
     UIC_Button btn_video;
-    //UIT_TextExtend m_Completion, m_CompletionScore, m_Difficulty, m_DifficultyMultiply, m_FinalScore;
-    //UIT_TextExtend m_CoinsAmount;
+    [SerializeField] Text m_Level;
+    [SerializeField] Text m_killMonsters;
+    [SerializeField] Text m_difficulty;
 
+    [SerializeField] Text m_goldCoin;
     protected override void Init()
     {
         base.Init();
@@ -29,6 +31,16 @@ public class UI_GameResult : UIPage {
     {
         m_ResultTitle.sprite = BattleUIManager.Instance.m_InGameSprites[UIConvertions.GetUIGameResultTitleBG(win, OptionsDataManager.m_OptionsData.m_Region)];
         OnButtonClick = _OnButtonClick;
+
+        m_Level.text = ((int)BattleManager.Instance.m_BattleProgress.m_Stage).ToString();
+        m_killMonsters.text = BattleManager.Instance.m_BattleEntity.m_EnermyKilled.ToString();
+        m_difficulty.text = ((int)BattleManager.Instance.m_BattleEntity.m_Difficulty).ToString();
+
+        float stageCredit = ((int)BattleManager.Instance.m_BattleProgress.m_Stage - 1) * GameConst.F_GameResultCreditStageBase;
+        float killCredit = BattleManager.Instance.m_BattleEntity.m_EnermyKilled * GameConst.F_GameResultCreditEnermyKilledBase;
+        float difficultyBonus = (1f + ((int)BattleManager.Instance.m_BattleEntity.m_Difficulty - 1) * GameConst.F_GameResultCreditDifficultyBonus);
+        int num = (int)(Math.Round(stageCredit + killCredit) * difficultyBonus);
+        m_goldCoin.text = num.ToString();
     }
     protected override void OnCancelBtnClick()
     {

@@ -1027,13 +1027,15 @@ MonoBehaviour:
   I_HealthPerRank: 10
   I_DefaultArmor: 30
   I_ArmorPerRank: 5
-  F_AbilityCoolDown: 3
-  F_RollSpeedMultiple: 1.8
-  F_RollDuration: 0.5
-  P_RollFinishClipRestore: 0
-  P_RollFinishFireRateExtraMultiply: 100
-  P_RollFinishFireRateRankMultiply: 10
-  F_RollFinishFireRateDuration: 1.5
+  I_ShotProjectileID: 9000
+  F_ShotRestoreCoolDown: 6
+  I_BaseShotStorage: 1
+  I_ExtraShotStorageRankStep: 100
+  F_AbilityDamageBase: 250
+  F_AbilityDamageExtraMultiply: 1
+  F_AbilityDamageRankMultiply: 20
+  F_AbilityCriticalRateMultiply: 1
+  m_SpawnIndex: 601
   m_SpawnParticleIndex: 19205
   m_HealthMultiplierPerEnhance: 0.2
   m_DamageMultiplierPerEnhance: 0.2

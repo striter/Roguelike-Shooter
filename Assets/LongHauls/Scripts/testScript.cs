@@ -22,11 +22,12 @@ public class testScript : MonoBehaviour
     {
         if (GUI.Button(new Rect(0, 0, 50, 50), ""))
         {
-            int num = Random.Range(0, 14);
+            //new DamageInfo(CampManager.Instance.m_LocalPlayer.m_EntityID, enum_DamageIdentity.Expire).SetDamage(50, enum_DamageType.Basic);
+            //int num = Random.Range(0, 14);
 
-            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New((enum_PlayerWeaponIdentity)m_idLis[num], 0), GameDataManager.m_CGameDrawWeaponData.m_currentValue);
+            //GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New((enum_PlayerWeaponIdentity)m_idLis[num], 0), GameDataManager.m_CGameDrawWeaponData.m_currentValue);
 
-            GameDataManager.m_CGameDrawWeaponData.AddWeapon((enum_PlayerWeaponIdentity)m_idLis[num], NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f)) ;
+            //GameDataManager.m_CGameDrawWeaponData.AddWeapon((enum_PlayerWeaponIdentity)m_idLis[num], NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f)) ;
             //enum_PlayerWeaponIdentity m_weaponDrawing = GameDataManager.RandomWeaponDrawing();
             //Debug.Log( TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
 

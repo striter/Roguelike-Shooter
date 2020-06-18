@@ -148,7 +148,8 @@ namespace GameSetting
             float stageCredit = ((int)progress.m_Stage-1) *GameConst.F_GameResultCreditStageBase;
             float killCredit = entity.m_EnermyKilled *GameConst.F_GameResultCreditEnermyKilledBase;
             float difficultyBonus = (1f+((int)entity.m_Difficulty-1) *GameConst.F_GameResultCreditDifficultyBonus);
-            m_GameData.m_Credit += (stageCredit+killCredit)*difficultyBonus;
+            int num = (int)(Math.Round(stageCredit + killCredit) * difficultyBonus);
+            m_GameData.m_Credit += num;
             TGameData<CGameSave>.Save();
         }
 

@@ -41,7 +41,12 @@ public class EntityCharacterPlayerRailer : EntityCharacterPlayer {
         if (m_IsDead || !down||!m_AbilityAvailable)
             return;
 
-        m_CharacterWeaponHelper.OnPlay(null, GetAimingPosition(true), new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(F_AbilityDamageBase + F_AbilityDamageExtraMultiply * m_CharacterInfo.m_DamageAdditive + m_CharacterInfo.m_RankManager.m_Rank * F_AbilityDamageRankMultiply).SetDamageCritical(m_CharacterInfo.m_CriticalRateAdditive * F_AbilityCriticalRateMultiply, m_CharacterInfo.m_CriticalDamageMultiply));
+        DamageInfo damageInfo = new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility);
+        if (m_Enhance >= enum_PlayerCharacterEnhance.Critical)
+        {
+            damageInfo.AddPresetBuff(GameConst.m_GameDebuffID[0]);
+        }
+        m_CharacterWeaponHelper.OnPlay(null, GetAimingPosition(true), damageInfo.SetDamage(F_AbilityDamageBase + F_AbilityDamageExtraMultiply * m_CharacterInfo.m_DamageAdditive + m_CharacterInfo.m_RankManager.m_Rank * F_AbilityDamageRankMultiply).SetDamageCritical(m_CharacterInfo.m_CriticalRateAdditive * F_AbilityCriticalRateMultiply, m_CharacterInfo.m_CriticalDamageMultiply));
         if (m_ShotStorage == m_MaxShotStorage)
             m_ShotRestoreTimer.Replay();
         m_ShotStorage -=1;

@@ -27,6 +27,7 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
     }
     protected void PlaySFX(int sourceID,float playDuration,float delayDuration,bool lifeTimeTick)
     {
+        //Debug.Log("執行固定"+ );
         B_Activating = true;
         B_Delaying = true;
         B_Playing = false;
@@ -68,7 +69,6 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
         m_relativeSFXs.Traversal((SFXRelativeBase relative) => { relative.OnRecycle(); });
         DoRecycle();
     }
-
     public void AttachTo(Transform _attachTo)
     {
         m_AttachTo = _attachTo;
@@ -85,6 +85,7 @@ public class SFXBase :CObjectPoolStaticPrefabBase<int> {
 
         if (m_AttachTo)
         {
+            //Debug.Log("固定");
             transform.position = m_AttachTo.TransformPoint(m_localPos);
             transform.rotation = Quaternion.LookRotation(m_AttachTo.TransformDirection(m_localDir));
         }
