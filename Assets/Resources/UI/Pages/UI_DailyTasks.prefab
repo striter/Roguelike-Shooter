@@ -2418,9 +2418,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: STORE
+  m_Text: MISSON
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_Commodity_TitleNew
+  S_AutoLocalizeKey: UI_Task_New
   m_characterSpacing: 3
 --- !u!114 &114466657472047372
 MonoBehaviour:
