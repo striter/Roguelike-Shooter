@@ -61,6 +61,22 @@ public class UI_DailyTasks : UIPage
         m_tasksList[1].OnPlay(AdvertisementTask, 1089);
         m_tasksList[2].OnPlay(m_goidTask[goldCoinTask], goldCoinTask);
         m_tasksList[3].OnPlay(m_diamondsTask[diamondMission], diamondMission+100);
+
+        for (int i = 0; i < m_tasksList.Length; i++)
+        {
+            if (m_tasksList[i].m_state == 0)
+            {
+                m_tasksList[i].transform.SetAsLastSibling();
+            }
+        }
+
+        for (int i = 0; i < m_tasksList.Length; i++)
+        {
+            if (m_tasksList[i].m_state == 2)
+            {
+                m_tasksList[i].transform.SetAsLastSibling();
+            }
+        }
     }
 
 }

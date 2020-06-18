@@ -2651,9 +2651,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u8D2D\u4E70\u91D1\u5E01"
+  m_Text: UI_Commodity_PurchaseGold
   B_AutoLocalize: 1
-  S_AutoLocalizeKey: UI_Commodity_Time
+  S_AutoLocalizeKey: UI_Commodity_PurchaseGold
   m_characterSpacing: 0
 --- !u!114 &114803304253898986
 MonoBehaviour:
@@ -4146,7 +4146,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 130, y: -9}
+  m_AnchoredPosition: {x: 115.8, y: -9}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224728362958064080
