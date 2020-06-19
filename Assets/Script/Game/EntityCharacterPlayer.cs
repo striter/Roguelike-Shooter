@@ -88,14 +88,14 @@ public class EntityCharacterPlayer : EntityCharacterBase
         m_CharacterRotation = transform.rotation;
         m_Agent.enabled = true;
         ///携带武器进入战斗场景
-        if (BattleManager.Instance && GameDataManager.m_bearArmsList[0] != enum_PlayerWeaponIdentity.Invalid)
+        if (BattleManager.Instance && GameDataManager.m_bearArmsList[0] != enum_PlayerWeaponIdentity.Invalid && GameDataManager.m_bearArmsList[0] != _battleSave.m_Weapon1.m_Weapon)
         {
             ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[0], 0)));
             GameDataManager.m_bearArmsList[0] = enum_PlayerWeaponIdentity.Invalid;
         }
         else
             ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
-        if (BattleManager.Instance && GameDataManager.m_bearArmsList[1] != enum_PlayerWeaponIdentity.Invalid)
+        if (BattleManager.Instance && GameDataManager.m_bearArmsList[1] != enum_PlayerWeaponIdentity.Invalid && GameDataManager.m_bearArmsList[1] != _battleSave.m_Weapon2.m_Weapon)
         {
             ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[1], 0)));
             GameDataManager.m_bearArmsList[1] = enum_PlayerWeaponIdentity.Invalid;

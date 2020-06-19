@@ -297,6 +297,7 @@ namespace GameSetting_CharacterPlayerPerks_10000
         TimerBase m_Timer;
         public override void OnKillEnermy(DamageInfo info, EntityCharacterBase target)
         {
+            Debug.Log("@@@@@");
             base.OnKillEnermy(info, target);
             m_Timer.Replay();
         }
@@ -463,9 +464,9 @@ namespace GameSetting_CharacterPlayerPerks_10000
     public class P10099 : ExpirePlayerPerkBase
     {
         public override int m_Index => 10099;
-        public override enum_Rarity m_Rarity => enum_Rarity.Ordinary;
-        public override float Value1 => 300f;
-        public override float Value2 => 3f;
+        public override enum_Rarity m_Rarity => enum_Rarity.Invalid;
+        public override float Value1 => 50;
+        public override float Value2 => 2f;
         public override float m_MovementSpeedMultiply => m_Timer.m_Timing ? Value1 / 100f * m_Stack * m_Timer.m_TimeLeftScale : 0;
         TimerBase m_Timer;
         public override void OnKillEnermy(DamageInfo info, EntityCharacterBase target)

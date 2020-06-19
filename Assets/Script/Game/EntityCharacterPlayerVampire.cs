@@ -11,7 +11,7 @@ public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
     public float F_AbilityAttackDuration = .2f;
 
     public float F_AbilityBaseDamage = 20;
-    public float F_AbilityDamagePerStack = 30;
+    public float F_DamageIncreased = 50;
     public int I_MaxAbilityDamageStack = 5;
     public float F_AbilityStackResetDuration = 20;
 
@@ -78,7 +78,7 @@ public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
         PlayTeleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         if (!m_AssassinTarget.m_IsDead)
         {
-            m_AssassinTarget.m_HitCheck.TryHit(m_CharacterInfo.GetDamageInfo(F_AbilityBaseDamage + F_AbilityDamagePerStack * m_AssassinDamageStack)); 
+            m_AssassinTarget.m_HitCheck.TryHit(m_CharacterInfo.GetDamageInfo(F_AbilityBaseDamage + F_DamageIncreased * (int)m_Enhance, 0,-1, enum_DamageType.Basic, enum_DamageIdentity.PlayerAbility)); 
             if (m_AssassinTarget.m_IsDead)
                 m_HitCheck.TryHit(new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(-m_Health.m_MaxHealth*(F_AbilityKillsHealPercent+m_CharacterInfo.m_RankManager.m_Rank*F_AbilityKillsHealPercentAdditivePerRank), enum_DamageType.Health));
         }

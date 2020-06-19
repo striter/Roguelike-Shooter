@@ -19,15 +19,21 @@ public class InteractBloodShrine : InteractBattleBase {
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactor)
     {
         base.OnInteractedContinousCheck(_interactor);
-        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(_interactor.m_Health.m_CurrentHealth*m_damageHealthScale, enum_DamageType.Health,true));
+        _interactor.m_HitCheck.TryHit(new DamageInfo(-1, enum_DamageIdentity.Environment).SetDamage(m_damageHealthScale, enum_DamageType.Health,true));
         m_TryCount++;
         m_damageHealthScale = GameExpression.GetBloodShrineHealthCostMultiple(m_TryCount);
-        int amount = GameConst.RI_BloodShrintCoinsAmount.Random();
-        if(amount>0)
+
+        int num = Random.Range(1, 101);
+        if (num < 30)
         {
-            for (int i = 0; i < amount; i++)
-                GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, Quaternion.identity).Play(1).PlayDropAnim(NavigationManager.NavMeshPosition(_interactor.transform.position + TCommon.RandomXZCircle() * 4f)).PlayMoveAnim(_interactor.transform);
-            GameObjectManager.PlayMuzzle(-1, _interactor.transform.position, Vector3.up, I_MuzzleSuccess);
+            int amount = GameConst.RI_BloodShrintCoinsAmount.Random();
+            if (amount > 0)
+            {
+                for (int i = 0; i < amount; i++)
+                    GameObjectManager.SpawnInteract<InteractPickupCoin>(transform.position, Quaternion.identity).Play(1).PlayDropAnim(NavigationManager.NavMeshPosition(_interactor.transform.position + TCommon.RandomXZCircle() * 4f)).PlayMoveAnim(_interactor.transform);
+                GameObjectManager.PlayMuzzle(-1, _interactor.transform.position, Vector3.up, I_MuzzleSuccess);
+            }
+            return false;
         }
         return m_TryCount < GameConst.I_BloodShrineTryCountMax;
     }

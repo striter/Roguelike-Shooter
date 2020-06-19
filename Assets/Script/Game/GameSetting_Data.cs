@@ -476,7 +476,7 @@ namespace GameSetting
             m_AllPlayerPerks.Clear();
             m_PlayerPerkRarities.Clear();
             TReflection.TraversalAllInheritedClasses(((Type type, ExpirePlayerPerkBase perk) => {
-                m_AllPlayerPerks.Add(perk.m_Index, perk);
+            m_AllPlayerPerks.Add(perk.m_Index, perk);
                 if (perk.m_DataHidden)
                     return;
                 if (!m_PlayerPerkRarities.ContainsKey(perk.m_Rarity))

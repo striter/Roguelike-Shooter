@@ -94,7 +94,7 @@ namespace GameSetting
         public const int I_PerkShrineTradePrice = 2;
         public const int I_PerkShrineTryCountMax = 10086;
         public static readonly Dictionary<enum_Rarity, int> D_PerkShrineRate = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 15 }, { enum_Rarity.Advanced, 8 }, { enum_Rarity.Rare, 5 }, { enum_Rarity.Epic, 2 } };
-        public const int I_BloodShrineTryCountMax = 1;
+        public const int I_BloodShrineTryCountMax = 99999;
         public static readonly RangeInt RI_BloodShrintCoinsAmount = new RangeInt(10, 20);
         public const int I_HealShrineTradePrice = 10;
         public const int I_HealShrineTryCountMax = 5;
@@ -179,7 +179,7 @@ namespace GameSetting
         #region Interacts
         public static float GetPerkShrinePriceMultiply(int tryCount) => 1f * tryCount;
         public static float GetHealShrinePriceMultiply(int tryCount) => 1f + .1f * tryCount;
-        public static float GetBloodShrineHealthCostMultiple(int count) => .5f + .05f * count;
+        public static float GetBloodShrineHealthCostMultiple(int count) => 10 + 5 * count;
         #endregion
     }
 
@@ -741,7 +741,7 @@ namespace GameSetting
         public float DoStoreRateTick(float deltaTime) => deltaTime * F_Projectile_Store_TickMultiply;
 
         public List<ExpirePlayerBase> m_ExpireInteracts { get; private set; } = new List<ExpirePlayerBase>();
-        public P10009 m_SkillAcceleration;
+        public List<ExpirePlayerBase> m_SkillAcceleration =new List<ExpirePlayerBase> ();
         public Dictionary<int, ExpirePlayerPerkBase> m_ExpirePerks { get; private set; } = new Dictionary<int, ExpirePlayerPerkBase>();
         public float m_Coins { get; private set; } = 0;
         public int m_Keys { get; private set; } = 0;
@@ -778,10 +778,18 @@ namespace GameSetting
         }
         public void OnKilledEnermys(DamageInfo info, EntityCharacterBase target)
         {
-            if (m_SkillAcceleration == null)
-                m_SkillAcceleration = new P10009(PerkSaveData.New(10099));
+            if (info.m_IdentityType == enum_DamageIdentity.PlayerAbility && BattleManager.Instance.m_LocalPlayer.m_Character == enum_PlayerCharacter.Vampire)
+            {
+                Debug.Log("加速加速");
+                if (m_SkillAcceleration.Count == 0)
+                {
+                    ExpirePlayerPerkBase expire = GameDataManager.CreatePlayerPerk(PerkSaveData.New(10099));
+                    base.AddExpire(expire);
+                    m_SkillAcceleration.Add(expire as ExpirePlayerBase);
+                }
 
-            //m_SkillAcceleration.OnKillEnermy(info, target);
+                m_SkillAcceleration.Traversal((ExpirePlayerBase expire) => { expire.OnKillEnermy(info, target); });
+            }
         }
 
         public void OnActionPerkAcquire(int perkID)

@@ -166,7 +166,7 @@ public class UIC_GameStatus : UIControlBase {
             m_EliteHealthAmount.text = string.Format("{0} / {1}", m_Elite.m_Health.m_CurrentHealth, m_Elite.m_Health.m_MaxHealth);
         }
 
-        for (int i = 0; i < BattleManager.Instance.m_StageInteracts.Count; i++)
+        for (int i = 0; i < m_Map.m_imagelist.Count; i++)
         {
             if (!BattleManager.Instance.m_StageInteracts[i].m_InteractEnable&& BattleManager.Instance.m_StageInteracts[i].m_InteractType!= enum_Interaction.SignalTower&& m_Map.m_imagelist[i].gameObject.activeInHierarchy)
                 m_Map.m_imagelist[i].SetActivate(false);
@@ -186,6 +186,7 @@ public class UIC_GameStatus : UIControlBase {
         public List<Image> m_imagelist = new List<Image>();
         public override void OnPlay()
         {
+            m_imagelist = new List<Image>();
             base.OnPlay();
             UpdateMapRotation(GameLevelManager.Instance.GetMapAngle(CameraController.Instance.m_Yaw));
 

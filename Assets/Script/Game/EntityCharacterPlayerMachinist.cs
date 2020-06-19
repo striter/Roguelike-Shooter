@@ -52,7 +52,9 @@ public class EntityCharacterPlayerMachinist : EntityCharacterPlayer
         if (m_IsDead || !down || !m_AbilityAvailable)
             return;
 
-        Vector3 position = NavigationManager.NavMeshPosition(transform.position + TCommon.RandomXZCircle() * 2f);        GameObjectManager.SpawnParticles(m_SpawnParticleIndex, position, Vector3.up).PlayUncontrolled(m_EntityID);        GameObjectManager.SpawnGameCharcter(m_SpawnIndex, position, Quaternion.identity).OnCharacterBattleActivate(m_Flag, GameDataManager.DefaultGameCharacterPerk(m_HealthMultiplier, m_DamageMultiplier), m_EntityID);
+        Vector3 position = NavigationManager.NavMeshPosition(transform.position + TCommon.RandomXZCircle() * 2f);
+        GameObjectManager.SpawnParticles(m_SpawnParticleIndex, position, Vector3.up).PlayUncontrolled(m_EntityID);
+        GameObjectManager.SpawnGameCharcter(m_SpawnIndex, position, Quaternion.identity).OnCharacterBattleActivate(m_Flag, GameDataManager.DefaultGameCharacterPerk(m_HealthMultiplier, m_DamageMultiplier), m_EntityID);
         if (m_ShotStorage == m_MaxShotStorage)
             m_ShotRestoreTimer.Replay();
         m_ShotStorage -= 1;
