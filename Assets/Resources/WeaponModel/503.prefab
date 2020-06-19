@@ -480,8 +480,8 @@ MonoBehaviour:
   F_RefillTime: 20
   m_SpawnIndex: 601
   m_SpawnParticleIndex: 19205
-  m_HealthMultiplierPerEnhance: 0.1
-  m_DamageMultiplierPerEnhance: 0.1
+  m_HealthMultiplierPerEnhance: 0.2
+  m_DamageMultiplierPerEnhance: 0.2
 --- !u!114 &114195839973500648
 MonoBehaviour:
   m_ObjectHideFlags: 1
