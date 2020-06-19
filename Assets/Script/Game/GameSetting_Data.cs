@@ -32,6 +32,13 @@ namespace GameSetting
     public static class GameDataManager
     {
         /// <summary>
+        /// 从场景带到战斗场景的武器
+        /// </summary>
+        public static enum_PlayerWeaponIdentity[] m_bearArmsList=new enum_PlayerWeaponIdentity[] { enum_PlayerWeaponIdentity .Invalid, enum_PlayerWeaponIdentity.Invalid };
+
+
+
+        /// <summary>
         /// 杀怪个数
         /// </summary>
         public static int  m_killMonsters = 0;
@@ -74,6 +81,7 @@ namespace GameSetting
         public static CBattleSave m_GameProgressData => TGameData<CBattleSave>.Data;
         public static CGameTask m_GameTaskData => TGameData<CGameTask>.Data;
         public static CGameShop m_CGameShopData => TGameData<CGameShop>.Data;
+        public static CGameDrawWeapon m_CGameDrawWeaponData => TGameData<CGameDrawWeapon>.Data;
         /// <summary>
         /// 当前选择true=新游戏   false=继续游戏
         /// </summary>
@@ -104,6 +112,7 @@ namespace GameSetting
             TGameData<CGameSave>.Init();
             TGameData<CGameTask>.Init();
             TGameData<CGameShop>.Init();
+            TGameData<CGameDrawWeapon>.Init();
 
             InitPlayerPerks();
             InitEnermyPerks();
@@ -998,7 +1007,185 @@ namespace GameSetting
         {
         }
     }
+    /// <summary>
+    /// 抽奖武器记录
+    /// </summary>
+    public class CGameDrawWeapon : ISave
+    {
+        int m_currentValue = 0;
+        //记录掉落的武器
+        public enum_PlayerWeaponIdentity m_weapon0 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon1 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon2 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon3 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon4 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon5 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon6 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon7 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon8 = enum_PlayerWeaponIdentity.Invalid;
+        public enum_PlayerWeaponIdentity m_weapon9 = enum_PlayerWeaponIdentity.Invalid;
 
+        //记录掉落的武位置X
+        public float m_weaponPosX0;
+        public float m_weaponPosX1;
+        public float m_weaponPosX2;
+        public float m_weaponPosX3;
+        public float m_weaponPosX4;
+        public float m_weaponPosX5;
+        public float m_weaponPosX6;
+        public float m_weaponPosX7;
+        public float m_weaponPosX8;
+        public float m_weaponPosX9;
+
+        //记录掉落的武器位置Y
+        public float m_weaponPosZ0;
+        public float m_weaponPosZ1;
+        public float m_weaponPosZ2;
+        public float m_weaponPosZ3;
+        public float m_weaponPosZ4;
+        public float m_weaponPosZ5;
+        public float m_weaponPosZ6;
+        public float m_weaponPosZ7;
+        public float m_weaponPosZ8;
+        public float m_weaponPosZ9;
+
+        /// <summary>
+        /// 添加武器储存
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <param name="pos"></param>
+        public void AddWeapon(enum_PlayerWeaponIdentity identity ,Vector3 pos)
+        {
+            switch (m_currentValue)
+            {
+                case 0:
+                    m_weapon0 = identity;
+                    m_weaponPosX0 = pos.x;
+                    m_weaponPosZ0 = pos.z;
+                    break;
+                case 1:
+                    m_weapon1 = identity;
+                    m_weaponPosX1 = pos.x;
+                    m_weaponPosZ1 = pos.z;
+                    break;
+                case 2:
+                    m_weapon2 = identity;
+                    m_weaponPosX2 = pos.x;
+                    m_weaponPosZ2 = pos.z;
+                    break;
+                case 3:
+                    m_weapon3 = identity;
+                    m_weaponPosX3 = pos.x;
+                    m_weaponPosZ3 = pos.z;
+                    break;
+                case 4:
+                    m_weapon4 = identity;
+                    m_weaponPosX4 = pos.x;
+                    m_weaponPosZ4 = pos.z;
+                    break;
+                case 5:
+                    m_weapon5 = identity;
+                    m_weaponPosX5 = pos.x;
+                    m_weaponPosZ5 = pos.z;
+                    break;
+                case 6:
+                    m_weapon6 = identity;
+                    m_weaponPosX6 = pos.x;
+                    m_weaponPosZ6 = pos.z;
+                    break;
+                case 7:
+                    m_weapon7 = identity;
+                    m_weaponPosX7 = pos.x;
+                    m_weaponPosZ7 = pos.z;
+                    break;
+                case 8:
+                    m_weapon8 = identity;
+                    m_weaponPosX8 = pos.x;
+                    m_weaponPosZ8 = pos.z;
+                    break;
+                case 9:
+                    m_weapon9 = identity;
+                    m_weaponPosX9 = pos.x;
+                    m_weaponPosZ9 = pos.z;
+                    break;
+            }
+            m_currentValue++;
+            if (m_currentValue > 9)
+            {
+                m_currentValue = 0;
+            }
+            TGameData<CGameDrawWeapon>.Save();
+        }
+
+        /// <summary>
+        /// 获取武器储存
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <param name="pos"></param>
+        public enum_PlayerWeaponIdentity GetWeapon(int id)
+        {
+            switch (m_currentValue)
+            {
+                case 0:
+                    return m_weapon0;
+                case 1:
+                    return m_weapon1;
+                case 2:
+                    return m_weapon2;
+                case 3:
+                    return m_weapon3;
+                case 4:
+                    return m_weapon4;
+                case 5:
+                    return m_weapon5;
+                case 6:
+                    return m_weapon6;
+                case 7:
+                    return m_weapon7;
+                case 8:
+                    return m_weapon8;
+                case 9:
+                    return m_weapon9;
+            }
+            return enum_PlayerWeaponIdentity.Invalid;
+        }
+        /// <summary>
+        /// 获取武器储存位置
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <param name="pos"></param>
+        public Vector3 GetWeaponPos(int id)
+        {
+            switch (m_currentValue)
+            {
+                case 0:
+                    return new Vector3(m_weaponPosX0, 0, m_weaponPosZ0);
+                case 1:
+                    return new Vector3(m_weaponPosX1, 0, m_weaponPosZ1);
+                case 2:
+                    return new Vector3(m_weaponPosX2, 0, m_weaponPosZ2);
+                case 3:
+                    return new Vector3(m_weaponPosX3, 0, m_weaponPosZ3);
+                case 4:
+                    return new Vector3(m_weaponPosX4, 0, m_weaponPosZ4);
+                case 5:
+                    return new Vector3(m_weaponPosX5, 0, m_weaponPosZ5);
+                case 6:
+                    return new Vector3(m_weaponPosX6, 0, m_weaponPosZ6);
+                case 7:
+                    return new Vector3(m_weaponPosX7, 0, m_weaponPosZ7);
+                case 8:
+                    return new Vector3(m_weaponPosX8, 0, m_weaponPosZ8);
+                case 9:
+                    return new Vector3(m_weaponPosX9, 0, m_weaponPosZ9);
+            }
+            return Vector3.zero;
+        }
+        public bool DataCrypt() => false;
+        void ISave.DataRecorrect()
+        {
+        }
+    }
     public struct WeaponSaveData : IDataConvert
     {
         public enum_PlayerWeaponIdentity m_Weapon { get; private set; }

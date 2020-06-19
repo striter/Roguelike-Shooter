@@ -21,9 +21,11 @@ public class testScript : MonoBehaviour
     {
         if (GUI.Button(new Rect(0, 0, 50, 50), ""))
         {
+            GameObjectManager.SpawnInteract<InteractPickupWeapon>(NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f), Quaternion.identity).Play(WeaponSaveData.New(enum_PlayerWeaponIdentity.SheildDrain, 5));
 
-            enum_PlayerWeaponIdentity m_weaponDrawing = GameDataManager.RandomWeaponDrawing();
-            Debug.Log( TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
+            GameDataManager.m_CGameDrawWeaponData.AddWeapon(enum_PlayerWeaponIdentity.SheildDrain, NavigationManager.NavMeshPosition(CampManager.Instance.m_LocalPlayer.transform.position + TCommon.RandomXZSphere() * 5f)) ;
+            //enum_PlayerWeaponIdentity m_weaponDrawing = GameDataManager.RandomWeaponDrawing();
+            //Debug.Log( TLocalization.GetKeyLocalized(m_weaponDrawing.GetNameLocalizeKey()));
 
 
             //enum_PlayerWeaponIdentity m_weaponDrawing = enum_PlayerWeaponIdentity.DE;
@@ -41,13 +43,17 @@ public class testScript : MonoBehaviour
             //if(BattleManager.Instance)
             //BattleManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
             //else
-            //    CampManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
+            //CampManager.Instance.m_LocalPlayer.ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New((enum_PlayerWeaponIdentity)id, 5)));
         }
         if (GUI.Button(new Rect(50, 0, 50, 50), ""))
         {
+            for (int i = 0; i < 10; i++)
+            {
+                GameObjectManager.SpawnInteract<InteractPickupWeapon>(GameDataManager.m_CGameDrawWeaponData.GetWeaponPos(i), Quaternion.identity).Play(WeaponSaveData.New(GameDataManager.m_CGameDrawWeaponData.GetWeapon(i), 5));
+            }
             //GameDataManager.m_GameTaskData.RandomTask();
             //GameDataManager.OnCGameTask(50);
-            GameDataManager.OnDiamondsStatus(50000);
+            //GameDataManager.OnDiamondsStatus(50000);
             //GameObjectManager.SpawnPlayerCharacter(GameDataManager.m_GameProgressData.m_Character, Vector3.zero, new Quaternion(0,0,0,0)).OnPlayerActivate(GameDataManager.m_GameProgressData);
         }
     }

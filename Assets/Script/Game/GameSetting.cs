@@ -132,7 +132,7 @@ namespace GameSetting
         public static readonly Dictionary<enum_Rarity, int> m_CharacterRandomStartWeaponRarities = new Dictionary<enum_Rarity, int>() { { enum_Rarity.Ordinary, 50 }, { enum_Rarity.Advanced, 50 } };
 
         public static readonly Dictionary<enum_PlayerCharacter, float> m_CharacterUnlockCost = new Dictionary<enum_PlayerCharacter, float>() {
-            { enum_PlayerCharacter.Beth,5000 },{ enum_PlayerCharacter.Railer,6000},{ enum_PlayerCharacter.Vampire,7000},{ enum_PlayerCharacter.RailerNew,8000}
+            { enum_PlayerCharacter.Beth,5000 },{ enum_PlayerCharacter.Railer,6000},{ enum_PlayerCharacter.Vampire,7000},{ enum_PlayerCharacter.RailerNew,9999}
         };
 
         public static readonly Dictionary<enum_PlayerCharacterEnhance, int> m_CharacterEnhanceCost = new Dictionary<enum_PlayerCharacterEnhance, int>() {

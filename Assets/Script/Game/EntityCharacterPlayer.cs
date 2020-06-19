@@ -87,10 +87,24 @@ public class EntityCharacterPlayer : EntityCharacterBase
 
         m_CharacterRotation = transform.rotation;
         m_Agent.enabled = true;
-
-        ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
-        if (_battleSave.m_Weapon2.m_Weapon != enum_PlayerWeaponIdentity.Invalid)
-            ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon2));
+        ///携带武器进入战斗场景
+        if (GameDataManager.m_bearArmsList[0] != enum_PlayerWeaponIdentity.Invalid)
+        {
+            ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[0], 5)));
+            GameDataManager.m_bearArmsList[0] = enum_PlayerWeaponIdentity.Invalid;
+        }
+        else
+            ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon1));
+        if (GameDataManager.m_bearArmsList[1] != enum_PlayerWeaponIdentity.Invalid)
+        {
+            ObtainWeapon(GameObjectManager.SpawnWeapon(WeaponSaveData.New(GameDataManager.m_bearArmsList[1], 5)));
+            GameDataManager.m_bearArmsList[1] = enum_PlayerWeaponIdentity.Invalid;
+        }
+        else
+        {
+            if (_battleSave.m_Weapon2.m_Weapon != enum_PlayerWeaponIdentity.Invalid)
+                ObtainWeapon(GameObjectManager.SpawnWeapon(_battleSave.m_Weapon2));
+        }
         OnSwapWeapon(true);
         return this;
     }
@@ -279,18 +293,30 @@ public class EntityCharacterPlayer : EntityCharacterBase
             m_WeaponCurrent.OnDetach();
             exchangeWeapon = m_WeaponCurrent;
             if (m_weaponEquipingFirst)
+            {
+                if(CampManager.Instance)
+                    GameDataManager.m_bearArmsList[0] = _weapon.m_Identity;
                 m_Weapon1 = _weapon;
+            }
             else
+            {
+                if (CampManager.Instance)
+                    GameDataManager.m_bearArmsList[1] = _weapon.m_Identity;
                 m_Weapon2 = _weapon;
+            }
             OnSwapWeapon(m_weaponEquipingFirst);
         }
         else if (m_Weapon1 == null)
         {
+            if (CampManager.Instance)
+                GameDataManager.m_bearArmsList[0] = _weapon.m_Identity;
             m_Weapon1 = _weapon;
             OnSwapWeapon(true);
         }
         else if (m_Weapon2 == null)
         {
+            if (CampManager.Instance)
+                GameDataManager.m_bearArmsList[1] = _weapon.m_Identity;
             m_Weapon2 = _weapon;
             OnSwapWeapon(false);
         }
