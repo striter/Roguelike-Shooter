@@ -78,7 +78,8 @@ public class EntityCharacterPlayerVampire : EntityCharacterPlayer {
         PlayTeleport(NavigationManager.NavMeshPosition(m_AssassinTarget.transform.position - m_AssassinTarget.transform.forward), m_AssassinTarget.transform.rotation);
         if (!m_AssassinTarget.m_IsDead)
         {
-            m_AssassinTarget.m_HitCheck.TryHit(m_CharacterInfo.GetDamageInfo(F_AbilityBaseDamage + F_DamageIncreased * (int)m_Enhance, 0,-1, enum_DamageType.Basic, enum_DamageIdentity.PlayerAbility)); 
+            Debug.Log(m_CharacterInfo.m_RankManager.m_Rank);
+            m_AssassinTarget.m_HitCheck.TryHit(m_CharacterInfo.GetDamageInfo(F_AbilityBaseDamage + F_DamageIncreased * m_CharacterInfo.m_RankManager.m_Rank, 0,-1, enum_DamageType.Basic, enum_DamageIdentity.PlayerAbility)); 
             if (m_AssassinTarget.m_IsDead)
                 m_HitCheck.TryHit(new DamageInfo(m_EntityID, enum_DamageIdentity.PlayerAbility).SetDamage(-m_Health.m_MaxHealth*(F_AbilityKillsHealPercent+m_CharacterInfo.m_RankManager.m_Rank*F_AbilityKillsHealPercentAdditivePerRank), enum_DamageType.Health));
         }
