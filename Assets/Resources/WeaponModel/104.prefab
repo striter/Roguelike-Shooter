@@ -472,7 +472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 0.7
+  F_FireRate: 0.5
 --- !u!114 &114858338715970180
 MonoBehaviour:
   m_ObjectHideFlags: 1
