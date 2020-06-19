@@ -493,4 +493,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 1
+  F_FireRate: 0.5

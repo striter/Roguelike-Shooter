@@ -85,8 +85,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4638786458670128}
-  - component: {fileID: 114195839973500648}
   - component: {fileID: 114192581977987866}
+  - component: {fileID: 114195839973500648}
   m_Layer: 0
   m_Name: 505
   m_TagString: Untagged
@@ -493,4 +493,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e934d56fa70b743b35c4c61f772a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  F_FireRate: 1
+  F_FireRate: 0.5
