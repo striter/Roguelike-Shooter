@@ -36,6 +36,7 @@ namespace TGameSave
             if (m_Data == null)
                 Debug.LogError("Please Check File First!" + typeof(T).ToString());
              Task.Run(()=> { SaveFile(m_Data); });
+            //Debug.Log(s_FilePath);
         }
 
         public static void Reset() => m_Data = new T();
@@ -43,6 +44,7 @@ namespace TGameSave
 
         public static readonly string s_Directory = Application.persistentDataPath + "/Save";
         public static readonly string s_FilePath = s_Directory + "/" + typeof(T).Name + ".xml";
+
         #region Tools
         static XmlDocument m_Doc;
         static XmlNode m_ParentNode;

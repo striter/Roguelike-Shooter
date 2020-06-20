@@ -736,4 +736,5 @@ public class BattleEntityManager
         return list;
     }
     #endregion
+
 }

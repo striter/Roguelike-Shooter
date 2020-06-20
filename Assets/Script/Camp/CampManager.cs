@@ -87,6 +87,13 @@ public class CampManager : GameManagerBase
         AttachSceneCamera(cameraPos);
         CampUIManager.Instance.ShowCoinsPage<UI_Billboard>(true,true, ResetPlayerCamera, .1f);
     }
+    public void OnTasksInteract(Transform cameraPos)
+    {
+        if (UIManager.Instance.m_PageOpening)
+            return;
+        AttachSceneCamera(cameraPos);
+        CampUIManager.Instance.ShowCoinsPage<UI_DailyTasks>(true, true, ResetPlayerCamera, .1f);
+    }
 
     public void OnCharacterSelectInteract(InteractCampCharacterSelect characterSelect)
     {

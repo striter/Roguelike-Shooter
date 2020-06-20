@@ -31,10 +31,48 @@ namespace GameSetting
 
     public static class GameDataManager
     {
+        /// <summary>
+        /// 杀怪个数
+        /// </summary>
+        public static int  m_killMonsters = 0;
+        /// <summary>
+        /// 通过关卡数
+        /// </summary>
+        public static int m_PassTheGate = 0;
+        /// <summary>
+        /// 获得金币数量
+        /// </summary>
+        public static int m_getGoldCoins = 0;
+        /// <summary>
+        /// 击杀boss数量
+        /// </summary>
+        public static int m_killBoss = 0;
+        /// <summary>
+        /// 开启信号塔
+        /// </summary>
+        public static int m_portal = 0;
+        /// <summary>
+        /// 关卡
+        /// </summary>
+        public static int m_passThe = 4;
+        /// <summary>
+        /// 通过某个关卡金币
+        /// </summary>
+        public static int m_passTheGate = 0;
+        /// <summary>
+        /// 通过某个关卡钻石
+        /// </summary>
+        public static int m_passTheGateNew = 0;
+        /// <summary>
+        /// 获得武器最高星级
+        /// </summary>
+        public static int m_getWeapons = 0;
+
         public static CGameSave m_GameData => TGameData<CGameSave>.Data;
         public static CArmoryData m_ArmoryData => TGameData<CArmoryData>.Data;
         public static CPlayerCharactersCultivateData m_CharacterData => TGameData<CPlayerCharactersCultivateData>.Data;
         public static CBattleSave m_GameProgressData => TGameData<CBattleSave>.Data;
+        public static CGameTask m_GameTaskData => TGameData<CGameTask>.Data;
         /// <summary>
         /// 当前选择true=新游戏   false=继续游戏
         /// </summary>
@@ -52,6 +90,7 @@ namespace GameSetting
             TGameData<CPlayerCharactersCultivateData>.Init();
             TGameData<CArmoryData>.Init();
             TGameData<CGameSave>.Init();
+            TGameData<CGameTask>.Init();
 
             InitPlayerPerks();
             InitEnermyPerks();
@@ -102,6 +141,15 @@ namespace GameSetting
             m_GameData.m_Credit += credit;
             TGameData<CGameSave>.Save();
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampCurrencyStatus);
+        }
+        public static bool CanUseDiamonds(float diamonds) => m_GameData.m_Diamonds >= diamonds;
+        public static void OnDiamondsStatus(float diamonds)
+        {
+            if (diamonds == 0)
+                return;
+            m_GameData.m_Diamonds += diamonds;
+            TGameData<CGameSave>.Save();
+            TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_CampDiamondsStatus);
         }
 
         public static enum_BattleDifficulty OnCampDifficultySwitch()
@@ -282,7 +330,37 @@ namespace GameSetting
             OnCreditStatus(-GetCharacterEnhancePrice(character));
             m_CharacterData.DoEnhance(character);
             TGameData<CPlayerCharactersCultivateData>.Save();
-        } 
+        }
+        #endregion
+        /// <summary>
+        /// 任务储存
+        /// </summary>
+        /// <param name="credit"></param>
+        #region ArmoryData
+        /// <summary>
+        /// 每天24点随机任务
+        /// </summary>
+        public static void RandomTask()
+        {
+            m_GameTaskData.RandomTask();
+            TGameData<CGameTask>.Save();
+        }
+        /// <summary>
+        /// 储存任务进度
+        /// </summary>
+        public static void OnCGameTask()
+        {
+            m_GameTaskData.m_killMonsters += m_killMonsters;
+            m_GameTaskData.m_PassTheGate += m_PassTheGate;
+            m_GameTaskData.m_getGoldCoins += m_getGoldCoins;
+            m_GameTaskData.m_killBoss += m_killBoss;
+            m_GameTaskData.m_portal += m_portal;
+            m_GameTaskData.m_passTheGate += m_passTheGate;
+            m_GameTaskData.m_passTheGateNew += m_passTheGateNew;
+            m_GameTaskData.m_getWeapons = m_getWeapons;
+            TGameData<CGameTask>.Save();
+            //Debug.Log(m_GameTaskData.m_killMonsters);
+        }
         #endregion
 
         #region Player Perk Data
@@ -409,7 +487,33 @@ namespace GameSetting
         public bool m_BattleResume;
         public enum_BattleDifficulty m_BattleDifficulty;
         public enum_BattleDifficulty m_DifficultyUnlocked;
-        public float m_Credit;
+        float m_credit=0;
+        public float m_Credit
+        {
+            get {
+                //Debug.Log("读取"+ m_credit);
+                return m_credit;
+            }
+            set
+            {
+                //Debug.Log("录入" + value);
+                m_credit = value;
+            }
+        }
+        public float m_diamonds;
+        public float m_Diamonds
+        {
+            get
+            {
+                //Debug.Log("读取" + m_diamonds);
+                return m_diamonds;
+            }
+            set
+            {
+                //Debug.Log("录入" + value);
+                m_diamonds = value;
+            }
+        }
         public int m_LastDailyRewardStamp;
 
         public CGameSave()
@@ -604,6 +708,150 @@ namespace GameSetting
         {
         }
     }
+    /// <summary>
+    /// 任务记录
+    /// </summary>
+    public class CGameTask : ISave
+    {
+        //上次保存时间
+        public int m_preservation;
+        //金币任务
+        public int m_goldCoinTask;
+        //钻石任务
+        public int m_diamondMission;
+        //金币任务状态
+        public int m_goldCoinTaskState=0;
+        //钻石任务状态
+        public int m_diamondMissionState=0 ;
+        /// <summary>
+        /// 每日登陆
+        /// </summary>
+        public int m_signIn=0;
+        /// <summary>
+        /// 看广告次数
+        /// </summary>
+        public int m_advertisement=0;
+        /// <summary>
+        /// 看广告领取次数
+        /// </summary>
+        public int m_advertisementCollection=0;
+        /// <summary>
+        /// 杀怪个数
+        /// </summary>
+        public int m_killMonsters = 0;
+        /// <summary>
+        /// 通过关卡数
+        /// </summary>
+        public int m_PassTheGate = 0;
+        /// <summary>
+        /// 获得金币数量
+        /// </summary>
+        public int m_getGoldCoins = 0;
+        /// <summary>
+        /// 击杀boss数量
+        /// </summary>
+        public int m_killBoss = 0;
+        /// <summary>
+        /// 开启信号塔
+        /// </summary>
+        public int m_portal = 0;
+        /// <summary>
+        /// 通过某个关卡金币
+        /// </summary>
+        public int m_passTheGate = 0;
+        /// <summary>
+        /// 通过某个关卡钻石
+        /// </summary>
+        public int m_passTheGateNew = 0;
+        /// <summary>
+        /// 获得武器最高星级
+        /// </summary>
+        public int m_getWeapons = 0;
+
+        /// <summary>
+        /// 每天24点随机任务
+        /// </summary>
+        public void RandomTask()
+        {
+            if (m_preservation == 0 || !IsTodayTimeBySpan(m_preservation))
+            {
+                m_goldCoinTask = UnityEngine.Random.Range(0, 7);
+                m_diamondMission = UnityEngine.Random.Range(0, 7);
+                Debug.Log("任务重置" + m_preservation);
+                m_goldCoinTaskState = 0;
+                m_diamondMissionState = 0;
+                m_preservation = GetTimeStamp();
+                m_signIn = 1;
+                m_advertisement = 0;
+                m_advertisementCollection = 0;
+                m_killMonsters = 0;
+                m_PassTheGate = 0;
+                m_getGoldCoins = 0;
+                m_killBoss = 0;
+                m_portal = 0;
+                m_passTheGate = 0;
+                m_passTheGateNew = 0;
+                m_getWeapons = 0;
+            }
+        }
+        //public CGameTask()
+        //{
+        //    m_killMonsters = 10;
+        //}
+
+        public bool DataCrypt() => false;
+        void ISave.DataRecorrect()
+        {
+        }
+        /// <summary>
+        /// 判断上次保存是否是当天
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public  bool IsTodayTimeBySpan(int num)
+        {
+            if (num == 0) return false;
+            DateTime nowTime = DateTime.Now;
+            DateTime dt = GetDateTime(num);
+            Debug.Log(string.Format("保存时间{0}———当前时间{1}", dt, nowTime));
+            if (dt.Date == nowTime.Date)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        /// 获取当前时间戳
+        /// </summary>
+        /// <param name="bflag">为真时获取10位时间戳,为假时获取13位时间戳.</param>
+        /// <returns></returns>
+        public  int GetTimeStamp(bool bflag = true)
+        {
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            long ret;
+            if (bflag)
+                ret = Convert.ToInt64(ts.TotalSeconds);
+            else
+                ret = Convert.ToInt64(ts.TotalMilliseconds);
+            return (int)ret;
+        }
+        /// <summary>    
+        /// 时间戳Timestamp转换成日期    
+        /// </summary>    
+        /// <param name="timeStamp"></param>    
+        /// <returns></returns>    
+        private DateTime GetDateTime(int timeStamp)
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            long lTime = ((long)timeStamp * 10000000);
+            TimeSpan toNow = new TimeSpan(lTime);
+            DateTime targetDt = dtStart.Add(toNow);
+            return targetDt;
+        }
+
+    }
 
 
     public struct WeaponSaveData : IDataConvert
@@ -724,4 +972,5 @@ namespace GameSetting
     }
     #endregion
     #endregion
+
 }

@@ -43,6 +43,9 @@ public class InteractSignalTower : InteractBattleBase {
         m_Canvas.SetActivate(true);
         m_Count.text = "0";
         OnSignalTowerTrigger();
+
+        GameDataManager.m_portal++;
+        Debug.Log("开启信号塔");
         return false;
     }
 

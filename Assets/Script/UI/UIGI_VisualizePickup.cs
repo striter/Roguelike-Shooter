@@ -23,6 +23,7 @@ public class UIGI_VisualizePickup : UIT_GridItem {
 
     public void Play(InteractPickup pickup , Action<int> _OnAnimFinished)
     {
+        
         m_Animation.Play(true);
         m_pickupPos = pickup.transform.position;
         rtf_RectTransform.SetWorldViewPortAnchor(m_pickupPos, CameraController.MainCamera);

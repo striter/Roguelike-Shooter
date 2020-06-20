@@ -44,6 +44,9 @@ namespace GameSetting
         UI_OnWillAIAttack,
 
         UI_CampCurrencyStatus,
+        UI_CampDiamondsStatus,
+
+
 
         UI_PageOpen,
         UI_PageClose,
@@ -111,7 +114,7 @@ namespace GameSetting
         SignalTower, Portal,
         BattleEnd,
 
-        CampBegin, CampBattleEnter,CampBattleResume, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd,
+        CampBegin, CampBattleEnter,CampBattleResume, CampDifficulty, CampArmory,CampDailyReward,CampBillboard,CampCharaceterSelect, CampEnd, CampTasks,
     }
 
     public enum enum_DamageIdentity { Invalid=-1,Default,Environment,Expire,PlayerWeapon,PlayerAbility, }

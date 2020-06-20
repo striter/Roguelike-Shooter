@@ -884,6 +884,8 @@ namespace GameSetting
         }
         public void OnCoinsGain(float coinAmount)
         {
+            GameDataManager.m_getGoldCoins += (int)coinAmount;
+            Debug.Log("拾取了金币"+ coinAmount);
             m_Coins += coinAmount;
             TBroadCaster<enum_BC_UIStatus>.Trigger(enum_BC_UIStatus.UI_PlayerCurrencyUpdate, this);
         } 

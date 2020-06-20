@@ -37,6 +37,13 @@ public class InteractPickupWeapon : InteractPickup {
 
     protected override bool OnInteractedContinousCheck(EntityCharacterPlayer _interactTarget)
     {
+        int Score = (int)m_Weapon.m_WeaponInfo.m_Rarity+ m_Weapon.m_EnhanceLevel;
+        if (GameDataManager.m_getWeapons < Score)
+        {
+            GameDataManager.m_getWeapons = Score;
+        }
+        Debug.Log("武器星星" + m_Weapon.m_WeaponInfo.m_Weapon + "00000" + Score);
+
         base.OnInteractedContinousCheck(_interactTarget);
         m_Weapon = _interactTarget.ObtainWeapon(m_Weapon);
         if (!m_Weapon)

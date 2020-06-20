@@ -45,6 +45,15 @@ public class InteractPortal : InteractBattleBase
         m_PortalParticles.Traversal((TSpecialClasses.ParticleControlBase particles) => {
                 particles.Stop();
         });
+
+        GameDataManager.m_PassTheGate++;
+        if ((int)BattleManager.Instance.m_BattleProgress.m_Stage - 1 == GameDataManager.m_passThe)
+        {
+            GameDataManager.m_passTheGate++;
+            GameDataManager.m_passTheGateNew++;
+        }
+        Debug.Log("通过关卡"+(int)BattleManager.Instance.m_BattleProgress.m_Stage);
+        GameDataManager.OnCGameTask();
         return false;
     }
 }

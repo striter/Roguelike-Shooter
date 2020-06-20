@@ -292,6 +292,15 @@ public class UI_Options : UIPage {
         if (OptionsDataManager.m_OptionsData.m_Effect > enum_Option_Effect.High)
             OptionsDataManager.m_OptionsData.m_Effect = enum_Option_Effect.Off;
         OptionsDataManager.OnOptionChanged();
+
+        if (OptionsDataManager.m_OptionsData.m_Effect == enum_Option_Effect.Off)
+        {
+            OnShadowClicked(true);
+        }
+        else
+        {
+            OnShadowClicked(false);
+        }
         return GetEffectOption();
     }
 
@@ -304,9 +313,9 @@ public class UI_Options : UIPage {
     }
 
     bool GetShadowOption() => OptionsDataManager.m_OptionsData.m_ShadowOff;
-    bool OnShadowClicked()
+    bool OnShadowClicked( bool ShadowOff)
     {
-        OptionsDataManager.m_OptionsData.m_ShadowOff = !OptionsDataManager.m_OptionsData.m_ShadowOff;
+        OptionsDataManager.m_OptionsData.m_ShadowOff = ShadowOff;//!OptionsDataManager.m_OptionsData.m_ShadowOff;
         OptionsDataManager.OnOptionChanged();
         return GetShadowOption();
     }

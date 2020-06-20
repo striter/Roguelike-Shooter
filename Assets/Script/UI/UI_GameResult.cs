@@ -1,5 +1,6 @@
 ﻿using GameSetting;
 using System;
+using TGameSave;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +32,7 @@ public class UI_GameResult : UIPage {
     }
     protected override void OnCancelBtnClick()
     {
+        GameDataManager.OnCGameTask();
         OnButtonClick?.Invoke();
         OnButtonClick = null;
     }
@@ -43,5 +45,8 @@ public class UI_GameResult : UIPage {
     void OnVideoBtnClick()
     {
         btn_video.SetInteractable(false);
+        GameDataManager.m_GameTaskData.m_advertisement++;
+        Debug.Log("看广告了");
+        TGameData<CGameTask>.Save();
     }
 }

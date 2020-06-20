@@ -206,7 +206,20 @@ public class EntityCharacterPlayer : EntityCharacterBase
                 m_WeaponCurrent.OnDealtDamage(amountApply);
 
             if (damageEntity.m_IsDead)
+            {
                 m_CharacterInfo.OnKilledEnermy(damageInfo, damageEntity);
+                if (damageEntity.m_Identity == 107 || damageEntity.m_Identity == 207 || damageEntity.m_Identity == 306
+                    || damageEntity.m_Identity == 407 || damageEntity.m_Identity == 507)
+                {
+                    GameDataManager.m_killBoss++;
+                    Debug.Log("BOSS死了");
+                }
+                else
+                {
+                    GameDataManager.m_killMonsters++;
+                    Debug.Log("怪死了");
+                }
+            }
         }
     }
 
